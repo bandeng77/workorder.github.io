@@ -2947,96 +2947,77 @@
         }
         
         <!-- Page Protection Script -->
-        // ==================== PAGE PROTECTION ====================
+        // ==================== PAGE SOURCE PROTECTION ====================
         (function() {
             'use strict';
             
-            let protectionWarningCount = 0;
-            const MAX_WARNINGS = 3;
-            
-            // Custom protection warning toast
-            function showProtectionToast(message, type = 'warning') {
-                const toastContainer = document.getElementById('toast-container');
-                if (!toastContainer) return;
-                
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                toast.innerHTML = `
-                    <i class="fas fa-shield-alt"></i>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600; margin-bottom: 2px;">Security Notice</div>
-                        <div style="font-size: 0.85rem; opacity: 0.9;">${message}</div>
-                    </div>
-                `;
-                
-                toastContainer.appendChild(toast);
-                
-                // Animation
-                setTimeout(() => toast.classList.add('show'), 10);
-                
-                // Auto remove
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                    setTimeout(() => toast.remove(), 300);
-                }, 4000);
-            }
-            
-            // Block specific shortcuts
+            // Block specific keyboard shortcuts for viewing page source
             document.addEventListener('keydown', function(e) {
-                // Ctrl+U - View Page Source
-                if (e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey && 
-                    (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+                // Block Ctrl+U (View page source)
+                if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
                     e.preventDefault();
                     e.stopPropagation();
-                    protectionWarningCount++;
-                    
-                    if (protectionWarningCount === 1) {
-                        showProtectionToast('Page source viewing is disabled. Please use the application interface.');
-                    } else if (protectionWarningCount === 2) {
-                        showProtectionToast('Source code access is restricted for security reasons.');
-                    } else if (protectionWarningCount >= 3) {
-                        showProtectionToast('⚠️ Repeated attempts to access source code detected.', 'error');
-                    }
+                    showToast('View page source is not allowed', 'warning');
                     return false;
                 }
                 
-                // F12 - Developer Tools
+                // Block Ctrl+Shift+I (Developer Tools - Chrome/Firefox)
+                if (e.ctrlKey && e.shiftKey && (e.key === 'i' || e.key === 'I' || e.keyCode === 73)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showToast('Developer tools are restricted', 'warning');
+                    return false;
+                }
+                
+                // Block F12 (Developer Tools)
                 if (e.key === 'F12' || e.keyCode === 123) {
                     e.preventDefault();
                     e.stopPropagation();
-                    showProtectionToast('Developer tools access is limited on this application.');
+                    showToast('Developer tools are restricted', 'warning');
                     return false;
                 }
                 
-                // Ctrl+Shift+I - Developer Tools
-                if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey && 
-                    (e.key === 'i' || e.key === 'I' || e.keyCode === 73)) {
+                // Block Ctrl+Shift+J (JavaScript Console - Chrome)
+                if (e.ctrlKey && e.shiftKey && (e.key === 'j' || e.key === 'J' || e.keyCode === 74)) {
                     e.preventDefault();
                     e.stopPropagation();
-                    showProtectionToast('Developer tools are restricted. Please use the provided features.');
+                    showToast('JavaScript console is restricted', 'warning');
                     return false;
                 }
-            }, true); // Use capture phase
+                
+                // Block Ctrl+Shift+C (Inspect Element - Chrome)
+                if (e.ctrlKey && e.shiftKey && (e.key === 'c' || e.key === 'C' || e.keyCode === 67)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showToast('Inspect element is restricted', 'warning');
+                    return false;
+                }
+            });
             
-            // Prevent direct view-source: access
+            // Add warning when page is viewed via view-source:
             if (window.location.protocol === 'view-source:') {
-                setTimeout(() => {
-                    const normalUrl = window.location.href.replace('view-source:', '');
-                    window.location.href = normalUrl;
-                }, 100);
+                // Redirect back to main page with warning
+                window.location.href = window.location.href.replace('view-source:', '');
+                showToast('Direct source viewing is not allowed', 'error');
             }
             
-            // Console warning (subtle)
+            // Optional: Add a subtle indicator that page is protected
+            console.log('%c⚠️ Protected Content ⚠️', 'color: #ef4444; font-size: 16px; font-weight: bold;');
+            console.log('%cThis page source is protected. Please do not attempt to view or modify the source code.', 'color: #6b7280;');
+            
+            // Optional: Make it harder to access via bookmarklet
             window.addEventListener('load', function() {
-                setTimeout(() => {
-                    console.log(
-                        '%c🔐 Work Order Management System 🔐\n%cThis is a proprietary business application.\nFor access inquiries, contact system administrator.',
-                        'color: #20c9ac; font-size: 14px; font-weight: bold;',
-                        'color: #6b7280; font-size: 12px;'
-                    );
-                }, 2000);
-            });   
+                // Add small delay to prevent immediate access
+                setTimeout(function() {
+                    // This makes it slightly harder to access via console
+                    Object.defineProperty(document, 'hidden', {
+                        get: function() {
+                            return false;
+                        }
+                    });
+                }, 1000);
+            });
+            
         })();
-        
 </body>
 </html>
