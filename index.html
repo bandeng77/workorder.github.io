@@ -3,352 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Work Order Management System - Genetek</title>
+    <title>Work Order Management System - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
     <style>
         :root {
             --primary-color: #2563eb;
             --secondary-color: #10b981;
             --accent-color: #f59e0b;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --success-color: #10b981;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
-        }
-
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .neumorphic {
-            border-radius: 15px;
-            background: #f0f0f0;
-            box-shadow:  10px 10px 20px #d9d9d9,
-                        -10px -10px 20px #ffffff;
-        }
-
-        .neumorphic-inset {
-            border-radius: 15px;
-            background: #f0f0f0;
-            box-shadow: inset 10px 10px 20px #d9d9d9,
-                        inset -10px -10px 20px #ffffff;
+            overflow-x: hidden;
         }
 
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .gradient-primary {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .gradient-success {
-            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+        .neumorphic {
+            border-radius: 20px;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow:  20px 20px 60px #d9d9d9,
+                        -20px -20px 60px #ffffff;
         }
 
-        .gradient-warning {
-            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
-        }
-
-        .gradient-danger {
-            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
-        }
-
-        .workorder-container {
-            min-height: 480px;
-            max-height: 600px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 12px;
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            background: white;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        .workorder-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 8s infinite linear;
         }
 
-        .workorder-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
-        .workorder-header h3 {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: #1f2937;
-            flex-shrink: 0;
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
         }
 
-        .workorder-content {
-            flex-grow: 1;
-            padding: 1.25rem;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            min-height: 100px;
-            height: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-content: flex-start;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
 
-        .workorder-card {
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
             cursor: pointer;
             position: relative;
-            background: white;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            font-size: 0.875rem;
-            width: calc(33.333% - 0.666rem);
-            min-width: 280px;
-            box-sizing: border-box;
             overflow: hidden;
         }
 
-        .workorder-card::before {
+        .btn-login::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
         }
 
-        .workorder-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        .btn-login:hover::before {
+            left: 100%;
         }
 
-        .workorder-card.running::before { background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%); }
-        .workorder-card.done::before { background: linear-gradient(90deg, #10b981 0%, #34d399 100%); }
-        .workorder-card.close::before { background: linear-gradient(90deg, #6b7280 0%, #9ca3af 100%); }
-
-        .workorder-content::-webkit-scrollbar {
-            width: 8px;
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
         }
 
-        .workorder-content::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .workorder-content::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            border-radius: 10px;
-        }
-
-        .workorder-content::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #1d4ed8 0%, #059669 100%);
-        }
-
-        /* Animations */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        .animate-slide-in {
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        .modal-content-enter {
-            opacity: 0;
-            transform: scale(0.95) translateY(-20px);
-        }
-
-        .modal-content-enter-active {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .modal-content-leave {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-        }
-
-        .modal-content-leave-active {
-            opacity: 0;
-            transform: scale(0.95) translateY(20px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        #toast-container {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .toast {
-            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            min-width: 300px;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .toast.success { border-left-color: var(--success-color); }
-        .toast.error { border-left-color: var(--danger-color); }
-        .toast.warning { border-left-color: var(--warning-color); }
-        .toast.info { border-left-color: var(--primary-color); }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .toast i {
-            font-size: 1.25rem;
-        }
-
-        /* Status badges */
-        .status-badge {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.75rem;
-            line-height: 1;
-            border-radius: 20px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .status-done { 
-            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
-            color: white;
-        }
-        .status-close { 
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-            color: white;
-        }
-        .status-running { 
-            background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
-            color: white;
-        }
-        .status-pending { 
-            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
-            color: white;
-        }
-
-        /* Work order details */
-        .workorder-details p {
-            font-size: 0.8rem;
-            margin-top: 0.25rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #4b5563;
-        }
-
-        .workorder-footer {
-            margin-top: 1rem;
-            border-top: 1px solid rgba(229, 231, 235, 0.5);
-            padding-top: 1rem;
-        }
-
-        /* Media Queries */
-        @media (max-width: 1200px) {
-            .workorder-card {
-                width: calc(50% - 0.5rem);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .workorder-card {
-                width: 100%;
-            }
-        }
-
-        /* Modal styles */
-        #workorderModalContent {
-            max-height: 85vh;
-            overflow-y: auto;
-            border-radius: 16px;
-            box-sizing: border-box;
-            padding: 2rem;
-            background: white;
-            position: relative;
-        }
-
-        #workorderModalContent::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            border-radius: 16px 16px 0 0;
-        }
-
-        /* Form elements */
         .form-input {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             border: 2px solid #e5e7eb;
             border-radius: 10px;
+            padding: 0.875rem 1rem;
+            width: 100%;
         }
 
         .form-input:focus {
@@ -357,357 +126,116 @@
             outline: none;
         }
 
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
         .form-label {
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        /* Button styles */
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            border: none;
-            font-size: 0.875rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-            color: white;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
-            color: white;
-        }
-
-        /* Dashboard cards */
-        .dashboard-card {
-            border-radius: 16px;
-            padding: 1.5rem;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .dashboard-card i {
-            font-size: 2rem;
-            opacity: 0.8;
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            background: #f8fafc;
-            padding: 0.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-        }
-
-        .tab {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
+            position: absolute;
+            left: 1rem;
+            top: 0.875rem;
             color: #6b7280;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            background: white;
+            padding: 0 0.25rem;
         }
 
-        .tab.active {
-            background: white;
+        .form-input:focus + .form-label,
+        .form-input:not(:placeholder-shown) + .form-label {
+            top: -0.5rem;
+            left: 0.75rem;
+            font-size: 0.75rem;
             color: var(--primary-color);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        /* List view */
-        .list-view {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.875rem;
-        }
-
-        .list-view th {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            padding: 1rem 1.25rem;
-            text-align: left;
-            font-weight: 600;
-            color: #374151;
-            border-bottom: 2px solid #e5e7eb;
-            position: sticky;
-            top: 0;
-        }
-
-        .list-view td {
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid #e5e7eb;
-            vertical-align: middle;
-        }
-
-        .list-view tr {
-            transition: all 0.2s;
-        }
-
-        .list-view tr:hover {
-            background-color: #f9fafb;
-            transform: translateX(5px);
-        }
-
-        .list-view .workorder-actions {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: flex-end;
-        }
-
-        /* Notes section */
-        .notes-section {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .notes-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .notes-table th,
-        .notes-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-            background: white;
-        }
-
-        .notes-table th {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            font-weight: 600;
-            color: #374151;
-        }
-
-        /* Man Power Tags */
-        .manpower-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .manpower-tag {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-            color: #1e40af;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .manpower-tag:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-        }
-
-        .remove-tag {
-            cursor: pointer;
-            color: var(--danger-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 16px;
-            height: 16px;
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: transparent;
             border-radius: 50%;
-            background: rgba(239, 68, 68, 0.1);
-            transition: all 0.2s;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
         }
 
-        .remove-tag:hover {
-            background: rgba(239, 68, 68, 0.2);
-            transform: scale(1.1);
-        }
-
-        /* Progress bar */
-        .progress-bar {
-            height: 8px;
-            background: #e5e7eb;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 0.5rem 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
-        /* Custom scrollbar */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            border-radius: 3px;
-        }
-
-        /* Stats cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .stat-content {
-            flex: 1;
-        }
-
-        .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #1f2937;
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: #6b7280;
-            margin-top: 0.25rem;
-        }
-
-        /* Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-            margin: 2rem 0;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 1.5rem;
-            padding-left: 1rem;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -2rem;
-            top: 0.5rem;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            border: 2px solid white;
-            box-shadow: 0 0 0 3px var(--primary-color);
-        }
-
-        .timeline-date {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin-bottom: 0.25rem;
-        }
-
-        .timeline-content {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800">
-    <div class="max-w-7xl mx-auto px-4 py-6">
+<body class="gradient-bg">
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-20 left-10 w-64 h-64 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-spin-slow floating-element"></div>
+            <div class="absolute bottom-20 right-10 w-64 h-64 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-spin-slow floating-element" style="animation-delay: -2s;"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-spin-slow floating-element" style="animation-delay: -4s;"></div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-md mx-4">
+            <div class="neumorphic p-8 rounded-3xl">
+                <div class="text-center mb-10">
+                    <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <i class="fas fa-clipboard-list text-white text-3xl"></i>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Work Order System</h1>
+                    <p class="text-gray-600">Genetek Management Platform</p>
+                </div>
+
+                <form id="loginForm" class="space-y-6">
+                    <div class="form-group">
+                        <input type="text" 
+                               id="username" 
+                               class="form-input"
+                               placeholder=" "
+                               required>
+                        <label class="form-label" for="username">
+                            <i class="fas fa-user mr-2"></i>
+                            Username
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password" 
+                               id="password" 
+                               class="form-input"
+                               placeholder=" "
+                               required>
+                        <label class="form-label" for="password">
+                            <i class="fas fa-lock mr-2"></i>
+                            Password
+                        </label>
+                    </div>
+
+                    <div id="loginError" class="hidden">
+                        <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg flex items-center">
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            <span id="errorMessage">Invalid credentials</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-login w-full flex items-center justify-center">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        <span>Login to System</span>
+                    </button>
+
+                    <div class="text-center pt-6 border-t border-gray-200">
+                        <p class="text-sm text-gray-600">
+                            <i class="fas fa-shield-alt mr-1"></i>
+                            Secure Login - Authorized Personnel Only
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application Page (Hidden Initially) -->
+    <div id="appPage" class="hidden">
         <!-- Header -->
         <header class="mb-8">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-6">
@@ -730,9 +258,17 @@
                         <i class="fas fa-plus-circle"></i>
                         <span>New Work Order</span>
                     </button>
-                    <button id="exportExcelBtn" class="btn btn-success shadow-lg hidden">
+                    <button id="exportExcelBtn" class="btn btn-success shadow-lg">
                         <i class="fas fa-file-excel"></i>
                         <span>Export Excel</span>
+                    </button>
+                    <button id="analyticsBtn" class="btn btn-warning shadow-lg">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </button>
+                    <button id="activityBtn" class="btn btn-secondary shadow-lg">
+                        <i class="fas fa-history"></i>
+                        <span>Recent Activity</span>
                     </button>
                     <button id="authButton" class="btn btn-danger shadow-lg">
                         <i class="fas fa-sign-out-alt"></i>
@@ -902,49 +438,79 @@
                 </div>
             </div>
         </main>
-
-        <!-- Charts Section -->
-        <section class="mt-12">
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold text-gray-900">Work Order Analytics</h3>
-                    <select id="chartTimeRange" class="form-input py-2 px-3 text-sm">
-                        <option value="week">Last Week</option>
-                        <option value="month" selected>Last Month</option>
-                        <option value="quarter">Last Quarter</option>
-                        <option value="year">Last Year</option>
-                    </select>
-                </div>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="chart-container">
-                        <canvas id="statusChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="divisionChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="companyChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="timelineChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Activity Feed -->
-        <section class="mt-8">
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <h3 class="text-xl font-bold mb-6 text-gray-900">Recent Activity</h3>
-                <div id="activityFeed" class="space-y-4">
-                    <!-- Activity items will be added here -->
-                </div>
-            </div>
-        </section>
     </div>
 
     <!-- ==================== MODALS ==================== -->
+
+    <!-- Analytics Modal -->
+    <div id="analyticsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            <div class="bg-white rounded-xl shadow-2xl modal-content-enter" id="analyticsModalContent">
+                <div class="sticky top-0 bg-white z-10 border-b">
+                    <div class="flex justify-between items-center p-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Work Order Analytics</h2>
+                            <p class="text-gray-600 mt-1">Comprehensive analysis and insights</p>
+                        </div>
+                        <button id="closeAnalyticsModal" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6 overflow-y-auto max-h-[60vh] custom-scrollbar">
+                    <div class="flex justify-between items-center mb-6">
+                        <select id="chartTimeRange" class="form-input py-2 px-3 text-sm">
+                            <option value="week">Last Week</option>
+                            <option value="month" selected>Last Month</option>
+                            <option value="quarter">Last Quarter</option>
+                            <option value="year">Last Year</option>
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="chart-container">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="divisionChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="companyChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="timelineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Modal -->
+    <div id="activityModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <div class="bg-white rounded-xl shadow-2xl modal-content-enter" id="activityModalContent">
+                <div class="sticky top-0 bg-white z-10 border-b">
+                    <div class="flex justify-between items-center p-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Recent Activity</h2>
+                            <p class="text-gray-600 mt-1">Latest system activities and changes</p>
+                        </div>
+                        <button id="closeActivityModal" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6 overflow-y-auto max-h-[60vh] custom-scrollbar">
+                    <div id="activityFeed" class="space-y-4">
+                        <!-- Activity items will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Add/Edit Work Order Modal -->
     <div id="workorderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
@@ -1486,6 +1052,109 @@
             'Yudiyono', 'Edwin', 'Fiki', 'Harianto', 'Haryo'
         ]);
 
+        // Predefined users for login (you can replace with Firebase Auth or your own auth system)
+        const validUsers = {
+            'admin': { password: 'admin123', role: 'admin', email: 'admin@genetek.com' },
+            'user': { password: 'user123', role: 'user', email: 'user@genetek.com' },
+            'manager': { password: 'manager123', role: 'manager', email: 'manager@genetek.com' }
+        };
+
+        // ==================== LOGIN FUNCTIONS ====================
+        function initLogin() {
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleLogin();
+            });
+        }
+
+        function handleLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+
+            // Hide any previous error
+            errorDiv.classList.add('hidden');
+
+            // Basic validation
+            if (!username || !password) {
+                showError('Please enter both username and password');
+                return;
+            }
+
+            // Check credentials
+            if (validUsers[username] && validUsers[username].password === password) {
+                // Successful login
+                const user = validUsers[username];
+                currentUser = {
+                    email: user.email,
+                    username: username
+                };
+                currentUserRole = user.role;
+                
+                // Simulate loading
+                const loginBtn = document.querySelector('#loginForm button[type="submit"]');
+                const originalText = loginBtn.innerHTML;
+                loginBtn.innerHTML = '<div class="loader"></div>';
+                loginBtn.disabled = true;
+
+                // Show success and transition to app
+                setTimeout(() => {
+                    showLoginSuccess();
+                    setTimeout(() => {
+                        document.getElementById('loginPage').classList.add('hidden');
+                        document.getElementById('appPage').classList.remove('hidden');
+                        document.getElementById('userWelcome').textContent = currentUser.email;
+                        document.getElementById('userRole').textContent = currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1);
+                        initApp();
+                    }, 500);
+                }, 1000);
+
+            } else {
+                showError('Invalid username or password');
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('loginError');
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorDiv.classList.remove('hidden');
+            
+            // Add shake animation
+            errorDiv.style.animation = 'none';
+            setTimeout(() => {
+                errorDiv.style.animation = 'shake 0.5s';
+            }, 10);
+        }
+
+        function showLoginSuccess() {
+            // Create success toast
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 animate-slide-in';
+            toast.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                <span>Login successful! Redirecting...</span>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+
+        function logout() {
+            currentUser = null;
+            currentUserRole = 'user';
+            document.getElementById('appPage').classList.add('hidden');
+            document.getElementById('loginPage').classList.remove('hidden');
+            
+            // Reset login form
+            document.getElementById('loginForm').reset();
+            document.getElementById('loginError').classList.add('hidden');
+            
+            showToast('Logged out successfully', 'success');
+        }
+
         // ==================== UTILITY FUNCTIONS ====================
         function formatDate(date, includeTime = false) {
             if (!date) return '-';
@@ -1556,77 +1225,6 @@
 
         function hideLoading() {
             document.getElementById('loadingOverlay').classList.add('hidden');
-        }
-
-        // ==================== AUTHENTICATION ====================
-        auth.onAuthStateChanged(async (user) => {
-            if (authInitialized) return;
-            authInitialized = true;
-            
-            if (!user && window.location.pathname.includes('app.html')) {
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            if (user && window.location.pathname.includes('login.html')) {
-                window.location.href = 'app.html';
-                return;
-            }
-
-            if (user && window.location.pathname.includes('app.html')) {
-                currentUser = user;
-                
-                try {
-                    // Update user info
-                    document.getElementById('userWelcome').textContent = user.email;
-                    
-                    // Get user role
-                    const userDoc = await usersCollection.doc(user.uid).get();
-                    if (userDoc.exists) {
-                        currentUserRole = userDoc.data().role || 'user';
-                    } else {
-                        // Set default role
-                        currentUserRole = 'user';
-                        await usersCollection.doc(user.uid).set({
-                            email: user.email,
-                            role: 'user',
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    }
-                    
-                    document.getElementById('userRole').textContent = currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1);
-                    
-                    // Apply permissions
-                    applyUserPermissions();
-                    
-                    // Load data
-                    await loadDropdownOptions();
-                    await loadWorkOrders();
-                    initEventListeners();
-                    updateStats();
-                    renderCharts();
-                    loadActivityFeed();
-                    
-                    showToast('Welcome back!', 'success');
-                    
-                } catch (error) {
-                    console.error('Auth error:', error);
-                    showToast('Failed to load user data', 'error');
-                }
-            }
-        });
-
-        async function logout() {
-            try {
-                await auth.signOut();
-                showToast('Logged out successfully', 'success');
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1000);
-            } catch (error) {
-                console.error('Logout error:', error);
-                showToast('Failed to logout', 'error');
-            }
         }
 
         // ==================== DROPDOWN OPTIONS ====================
@@ -1821,6 +1419,7 @@
                         </button>
                     </div>
                 `;
+                document.getElementById('createFirstWorkOrder').addEventListener('click', () => openWorkOrderModal());
                 return;
             }
             
@@ -1835,6 +1434,9 @@
             } else if (currentView === 'timeline') {
                 renderTimelineView();
             }
+            
+            // Add event listeners to dynamically created elements
+            attachEventListenersToWorkOrders();
         }
 
         function createWorkOrderCard(workorder) {
@@ -2114,12 +1716,25 @@
             } else {
                 modalTitle.textContent = 'Create New Work Order';
                 // Set default values
-                document.getElementById('startDate').valueAsDate = new Date();
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('startDate').value = today;
                 document.getElementById('status').value = 'Running';
                 document.getElementById('priority').value = 'Normal';
+                document.getElementById('workOrderNumber').value = generateWorkOrderNumber();
             }
             
             modal.classList.remove('hidden');
+        }
+
+        function generateWorkOrderNumber() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const count = workorders.filter(wo => {
+                const woDate = wo.createdAt?.toDate();
+                return woDate && woDate.getMonth() === now.getMonth() && woDate.getFullYear() === year;
+            }).length + 1;
+            return `WO-${year}${month}-${count.toString().padStart(3, '0')}`;
         }
 
         function closeWorkOrderModal() {
@@ -2381,6 +1996,24 @@
             document.getElementById('workorderDetailModal').classList.add('hidden');
         }
 
+        function openAnalyticsModal() {
+            renderCharts();
+            document.getElementById('analyticsModal').classList.remove('hidden');
+        }
+
+        function closeAnalyticsModal() {
+            document.getElementById('analyticsModal').classList.add('hidden');
+        }
+
+        function openActivityModal() {
+            loadActivityFeed();
+            document.getElementById('activityModal').classList.remove('hidden');
+        }
+
+        function closeActivityModal() {
+            document.getElementById('activityModal').classList.add('hidden');
+        }
+
         // ==================== CHARTS ====================
         function renderCharts() {
             renderStatusChart();
@@ -2579,7 +2212,7 @@
             try {
                 const querySnapshot = await activitiesCollection
                     .orderBy('timestamp', 'desc')
-                    .limit(10)
+                    .limit(20)
                     .get();
                 
                 const container = document.getElementById('activityFeed');
@@ -2598,15 +2231,37 @@
                 querySnapshot.forEach(doc => {
                     const activity = doc.data();
                     const activityItem = document.createElement('div');
-                    activityItem.className = 'flex items-start gap-3 p-4 bg-gray-50 rounded-lg';
+                    activityItem.className = 'flex items-start gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors';
+                    
+                    // Determine icon based on activity type
+                    let icon = 'fa-history';
+                    let iconColor = 'text-blue-600';
+                    let bgColor = 'bg-blue-100';
+                    
+                    if (activity.type === 'work order') {
+                        if (activity.message.includes('created')) {
+                            icon = 'fa-plus-circle';
+                            iconColor = 'text-green-600';
+                            bgColor = 'bg-green-100';
+                        } else if (activity.message.includes('updated')) {
+                            icon = 'fa-edit';
+                            iconColor = 'text-blue-600';
+                            bgColor = 'bg-blue-100';
+                        } else if (activity.message.includes('deleted')) {
+                            icon = 'fa-trash';
+                            iconColor = 'text-red-600';
+                            bgColor = 'bg-red-100';
+                        }
+                    }
                     
                     activityItem.innerHTML = `
-                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-history text-blue-600"></i>
+                        <div class="w-8 h-8 rounded-full ${bgColor} flex items-center justify-center flex-shrink-0">
+                            <i class="fas ${icon} ${iconColor}"></i>
                         </div>
                         <div class="flex-1">
                             <p class="text-gray-800">${activity.message}</p>
                             <p class="text-xs text-gray-500 mt-1">
+                                <i class="far fa-clock mr-1"></i>
                                 ${formatDateTime(activity.timestamp)}
                             </p>
                         </div>
@@ -2617,6 +2272,7 @@
                 
             } catch (error) {
                 console.error('Error loading activity feed:', error);
+                showToast('Failed to load activity feed', 'error');
             }
         }
 
@@ -2629,8 +2285,10 @@
                     type: type
                 });
                 
-                // Reload activity feed
-                loadActivityFeed();
+                // Reload activity feed if modal is open
+                if (!document.getElementById('activityModal').classList.contains('hidden')) {
+                    loadActivityFeed();
+                }
                 
             } catch (error) {
                 console.error('Error logging activity:', error);
@@ -2638,10 +2296,17 @@
         }
 
         // ==================== EVENT LISTENERS ====================
-        function initEventListeners() {
+        function initApp() {
+            // Load initial data
+            loadDropdownOptions();
+            loadWorkOrders();
+            loadActivityFeed();
+            
             // Header buttons
             document.getElementById('newWorkOrderBtn').addEventListener('click', () => openWorkOrderModal());
             document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
+            document.getElementById('analyticsBtn').addEventListener('click', openAnalyticsModal);
+            document.getElementById('activityBtn').addEventListener('click', openActivityModal);
             document.getElementById('authButton').addEventListener('click', logout);
             
             // Search
@@ -2697,6 +2362,19 @@
                 setTimeout(() => openWorkOrderModal(workorderId), 300);
             });
             
+            // Analytics modal
+            document.getElementById('closeAnalyticsModal').addEventListener('click', closeAnalyticsModal);
+            document.getElementById('chartTimeRange').addEventListener('change', renderCharts);
+            
+            // Activity modal
+            document.getElementById('closeActivityModal').addEventListener('click', closeActivityModal);
+            
+            // Advanced Search
+            document.getElementById('applyFiltersBtn').addEventListener('click', applyAdvancedFilters);
+            document.getElementById('resetFiltersBtn').addEventListener('click', resetAdvancedFilters);
+        }
+
+        function attachEventListenersToWorkOrders() {
             // Event delegation for dynamic elements
             document.addEventListener('click', function(e) {
                 // View detail
@@ -2724,11 +2402,6 @@
                         const workorderId = card.dataset.id;
                         deleteWorkOrder(workorderId);
                     }
-                }
-                
-                // Create first work order
-                if (e.target.closest('#createFirstWorkOrder')) {
-                    openWorkOrderModal();
                 }
             });
         }
@@ -2817,6 +2490,7 @@
             }
             
             try {
+                // Create worksheet data
                 const worksheetData = filteredWorkorders.map(wo => ({
                     'Work Order Number': wo.workOrderNumber,
                     'SO Number': wo.soNumber || '',
@@ -2837,12 +2511,19 @@
                     'Created By': wo.createdBy || ''
                 }));
                 
-                const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, 'Work Orders');
+                // Create worksheet
+                const ws = XLSX.utils.json_to_sheet(worksheetData);
                 
-                const fileName = `Work_Orders_${new Date().toISOString().split('T')[0]}.xlsx`;
-                XLSX.writeFile(workbook, fileName);
+                // Create workbook
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Work Orders');
+                
+                // Generate filename
+                const date = new Date();
+                const filename = `Work_Orders_${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')}.xlsx`;
+                
+                // Export
+                XLSX.writeFile(wb, filename);
                 
                 showToast('Data exported successfully', 'success');
                 
@@ -2852,36 +2533,594 @@
             }
         }
 
-        // ==================== PERMISSIONS ====================
-        function applyUserPermissions() {
-            const exportBtn = document.getElementById('exportExcelBtn');
-            
-            if (currentUserRole === 'admin') {
-                exportBtn.classList.remove('hidden');
-            } else {
-                exportBtn.classList.add('hidden');
-            }
-        }
-
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Work Order Management System initialized');
             
-            // Initialize charts
-            renderCharts();
+            // Initialize login
+            initLogin();
             
-            // Set up advanced search modal
-            document.getElementById('applyFiltersBtn').addEventListener('click', applyAdvancedFilters);
-            document.getElementById('resetFiltersBtn').addEventListener('click', resetAdvancedFilters);
-            document.querySelectorAll('.close-history-modal').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.getElementById('customerHistoryModal').classList.add('hidden');
-                });
-            });
+            // Load required libraries
+            const script1 = document.createElement('script');
+            script1.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+            document.head.appendChild(script1);
+            
+            const script2 = document.createElement('script');
+            script2.src = 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js';
+            document.head.appendChild(script2);
+            
+            const script3 = document.createElement('script');
+            script3.src = 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js';
+            document.head.appendChild(script3);
+            
+            const script4 = document.createElement('script');
+            script4.src = 'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js';
+            document.head.appendChild(script4);
+            
+            const script5 = document.createElement('script');
+            script5.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+            document.head.appendChild(script5);
+            
+            // Add CSS for animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                    20%, 40%, 60%, 80% { transform: translateX(5px); }
+                }
+                
+                .animate-slide-in {
+                    animation: slideIn 0.3s ease-out;
+                }
+                
+                @keyframes slideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                .animate-spin-slow {
+                    animation: spin 20s linear infinite;
+                }
+                
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
         });
 
         // Expose some functions to global scope for onclick handlers
         window.removeManPowerTag = removeManPowerTag;
     </script>
+
+    <!-- Include the original CSS styles from your index.html -->
+    <style>
+        /* Copy all the CSS styles from your original index.html here */
+        /* I've included the key styles, but you might want to copy the entire style block */
+        
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #10b981;
+            --accent-color: #f59e0b;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --success-color: #10b981;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .neumorphic {
+            border-radius: 15px;
+            background: #f0f0f0;
+            box-shadow:  10px 10px 20px #d9d9d9,
+                        -10px -10px 20px #ffffff;
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+        }
+
+        .gradient-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+        }
+
+        .gradient-warning {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+        }
+
+        .gradient-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+        }
+
+        .workorder-container {
+            min-height: 480px;
+            max-height: 600px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .workorder-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .workorder-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .workorder-header h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1f2937;
+            flex-shrink: 0;
+        }
+
+        .workorder-content {
+            flex-grow: 1;
+            padding: 1.25rem;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            min-height: 100px;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-content: flex-start;
+        }
+
+        .workorder-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            font-size: 0.875rem;
+            width: calc(33.333% - 0.666rem);
+            min-width: 280px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .workorder-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .workorder-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .workorder-card.running::before { background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%); }
+        .workorder-card.done::before { background: linear-gradient(90deg, #10b981 0%, #34d399 100%); }
+        .workorder-card.close::before { background: linear-gradient(90deg, #6b7280 0%, #9ca3af 100%); }
+
+        .workorder-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .workorder-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .workorder-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 10px;
+        }
+
+        .workorder-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #1d4ed8 0%, #059669 100%);
+        }
+
+        /* Add the rest of your CSS styles here... */
+        /* Status badges, modal styles, form elements, buttons, etc. */
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1f2937;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: #f8fafc;
+            padding: 0.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.75rem;
+            line-height: 1;
+            border-radius: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .status-done { 
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            color: white;
+        }
+        .status-close { 
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+        }
+        .status-running { 
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+            color: white;
+        }
+        .status-pending { 
+            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+            color: white;
+        }
+
+        #toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 300px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .toast.success { border-left-color: var(--success-color); }
+        .toast.error { border-left-color: var(--danger-color); }
+        .toast.warning { border-left-color: var(--warning-color); }
+        .toast.info { border-left-color: var(--primary-color); }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .modal-content-enter {
+            opacity: 0;
+            transform: scale(0.95) translateY(-20px);
+        }
+
+        .modal-content-enter-active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 3px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .view-toggle-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .view-toggle-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .notes-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .notes-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .notes-table th,
+        .notes-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            background: white;
+        }
+
+        .notes-table th {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .manpower-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .manpower-tag {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .remove-tag {
+            cursor: pointer;
+            color: var(--danger-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.1);
+            transition: all 0.2s;
+        }
+
+        .remove-tag:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.1);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            border: 2px solid white;
+            box-shadow: 0 0 0 3px var(--primary-color);
+        }
+
+        @media (max-width: 1200px) {
+            .workorder-card {
+                width: calc(50% - 0.5rem);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .workorder-card {
+                width: 100%;
+            }
+        }
+    </style>
 </body>
 </html>
