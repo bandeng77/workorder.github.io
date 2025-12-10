@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Work Order Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        .company-logo {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+        .input-group {
+            position: relative;
+        }
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+        .input-group input {
+            padding-left: 45px;
+        }
+        .btn-login {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            transition: all 0.3s;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="w-full max-w-md mx-4">
+        <div class="login-card">
+            <!-- Company Header -->
+            <div class="company-logo p-8 text-center">
+                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-clipboard-list text-3xl text-green-600"></i>
+                </div>
+                <h1 class="text-3xl font-bold">Genetek Intratama</h1>
+                <p class="text-green-100 mt-2">Work Order Management System</p>
+            </div>
+
+            <!-- Login Form -->
+            <div class="p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h2>
+                <p class="text-gray-600 mb-6">Please sign in to your account</p>
+
+                <form id="loginForm" class="space-y-6">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" 
+                               id="email" 
+                               placeholder="Email address" 
+                               required
+                               class="w-full p-4 pl-12 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:ring-opacity-50 transition-all duration-300">
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" 
+                               id="password" 
+                               placeholder="Password" 
+                               required
+                               class="w-full p-4 pl-12 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:ring-opacity-50 transition-all duration-300">
+                        <button type="button" id="togglePassword" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="rememberMe" class="rounded text-green-600 focus:ring-green-500">
+                            <span class="ml-2 text-gray-600">Remember me</span>
+                        </label>
+                        <button type="button" id="forgotPassword" class="text-green-600 hover:text-green-800 text-sm font-medium">
+                            Forgot password?
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn-login w-full p-4 rounded-xl font-bold text-lg">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Sign In
+                    </button>
+
+                    <!-- Demo Accounts -->
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <p class="text-sm text-gray-600 mb-3">Demo Accounts:</p>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-700">Admin:</span>
+                                <span class="font-medium">admin@genetek.co.id</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-700">Manager:</span>
+                                <span class="font-medium">manager@genetek.co.id</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-700">Technician:</span>
+                                <span class="font-medium">technician@genetek.co.id</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="mt-4 p-4 bg-red-50 text-red-700 rounded-lg hidden">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span id="errorText"></span>
+                </div>
+
+                <!-- Loading -->
+                <div id="loading" class="mt-4 hidden">
+                    <div class="flex items-center justify-center">
+                        <div class="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin mr-3"></div>
+                        <span class="text-gray-600">Signing in...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="bg-gray-50 p-4 text-center border-t">
+                <p class="text-sm text-gray-600">
+                    &copy; 2024 Genetek Intratama. All rights reserved.
+                    <span class="block mt-1 text-xs text-gray-500">v1.0.0</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwXNGrJsBqQ2RslAkdWWPSOubUw13QcRI",
+            authDomain: "workorder-mon.firebaseapp.com",
+            projectId: "workorder-mon",
+            storageBucket: "workorder-mon.firebasestorage.app",
+            messagingSenderId: "226391173482",
+            appId: "1:226391173482:web:9ea9c68c1e31c84f50dd13"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const forgotPasswordBtn = document.getElementById('forgotPassword');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const loading = document.getElementById('loading');
+        const rememberMe = document.getElementById('rememberMe');
+
+        // Check if already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // Redirect to app
+                window.location.href = 'app.html';
+            }
+        });
+
+        // Toggle password visibility
+        togglePasswordBtn.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            togglePasswordBtn.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+
+        // Forgot password
+        forgotPasswordBtn.addEventListener('click', () => {
+            const email = prompt('Enter your email address to reset password:');
+            if (email) {
+                auth.sendPasswordResetEmail(email)
+                    .then(() => {
+                        alert('Password reset email sent! Check your inbox.');
+                    })
+                    .catch((error) => {
+                        alert('Error: ' + error.message);
+                    });
+            }
+        });
+
+        // Load saved email if remember me was checked
+        const savedEmail = localStorage.getItem('rememberedEmail');
+        if (savedEmail) {
+            emailInput.value = savedEmail;
+            rememberMe.checked = true;
+        }
+
+        // Handle login form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            
+            // Validate email domain
+            if (!email.endsWith('@genetek.co.id') && !email.endsWith('@effrensindo.co.id')) {
+                showError('Only company email addresses are allowed (@genetek.co.id or @effrensindo.co.id)');
+                return;
+            }
+
+            // Save email if remember me is checked
+            if (rememberMe.checked) {
+                localStorage.setItem('rememberedEmail', email);
+            } else {
+                localStorage.removeItem('rememberedEmail');
+            }
+
+            // Show loading
+            loading.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+
+            try {
+                // Sign in with email and password
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // Get user role from Firestore
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    // Create user document if it doesn't exist
+                    await db.collection('users').doc(user.uid).set({
+                        email: user.email,
+                        role: 'user', // Default role
+                        fullName: user.email.split('@')[0],
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } else {
+                    // Update last login
+                    await db.collection('users').doc(user.uid).update({
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+
+                // Log login activity
+                await db.collection('activities').add({
+                    type: 'login',
+                    message: `${user.email} logged in to the system`,
+                    userEmail: user.email,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Redirect to main app
+                window.location.href = 'app.html';
+
+            } catch (error) {
+                // Handle errors
+                let errorMessageText = '';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessageText = 'User not found. Please check your email.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessageText = 'Incorrect password. Please try again.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessageText = 'Invalid email format.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessageText = 'This account has been disabled.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessageText = 'Too many failed attempts. Please try again later.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessageText = 'Network error. Please check your internet connection.';
+                        break;
+                    default:
+                        errorMessageText = 'Login failed. Please try again.';
+                        console.error('Login error:', error);
+                }
+                
+                showError(errorMessageText);
+                
+            } finally {
+                loading.classList.add('hidden');
+            }
+        });
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+            
+            // Auto-hide error after 5 seconds
+            setTimeout(() => {
+                errorMessage.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Demo account auto-fill
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check URL parameters for demo account
+            const urlParams = new URLSearchParams(window.location.search);
+            const demoAccount = urlParams.get('demo');
+            
+            if (demoAccount) {
+                const demoAccounts = {
+                    admin: { email: 'admin@genetek.co.id', password: 'GenetekAdmin2024!' },
+                    manager: { email: 'manager@genetek.co.id', password: 'Manager123!' },
+                    technician: { email: 'technician@genetek.co.id', password: 'Tech123!' }
+                };
+                
+                if (demoAccounts[demoAccount]) {
+                    emailInput.value = demoAccounts[demoAccount].email;
+                    passwordInput.value = demoAccounts[demoAccount].password;
+                    
+                    // Show info message
+                    showError(`Using demo ${demoAccount} account. Click "Sign In" to continue.`);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
