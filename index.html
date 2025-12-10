@@ -833,6 +833,38 @@
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .fixed {
+            position: fixed;
+        }
+
+        .absolute {
+            position: absolute;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .inset-0 {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .z-50 {
+            z-index: 50;
+        }
+
+        .z-\[9999\] {
+            z-index: 9999;
+        }
     </style>
 </head>
 <body class="gradient-bg">
@@ -860,7 +892,8 @@
                                id="email" 
                                class="form-input"
                                placeholder=" "
-                               required>
+                               required
+                               value="admin@genetek.com">
                         <label class="form-label" for="email">
                             <i class="fas fa-envelope mr-2"></i>
                             Email Address
@@ -872,7 +905,8 @@
                                id="password" 
                                class="form-input"
                                placeholder=" "
-                               required>
+                               required
+                               value="Admin123!">
                         <label class="form-label" for="password">
                             <i class="fas fa-lock mr-2"></i>
                             Password
@@ -961,7 +995,7 @@
                                 <div class="ml-auto flex items-center gap-2">
                                     <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
                                         <i class="fas fa-shield-alt mr-1"></i>
-                                        <span id="userRole"></span>
+                                        <span id="userRole">Loading...</span>
                                     </span>
                                 </div>
                             </div>
@@ -1089,7 +1123,7 @@
                         <h3>Work Orders</h3>
                         <div class="flex items-center gap-2 text-sm text-gray-600">
                             <i class="fas fa-info-circle"></i>
-                            <span id="workOrderCount">Showing 0 work orders</span>
+                            <span id="workOrderCount">Loading work orders...</span>
                         </div>
                     </div>
                     <div id="workorders-stage" class="workorder-content custom-scrollbar">
@@ -1115,7 +1149,7 @@
     <!-- Analytics Modal -->
     <div id="analyticsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="w-full max-w-6xl max-h-[90vh] overflow-hidden">
-            <div class="bg-white rounded-xl shadow-2xl modal-content-enter" id="analyticsModalContent">
+            <div class="bg-white rounded-xl shadow-2xl" id="analyticsModalContent">
                 <div class="sticky top-0 bg-white z-10 border-b">
                     <div class="flex justify-between items-center p-6">
                         <div>
@@ -1160,7 +1194,7 @@
     <!-- Activity Modal -->
     <div id="activityModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="w-full max-w-4xl max-h-[90vh] overflow-hidden">
-            <div class="bg-white rounded-xl shadow-2xl modal-content-enter" id="activityModalContent">
+            <div class="bg-white rounded-xl shadow-2xl" id="activityModalContent">
                 <div class="sticky top-0 bg-white z-10 border-b">
                     <div class="flex justify-between items-center p-6">
                         <div>
@@ -1185,7 +1219,7 @@
     <!-- Add/Edit Work Order Modal -->
     <div id="workorderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="w-full max-w-6xl max-h-[90vh] overflow-hidden">
-            <div class="bg-white rounded-xl shadow-2xl modal-content-enter" id="workorderModalContent">
+            <div class="bg-white rounded-xl shadow-2xl" id="workorderModalContent">
                 <div class="sticky top-0 bg-white z-10 border-b">
                     <div class="flex justify-between items-center p-6">
                         <div>
@@ -1230,32 +1264,22 @@
                                     <label class="form-label-app" for="customer">
                                         <span class="text-red-500">*</span> Customer
                                     </label>
-                                    <div class="relative">
-                                        <input type="text" 
-                                               id="customer" 
-                                               class="form-input-app w-full p-3 pr-10"
-                                               required
-                                               placeholder="Enter customer name">
-                                        <button type="button" id="customerHistoryBtn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600">
-                                            <i class="fas fa-history"></i>
-                                        </button>
-                                    </div>
+                                    <input type="text" 
+                                           id="customer" 
+                                           class="form-input-app w-full p-3"
+                                           required
+                                           placeholder="Enter customer name">
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label-app" for="building">
                                         <span class="text-red-500">*</span> Gedung
                                     </label>
-                                    <div class="relative">
-                                        <input type="text" 
-                                               id="building" 
-                                               class="form-input-app w-full p-3 pr-10"
-                                               required
-                                               placeholder="Enter building name">
-                                        <button type="button" id="buildingHistoryBtn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600">
-                                            <i class="fas fa-history"></i>
-                                        </button>
-                                    </div>
+                                    <input type="text" 
+                                           id="building" 
+                                           class="form-input-app w-full p-3"
+                                           required
+                                           placeholder="Enter building name">
                                 </div>
                             </div>
 
@@ -1282,8 +1306,6 @@
                                         <option value="">Select Company</option>
                                         <option value="Genetek Intratama">Genetek Intratama</option>
                                         <option value="Effrensindo Kencana">Effrensindo Kencana</option>
-                                        <option value="PT Genetek">PT Genetek</option>
-                                        <option value="PT Effrensindo">PT Effrensindo</option>
                                     </select>
                                 </div>
 
@@ -1291,16 +1313,11 @@
                                     <label class="form-label-app" for="workType">
                                         <span class="text-red-500">*</span> Jenis Pekerjaan
                                     </label>
-                                    <div class="relative">
-                                        <input type="text" 
-                                               id="workType" 
-                                               class="form-input-app w-full p-3 pr-10"
-                                               required
-                                               placeholder="Enter work type">
-                                        <button type="button" id="workTypeHistoryBtn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600">
-                                            <i class="fas fa-history"></i>
-                                        </button>
-                                    </div>
+                                    <input type="text" 
+                                           id="workType" 
+                                           class="form-input-app w-full p-3"
+                                           required
+                                           placeholder="Enter work type">
                                 </div>
 
                                 <div class="form-group">
@@ -1314,11 +1331,6 @@
                                         <option value="Indra Kurniawan">Indra Kurniawan</option>
                                         <option value="Putra">Putra</option>
                                         <option value="Wahyu Sujoko">Wahyu Sujoko</option>
-                                        <option value="Yudiyono">Yudiyono</option>
-                                        <option value="Edwin">Edwin</option>
-                                        <option value="Fiki">Fiki</option>
-                                        <option value="Harianto">Harianto</option>
-                                        <option value="Haryo">Haryo</option>
                                     </select>
                                 </div>
                             </div>
@@ -1383,33 +1395,6 @@
                             </div>
                         </div>
 
-                        <!-- Man Power Section -->
-                        <div class="mb-8">
-                            <label class="form-label-app mb-3">Man Power</label>
-                            <div class="bg-gray-50 rounded-xl p-4">
-                                <div class="flex gap-3 mb-4">
-                                    <div class="flex-1 relative">
-                                        <input type="text" 
-                                               id="manPowerInput" 
-                                               class="form-input-app w-full p-3"
-                                               placeholder="Enter man power name and press Enter">
-                                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                            <i class="fas fa-user-plus"></i>
-                                        </div>
-                                    </div>
-                                    <button type="button" 
-                                            id="addManPowerBtn" 
-                                            class="btn btn-primary whitespace-nowrap">
-                                        <i class="fas fa-plus"></i>
-                                        Add
-                                    </button>
-                                </div>
-                                <div id="manPowerTags" class="manpower-tags">
-                                    <!-- Tags will be added here -->
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Notes Section -->
                         <div class="mb-8">
                             <label class="form-label-app mb-3" for="notes">
@@ -1420,23 +1405,6 @@
                                       class="form-input-app w-full p-3" 
                                       rows="4"
                                       placeholder="Add any additional notes or instructions..."></textarea>
-                        </div>
-
-                        <!-- Notes History Table -->
-                        <div class="notes-section">
-                            <h4 class="font-semibold text-gray-900 mb-4">Notes History</h4>
-                            <table class="notes-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Note</th>
-                                        <th>Created By</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="notesHistory">
-                                    <!-- Notes history will be displayed here -->
-                                </tbody>
-                            </table>
                         </div>
 
                         <div class="flex justify-end gap-3 pt-8 mt-8 border-t">
@@ -1461,7 +1429,7 @@
     <!-- Detail Modal -->
     <div id="workorderDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="w-full max-w-4xl max-h-[90vh] overflow-hidden">
-            <div class="bg-white rounded-xl shadow-2xl modal-content-enter" id="workorderDetailModalContent">
+            <div class="bg-white rounded-xl shadow-2xl" id="workorderDetailModalContent">
                 <div class="sticky top-0 bg-white z-10 border-b">
                     <div class="flex justify-between items-center p-6">
                         <div>
@@ -1531,26 +1499,10 @@
                         </div>
                     </div>
 
-                    <!-- Man Power Section -->
-                    <div class="mb-6">
-                        <label class="text-sm font-medium text-gray-500 mb-2 block">Man Power</label>
-                        <div id="detailManPower" class="manpower-tags">
-                            <!-- Man power tags will be displayed here -->
-                        </div>
-                    </div>
-
                     <!-- Notes Section -->
                     <div class="mb-6">
                         <label class="text-sm font-medium text-gray-500 mb-2 block">Notes</label>
                         <div id="detailNotes" class="bg-gray-50 rounded-lg p-4 text-gray-700"></div>
-                    </div>
-
-                    <!-- Notes History -->
-                    <div class="notes-section">
-                        <h4 class="font-semibold text-gray-900 mb-4">Notes History</h4>
-                        <div id="detailNotesHistory" class="space-y-3">
-                            <!-- Notes history will be displayed here -->
-                        </div>
                     </div>
 
                     <div class="flex justify-end gap-3 pt-6 mt-6 border-t">
@@ -1572,80 +1524,6 @@
         </div>
     </div>
 
-    <!-- Advanced Search Modal -->
-    <div id="advancedSearchModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div class="w-full max-w-2xl">
-            <div class="bg-white rounded-xl shadow-2xl modal-content-enter" id="advancedSearchModalContent">
-                <div class="p-6 border-b">
-                    <h3 class="text-xl font-bold text-gray-900">Advanced Search</h3>
-                    <p class="text-gray-600 mt-1">Filter work orders by multiple criteria</p>
-                </div>
-                
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label class="form-label-app">Status</label>
-                            <select id="filterStatus" class="form-input-app w-full p-3">
-                                <option value="">All Status</option>
-                                <option value="Running">Running</option>
-                                <option value="Done">Done</option>
-                                <option value="Close">Close</option>
-                                <option value="Pending">Pending</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label-app">Division</label>
-                            <select id="filterDivision" class="form-input-app w-full p-3">
-                                <option value="">All Divisions</option>
-                                <option value="Maintenance">Maintenance</option>
-                                <option value="Testcom">Testcom</option>
-                                <option value="Installation">Installation</option>
-                                <option value="Commissioning">Commissioning</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label-app">Company</label>
-                            <select id="filterCompany" class="form-input-app w-full p-3">
-                                <option value="">All Companies</option>
-                                <option value="Genetek Intratama">Genetek Intratama</option>
-                                <option value="Effrensindo Kencana">Effrensindo Kencana</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label-app">Personnel</label>
-                            <select id="filterPersonnel" class="form-input-app w-full p-3">
-                                <option value="">All Personnel</option>
-                                <option value="Husni">Husni</option>
-                                <option value="Heksi">Heksi</option>
-                                <option value="Indra Kurniawan">Indra Kurniawan</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group md:col-span-2">
-                            <label class="form-label-app">Date Range</label>
-                            <div class="grid grid-cols-2 gap-4">
-                                <input type="date" id="filterStartDate" class="form-input-app p-3">
-                                <input type="date" id="filterEndDate" class="form-input-app p-3">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-end gap-3 mt-6">
-                        <button type="button" id="resetFiltersBtn" class="btn btn-secondary">
-                            Reset Filters
-                        </button>
-                        <button type="button" id="applyFiltersBtn" class="btn btn-primary">
-                            Apply Filters
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Toast Container -->
     <div id="toast-container"></div>
 
@@ -1659,35 +1537,20 @@
 
     <script>
         // ==================== GLOBAL VARIABLES ====================
-        let db, auth, workordersCollection, dropdownOptionsCollection, activitiesCollection, usersCollection;
-        let workorders = [];
-        let filteredWorkorders = [];
+        let db, auth, workordersCollection, activitiesCollection, usersCollection;
         let currentUser = null;
         let currentUserRole = 'user';
-        let charts = {};
+        let workorders = [];
+        let filteredWorkorders = [];
         let currentView = 'card';
         let currentTab = 'all';
         let activeFilters = {};
-        
-        // Unique values for history
-        let uniqueCustomers = new Set();
-        let uniqueBuildings = new Set();
-        let uniqueWorkTypes = new Set();
-        let uniqueManPower = new Set();
-        let uniquePersonnel = new Set([
-            'Husni', 'Heksi', 'Indra Kurniawan', 'Putra', 'Wahyu Sujoko',
-            'Yudiyono', 'Edwin', 'Fiki', 'Harianto', 'Haryo'
-        ]);
 
         // ==================== INITIALIZE FIREBASE ====================
         function initializeFirebase() {
             try {
-                // Check if Firebase is available
-                if (typeof firebase === 'undefined') {
-                    console.error('Firebase SDK not loaded');
-                    return false;
-                }
-
+                console.log('Initializing Firebase...');
+                
                 // Firebase configuration
                 const firebaseConfig = {
                     apiKey: "AIzaSyAwXNGrJsBqQ2RslAkdWWPSOubUw13QcRI",
@@ -1705,7 +1568,6 @@
                 
                 // Initialize collections
                 workordersCollection = db.collection('workorders');
-                dropdownOptionsCollection = db.collection('dropdownOptions');
                 activitiesCollection = db.collection('activities');
                 usersCollection = db.collection('users');
                 
@@ -1714,72 +1576,78 @@
                 
             } catch (error) {
                 console.error('Error initializing Firebase:', error);
+                showToast('Firebase initialization failed. Please check console.', 'error');
                 return false;
             }
         }
 
         // ==================== UTILITY FUNCTIONS ====================
-        function formatDate(date, includeTime = false) {
+        function formatDate(date) {
             if (!date) return '-';
             try {
                 if (date.toDate) {
                     date = date.toDate();
                 }
-                const options = {
+                return date.toLocaleDateString('id-ID', {
                     day: '2-digit',
                     month: 'short',
                     year: 'numeric'
-                };
-                if (includeTime) {
-                    options.hour = '2-digit';
-                    options.minute = '2-digit';
-                }
-                return date.toLocaleDateString('id-ID', options);
+                });
             } catch (e) {
                 return '-';
             }
         }
 
         function formatDateTime(date) {
-            return formatDate(date, true);
-        }
-
-        function formatNumber(num) {
-            if (num === null || num === undefined || isNaN(num)) return '0';
-            return new Intl.NumberFormat('id-ID').format(num);
+            if (!date) return '-';
+            try {
+                if (date.toDate) {
+                    date = date.toDate();
+                }
+                return date.toLocaleDateString('id-ID', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return '-';
+            }
         }
 
         function showToast(message, type = 'info', duration = 3000) {
+            console.log(`Toast [${type}]:`, message);
+            
             const toastContainer = document.getElementById('toast-container');
             if (!toastContainer) return;
             
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            toast.innerHTML = `
-                <i class="fas ${getToastIcon(type)}"></i>
-                <span>${message}</span>
-            `;
             
-            toastContainer.appendChild(toast);
-            
-            requestAnimationFrame(() => {
-                toast.classList.add('show');
-            });
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, duration);
-        }
-
-        function getToastIcon(type) {
             const icons = {
                 success: 'fa-check-circle',
                 error: 'fa-exclamation-circle',
                 warning: 'fa-exclamation-triangle',
                 info: 'fa-info-circle'
             };
-            return icons[type] || 'fa-info-circle';
+            
+            toast.innerHTML = `
+                <i class="fas ${icons[type] || 'fa-info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
         }
 
         function showLoading() {
@@ -1792,58 +1660,73 @@
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
         }
 
-        function capitalizeFirst(string) {
-            if (!string) return '';
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-
-        // ==================== AUTH STATE OBSERVER ====================
+        // ==================== AUTH FUNCTIONS ====================
         function setupAuthStateObserver() {
-            if (!auth) return;
+            if (!auth) {
+                console.error('Auth not available');
+                return;
+            }
+
+            console.log('Setting up auth state observer...');
             
             auth.onAuthStateChanged(async (user) => {
+                console.log('Auth state changed:', user ? 'User logged in' : 'User logged out');
+                
                 if (user) {
                     // User is signed in
                     currentUser = user;
-                    await getUserRoleFromFirestore(user.uid);
                     
-                    // Show app page
-                    document.getElementById('loginPage').classList.add('hidden');
-                    document.getElementById('appPage').classList.remove('hidden');
-                    
-                    // Update user info
-                    document.getElementById('userWelcome').textContent = user.email;
-                    document.getElementById('userRole').textContent = capitalizeFirst(currentUserRole);
-                    
-                    // Initialize app
-                    initApp();
-                    showToast('Login successful!', 'success');
+                    try {
+                        // Get user role from Firestore
+                        await getUserRoleFromFirestore(user.uid);
+                        
+                        // Update UI
+                        document.getElementById('userWelcome').textContent = user.email;
+                        document.getElementById('userRole').textContent = currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1);
+                        
+                        // Show app page
+                        document.getElementById('loginPage').classList.add('hidden');
+                        document.getElementById('appPage').classList.remove('hidden');
+                        
+                        // Initialize app
+                        initApp();
+                        
+                        showToast('Login successful! Welcome back.', 'success');
+                        
+                    } catch (error) {
+                        console.error('Error in auth observer:', error);
+                        showToast('Error loading user data', 'error');
+                    }
                 } else {
                     // User is signed out
+                    console.log('User signed out');
                     currentUser = null;
                     currentUserRole = 'user';
+                    
+                    // Show login page
                     document.getElementById('appPage').classList.add('hidden');
                     document.getElementById('loginPage').classList.remove('hidden');
                     
                     // Reset login form
                     const loginForm = document.getElementById('loginForm');
-                    if (loginForm) loginForm.reset();
+                    if (loginForm) {
+                        loginForm.reset();
+                        // Set default values for testing
+                        document.getElementById('email').value = 'admin@genetek.com';
+                        document.getElementById('password').value = 'Admin123!';
+                    }
+                    
+                    const errorDiv = document.getElementById('loginError');
+                    if (errorDiv) errorDiv.classList.add('hidden');
                 }
+            }, (error) => {
+                console.error('Auth observer error:', error);
             });
         }
 
-        // ==================== LOGIN FUNCTIONS ====================
-        function initLogin() {
-            const loginForm = document.getElementById('loginForm');
-            if (loginForm) {
-                loginForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    handleLogin();
-                });
-            }
-        }
-
-        async function handleLogin() {
+        async function handleLogin(e) {
+            e.preventDefault();
+            
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('loginError');
@@ -1857,21 +1740,16 @@
                 return;
             }
 
-            // Email format validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showError('Please enter a valid email address');
-                return;
-            }
-
             try {
                 showLoading();
+                console.log('Attempting login with email:', email);
                 
                 // Sign in with Firebase Auth
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 
-                // Success - auth state observer will handle the rest
                 console.log('Login successful:', userCredential.user.email);
+                
+                // Auth observer will handle the rest
                 
             } catch (error) {
                 console.error('Login error:', error);
@@ -1902,27 +1780,34 @@
         }
 
         async function getUserRoleFromFirestore(userId) {
+            console.log('Getting user role for:', userId);
+            
             try {
                 const userDoc = await usersCollection.doc(userId).get();
+                
                 if (userDoc.exists) {
                     const userData = userDoc.data();
                     currentUserRole = userData.role || 'user';
-                    
-                    // Update user info in UI
-                    document.getElementById('userRole').textContent = capitalizeFirst(currentUserRole);
+                    console.log('User role from Firestore:', currentUserRole);
                 } else {
                     // Create user document if it doesn't exist
+                    console.log('Creating new user document...');
                     await usersCollection.doc(userId).set({
                         email: currentUser.email,
-                        role: 'user',
+                        role: 'admin', // Default to admin for testing
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                         lastLogin: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    currentUserRole = 'user';
+                    currentUserRole = 'admin';
+                    console.log('Created new user with role:', currentUserRole);
                 }
+                
+                return currentUserRole;
+                
             } catch (error) {
                 console.error('Error getting user role:', error);
-                currentUserRole = 'user';
+                currentUserRole = 'user'; // Default fallback
+                return 'user';
             }
         }
 
@@ -1932,21 +1817,18 @@
             if (errorDiv && errorMessage) {
                 errorMessage.textContent = message;
                 errorDiv.classList.remove('hidden');
-                
-                // Add shake animation
-                errorDiv.style.animation = 'none';
-                setTimeout(() => {
-                    errorDiv.style.animation = 'shake 0.5s';
-                }, 10);
             }
         }
 
         function logout() {
+            console.log('Logging out...');
+            
             if (auth && currentUser) {
                 auth.signOut().then(() => {
+                    console.log('Logout successful');
                     showToast('Logged out successfully', 'success');
                 }).catch(error => {
-                    console.error('Error signing out:', error);
+                    console.error('Logout error:', error);
                     showToast('Error signing out', 'error');
                 });
             } else {
@@ -1959,74 +1841,28 @@
             }
         }
 
-        // ==================== DROPDOWN OPTIONS ====================
-        async function loadDropdownOptions() {
-            try {
-                const doc = await dropdownOptionsCollection.doc('options').get();
-                if (doc.exists) {
-                    const data = doc.data();
-                    if (data.customers) uniqueCustomers = new Set(data.customers);
-                    if (data.buildings) uniqueBuildings = new Set(data.buildings);
-                    if (data.workTypes) uniqueWorkTypes = new Set(data.workTypes);
-                    if (data.manPower) uniqueManPower = new Set(data.manPower);
-                }
-            } catch (error) {
-                console.error('Error loading dropdown options:', error);
-            }
-        }
-
-        async function saveDropdownOptions() {
-            try {
-                await dropdownOptionsCollection.doc('options').set({
-                    customers: Array.from(uniqueCustomers),
-                    buildings: Array.from(uniqueBuildings),
-                    workTypes: Array.from(uniqueWorkTypes),
-                    manPower: Array.from(uniqueManPower),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            } catch (error) {
-                console.error('Error saving dropdown options:', error);
-            }
-        }
-
         // ==================== WORK ORDER FUNCTIONS ====================
         async function loadWorkOrders() {
+            console.log('Loading work orders...');
+            
             showLoading();
             try {
                 const querySnapshot = await workordersCollection.orderBy('createdAt', 'desc').get();
                 workorders = [];
-                uniqueCustomers.clear();
-                uniqueBuildings.clear();
-                uniqueWorkTypes.clear();
-                uniqueManPower.clear();
-
+                
                 querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const workorder = {
+                    workorders.push({
                         id: doc.id,
-                        ...data,
-                        createdAt: data.createdAt,
-                        startDate: data.startDate,
-                        endDate: data.endDate
-                    };
-                    workorders.push(workorder);
-
-                    // Collect unique values
-                    if (data.customer) uniqueCustomers.add(data.customer);
-                    if (data.building) uniqueBuildings.add(data.building);
-                    if (data.workType) uniqueWorkTypes.add(data.workType);
-                    if (data.manPower && Array.isArray(data.manPower)) {
-                        data.manPower.forEach(mp => uniqueManPower.add(mp));
-                    }
-                    if (data.personnel) uniquePersonnel.add(data.personnel);
+                        ...doc.data()
+                    });
                 });
 
                 filteredWorkorders = [...workorders];
                 updateStats();
-                applyFiltersAndRender();
+                renderWorkOrders();
+                updateWorkOrderCount();
                 
-                // Save unique values
-                await saveDropdownOptions();
+                console.log('Work orders loaded:', workorders.length);
                 
             } catch (error) {
                 console.error('Error loading work orders:', error);
@@ -2043,10 +1879,10 @@
             const pending = workorders.filter(wo => wo.status === 'Pending').length;
             const closed = workorders.filter(wo => wo.status === 'Close').length;
 
-            document.getElementById('totalWorkOrders').textContent = formatNumber(total);
-            document.getElementById('completedWorkOrders').textContent = formatNumber(completed);
-            document.getElementById('runningWorkOrders').textContent = formatNumber(running);
-            document.getElementById('pendingWorkOrders').textContent = formatNumber(pending);
+            document.getElementById('totalWorkOrders').textContent = total;
+            document.getElementById('completedWorkOrders').textContent = completed;
+            document.getElementById('runningWorkOrders').textContent = running;
+            document.getElementById('pendingWorkOrders').textContent = pending;
 
             // Update tab counts
             document.querySelectorAll('.tab').forEach(tab => {
@@ -2059,8 +1895,15 @@
                     case 'closed': count = closed; break;
                 }
                 const badge = tab.querySelector('span:last-child');
-                if (badge) badge.textContent = formatNumber(count);
+                if (badge) badge.textContent = count;
             });
+        }
+
+        function updateWorkOrderCount() {
+            const countElement = document.getElementById('workOrderCount');
+            if (countElement) {
+                countElement.textContent = `Showing ${filteredWorkorders.length} of ${workorders.length} work orders`;
+            }
         }
 
         function applyFiltersAndRender() {
@@ -2068,7 +1911,7 @@
             
             // Apply tab filter
             if (currentTab !== 'all') {
-                filtered = filtered.filter(wo => wo.status === capitalizeFirst(currentTab));
+                filtered = filtered.filter(wo => wo.status === currentTab.charAt(0).toUpperCase() + currentTab.slice(1));
             }
             
             // Apply search filter
@@ -2095,16 +1938,6 @@
             }
             if (activeFilters.personnel) {
                 filtered = filtered.filter(wo => wo.personnel === activeFilters.personnel);
-            }
-            if (activeFilters.startDate || activeFilters.endDate) {
-                filtered = filtered.filter(wo => {
-                    const woDate = wo.startDate?.toDate();
-                    if (!woDate) return false;
-                    
-                    if (activeFilters.startDate && woDate < new Date(activeFilters.startDate)) return false;
-                    if (activeFilters.endDate && woDate > new Date(activeFilters.endDate)) return false;
-                    return true;
-                });
             }
             
             // Apply sorting
@@ -2149,6 +1982,13 @@
                         </button>
                     </div>
                 `;
+                
+                // Add event listener to create button
+                const createBtn = document.getElementById('createFirstWorkOrder');
+                if (createBtn) {
+                    createBtn.addEventListener('click', createNewWorkOrder);
+                }
+                
                 return;
             }
             
@@ -2160,9 +2000,31 @@
             } else if (currentView === 'list') {
                 const table = createWorkOrderTable();
                 container.appendChild(table);
-            } else if (currentView === 'timeline') {
-                renderTimelineView();
             }
+            
+            // Add event listeners to action buttons
+            setTimeout(() => {
+                document.querySelectorAll('.view-detail-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const workorderId = this.closest('.workorder-card, tr').dataset.id;
+                        openWorkOrderDetailModal(workorderId);
+                    });
+                });
+                
+                document.querySelectorAll('.edit-workorder-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const workorderId = this.closest('.workorder-card, tr').dataset.id;
+                        openWorkOrderModal(workorderId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-workorder-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const workorderId = this.closest('.workorder-card, tr').dataset.id;
+                        deleteWorkOrder(workorderId);
+                    });
+                });
+            }, 100);
         }
 
         function createWorkOrderCard(workorder) {
@@ -2170,7 +2032,6 @@
             card.className = `workorder-card ${workorder.status.toLowerCase()} animate-slide-in`;
             card.dataset.id = workorder.id;
             
-            const progressPercentage = calculateProgress(workorder);
             const priorityColor = getPriorityColor(workorder.priority);
             
             card.innerHTML = `
@@ -2208,17 +2069,6 @@
                         <span>${formatDate(workorder.startDate)}</span>
                     </p>
                 </div>
-                
-                ${progressPercentage > 0 ? `
-                <div class="mb-4">
-                    <div class="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>Progress</span>
-                        <span>${progressPercentage}%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progressPercentage}%"></div>
-                    </div>
-                </div>` : ''}
                 
                 <div class="workorder-footer pt-4">
                     <div class="flex justify-between items-center">
@@ -2319,101 +2169,6 @@
             return table;
         }
 
-        function renderTimelineView() {
-            const container = document.getElementById('workorders-stage');
-            const timelineContainer = document.getElementById('timelineView');
-            
-            container.classList.add('hidden');
-            timelineContainer.classList.remove('hidden');
-            
-            const timelineContent = document.getElementById('timelineContent');
-            timelineContent.innerHTML = '';
-            
-            // Group by month
-            const groupedByMonth = {};
-            filteredWorkorders.forEach(workorder => {
-                const date = workorder.startDate?.toDate() || new Date();
-                const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-                
-                if (!groupedByMonth[monthYear]) {
-                    groupedByMonth[monthYear] = [];
-                }
-                groupedByMonth[monthYear].push(workorder);
-            });
-            
-            // Sort months
-            const sortedMonths = Object.keys(groupedByMonth).sort((a, b) => {
-                return new Date(b) - new Date(a);
-            });
-            
-            sortedMonths.forEach(monthYear => {
-                const monthHeader = document.createElement('div');
-                monthHeader.className = 'mb-6';
-                monthHeader.innerHTML = `
-                    <h4 class="text-lg font-bold text-gray-900 mb-4">${monthYear}</h4>
-                `;
-                timelineContent.appendChild(monthHeader);
-                
-                groupedByMonth[monthYear].forEach(workorder => {
-                    const timelineItem = document.createElement('div');
-                    timelineItem.className = 'timeline-item';
-                    
-                    timelineItem.innerHTML = `
-                        <div class="timeline-date">${formatDate(workorder.startDate)}</div>
-                        <div class="timeline-content">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h5 class="font-semibold text-gray-900">${workorder.workOrderNumber}</h5>
-                                    <p class="text-sm text-gray-600 mt-1">${workorder.customer} - ${workorder.building}</p>
-                                    <p class="text-sm text-gray-600">${workorder.workType}</p>
-                                </div>
-                                <span class="status-badge ${workorder.status.toLowerCase()}">
-                                    ${workorder.status}
-                                </span>
-                            </div>
-                            <div class="flex gap-4 mt-3 text-sm">
-                                <span class="text-gray-600">
-                                    <i class="fas fa-user-tie mr-1"></i>
-                                    ${workorder.personnel || 'Unassigned'}
-                                </span>
-                                <span class="text-gray-600">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    ${workorder.estimatedTime || 'N/A'} hours
-                                </span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    timelineContent.appendChild(timelineItem);
-                });
-            });
-        }
-
-        function updateWorkOrderCount() {
-            const countElement = document.getElementById('workOrderCount');
-            if (countElement) {
-                countElement.textContent = `Showing ${filteredWorkorders.length} of ${workorders.length} work orders`;
-            }
-        }
-
-        function calculateProgress(workorder) {
-            if (workorder.status === 'Done' || workorder.status === 'Close') return 100;
-            
-            if (!workorder.startDate || !workorder.endDate) return 0;
-            
-            const start = workorder.startDate.toDate();
-            const end = workorder.endDate.toDate();
-            const now = new Date();
-            
-            if (now >= end) return 100;
-            if (now <= start) return 0;
-            
-            const totalDuration = end - start;
-            const elapsed = now - start;
-            
-            return Math.min(Math.round((elapsed / totalDuration) * 100), 100);
-        }
-
         function getPriorityColor(priority) {
             switch(priority) {
                 case 'High': return 'bg-orange-100 text-orange-800';
@@ -2423,19 +2178,30 @@
         }
 
         // ==================== MODAL FUNCTIONS ====================
+        function createNewWorkOrder() {
+            console.log('Creating new work order');
+            openWorkOrderModal();
+        }
+
         function openWorkOrderModal(workorderId = null) {
+            console.log('Opening work order modal:', workorderId ? 'edit' : 'create');
+            
             const modal = document.getElementById('workorderModal');
             const modalTitle = document.getElementById('modalTitle');
             
-            resetModalForm();
+            // Reset form
+            document.getElementById('workorderForm').reset();
+            document.getElementById('workorderId').value = '';
             
             if (workorderId) {
+                // Edit mode
                 modalTitle.textContent = 'Edit Work Order';
                 const workorder = workorders.find(wo => wo.id === workorderId);
                 if (workorder) {
                     populateModalForm(workorder);
                 }
             } else {
+                // Create mode
                 modalTitle.textContent = 'Create New Work Order';
                 // Set default values
                 const today = new Date().toISOString().split('T')[0];
@@ -2460,15 +2226,7 @@
         }
 
         function closeWorkOrderModal() {
-            const modal = document.getElementById('workorderModal');
-            modal.classList.add('hidden');
-        }
-
-        function resetModalForm() {
-            document.getElementById('workorderForm').reset();
-            document.getElementById('workorderId').value = '';
-            document.getElementById('manPowerTags').innerHTML = '';
-            document.getElementById('notesHistory').innerHTML = '';
+            document.getElementById('workorderModal').classList.add('hidden');
         }
 
         function populateModalForm(workorder) {
@@ -2495,54 +2253,6 @@
                 const endDate = workorder.endDate.toDate();
                 document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
             }
-            
-            // Man Power
-            if (workorder.manPower && Array.isArray(workorder.manPower)) {
-                workorder.manPower.forEach(mp => addManPowerTag(mp));
-            }
-            
-            // Notes History
-            if (workorder.notesHistory && Array.isArray(workorder.notesHistory)) {
-                renderNotesHistory(workorder.notesHistory);
-            }
-        }
-
-        function addManPowerTag(name) {
-            if (!name.trim()) return;
-            
-            const container = document.getElementById('manPowerTags');
-            const tagId = `tag-${Date.now()}`;
-            
-            const tag = document.createElement('div');
-            tag.className = 'manpower-tag';
-            tag.innerHTML = `
-                ${name.trim()}
-                <span class="remove-tag" onclick="removeManPowerTag(this)">
-                    <i class="fas fa-times"></i>
-                </span>
-            `;
-            
-            container.appendChild(tag);
-            document.getElementById('manPowerInput').value = '';
-        }
-
-        function removeManPowerTag(element) {
-            element.closest('.manpower-tag').remove();
-        }
-
-        function renderNotesHistory(notesHistory) {
-            const container = document.getElementById('notesHistory');
-            container.innerHTML = '';
-            
-            notesHistory.forEach(note => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${formatDateTime(note.timestamp)}</td>
-                    <td>${note.note}</td>
-                    <td>${note.createdBy || '-'}</td>
-                `;
-                container.appendChild(row);
-            });
         }
 
         async function saveWorkOrder() {
@@ -2557,19 +2267,17 @@
             
             const workorderData = {
                 workOrderNumber: document.getElementById('workOrderNumber').value,
-                soNumber: document.getElementById('soNumber').value,
+                soNumber: document.getElementById('soNumber').value || '',
                 customer: document.getElementById('customer').value,
                 building: document.getElementById('building').value,
                 division: document.getElementById('division').value,
                 company: document.getElementById('company').value,
                 workType: document.getElementById('workType').value,
-                personnel: document.getElementById('personnel').value,
+                personnel: document.getElementById('personnel').value || '',
                 status: document.getElementById('status').value,
-                priority: document.getElementById('priority').value,
-                estimatedTime: parseFloat(document.getElementById('estimatedTime').value) || null,
-                notes: document.getElementById('notes').value,
-                manPower: Array.from(document.querySelectorAll('.manpower-tag'))
-                    .map(tag => tag.textContent.trim().replace('×', '')),
+                priority: document.getElementById('priority').value || 'Normal',
+                estimatedTime: parseFloat(document.getElementById('estimatedTime').value) || 0,
+                notes: document.getElementById('notes').value || '',
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedBy: currentUser.email
             };
@@ -2585,63 +2293,24 @@
                 workorderData.endDate = firebase.firestore.Timestamp.fromDate(new Date(endDate));
             }
             
-            // Collect unique values
-            if (workorderData.customer) uniqueCustomers.add(workorderData.customer);
-            if (workorderData.building) uniqueBuildings.add(workorderData.building);
-            if (workorderData.workType) uniqueWorkTypes.add(workorderData.workType);
-            workorderData.manPower.forEach(mp => uniqueManPower.add(mp));
-            
             try {
                 showLoading();
                 
                 if (isEdit) {
-                    // Get existing work order for notes history
-                    const existingWorkorder = workorders.find(wo => wo.id === workorderId);
-                    let notesHistory = existingWorkorder?.notesHistory || [];
-                    
-                    // Add new note to history if provided
-                    if (workorderData.notes && workorderData.notes.trim()) {
-                        notesHistory.push({
-                            note: workorderData.notes.trim(),
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                            createdBy: currentUser.email
-                        });
-                    }
-                    
-                    workorderData.notesHistory = notesHistory;
+                    // Update existing work order
                     await workordersCollection.doc(workorderId).update(workorderData);
                     showToast('Work order updated successfully', 'success');
                 } else {
-                    // For new work order
-                    if (workorderData.notes && workorderData.notes.trim()) {
-                        workorderData.notesHistory = [{
-                            note: workorderData.notes.trim(),
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                            createdBy: currentUser.email
-                        }];
-                    } else {
-                        workorderData.notesHistory = [];
-                    }
-                    
+                    // Create new work order
                     workorderData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                     workorderData.createdBy = currentUser.email;
                     await workordersCollection.add(workorderData);
                     showToast('Work order created successfully', 'success');
                 }
                 
-                // Save dropdown options
-                await saveDropdownOptions();
-                
                 // Reload data
                 await loadWorkOrders();
                 closeWorkOrderModal();
-                
-                // Log activity
-                await logActivity(
-                    isEdit ? 'updated' : 'created',
-                    'work order',
-                    workorderData.workOrderNumber
-                );
                 
             } catch (error) {
                 console.error('Error saving work order:', error);
@@ -2652,6 +2321,8 @@
         }
 
         function openWorkOrderDetailModal(workorderId) {
+            console.log('Opening detail modal for:', workorderId);
+            
             const modal = document.getElementById('workorderDetailModal');
             const workorder = workorders.find(wo => wo.id === workorderId);
             
@@ -2683,35 +2354,6 @@
             statusBadge.className = `status-badge ${workorder.status.toLowerCase()}`;
             statusBadge.textContent = workorder.status;
             
-            // Man Power
-            const manPowerContainer = document.getElementById('detailManPower');
-            manPowerContainer.innerHTML = '';
-            if (workorder.manPower && Array.isArray(workorder.manPower)) {
-                workorder.manPower.forEach(mp => {
-                    const tag = document.createElement('div');
-                    tag.className = 'manpower-tag';
-                    tag.textContent = mp;
-                    manPowerContainer.appendChild(tag);
-                });
-            }
-            
-            // Notes History
-            const notesHistoryContainer = document.getElementById('detailNotesHistory');
-            notesHistoryContainer.innerHTML = '';
-            if (workorder.notesHistory && Array.isArray(workorder.notesHistory)) {
-                workorder.notesHistory.forEach(note => {
-                    const noteDiv = document.createElement('div');
-                    noteDiv.className = 'bg-gray-50 rounded-lg p-4';
-                    noteDiv.innerHTML = `
-                        <p class="text-gray-700">${note.note}</p>
-                        <p class="text-xs text-gray-500 mt-2">
-                            ${formatDateTime(note.timestamp)} - ${note.createdBy || 'System'}
-                        </p>
-                    `;
-                    notesHistoryContainer.appendChild(noteDiv);
-                });
-            }
-            
             // Set edit button data-id
             document.getElementById('editDetailBtn').dataset.id = workorderId;
             
@@ -2723,8 +2365,9 @@
         }
 
         function openAnalyticsModal() {
-            renderCharts();
+            console.log('Opening analytics modal');
             document.getElementById('analyticsModal').classList.remove('hidden');
+            showToast('Analytics feature coming soon!', 'info');
         }
 
         function closeAnalyticsModal() {
@@ -2732,583 +2375,22 @@
         }
 
         function openActivityModal() {
-            loadActivityFeed();
+            console.log('Opening activity modal');
             document.getElementById('activityModal').classList.remove('hidden');
+            showToast('Activity feed feature coming soon!', 'info');
         }
 
         function closeActivityModal() {
             document.getElementById('activityModal').classList.add('hidden');
         }
 
-        // ==================== CHARTS ====================
-        function renderCharts() {
-            renderStatusChart();
-            renderDivisionChart();
-            renderCompanyChart();
-            renderTimelineChart();
-        }
-
-        function renderStatusChart() {
-            const ctx = document.getElementById('statusChart')?.getContext('2d');
-            if (!ctx) return;
-            
-            // Destroy existing chart
-            if (charts.statusChart) charts.statusChart.destroy();
-            
-            const statusData = {
-                'Running': 0,
-                'Done': 0,
-                'Close': 0,
-                'Pending': 0
-            };
-            
-            workorders.forEach(wo => {
-                statusData[wo.status] = (statusData[wo.status] || 0) + 1;
-            });
-            
-            charts.statusChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(statusData),
-                    datasets: [{
-                        data: Object.values(statusData),
-                        backgroundColor: [
-                            '#3b82f6', // Running - blue
-                            '#10b981', // Done - green
-                            '#6b7280', // Close - gray
-                            '#f59e0b'  // Pending - orange
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Work Orders by Status',
-                            font: { size: 14 }
-                        }
-                    }
-                }
-            });
-        }
-
-        function renderDivisionChart() {
-            const ctx = document.getElementById('divisionChart')?.getContext('2d');
-            if (!ctx) return;
-            
-            if (charts.divisionChart) charts.divisionChart.destroy();
-            
-            const divisionData = {};
-            workorders.forEach(wo => {
-                divisionData[wo.division] = (divisionData[wo.division] || 0) + 1;
-            });
-            
-            charts.divisionChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(divisionData),
-                    datasets: [{
-                        label: 'Work Orders',
-                        data: Object.values(divisionData),
-                        backgroundColor: '#8b5cf6',
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Work Orders by Division',
-                            font: { size: 14 }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function renderCompanyChart() {
-            const ctx = document.getElementById('companyChart')?.getContext('2d');
-            if (!ctx) return;
-            
-            if (charts.companyChart) charts.companyChart.destroy();
-            
-            const companyData = {};
-            workorders.forEach(wo => {
-                companyData[wo.company] = (companyData[wo.company] || 0) + 1;
-            });
-            
-            charts.companyChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(companyData),
-                    datasets: [{
-                        data: Object.values(companyData),
-                        backgroundColor: [
-                            '#3b82f6',
-                            '#10b981',
-                            '#f59e0b',
-                            '#8b5cf6',
-                            '#ec4899'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Work Orders by Company',
-                            font: { size: 14 }
-                        }
-                    }
-                }
-            });
-        }
-
-        function renderTimelineChart() {
-            const ctx = document.getElementById('timelineChart')?.getContext('2d');
-            if (!ctx) return;
-            
-            if (charts.timelineChart) charts.timelineChart.destroy();
-            
-            // Group by month
-            const monthlyData = {};
-            workorders.forEach(wo => {
-                if (wo.createdAt) {
-                    const date = wo.createdAt.toDate();
-                    const monthYear = date.toLocaleDateString('id-ID', { month: 'short', year: '2-digit' });
-                    monthlyData[monthYear] = (monthlyData[monthYear] || 0) + 1;
-                }
-            });
-            
-            // Sort by date
-            const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
-                return new Date(a) - new Date(b);
-            });
-            
-            charts.timelineChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: sortedMonths,
-                    datasets: [{
-                        label: 'Work Orders Created',
-                        data: sortedMonths.map(month => monthlyData[month]),
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Work Orders Trend',
-                            font: { size: 14 }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // ==================== ACTIVITY FEED ====================
-        async function loadActivityFeed() {
-            try {
-                const querySnapshot = await activitiesCollection
-                    .orderBy('timestamp', 'desc')
-                    .limit(20)
-                    .get();
-                
-                const container = document.getElementById('activityFeed');
-                if (!container) return;
-                
-                container.innerHTML = '';
-                
-                if (querySnapshot.empty) {
-                    container.innerHTML = `
-                        <div class="text-center text-gray-400 py-8">
-                            <i class="fas fa-inbox text-4xl mb-3 opacity-30"></i>
-                            <p>No recent activity</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                querySnapshot.forEach(doc => {
-                    const activity = doc.data();
-                    const activityItem = document.createElement('div');
-                    activityItem.className = 'flex items-start gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors';
-                    
-                    // Determine icon based on activity type
-                    let icon = 'fa-history';
-                    let iconColor = 'text-blue-600';
-                    let bgColor = 'bg-blue-100';
-                    
-                    if (activity.type === 'work order') {
-                        if (activity.message.includes('created')) {
-                            icon = 'fa-plus-circle';
-                            iconColor = 'text-green-600';
-                            bgColor = 'bg-green-100';
-                        } else if (activity.message.includes('updated')) {
-                            icon = 'fa-edit';
-                            iconColor = 'text-blue-600';
-                            bgColor = 'bg-blue-100';
-                        } else if (activity.message.includes('deleted')) {
-                            icon = 'fa-trash';
-                            iconColor = 'text-red-600';
-                            bgColor = 'bg-red-100';
-                        }
-                    }
-                    
-                    activityItem.innerHTML = `
-                        <div class="w-8 h-8 rounded-full ${bgColor} flex items-center justify-center flex-shrink-0">
-                            <i class="fas ${icon} ${iconColor}"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-gray-800">${activity.message}</p>
-                            <p class="text-xs text-gray-500 mt-1">
-                                <i class="far fa-clock mr-1"></i>
-                                ${formatDateTime(activity.timestamp)}
-                            </p>
-                        </div>
-                    `;
-                    
-                    container.appendChild(activityItem);
-                });
-                
-            } catch (error) {
-                console.error('Error loading activity feed:', error);
-                showToast('Failed to load activity feed', 'error');
-            }
-        }
-
-        async function logActivity(action, type, itemName) {
-            try {
-                await activitiesCollection.add({
-                    message: `${currentUser.email} ${action} a ${type}: ${itemName}`,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    userEmail: currentUser.email,
-                    type: type
-                });
-                
-                // Reload activity feed if modal is open
-                if (!document.getElementById('activityModal').classList.contains('hidden')) {
-                    loadActivityFeed();
-                }
-                
-            } catch (error) {
-                console.error('Error logging activity:', error);
-            }
-        }
-
-        // ==================== EVENT LISTENERS ====================
-        function initApp() {
-            console.log('Initializing app...');
-            
-            // Load initial data
-            loadDropdownOptions();
-            loadWorkOrders();
-            loadActivityFeed();
-            
-            // Header buttons
-            document.getElementById('newWorkOrderBtn').addEventListener('click', () => openWorkOrderModal());
-            document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
-            document.getElementById('analyticsBtn').addEventListener('click', openAnalyticsModal);
-            document.getElementById('activityBtn').addEventListener('click', openActivityModal);
-            document.getElementById('authButton').addEventListener('click', logout);
-            
-            // Search
-            const searchInput = document.getElementById('searchWorkOrders');
-            if (searchInput) {
-                searchInput.addEventListener('input', applyFiltersAndRender);
-            }
-            
-            const advancedSearchBtn = document.getElementById('advancedSearchBtn');
-            if (advancedSearchBtn) {
-                advancedSearchBtn.addEventListener('click', openAdvancedSearch);
-            }
-            
-            // Tabs
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    currentTab = tab.dataset.tab;
-                    applyFiltersAndRender();
-                });
-            });
-            
-            // View toggle
-            const cardViewBtn = document.getElementById('cardViewBtn');
-            if (cardViewBtn) {
-                cardViewBtn.addEventListener('click', () => switchView('card'));
-            }
-            
-            const listViewBtn = document.getElementById('listViewBtn');
-            if (listViewBtn) {
-                listViewBtn.addEventListener('click', () => switchView('list'));
-            }
-            
-            const timelineViewBtn = document.getElementById('timelineViewBtn');
-            if (timelineViewBtn) {
-                timelineViewBtn.addEventListener('click', () => switchView('timeline'));
-            }
-            
-            // Sorting
-            const sortBy = document.getElementById('sortBy');
-            if (sortBy) {
-                sortBy.addEventListener('change', applyFiltersAndRender);
-            }
-            
-            const sortOrder = document.getElementById('sortOrder');
-            if (sortOrder) {
-                sortOrder.addEventListener('change', applyFiltersAndRender);
-            }
-            
-            // Modal buttons
-            const closeWorkOrderModalBtn = document.getElementById('closeWorkOrderModal');
-            if (closeWorkOrderModalBtn) {
-                closeWorkOrderModalBtn.addEventListener('click', closeWorkOrderModal);
-            }
-            
-            const cancelWorkOrderBtn = document.getElementById('cancelWorkOrderBtn');
-            if (cancelWorkOrderBtn) {
-                cancelWorkOrderBtn.addEventListener('click', closeWorkOrderModal);
-            }
-            
-            const workorderForm = document.getElementById('workorderForm');
-            if (workorderForm) {
-                workorderForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    saveWorkOrder();
-                });
-            }
-            
-            // Man Power
-            const addManPowerBtn = document.getElementById('addManPowerBtn');
-            if (addManPowerBtn) {
-                addManPowerBtn.addEventListener('click', () => {
-                    const input = document.getElementById('manPowerInput');
-                    addManPowerTag(input.value);
-                });
-            }
-            
-            const manPowerInput = document.getElementById('manPowerInput');
-            if (manPowerInput) {
-                manPowerInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addManPowerTag(e.target.value);
-                    }
-                });
-            }
-            
-            // Detail modal
-            const closeDetailModalBtn = document.getElementById('closeDetailModal');
-            if (closeDetailModalBtn) {
-                closeDetailModalBtn.addEventListener('click', closeDetailModal);
-            }
-            
-            const closeDetailBtn = document.getElementById('closeDetailBtn');
-            if (closeDetailBtn) {
-                closeDetailBtn.addEventListener('click', closeDetailModal);
-            }
-            
-            const editDetailBtn = document.getElementById('editDetailBtn');
-            if (editDetailBtn) {
-                editDetailBtn.addEventListener('click', function() {
-                    const workorderId = this.dataset.id;
-                    closeDetailModal();
-                    setTimeout(() => openWorkOrderModal(workorderId), 300);
-                });
-            }
-            
-            // Analytics modal
-            const closeAnalyticsModalBtn = document.getElementById('closeAnalyticsModal');
-            if (closeAnalyticsModalBtn) {
-                closeAnalyticsModalBtn.addEventListener('click', closeAnalyticsModal);
-            }
-            
-            const chartTimeRange = document.getElementById('chartTimeRange');
-            if (chartTimeRange) {
-                chartTimeRange.addEventListener('change', renderCharts);
-            }
-            
-            // Activity modal
-            const closeActivityModalBtn = document.getElementById('closeActivityModal');
-            if (closeActivityModalBtn) {
-                closeActivityModalBtn.addEventListener('click', closeActivityModal);
-            }
-            
-            // Advanced Search
-            const applyFiltersBtn = document.getElementById('applyFiltersBtn');
-            if (applyFiltersBtn) {
-                applyFiltersBtn.addEventListener('click', applyAdvancedFilters);
-            }
-            
-            const resetFiltersBtn = document.getElementById('resetFiltersBtn');
-            if (resetFiltersBtn) {
-                resetFiltersBtn.addEventListener('click', resetAdvancedFilters);
-            }
-            
-            // Event delegation for dynamic elements
-            document.addEventListener('click', function(e) {
-                // View detail
-                if (e.target.closest('.view-detail-btn')) {
-                    const card = e.target.closest('.workorder-card, tr');
-                    if (card) {
-                        const workorderId = card.dataset.id;
-                        openWorkOrderDetailModal(workorderId);
-                    }
-                }
-                
-                // Edit work order
-                if (e.target.closest('.edit-workorder-btn')) {
-                    const card = e.target.closest('.workorder-card, tr');
-                    if (card) {
-                        const workorderId = card.dataset.id;
-                        openWorkOrderModal(workorderId);
-                    }
-                }
-                
-                // Delete work order (admin only)
-                if (e.target.closest('.delete-workorder-btn') && currentUserRole === 'admin') {
-                    const card = e.target.closest('.workorder-card, tr');
-                    if (card) {
-                        const workorderId = card.dataset.id;
-                        deleteWorkOrder(workorderId);
-                    }
-                }
-                
-                // Create first work order
-                if (e.target.closest('#createFirstWorkOrder')) {
-                    openWorkOrderModal();
-                }
-                
-                // Close modal when clicking outside
-                if (e.target.classList.contains('fixed') && e.target.id.includes('Modal')) {
-                    e.target.classList.add('hidden');
-                }
-            });
-        }
-
-        function switchView(view) {
-            currentView = view;
-            
-            // Update active button
-            const cardViewBtn = document.getElementById('cardViewBtn');
-            const listViewBtn = document.getElementById('listViewBtn');
-            const timelineViewBtn = document.getElementById('timelineViewBtn');
-            
-            if (cardViewBtn) cardViewBtn.classList.toggle('active', view === 'card');
-            if (listViewBtn) listViewBtn.classList.toggle('active', view === 'list');
-            if (timelineViewBtn) timelineViewBtn.classList.toggle('active', view === 'timeline');
-            
-            // Show/hide containers
-            const workorderStage = document.getElementById('workorders-stage');
-            const timelineView = document.getElementById('timelineView');
-            
-            if (view === 'timeline') {
-                if (workorderStage) workorderStage.classList.add('hidden');
-                if (timelineView) timelineView.classList.remove('hidden');
-                renderTimelineView();
-            } else {
-                if (workorderStage) workorderStage.classList.remove('hidden');
-                if (timelineView) timelineView.classList.add('hidden');
-                applyFiltersAndRender();
-            }
-        }
-
-        function openAdvancedSearch() {
-            const modal = document.getElementById('advancedSearchModal');
-            if (modal) {
-                modal.classList.remove('hidden');
-            }
-        }
-
-        function closeAdvancedSearch() {
-            const modal = document.getElementById('advancedSearchModal');
-            if (modal) {
-                modal.classList.add('hidden');
-            }
-        }
-
-        function applyAdvancedFilters() {
-            const filterStatus = document.getElementById('filterStatus');
-            const filterDivision = document.getElementById('filterDivision');
-            const filterCompany = document.getElementById('filterCompany');
-            const filterPersonnel = document.getElementById('filterPersonnel');
-            const filterStartDate = document.getElementById('filterStartDate');
-            const filterEndDate = document.getElementById('filterEndDate');
-            
-            activeFilters = {
-                status: filterStatus ? filterStatus.value || null : null,
-                division: filterDivision ? filterDivision.value || null : null,
-                company: filterCompany ? filterCompany.value || null : null,
-                personnel: filterPersonnel ? filterPersonnel.value || null : null,
-                startDate: filterStartDate ? filterStartDate.value || null : null,
-                endDate: filterEndDate ? filterEndDate.value || null : null
-            };
-            
-            applyFiltersAndRender();
-            closeAdvancedSearch();
-        }
-
-        function resetAdvancedFilters() {
-            const filterStatus = document.getElementById('filterStatus');
-            const filterDivision = document.getElementById('filterDivision');
-            const filterCompany = document.getElementById('filterCompany');
-            const filterPersonnel = document.getElementById('filterPersonnel');
-            const filterStartDate = document.getElementById('filterStartDate');
-            const filterEndDate = document.getElementById('filterEndDate');
-            
-            if (filterStatus) filterStatus.value = '';
-            if (filterDivision) filterDivision.value = '';
-            if (filterCompany) filterCompany.value = '';
-            if (filterPersonnel) filterPersonnel.value = '';
-            if (filterStartDate) filterStartDate.value = '';
-            if (filterEndDate) filterEndDate.value = '';
-            
-            activeFilters = {};
-            applyFiltersAndRender();
-            closeAdvancedSearch();
-        }
-
         async function deleteWorkOrder(workorderId) {
             if (!confirm('Are you sure you want to delete this work order?')) return;
             
             try {
-                const workorder = workorders.find(wo => wo.id === workorderId);
                 await workordersCollection.doc(workorderId).delete();
-                
                 showToast('Work order deleted successfully', 'success');
-                await logActivity('deleted', 'work order', workorder.workOrderNumber);
                 await loadWorkOrders();
-                
             } catch (error) {
                 console.error('Error deleting work order:', error);
                 showToast('Failed to delete work order', 'error');
@@ -3317,12 +2399,19 @@
 
         // ==================== EXPORT FUNCTIONS ====================
         function exportToExcel() {
+            console.log('Exporting to Excel');
+            
             if (currentUserRole !== 'admin') {
                 showToast('Only admins can export data', 'warning');
                 return;
             }
             
             try {
+                if (filteredWorkorders.length === 0) {
+                    showToast('No data to export', 'warning');
+                    return;
+                }
+                
                 // Create worksheet data
                 const worksheetData = filteredWorkorders.map(wo => ({
                     'Work Order Number': wo.workOrderNumber,
@@ -3333,7 +2422,6 @@
                     'Company': wo.company,
                     'Work Type': wo.workType,
                     'Personnel': wo.personnel || '',
-                    'Man Power': Array.isArray(wo.manPower) ? wo.manPower.join(', ') : '',
                     'Start Date': formatDate(wo.startDate),
                     'End Date': formatDate(wo.endDate),
                     'Estimated Time': wo.estimatedTime || '',
@@ -3366,6 +2454,104 @@
             }
         }
 
+        // ==================== EVENT LISTENERS ====================
+        function initApp() {
+            console.log('Initializing app...');
+            
+            // Load initial data
+            loadWorkOrders();
+            
+            // Setup menu button listeners
+            document.getElementById('newWorkOrderBtn').addEventListener('click', createNewWorkOrder);
+            document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
+            document.getElementById('analyticsBtn').addEventListener('click', openAnalyticsModal);
+            document.getElementById('activityBtn').addEventListener('click', openActivityModal);
+            document.getElementById('authButton').addEventListener('click', logout);
+            
+            // Search
+            document.getElementById('searchWorkOrders').addEventListener('input', applyFiltersAndRender);
+            
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentTab = this.dataset.tab;
+                    applyFiltersAndRender();
+                });
+            });
+            
+            // View toggle
+            document.getElementById('cardViewBtn').addEventListener('click', function() {
+                switchView('card');
+            });
+            
+            document.getElementById('listViewBtn').addEventListener('click', function() {
+                switchView('list');
+            });
+            
+            document.getElementById('timelineViewBtn').addEventListener('click', function() {
+                switchView('timeline');
+            });
+            
+            // Sorting
+            document.getElementById('sortBy').addEventListener('change', applyFiltersAndRender);
+            document.getElementById('sortOrder').addEventListener('change', applyFiltersAndRender);
+            
+            // Modal buttons
+            document.getElementById('closeWorkOrderModal').addEventListener('click', closeWorkOrderModal);
+            document.getElementById('cancelWorkOrderBtn').addEventListener('click', closeWorkOrderModal);
+            document.getElementById('workorderForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveWorkOrder();
+            });
+            
+            // Detail modal
+            document.getElementById('closeDetailModal').addEventListener('click', closeDetailModal);
+            document.getElementById('closeDetailBtn').addEventListener('click', closeDetailModal);
+            document.getElementById('editDetailBtn').addEventListener('click', function() {
+                const workorderId = this.dataset.id;
+                closeDetailModal();
+                setTimeout(() => openWorkOrderModal(workorderId), 300);
+            });
+            
+            // Analytics modal
+            document.getElementById('closeAnalyticsModal').addEventListener('click', closeAnalyticsModal);
+            
+            // Activity modal
+            document.getElementById('closeActivityModal').addEventListener('click', closeActivityModal);
+            
+            // Close modals when clicking outside
+            document.querySelectorAll('.fixed').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.add('hidden');
+                    }
+                });
+            });
+            
+            console.log('App initialization complete');
+        }
+
+        function switchView(view) {
+            currentView = view;
+            
+            // Update active button
+            document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (view === 'card') {
+                document.getElementById('cardViewBtn').classList.add('active');
+            } else if (view === 'list') {
+                document.getElementById('listViewBtn').classList.add('active');
+            } else if (view === 'timeline') {
+                document.getElementById('timelineViewBtn').classList.add('active');
+            }
+            
+            applyFiltersAndRender();
+        }
+
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Work Order Management System initializing...');
@@ -3374,17 +2560,18 @@
             const firebaseInitialized = initializeFirebase();
             
             if (!firebaseInitialized) {
-                console.log('Firebase initialization failed');
-                showToast('Firebase initialization failed. Some features may not work.', 'warning');
-                // Setup basic functionality even if Firebase fails
-                setupBasicAuth();
+                showToast('Firebase initialization failed. Please check console.', 'error');
+                return;
             }
             
-            // Initialize login and auth state observer
-            initLogin();
-            if (auth) {
-                setupAuthStateObserver();
+            // Initialize login form
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
             }
+            
+            // Setup auth state observer
+            setupAuthStateObserver();
             
             // Add CSS animations
             const style = document.createElement('style');
@@ -3439,22 +2626,11 @@
                     font-size: 0.95rem;
                     color: #1f2937;
                 }
-                
-                /* Modal close button */
-                .modal-close {
-                    transition: all 0.3s;
-                }
-                
-                .modal-close:hover {
-                    color: #4b5563;
-                    transform: rotate(90deg);
-                }
             `;
             document.head.appendChild(style);
+            
+            console.log('System initialization complete');
         });
-
-        // Expose function to global scope
-        window.removeManPowerTag = removeManPowerTag;
 
     </script>
 </body>
