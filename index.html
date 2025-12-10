@@ -1658,881 +1658,670 @@
     </div>
 
     <script>
-        // ==================== GLOBAL VARIABLES ====================
-        let db, auth, workordersCollection, dropdownOptionsCollection, activitiesCollection, usersCollection;
-        let workorders = [];
-        let filteredWorkorders = [];
-        let currentUser = null;
-        let currentUserRole = 'user';
-        let charts = {};
-        let currentView = 'card';
-        let currentTab = 'all';
-        let activeFilters = {};
+<script>
+            // ==================== GLOBAL VARIABLES ====================
+            let db, auth, workordersCollection, dropdownOptionsCollection, activitiesCollection, usersCollection;
+            let workorders = [];
+            let filteredWorkorders = [];
+            let currentUser = null;
+            let currentUserRole = 'user';
+            let charts = {};
+            let currentView = 'card';
+            let currentTab = 'all';
+            let activeFilters = {};
         
-        // Unique values for history
-        let uniqueCustomers = new Set();
-        let uniqueBuildings = new Set();
-        let uniqueWorkTypes = new Set();
-        let uniqueManPower = new Set();
-        let uniquePersonnel = new Set([
-            'Husni', 'Heksi', 'Indra Kurniawan', 'Putra', 'Wahyu Sujoko',
-            'Yudiyono', 'Edwin', 'Fiki', 'Harianto', 'Haryo'
-        ]);
-
-        // Predefined users for fallback login
-        const validUsers = {
-            'admin': { password: 'admin123', role: 'admin', email: 'admin@genetek.com' },
-            'user': { password: 'user123', role: 'user', email: 'user@genetek.com' },
-            'manager': { password: 'manager123', role: 'manager', email: 'manager@genetek.com' }
-        };
-
-        // ==================== INITIALIZE FIREBASE ====================
-        function initializeFirebase() {
-            try {
-                // Check if Firebase is available
-                if (typeof firebase === 'undefined') {
-                    console.error('Firebase SDK not loaded');
+            // Admin UID yang Anda sebutkan
+            const ADMIN_UID = "oLDbHMzHXBXX3djytyuWKCzgyHr1";
+        
+            // ==================== FIREBASE INITIALIZATION ====================
+            function initializeFirebase() {
+                try {
+                    // Check if Firebase is available
+                    if (typeof firebase === 'undefined') {
+                        console.error('Firebase SDK not loaded');
+                        showToast('Firebase not available. Please refresh the page.', 'error');
+                        return false;
+                    }
+        
+                    // Firebase configuration
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyAwXNGrJsBqQ2RslAkdWWPSOubUw13QcRI",
+                        authDomain: "workorder-mon.firebaseapp.com",
+                        projectId: "workorder-mon",
+                        storageBucket: "workorder-mon.firebasestorage.app",
+                        messagingSenderId: "226391173482",
+                        appId: "1:226391173482:web:9ea9c68c1e31c84f50dd13"
+                    };
+        
+                    // Initialize Firebase
+                    const app = firebase.initializeApp(firebaseConfig);
+                    db = firebase.firestore(app);
+                    auth = firebase.auth(app);
+                    
+                    // Initialize collections
+                    workordersCollection = db.collection('workorders');
+                    dropdownOptionsCollection = db.collection('dropdownOptions');
+                    activitiesCollection = db.collection('activities');
+                    usersCollection = db.collection('users');
+                    
+                    console.log('Firebase initialized successfully');
+                    
+                    // Set up auth state listener
+                    setupAuthStateListener();
+                    
+                    return true;
+                    
+                } catch (error) {
+                    console.error('Error initializing Firebase:', error);
+                    showToast('Failed to initialize Firebase', 'error');
                     return false;
                 }
-
-                // Firebase configuration
-                const firebaseConfig = {
-                    apiKey: "AIzaSyAwXNGrJsBqQ2RslAkdWWPSOubUw13QcRI",
-                    authDomain: "workorder-mon.firebaseapp.com",
-                    projectId: "workorder-mon",
-                    storageBucket: "workorder-mon.firebasestorage.app",
-                    messagingSenderId: "226391173482",
-                    appId: "1:226391173482:web:9ea9c68c1e31c84f50dd13"
-                };
-
-                // Initialize Firebase
-                const app = firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore(app);
-                auth = firebase.auth(app);
-                
-                // Initialize collections
-                workordersCollection = db.collection('workorders');
-                dropdownOptionsCollection = db.collection('dropdownOptions');
-                activitiesCollection = db.collection('activities');
-                usersCollection = db.collection('users');
-                
-                console.log('Firebase initialized successfully');
-                return true;
-                
-            } catch (error) {
-                console.error('Error initializing Firebase:', error);
-                return false;
             }
-        }
-
-        // ==================== UTILITY FUNCTIONS ====================
-        function formatDate(date, includeTime = false) {
-            if (!date) return '-';
-            try {
-                if (date.toDate) {
-                    date = date.toDate();
-                }
-                const options = {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric'
-                };
-                if (includeTime) {
-                    options.hour = '2-digit';
-                    options.minute = '2-digit';
-                }
-                return date.toLocaleDateString('id-ID', options);
-            } catch (e) {
-                return '-';
-            }
-        }
-
-        function formatDateTime(date) {
-            return formatDate(date, true);
-        }
-
-        function formatNumber(num) {
-            if (num === null || num === undefined || isNaN(num)) return '0';
-            return new Intl.NumberFormat('id-ID').format(num);
-        }
-
-        function showToast(message, type = 'info', duration = 3000) {
-            const toastContainer = document.getElementById('toast-container');
-            if (!toastContainer) return;
-            
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `
-                <i class="fas ${getToastIcon(type)}"></i>
-                <span>${message}</span>
-            `;
-            
-            toastContainer.appendChild(toast);
-            
-            requestAnimationFrame(() => {
-                toast.classList.add('show');
-            });
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, duration);
-        }
-
-        function getToastIcon(type) {
-            const icons = {
-                success: 'fa-check-circle',
-                error: 'fa-exclamation-circle',
-                warning: 'fa-exclamation-triangle',
-                info: 'fa-info-circle'
-            };
-            return icons[type] || 'fa-info-circle';
-        }
-
-        function showLoading() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) loadingOverlay.classList.remove('hidden');
-        }
-
-        function hideLoading() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) loadingOverlay.classList.add('hidden');
-        }
-
-        function capitalizeFirst(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-
-        // ==================== LOGIN FUNCTIONS ====================
-        function initLogin() {
-            const loginForm = document.getElementById('loginForm');
-            if (loginForm) {
-                loginForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    handleLogin();
+        
+            // ==================== FIREBASE AUTHENTICATION ====================
+            function setupAuthStateListener() {
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        // User is signed in
+                        console.log('User signed in:', user.email);
+                        currentUser = user;
+                        
+                        // Determine user role
+                        await determineUserRole(user);
+                        
+                        // Hide login, show app
+                        document.getElementById('loginPage').classList.add('hidden');
+                        document.getElementById('appPage').classList.remove('hidden');
+                        
+                        // Update user info
+                        document.getElementById('userWelcome').textContent = user.email;
+                        document.getElementById('userRole').textContent = currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1);
+                        
+                        // Initialize app
+                        initApp();
+                        
+                    } else {
+                        // User is signed out
+                        console.log('User signed out');
+                        currentUser = null;
+                        currentUserRole = 'user';
+                        
+                        // Show login, hide app
+                        document.getElementById('appPage').classList.add('hidden');
+                        document.getElementById('loginPage').classList.remove('hidden');
+                    }
                 });
             }
-        }
-
-        async function handleLogin() {
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('loginError');
-
-            // Hide any previous error
-            if (errorDiv) errorDiv.classList.add('hidden');
-
-            // Basic validation
-            if (!username || !password) {
-                showError('Please enter both username and password');
-                return;
-            }
-
-            try {
-                // Try Firebase Auth first if available
-                if (auth) {
-                    const email = `${username}@genetek.com`;
+        
+            async function determineUserRole(user) {
+                try {
+                    // Check if user is the specific admin UID
+                    if (user.uid === ADMIN_UID) {
+                        currentUserRole = 'admin';
+                        return;
+                    }
                     
-                    try {
-                        // Sign in with Firebase Auth
-                        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                        currentUser = userCredential.user;
+                    // Try to get user role from Firestore
+                    const userDoc = await usersCollection.doc(user.uid).get();
+                    
+                    if (userDoc.exists) {
+                        currentUserRole = userDoc.data().role || 'user';
+                    } else {
+                        // Create user document if it doesn't exist
+                        currentUserRole = 'user';
+                        await usersCollection.doc(user.uid).set({
+                            email: user.email,
+                            uid: user.uid,
+                            role: 'user',
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error determining user role:', error);
+                    currentUserRole = 'user';
+                }
+            }
+        
+            function initLogin() {
+                const loginForm = document.getElementById('loginForm');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        handleFirebaseLogin();
+                    });
+                }
+            }
+        
+            async function handleFirebaseLogin() {
+                const usernameInput = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+                const errorDiv = document.getElementById('loginError');
+        
+                // Hide any previous error
+                if (errorDiv) errorDiv.classList.add('hidden');
+        
+                // Basic validation
+                if (!usernameInput || !password) {
+                    showError('Please enter both username and password');
+                    return;
+                }
+        
+                // Convert username to email format
+                let email = usernameInput;
+                if (!email.includes('@')) {
+                    email = usernameInput + '@genetek.co.id';
+                }
+        
+                try {
+                    // Show loading
+                    const loginBtn = document.querySelector('#loginForm button[type="submit"]');
+                    const originalText = loginBtn.innerHTML;
+                    loginBtn.innerHTML = '<div class="loader"></div>';
+                    loginBtn.disabled = true;
+        
+                    // Sign in with Firebase Auth
+                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                    
+                    // Login successful - auth state listener will handle the rest
+                    console.log('Login successful for:', userCredential.user.email);
+                    
+                } catch (error) {
+                    console.error('Firebase login error:', error);
+                    
+                    // Reset login button
+                    const loginBtn = document.querySelector('#loginForm button[type="submit"]');
+                    if (loginBtn) {
+                        loginBtn.innerHTML = originalText;
+                        loginBtn.disabled = false;
+                    }
+                    
+                    // Show appropriate error message
+                    let errorMessage = 'Login failed. Please try again.';
+                    
+                    switch(error.code) {
+                        case 'auth/user-not-found':
+                            errorMessage = 'No user found with this email.';
+                            break;
+                        case 'auth/wrong-password':
+                            errorMessage = 'Incorrect password.';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'Invalid email address.';
+                            break;
+                        case 'auth/user-disabled':
+                            errorMessage = 'This account has been disabled.';
+                            break;
+                        case 'auth/too-many-requests':
+                            errorMessage = 'Too many failed attempts. Try again later.';
+                            break;
+                        case 'auth/network-request-failed':
+                            errorMessage = 'Network error. Check your connection.';
+                            break;
+                    }
+                    
+                    showError(errorMessage);
+                }
+            }
+        
+            function showError(message) {
+                const errorDiv = document.getElementById('loginError');
+                const errorMessage = document.getElementById('errorMessage');
+                if (errorDiv && errorMessage) {
+                    errorMessage.textContent = message;
+                    errorDiv.classList.remove('hidden');
+                    
+                    // Add shake animation
+                    errorDiv.style.animation = 'none';
+                    setTimeout(() => {
+                        errorDiv.style.animation = 'shake 0.5s';
+                    }, 10);
+                }
+            }
+        
+            async function logout() {
+                try {
+                    await auth.signOut();
+                    showToast('Logged out successfully', 'success');
+                    
+                    // Reset login form
+                    const loginForm = document.getElementById('loginForm');
+                    if (loginForm) loginForm.reset();
+                    
+                    const errorDiv = document.getElementById('loginError');
+                    if (errorDiv) errorDiv.classList.add('hidden');
+                    
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    showToast('Error during logout', 'error');
+                }
+            }
+        
+            // ==================== CREATE DEFAULT ADMIN USER ====================
+            async function createDefaultAdminUser() {
+                try {
+                    // Check if admin user already exists in Firestore
+                    const adminDoc = await usersCollection.doc(ADMIN_UID).get();
+                    
+                    if (!adminDoc.exists) {
+                        // Create admin user document
+                        await usersCollection.doc(ADMIN_UID).set({
+                            email: 'admin@genetek.co.id',
+                            uid: ADMIN_UID,
+                            role: 'admin',
+                            username: 'admin',
+                            name: 'System Administrator',
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            isActive: true
+                        });
+                        console.log('Default admin user created in Firestore');
+                    }
+                } catch (error) {
+                    console.error('Error creating default admin user:', error);
+                }
+            }
+        
+            // ==================== UTILITY FUNCTIONS ====================
+            function showToast(message, type = 'info', duration = 3000) {
+                const toastContainer = document.getElementById('toast-container');
+                if (!toastContainer) return;
+                
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `
+                    <i class="fas ${getToastIcon(type)}"></i>
+                    <span>${message}</span>
+                `;
+                
+                toastContainer.appendChild(toast);
+                
+                requestAnimationFrame(() => {
+                    toast.classList.add('show');
+                });
+        
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
+            }
+        
+            function getToastIcon(type) {
+                const icons = {
+                    success: 'fa-check-circle',
+                    error: 'fa-exclamation-circle',
+                    warning: 'fa-exclamation-triangle',
+                    info: 'fa-info-circle'
+                };
+                return icons[type] || 'fa-info-circle';
+            }
+        
+            function showLoading() {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+            }
+        
+            function hideLoading() {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) loadingOverlay.classList.add('hidden');
+            }
+        
+            function formatDate(date, includeTime = false) {
+                if (!date) return '-';
+                try {
+                    if (date.toDate) {
+                        date = date.toDate();
+                    }
+                    const options = {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    };
+                    if (includeTime) {
+                        options.hour = '2-digit';
+                        options.minute = '2-digit';
+                    }
+                    return date.toLocaleDateString('id-ID', options);
+                } catch (e) {
+                    return '-';
+                }
+            }
+        
+            function formatNumber(num) {
+                if (num === null || num === undefined || isNaN(num)) return '0';
+                return new Intl.NumberFormat('id-ID').format(num);
+            }
+        
+            function capitalizeFirst(string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+        
+            // ==================== APPLICATION INITIALIZATION ====================
+            function initApp() {
+                console.log('Initializing application for user:', currentUser.email);
+                
+                // Create default admin user if needed
+                if (currentUserRole === 'admin') {
+                    createDefaultAdminUser();
+                }
+                
+                // Load initial data
+                loadDropdownOptions();
+                loadWorkOrders();
+                loadActivityFeed();
+                
+                // Initialize event listeners
+                initEventListeners();
+                
+                // Show welcome message
+                showToast(`Welcome back, ${currentUser.email.split('@')[0]}!`, 'success');
+            }
+        
+            // ==================== WORK ORDER FUNCTIONS ====================
+            async function loadWorkOrders() {
+                showLoading();
+                try {
+                    const querySnapshot = await workordersCollection.orderBy('createdAt', 'desc').get();
+                    workorders = [];
+                    uniqueCustomers.clear();
+                    uniqueBuildings.clear();
+                    uniqueWorkTypes.clear();
+                    uniqueManPower.clear();
+        
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const workorder = {
+                            id: doc.id,
+                            ...data,
+                            createdAt: data.createdAt,
+                            startDate: data.startDate,
+                            endDate: data.endDate
+                        };
+                        workorders.push(workorder);
+        
+                        // Collect unique values
+                        if (data.customer) uniqueCustomers.add(data.customer);
+                        if (data.building) uniqueBuildings.add(data.building);
+                        if (data.workType) uniqueWorkTypes.add(data.workType);
+                        if (data.manPower && Array.isArray(data.manPower)) {
+                            data.manPower.forEach(mp => uniqueManPower.add(mp));
+                        }
+                        if (data.personnel) uniquePersonnel.add(data.personnel);
+                    });
+        
+                    filteredWorkorders = [...workorders];
+                    updateStats();
+                    applyFiltersAndRender();
+                    
+                } catch (error) {
+                    console.error('Error loading work orders:', error);
+                    showToast('Failed to load work orders', 'error');
+                } finally {
+                    hideLoading();
+                }
+            }
+        
+            // ... (sisa fungsi sama seperti sebelumnya - loadDropdownOptions, saveWorkOrder, dll)
+            // Pastikan semua fungsi CRUD menggunakan currentUser dari Firebase Auth
+        
+            async function saveWorkOrder() {
+                const form = document.getElementById('workorderForm');
+                if (!form.checkValidity()) {
+                    showToast('Please fill in all required fields', 'warning');
+                    return;
+                }
+                
+                const workorderId = document.getElementById('workorderId').value;
+                const isEdit = !!workorderId;
+                
+                const workorderData = {
+                    workOrderNumber: document.getElementById('workOrderNumber').value,
+                    soNumber: document.getElementById('soNumber').value || '',
+                    customer: document.getElementById('customer').value,
+                    building: document.getElementById('building').value,
+                    division: document.getElementById('division').value,
+                    company: document.getElementById('company').value,
+                    workType: document.getElementById('workType').value,
+                    personnel: document.getElementById('personnel').value || '',
+                    status: document.getElementById('status').value,
+                    priority: document.getElementById('priority').value || 'Normal',
+                    estimatedTime: parseFloat(document.getElementById('estimatedTime').value) || null,
+                    notes: document.getElementById('notes').value || '',
+                    manPower: Array.from(document.querySelectorAll('.manpower-tag'))
+                        .map(tag => tag.textContent.trim().replace('×', '')),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser.email,
+                    updatedByUID: currentUser.uid
+                };
+                
+                // Dates
+                const startDate = document.getElementById('startDate').value;
+                if (startDate) {
+                    workorderData.startDate = firebase.firestore.Timestamp.fromDate(new Date(startDate));
+                }
+                
+                const endDate = document.getElementById('endDate').value;
+                if (endDate) {
+                    workorderData.endDate = firebase.firestore.Timestamp.fromDate(new Date(endDate));
+                }
+                
+                try {
+                    if (isEdit) {
+                        // Update existing work order
+                        const existingWorkorder = workorders.find(wo => wo.id === workorderId);
+                        let notesHistory = existingWorkorder?.notesHistory || [];
                         
-                        // Get user role from Firestore
-                        const userDoc = await usersCollection.doc(currentUser.uid).get();
-                        if (userDoc.exists) {
-                            currentUserRole = userDoc.data().role || 'user';
-                        } else {
-                            // Create user document if doesn't exist
-                            currentUserRole = 'user';
-                            await usersCollection.doc(currentUser.uid).set({
-                                email: currentUser.email,
-                                username: username,
-                                role: 'user',
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        if (workorderData.notes && workorderData.notes.trim()) {
+                            notesHistory.push({
+                                note: workorderData.notes.trim(),
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                createdBy: currentUser.email,
+                                createdByUID: currentUser.uid
                             });
                         }
                         
-                        // Login successful with Firebase Auth
-                        showLoginSuccess();
-                        setTimeout(() => {
-                            document.getElementById('loginPage').classList.add('hidden');
-                            document.getElementById('appPage').classList.remove('hidden');
-                            document.getElementById('userWelcome').textContent = currentUser.email;
-                            document.getElementById('userRole').textContent = currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1);
-                            initApp();
-                        }, 500);
-                        return;
+                        workorderData.notesHistory = notesHistory;
+                        await workordersCollection.doc(workorderId).update(workorderData);
+                        showToast('Work order updated successfully', 'success');
+                    } else {
+                        // Create new work order
+                        if (workorderData.notes && workorderData.notes.trim()) {
+                            workorderData.notesHistory = [{
+                                note: workorderData.notes.trim(),
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                createdBy: currentUser.email,
+                                createdByUID: currentUser.uid
+                            }];
+                        } else {
+                            workorderData.notesHistory = [];
+                        }
                         
-                    } catch (firebaseError) {
-                        console.log('Firebase Auth failed:', firebaseError);
-                        // Continue to fallback login
+                        workorderData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                        workorderData.createdBy = currentUser.email;
+                        workorderData.createdByUID = currentUser.uid;
+                        
+                        await workordersCollection.add(workorderData);
+                        showToast('Work order created successfully', 'success');
                     }
-                }
-                
-                // Fallback: Simple login with validUsers
-                if (validUsers[username] && validUsers[username].password === password) {
-                    const user = validUsers[username];
-                    currentUser = {
-                        email: user.email,
-                        username: username,
-                        uid: `local_${username}`
-                    };
-                    currentUserRole = user.role;
                     
-                    // Simulate loading
-                    const loginBtn = document.querySelector('#loginForm button[type="submit"]');
-                    if (loginBtn) {
-                        const originalText = loginBtn.innerHTML;
-                        loginBtn.innerHTML = '<div class="loader"></div>';
-                        loginBtn.disabled = true;
-
-                        // Show success and transition to app
-                        setTimeout(() => {
-                            showLoginSuccess();
-                            setTimeout(() => {
-                                document.getElementById('loginPage').classList.add('hidden');
-                                document.getElementById('appPage').classList.remove('hidden');
-                                document.getElementById('userWelcome').textContent = currentUser.email;
-                                document.getElementById('userRole').textContent = currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1);
-                                initApp();
-                            }, 500);
-                        }, 1000);
+                    // Reload data
+                    await loadWorkOrders();
+                    closeWorkOrderModal();
+                    
+                    // Log activity
+                    await logActivity(
+                        isEdit ? 'updated' : 'created',
+                        'work order',
+                        workorderData.workOrderNumber
+                    );
+                    
+                } catch (error) {
+                    console.error('Error saving work order:', error);
+                    showToast('Failed to save work order', 'error');
+                }
+            }
+        
+            // ==================== EVENT LISTENERS ====================
+            function initEventListeners() {
+                // Header buttons
+                document.getElementById('newWorkOrderBtn').addEventListener('click', () => openWorkOrderModal());
+                document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
+                document.getElementById('analyticsBtn').addEventListener('click', openAnalyticsModal);
+                document.getElementById('activityBtn').addEventListener('click', openActivityModal);
+                document.getElementById('authButton').addEventListener('click', logout);
+                
+                // Search
+                document.getElementById('searchWorkOrders').addEventListener('input', applyFiltersAndRender);
+                document.getElementById('advancedSearchBtn').addEventListener('click', openAdvancedSearch);
+                
+                // Tabs
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        currentTab = tab.dataset.tab;
+                        applyFiltersAndRender();
+                    });
+                });
+                
+                // View toggle
+                document.getElementById('cardViewBtn').addEventListener('click', () => switchView('card'));
+                document.getElementById('listViewBtn').addEventListener('click', () => switchView('list'));
+                document.getElementById('timelineViewBtn').addEventListener('click', () => switchView('timeline'));
+                
+                // Sorting
+                document.getElementById('sortBy').addEventListener('change', applyFiltersAndRender);
+                document.getElementById('sortOrder').addEventListener('change', applyFiltersAndRender);
+                
+                // Modal buttons
+                document.getElementById('closeWorkOrderModal').addEventListener('click', closeWorkOrderModal);
+                document.getElementById('cancelWorkOrderBtn').addEventListener('click', closeWorkOrderModal);
+                document.getElementById('workorderForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    saveWorkOrder();
+                });
+                
+                // Man Power
+                document.getElementById('addManPowerBtn').addEventListener('click', () => {
+                    const input = document.getElementById('manPowerInput');
+                    addManPowerTag(input.value);
+                });
+                
+                document.getElementById('manPowerInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addManPowerTag(e.target.value);
                     }
-                } else {
-                    showError('Invalid username or password');
-                }
-
-            } catch (error) {
-                console.error('Login error:', error);
-                showError('Login failed. Please try again.');
-            }
-        }
-
-        function showError(message) {
-            const errorDiv = document.getElementById('loginError');
-            const errorMessage = document.getElementById('errorMessage');
-            if (errorDiv && errorMessage) {
-                errorMessage.textContent = message;
-                errorDiv.classList.remove('hidden');
+                });
                 
-                // Add shake animation
-                errorDiv.style.animation = 'none';
-                setTimeout(() => {
-                    errorDiv.style.animation = 'shake 0.5s';
-                }, 10);
-            }
-        }
-
-        function showLoginSuccess() {
-            // Create success toast
-            const toast = document.createElement('div');
-            toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 animate-slide-in';
-            toast.innerHTML = `
-                <i class="fas fa-check-circle"></i>
-                <span>Login successful! Redirecting...</span>
-            `;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 2000);
-        }
-
-        function logout() {
-            // Sign out from Firebase if using Firebase Auth
-            if (auth && currentUser && currentUser.uid && !currentUser.uid.startsWith('local_')) {
-                auth.signOut().catch(error => {
-                    console.error('Error signing out from Firebase:', error);
+                // Detail modal
+                document.getElementById('closeDetailModal').addEventListener('click', closeDetailModal);
+                document.getElementById('closeDetailBtn').addEventListener('click', closeDetailModal);
+                document.getElementById('editDetailBtn').addEventListener('click', function() {
+                    const workorderId = this.dataset.id;
+                    closeDetailModal();
+                    setTimeout(() => openWorkOrderModal(workorderId), 300);
                 });
-            }
-            
-            currentUser = null;
-            currentUserRole = 'user';
-            document.getElementById('appPage').classList.add('hidden');
-            document.getElementById('loginPage').classList.remove('hidden');
-            
-            // Reset login form
-            const loginForm = document.getElementById('loginForm');
-            if (loginForm) loginForm.reset();
-            
-            const errorDiv = document.getElementById('loginError');
-            if (errorDiv) errorDiv.classList.add('hidden');
-            
-            showToast('Logged out successfully', 'success');
-        }
-
-        // ==================== DROPDOWN OPTIONS ====================
-        async function loadDropdownOptions() {
-            try {
-                const doc = await dropdownOptionsCollection.doc('options').get();
-                if (doc.exists) {
-                    const data = doc.data();
-                    if (data.customers) uniqueCustomers = new Set(data.customers);
-                    if (data.buildings) uniqueBuildings = new Set(data.buildings);
-                    if (data.workTypes) uniqueWorkTypes = new Set(data.workTypes);
-                    if (data.manPower) uniqueManPower = new Set(data.manPower);
-                }
-            } catch (error) {
-                console.error('Error loading dropdown options:', error);
-            }
-        }
-
-        async function saveDropdownOptions() {
-            try {
-                await dropdownOptionsCollection.doc('options').set({
-                    customers: Array.from(uniqueCustomers),
-                    buildings: Array.from(uniqueBuildings),
-                    workTypes: Array.from(uniqueWorkTypes),
-                    manPower: Array.from(uniqueManPower),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            } catch (error) {
-                console.error('Error saving dropdown options:', error);
-            }
-        }
-
-        // ==================== WORK ORDER FUNCTIONS ====================
-        async function loadWorkOrders() {
-            showLoading();
-            try {
-                const querySnapshot = await workordersCollection.orderBy('createdAt', 'desc').get();
-                workorders = [];
-                uniqueCustomers.clear();
-                uniqueBuildings.clear();
-                uniqueWorkTypes.clear();
-                uniqueManPower.clear();
-
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const workorder = {
-                        id: doc.id,
-                        ...data,
-                        createdAt: data.createdAt,
-                        startDate: data.startDate,
-                        endDate: data.endDate
-                    };
-                    workorders.push(workorder);
-
-                    // Collect unique values
-                    if (data.customer) uniqueCustomers.add(data.customer);
-                    if (data.building) uniqueBuildings.add(data.building);
-                    if (data.workType) uniqueWorkTypes.add(data.workType);
-                    if (data.manPower && Array.isArray(data.manPower)) {
-                        data.manPower.forEach(mp => uniqueManPower.add(mp));
+                
+                // Analytics modal
+                document.getElementById('closeAnalyticsModal').addEventListener('click', closeAnalyticsModal);
+                document.getElementById('chartTimeRange').addEventListener('change', renderCharts);
+                
+                // Activity modal
+                document.getElementById('closeActivityModal').addEventListener('click', closeActivityModal);
+                
+                // Advanced Search
+                document.getElementById('applyFiltersBtn').addEventListener('click', applyAdvancedFilters);
+                document.getElementById('resetFiltersBtn').addEventListener('click', resetAdvancedFilters);
+                
+                // Event delegation for dynamic elements
+                document.addEventListener('click', function(e) {
+                    // View detail
+                    if (e.target.closest('.view-detail-btn')) {
+                        const card = e.target.closest('.workorder-card, tr');
+                        if (card) {
+                            const workorderId = card.dataset.id;
+                            openWorkOrderDetailModal(workorderId);
+                        }
                     }
-                    if (data.personnel) uniquePersonnel.add(data.personnel);
-                });
-
-                filteredWorkorders = [...workorders];
-                updateStats();
-                applyFiltersAndRender();
-                
-                // Save unique values
-                await saveDropdownOptions();
-                
-            } catch (error) {
-                console.error('Error loading work orders:', error);
-                showToast('Failed to load work orders', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function updateStats() {
-            const total = workorders.length;
-            const completed = workorders.filter(wo => wo.status === 'Done').length;
-            const running = workorders.filter(wo => wo.status === 'Running').length;
-            const pending = workorders.filter(wo => wo.status === 'Pending').length;
-            const closed = workorders.filter(wo => wo.status === 'Close').length;
-
-            document.getElementById('totalWorkOrders').textContent = formatNumber(total);
-            document.getElementById('completedWorkOrders').textContent = formatNumber(completed);
-            document.getElementById('runningWorkOrders').textContent = formatNumber(running);
-            document.getElementById('pendingWorkOrders').textContent = formatNumber(pending);
-
-            // Update tab counts
-            document.querySelectorAll('.tab').forEach(tab => {
-                const tabType = tab.dataset.tab;
-                let count = 0;
-                switch(tabType) {
-                    case 'all': count = total; break;
-                    case 'completed': count = completed; break;
-                    case 'running': count = running; break;
-                    case 'closed': count = closed; break;
-                }
-                const badge = tab.querySelector('span:last-child');
-                if (badge) badge.textContent = formatNumber(count);
-            });
-        }
-
-        function applyFiltersAndRender() {
-            let filtered = [...workorders];
-            
-            // Apply tab filter
-            if (currentTab !== 'all') {
-                filtered = filtered.filter(wo => wo.status === capitalizeFirst(currentTab));
-            }
-            
-            // Apply search filter
-            const searchTerm = document.getElementById('searchWorkOrders').value.toLowerCase();
-            if (searchTerm) {
-                filtered = filtered.filter(wo => 
-                    (wo.workOrderNumber && wo.workOrderNumber.toLowerCase().includes(searchTerm)) ||
-                    (wo.customer && wo.customer.toLowerCase().includes(searchTerm)) ||
-                    (wo.building && wo.building.toLowerCase().includes(searchTerm)) ||
-                    (wo.personnel && wo.personnel.toLowerCase().includes(searchTerm)) ||
-                    (wo.workType && wo.workType.toLowerCase().includes(searchTerm))
-                );
-            }
-            
-            // Apply advanced filters
-            if (activeFilters.status) {
-                filtered = filtered.filter(wo => wo.status === activeFilters.status);
-            }
-            if (activeFilters.division) {
-                filtered = filtered.filter(wo => wo.division === activeFilters.division);
-            }
-            if (activeFilters.company) {
-                filtered = filtered.filter(wo => wo.company === activeFilters.company);
-            }
-            if (activeFilters.personnel) {
-                filtered = filtered.filter(wo => wo.personnel === activeFilters.personnel);
-            }
-            if (activeFilters.startDate || activeFilters.endDate) {
-                filtered = filtered.filter(wo => {
-                    const woDate = wo.startDate?.toDate();
-                    if (!woDate) return false;
                     
-                    if (activeFilters.startDate && woDate < new Date(activeFilters.startDate)) return false;
-                    if (activeFilters.endDate && woDate > new Date(activeFilters.endDate)) return false;
-                    return true;
-                });
-            }
-            
-            // Apply sorting
-            const sortBy = document.getElementById('sortBy').value;
-            const sortOrder = document.getElementById('sortOrder').value;
-            filtered.sort((a, b) => {
-                let aVal = a[sortBy];
-                let bVal = b[sortBy];
-                
-                if (sortBy === 'createdAt' || sortBy === 'startDate' || sortBy === 'endDate') {
-                    aVal = aVal?.toDate?.() || new Date(0);
-                    bVal = bVal?.toDate?.() || new Date(0);
-                }
-                
-                if (sortOrder === 'asc') {
-                    return aVal > bVal ? 1 : -1;
-                } else {
-                    return aVal < bVal ? 1 : -1;
-                }
-            });
-            
-            filteredWorkorders = filtered;
-            renderWorkOrders();
-            updateWorkOrderCount();
-        }
-
-        function renderWorkOrders() {
-            const container = document.getElementById('workorders-stage');
-            if (!container) return;
-            
-            container.innerHTML = '';
-            
-            if (filteredWorkorders.length === 0) {
-                container.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full text-gray-400">
-                        <i class="fas fa-inbox text-5xl mb-4 opacity-30"></i>
-                        <p class="text-lg font-medium">No work orders found</p>
-                        <p class="text-sm mt-1">Try adjusting your search or filters</p>
-                        <button id="createFirstWorkOrder" class="mt-6 btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Create First Work Order
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-            
-            if (currentView === 'card') {
-                filteredWorkorders.forEach(workorder => {
-                    const card = createWorkOrderCard(workorder);
-                    container.appendChild(card);
-                });
-            } else if (currentView === 'list') {
-                const table = createWorkOrderTable();
-                container.appendChild(table);
-            } else if (currentView === 'timeline') {
-                renderTimelineView();
-            }
-        }
-
-        function createWorkOrderCard(workorder) {
-            const card = document.createElement('div');
-            card.className = `workorder-card ${workorder.status.toLowerCase()} animate-slide-in`;
-            card.dataset.id = workorder.id;
-            
-            const progressPercentage = calculateProgress(workorder);
-            const priorityColor = getPriorityColor(workorder.priority);
-            
-            card.innerHTML = `
-                <div class="flex justify-between items-start mb-3">
-                    <div>
-                        <h3 class="font-bold text-gray-900 text-lg mb-1">${workorder.workOrderNumber || 'N/A'}</h3>
-                        <p class="text-sm text-gray-600">${workorder.customer || 'No customer'}</p>
-                    </div>
-                    <div class="flex flex-col items-end">
-                        <span class="status-badge ${workorder.status.toLowerCase()} mb-2">
-                            ${workorder.status}
-                        </span>
-                        ${workorder.priority ? `
-                        <span class="text-xs px-2 py-1 rounded-full ${priorityColor}">
-                            ${workorder.priority}
-                        </span>` : ''}
-                    </div>
-                </div>
-                
-                <div class="workorder-details space-y-2 mb-4">
-                    <p>
-                        <i class="fas fa-building text-gray-400"></i>
-                        <span class="truncate">${workorder.building || 'No building'}</span>
-                    </p>
-                    <p>
-                        <i class="fas fa-briefcase text-gray-400"></i>
-                        <span class="truncate">${workorder.workType || 'No work type'}</span>
-                    </p>
-                    <p>
-                        <i class="fas fa-user-tie text-gray-400"></i>
-                        <span class="truncate">${workorder.personnel || 'Unassigned'}</span>
-                    </p>
-                    <p>
-                        <i class="fas fa-calendar text-gray-400"></i>
-                        <span>${formatDate(workorder.startDate)}</span>
-                    </p>
-                </div>
-                
-                ${progressPercentage > 0 ? `
-                <div class="mb-4">
-                    <div class="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>Progress</span>
-                        <span>${progressPercentage}%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progressPercentage}%"></div>
-                    </div>
-                </div>` : ''}
-                
-                <div class="workorder-footer pt-4">
-                    <div class="flex justify-between items-center">
-                        <div class="text-xs text-gray-500">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-layer-group"></i>
-                                <span>${workorder.division || 'No division'}</span>
-                            </div>
-                        </div>
-                        <div class="flex gap-2 workorder-actions">
-                            <button class="view-detail-btn p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="edit-workorder-btn p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            ${currentUserRole === 'admin' ? `
-                            <button class="delete-workorder-btn p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                                <i class="fas fa-trash"></i>
-                            </button>` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            return card;
-        }
-
-        function createWorkOrderTable() {
-            const table = document.createElement('table');
-            table.className = 'list-view';
-            
-            const thead = document.createElement('thead');
-            thead.innerHTML = `
-                <tr>
-                    <th>WO Number</th>
-                    <th>Customer</th>
-                    <th>Building</th>
-                    <th>Work Type</th>
-                    <th>Division</th>
-                    <th>Personnel</th>
-                    <th>Start Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            `;
-            
-            const tbody = document.createElement('tbody');
-            filteredWorkorders.forEach(workorder => {
-                const row = document.createElement('tr');
-                row.className = 'animate-slide-in';
-                row.dataset.id = workorder.id;
-                
-                const priorityColor = getPriorityColor(workorder.priority);
-                
-                row.innerHTML = `
-                    <td>
-                        <div class="font-semibold text-gray-900">${workorder.workOrderNumber}</div>
-                        ${workorder.priority ? `
-                        <div class="text-xs mt-1">
-                            <span class="px-2 py-1 rounded-full ${priorityColor}">
-                                ${workorder.priority}
-                            </span>
-                        </div>` : ''}
-                    </td>
-                    <td>${workorder.customer || '-'}</td>
-                    <td>${workorder.building || '-'}</td>
-                    <td>${workorder.workType || '-'}</td>
-                    <td>${workorder.division || '-'}</td>
-                    <td>${workorder.personnel || '-'}</td>
-                    <td>${formatDate(workorder.startDate)}</td>
-                    <td>
-                        <span class="status-badge ${workorder.status.toLowerCase()}">
-                            ${workorder.status}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="flex gap-2 workorder-actions">
-                            <button class="view-detail-btn p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="edit-workorder-btn p-2 text-green-600 hover:bg-green-50 rounded-lg">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            ${currentUserRole === 'admin' ? `
-                            <button class="delete-workorder-btn p-2 text-red-600 hover:bg-red-50 rounded-lg">
-                                <i class="fas fa-trash"></i>
-                            </button>` : ''}
-                        </div>
-                    </td>
-                `;
-                
-                tbody.appendChild(row);
-            });
-            
-            table.appendChild(thead);
-            table.appendChild(tbody);
-            return table;
-        }
-
-        function renderTimelineView() {
-            const container = document.getElementById('workorders-stage');
-            const timelineContainer = document.getElementById('timelineView');
-            
-            container.classList.add('hidden');
-            timelineContainer.classList.remove('hidden');
-            
-            const timelineContent = document.getElementById('timelineContent');
-            timelineContent.innerHTML = '';
-            
-            // Group by month
-            const groupedByMonth = {};
-            filteredWorkorders.forEach(workorder => {
-                const date = workorder.startDate?.toDate() || new Date();
-                const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-                
-                if (!groupedByMonth[monthYear]) {
-                    groupedByMonth[monthYear] = [];
-                }
-                groupedByMonth[monthYear].push(workorder);
-            });
-            
-            // Sort months
-            const sortedMonths = Object.keys(groupedByMonth).sort((a, b) => {
-                return new Date(b) - new Date(a);
-            });
-            
-            sortedMonths.forEach(monthYear => {
-                const monthHeader = document.createElement('div');
-                monthHeader.className = 'mb-6';
-                monthHeader.innerHTML = `
-                    <h4 class="text-lg font-bold text-gray-900 mb-4">${monthYear}</h4>
-                `;
-                timelineContent.appendChild(monthHeader);
-                
-                groupedByMonth[monthYear].forEach(workorder => {
-                    const timelineItem = document.createElement('div');
-                    timelineItem.className = 'timeline-item';
+                    // Edit work order
+                    if (e.target.closest('.edit-workorder-btn')) {
+                        const card = e.target.closest('.workorder-card, tr');
+                        if (card) {
+                            const workorderId = card.dataset.id;
+                            openWorkOrderModal(workorderId);
+                        }
+                    }
                     
-                    timelineItem.innerHTML = `
-                        <div class="timeline-date">${formatDate(workorder.startDate)}</div>
-                        <div class="timeline-content">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h5 class="font-semibold text-gray-900">${workorder.workOrderNumber}</h5>
-                                    <p class="text-sm text-gray-600 mt-1">${workorder.customer} - ${workorder.building}</p>
-                                    <p class="text-sm text-gray-600">${workorder.workType}</p>
-                                </div>
-                                <span class="status-badge ${workorder.status.toLowerCase()}">
-                                    ${workorder.status}
-                                </span>
-                            </div>
-                            <div class="flex gap-4 mt-3 text-sm">
-                                <span class="text-gray-600">
-                                    <i class="fas fa-user-tie mr-1"></i>
-                                    ${workorder.personnel || 'Unassigned'}
-                                </span>
-                                <span class="text-gray-600">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    ${workorder.estimatedTime || 'N/A'} hours
-                                </span>
-                            </div>
-                        </div>
-                    `;
+                    // Delete work order (admin only)
+                    if (e.target.closest('.delete-workorder-btn') && currentUserRole === 'admin') {
+                        const card = e.target.closest('.workorder-card, tr');
+                        if (card) {
+                            const workorderId = card.dataset.id;
+                            deleteWorkOrder(workorderId);
+                        }
+                    }
                     
-                    timelineContent.appendChild(timelineItem);
+                    // Create first work order
+                    if (e.target.closest('#createFirstWorkOrder')) {
+                        openWorkOrderModal();
+                    }
                 });
+            }
+        
+            // ==================== DOM INITIALIZATION ====================
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Work Order Management System initializing...');
+                
+                // Initialize Firebase first
+                initializeFirebase();
+                
+                // Initialize login form
+                initLogin();
+                
+                // Add CSS animations
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes shake {
+                        0%, 100% { transform: translateX(0); }
+                        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                        20%, 40%, 60%, 80% { transform: translateX(5px); }
+                    }
+                    
+                    .view-toggle-btn {
+                        padding: 0.75rem 1.5rem;
+                        border-radius: 8px;
+                        background: #f8fafc;
+                        border: 1px solid #e5e7eb;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        font-weight: 500;
+                    }
+        
+                    .view-toggle-btn.active {
+                        background: var(--primary-color);
+                        color: white;
+                        border-color: var(--primary-color);
+                    }
+                    
+                    .chart-container {
+                        background: white;
+                        border-radius: 12px;
+                        padding: 1.5rem;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                    }
+                `;
+                document.head.appendChild(style);
             });
-        }
-
-        function updateWorkOrderCount() {
-            const countElement = document.getElementById('workOrderCount');
-            if (countElement) {
-                countElement.textContent = `Showing ${filteredWorkorders.length} of ${workorders.length} work orders`;
-            }
-        }
-
-        function calculateProgress(workorder) {
-            if (workorder.status === 'Done' || workorder.status === 'Close') return 100;
-            
-            if (!workorder.startDate || !workorder.endDate) return 0;
-            
-            const start = workorder.startDate.toDate();
-            const end = workorder.endDate.toDate();
-            const now = new Date();
-            
-            if (now >= end) return 100;
-            if (now <= start) return 0;
-            
-            const totalDuration = end - start;
-            const elapsed = now - start;
-            
-            return Math.min(Math.round((elapsed / totalDuration) * 100), 100);
-        }
-
-        function getPriorityColor(priority) {
-            switch(priority) {
-                case 'High': return 'bg-orange-100 text-orange-800';
-                case 'Urgent': return 'bg-red-100 text-red-800';
-                default: return 'bg-blue-100 text-blue-800';
-            }
-        }
-
-        // ==================== MODAL FUNCTIONS ====================
-        function openWorkOrderModal(workorderId = null) {
-            const modal = document.getElementById('workorderModal');
-            const modalTitle = document.getElementById('modalTitle');
-            
-            resetModalForm();
-            
-            if (workorderId) {
-                modalTitle.textContent = 'Edit Work Order';
-                const workorder = workorders.find(wo => wo.id === workorderId);
-                if (workorder) {
-                    populateModalForm(workorder);
-                }
-            } else {
-                modalTitle.textContent = 'Create New Work Order';
-                // Set default values
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('startDate').value = today;
-                document.getElementById('status').value = 'Running';
-                document.getElementById('priority').value = 'Normal';
-                document.getElementById('workOrderNumber').value = generateWorkOrderNumber();
-            }
-            
-            modal.classList.remove('hidden');
-        }
-
-        function generateWorkOrderNumber() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const count = workorders.filter(wo => {
-                const woDate = wo.createdAt?.toDate();
-                return woDate && woDate.getMonth() === now.getMonth() && woDate.getFullYear() === year;
-            }).length + 1;
-            return `WO-${year}${month}-${count.toString().padStart(3, '0')}`;
-        }
-
-        function closeWorkOrderModal() {
-            const modal = document.getElementById('workorderModal');
-            modal.classList.add('hidden');
-        }
-
-        function resetModalForm() {
-            document.getElementById('workorderForm').reset();
-            document.getElementById('workorderId').value = '';
-            document.getElementById('manPowerTags').innerHTML = '';
-            document.getElementById('notesHistory').innerHTML = '';
-        }
-
-        function populateModalForm(workorder) {
-            document.getElementById('workorderId').value = workorder.id;
-            document.getElementById('workOrderNumber').value = workorder.workOrderNumber || '';
-            document.getElementById('soNumber').value = workorder.soNumber || '';
-            document.getElementById('customer').value = workorder.customer || '';
-            document.getElementById('building').value = workorder.building || '';
-            document.getElementById('division').value = workorder.division || '';
-            document.getElementById('company').value = workorder.company || '';
-            document.getElementById('workType').value = workorder.workType || '';
-            document.getElementById('personnel').value = workorder.personnel || '';
-            document.getElementById('status').value = workorder.status || 'Running';
-            document.getElementById('priority').value = workorder.priority || 'Normal';
-            document.getElementById('estimatedTime').value = workorder.estimatedTime || '';
-            document.getElementById('notes').value = workorder.notes || '';
-            
-            // Dates
-            if (workorder.startDate) {
-                const startDate = workorder.startDate.toDate();
-                document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
-            }
-            if (workorder.endDate) {
-                const endDate = workorder.endDate.toDate();
-                document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
-            }
-            
-            // Man Power
-            if (workorder.manPower && Array.isArray(workorder.manPower)) {
-                workorder.manPower.forEach(mp => addManPowerTag(mp));
-            }
-            
-            // Notes History
-            if (workorder.notesHistory && Array.isArray(workorder.notesHistory)) {
-                renderNotesHistory(workorder.notesHistory);
-            }
-        }
-
-        function addManPowerTag(name) {
-            if (!name.trim()) return;
-            
-            const container = document.getElementById('manPowerTags');
-            const tagId = `tag-${Date.now()}`;
-            
-            const tag = document.createElement('div');
-            tag.className = 'manpower-tag';
-            tag.innerHTML = `
-                ${name.trim()}
-                <span class="remove-tag" onclick="removeManPowerTag(this)">
-                    <i class="fas fa-times"></i>
-                </span>
-            `;
-            
-            container.appendChild(tag);
-            document.getElementById('manPowerInput').value = '';
-        }
-
-        function removeManPowerTag(element) {
-            element.closest('.manpower-tag').remove();
-        }
-
+        
+            // Expose function to global scope
+            window.removeManPowerTag = function(element) {
+                element.closest('.manpower-tag').remove();
+            };
+        
         function renderNotesHistory(notesHistory) {
             const container = document.getElementById('notesHistory');
             container.innerHTML = '';
