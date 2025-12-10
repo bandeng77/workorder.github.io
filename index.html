@@ -1679,13 +1679,6 @@
             'Yudiyono', 'Edwin', 'Fiki', 'Harianto', 'Haryo'
         ]);
 
-        // Test users for Firebase Auth (should be created in Firebase Console)
-        const testUsers = {
-            'admin@genetek.com': { password: 'Admin123!', role: 'admin' },
-            'manager@genetek.com': { password: 'Manager123!', role: 'manager' },
-            'user@genetek.com': { password: 'User123!', role: 'user' }
-        };
-
         // ==================== INITIALIZE FIREBASE ====================
         function initializeFirebase() {
             try {
@@ -3034,6 +3027,8 @@
 
         // ==================== EVENT LISTENERS ====================
         function initApp() {
+            console.log('Initializing app...');
+            
             // Load initial data
             loadDropdownOptions();
             loadWorkOrders();
@@ -3047,8 +3042,15 @@
             document.getElementById('authButton').addEventListener('click', logout);
             
             // Search
-            document.getElementById('searchWorkOrders').addEventListener('input', applyFiltersAndRender);
-            document.getElementById('advancedSearchBtn').addEventListener('click', openAdvancedSearch);
+            const searchInput = document.getElementById('searchWorkOrders');
+            if (searchInput) {
+                searchInput.addEventListener('input', applyFiltersAndRender);
+            }
+            
+            const advancedSearchBtn = document.getElementById('advancedSearchBtn');
+            if (advancedSearchBtn) {
+                advancedSearchBtn.addEventListener('click', openAdvancedSearch);
+            }
             
             // Tabs
             document.querySelectorAll('.tab').forEach(tab => {
@@ -3061,54 +3063,117 @@
             });
             
             // View toggle
-            document.getElementById('cardViewBtn').addEventListener('click', () => switchView('card'));
-            document.getElementById('listViewBtn').addEventListener('click', () => switchView('list'));
-            document.getElementById('timelineViewBtn').addEventListener('click', () => switchView('timeline'));
+            const cardViewBtn = document.getElementById('cardViewBtn');
+            if (cardViewBtn) {
+                cardViewBtn.addEventListener('click', () => switchView('card'));
+            }
+            
+            const listViewBtn = document.getElementById('listViewBtn');
+            if (listViewBtn) {
+                listViewBtn.addEventListener('click', () => switchView('list'));
+            }
+            
+            const timelineViewBtn = document.getElementById('timelineViewBtn');
+            if (timelineViewBtn) {
+                timelineViewBtn.addEventListener('click', () => switchView('timeline'));
+            }
             
             // Sorting
-            document.getElementById('sortBy').addEventListener('change', applyFiltersAndRender);
-            document.getElementById('sortOrder').addEventListener('change', applyFiltersAndRender);
+            const sortBy = document.getElementById('sortBy');
+            if (sortBy) {
+                sortBy.addEventListener('change', applyFiltersAndRender);
+            }
+            
+            const sortOrder = document.getElementById('sortOrder');
+            if (sortOrder) {
+                sortOrder.addEventListener('change', applyFiltersAndRender);
+            }
             
             // Modal buttons
-            document.getElementById('closeWorkOrderModal').addEventListener('click', closeWorkOrderModal);
-            document.getElementById('cancelWorkOrderBtn').addEventListener('click', closeWorkOrderModal);
-            document.getElementById('workorderForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveWorkOrder();
-            });
+            const closeWorkOrderModalBtn = document.getElementById('closeWorkOrderModal');
+            if (closeWorkOrderModalBtn) {
+                closeWorkOrderModalBtn.addEventListener('click', closeWorkOrderModal);
+            }
+            
+            const cancelWorkOrderBtn = document.getElementById('cancelWorkOrderBtn');
+            if (cancelWorkOrderBtn) {
+                cancelWorkOrderBtn.addEventListener('click', closeWorkOrderModal);
+            }
+            
+            const workorderForm = document.getElementById('workorderForm');
+            if (workorderForm) {
+                workorderForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    saveWorkOrder();
+                });
+            }
             
             // Man Power
-            document.getElementById('addManPowerBtn').addEventListener('click', () => {
-                const input = document.getElementById('manPowerInput');
-                addManPowerTag(input.value);
-            });
+            const addManPowerBtn = document.getElementById('addManPowerBtn');
+            if (addManPowerBtn) {
+                addManPowerBtn.addEventListener('click', () => {
+                    const input = document.getElementById('manPowerInput');
+                    addManPowerTag(input.value);
+                });
+            }
             
-            document.getElementById('manPowerInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addManPowerTag(e.target.value);
-                }
-            });
+            const manPowerInput = document.getElementById('manPowerInput');
+            if (manPowerInput) {
+                manPowerInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addManPowerTag(e.target.value);
+                    }
+                });
+            }
             
             // Detail modal
-            document.getElementById('closeDetailModal').addEventListener('click', closeDetailModal);
-            document.getElementById('closeDetailBtn').addEventListener('click', closeDetailModal);
-            document.getElementById('editDetailBtn').addEventListener('click', function() {
-                const workorderId = this.dataset.id;
-                closeDetailModal();
-                setTimeout(() => openWorkOrderModal(workorderId), 300);
-            });
+            const closeDetailModalBtn = document.getElementById('closeDetailModal');
+            if (closeDetailModalBtn) {
+                closeDetailModalBtn.addEventListener('click', closeDetailModal);
+            }
+            
+            const closeDetailBtn = document.getElementById('closeDetailBtn');
+            if (closeDetailBtn) {
+                closeDetailBtn.addEventListener('click', closeDetailModal);
+            }
+            
+            const editDetailBtn = document.getElementById('editDetailBtn');
+            if (editDetailBtn) {
+                editDetailBtn.addEventListener('click', function() {
+                    const workorderId = this.dataset.id;
+                    closeDetailModal();
+                    setTimeout(() => openWorkOrderModal(workorderId), 300);
+                });
+            }
             
             // Analytics modal
-            document.getElementById('closeAnalyticsModal').addEventListener('click', closeAnalyticsModal);
-            document.getElementById('chartTimeRange').addEventListener('change', renderCharts);
+            const closeAnalyticsModalBtn = document.getElementById('closeAnalyticsModal');
+            if (closeAnalyticsModalBtn) {
+                closeAnalyticsModalBtn.addEventListener('click', closeAnalyticsModal);
+            }
+            
+            const chartTimeRange = document.getElementById('chartTimeRange');
+            if (chartTimeRange) {
+                chartTimeRange.addEventListener('change', renderCharts);
+            }
             
             // Activity modal
-            document.getElementById('closeActivityModal').addEventListener('click', closeActivityModal);
+            const closeActivityModalBtn = document.getElementById('closeActivityModal');
+            if (closeActivityModalBtn) {
+                closeActivityModalBtn.addEventListener('click', closeActivityModal);
+            }
             
             // Advanced Search
-            document.getElementById('applyFiltersBtn').addEventListener('click', applyAdvancedFilters);
-            document.getElementById('resetFiltersBtn').addEventListener('click', resetAdvancedFilters);
+            const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+            if (applyFiltersBtn) {
+                applyFiltersBtn.addEventListener('click', applyAdvancedFilters);
+            }
+            
+            const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+            if (resetFiltersBtn) {
+                resetFiltersBtn.addEventListener('click', resetAdvancedFilters);
+            }
             
             // Event delegation for dynamic elements
             document.addEventListener('click', function(e) {
@@ -3143,6 +3208,11 @@
                 if (e.target.closest('#createFirstWorkOrder')) {
                     openWorkOrderModal();
                 }
+                
+                // Close modal when clicking outside
+                if (e.target.classList.contains('fixed') && e.target.id.includes('Modal')) {
+                    e.target.classList.add('hidden');
+                }
             });
         }
 
@@ -3150,42 +3220,58 @@
             currentView = view;
             
             // Update active button
-            document.getElementById('cardViewBtn').classList.toggle('active', view === 'card');
-            document.getElementById('listViewBtn').classList.toggle('active', view === 'list');
-            document.getElementById('timelineViewBtn').classList.toggle('active', view === 'timeline');
+            const cardViewBtn = document.getElementById('cardViewBtn');
+            const listViewBtn = document.getElementById('listViewBtn');
+            const timelineViewBtn = document.getElementById('timelineViewBtn');
+            
+            if (cardViewBtn) cardViewBtn.classList.toggle('active', view === 'card');
+            if (listViewBtn) listViewBtn.classList.toggle('active', view === 'list');
+            if (timelineViewBtn) timelineViewBtn.classList.toggle('active', view === 'timeline');
             
             // Show/hide containers
             const workorderStage = document.getElementById('workorders-stage');
             const timelineView = document.getElementById('timelineView');
             
             if (view === 'timeline') {
-                workorderStage.classList.add('hidden');
-                timelineView.classList.remove('hidden');
+                if (workorderStage) workorderStage.classList.add('hidden');
+                if (timelineView) timelineView.classList.remove('hidden');
                 renderTimelineView();
             } else {
-                workorderStage.classList.remove('hidden');
-                timelineView.classList.add('hidden');
+                if (workorderStage) workorderStage.classList.remove('hidden');
+                if (timelineView) timelineView.classList.add('hidden');
                 applyFiltersAndRender();
             }
         }
 
         function openAdvancedSearch() {
             const modal = document.getElementById('advancedSearchModal');
-            modal.classList.remove('hidden');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
         }
 
         function closeAdvancedSearch() {
-            document.getElementById('advancedSearchModal').classList.add('hidden');
+            const modal = document.getElementById('advancedSearchModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
         }
 
         function applyAdvancedFilters() {
+            const filterStatus = document.getElementById('filterStatus');
+            const filterDivision = document.getElementById('filterDivision');
+            const filterCompany = document.getElementById('filterCompany');
+            const filterPersonnel = document.getElementById('filterPersonnel');
+            const filterStartDate = document.getElementById('filterStartDate');
+            const filterEndDate = document.getElementById('filterEndDate');
+            
             activeFilters = {
-                status: document.getElementById('filterStatus').value || null,
-                division: document.getElementById('filterDivision').value || null,
-                company: document.getElementById('filterCompany').value || null,
-                personnel: document.getElementById('filterPersonnel').value || null,
-                startDate: document.getElementById('filterStartDate').value || null,
-                endDate: document.getElementById('filterEndDate').value || null
+                status: filterStatus ? filterStatus.value || null : null,
+                division: filterDivision ? filterDivision.value || null : null,
+                company: filterCompany ? filterCompany.value || null : null,
+                personnel: filterPersonnel ? filterPersonnel.value || null : null,
+                startDate: filterStartDate ? filterStartDate.value || null : null,
+                endDate: filterEndDate ? filterEndDate.value || null : null
             };
             
             applyFiltersAndRender();
@@ -3193,12 +3279,19 @@
         }
 
         function resetAdvancedFilters() {
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterDivision').value = '';
-            document.getElementById('filterCompany').value = '';
-            document.getElementById('filterPersonnel').value = '';
-            document.getElementById('filterStartDate').value = '';
-            document.getElementById('filterEndDate').value = '';
+            const filterStatus = document.getElementById('filterStatus');
+            const filterDivision = document.getElementById('filterDivision');
+            const filterCompany = document.getElementById('filterCompany');
+            const filterPersonnel = document.getElementById('filterPersonnel');
+            const filterStartDate = document.getElementById('filterStartDate');
+            const filterEndDate = document.getElementById('filterEndDate');
+            
+            if (filterStatus) filterStatus.value = '';
+            if (filterDivision) filterDivision.value = '';
+            if (filterCompany) filterCompany.value = '';
+            if (filterPersonnel) filterPersonnel.value = '';
+            if (filterStartDate) filterStartDate.value = '';
+            if (filterEndDate) filterEndDate.value = '';
             
             activeFilters = {};
             applyFiltersAndRender();
@@ -3283,11 +3376,15 @@
             if (!firebaseInitialized) {
                 console.log('Firebase initialization failed');
                 showToast('Firebase initialization failed. Some features may not work.', 'warning');
+                // Setup basic functionality even if Firebase fails
+                setupBasicAuth();
             }
             
             // Initialize login and auth state observer
             initLogin();
-            setupAuthStateObserver();
+            if (auth) {
+                setupAuthStateObserver();
+            }
             
             // Add CSS animations
             const style = document.createElement('style');
@@ -3341,6 +3438,16 @@
                 .detail-item p {
                     font-size: 0.95rem;
                     color: #1f2937;
+                }
+                
+                /* Modal close button */
+                .modal-close {
+                    transition: all 0.3s;
+                }
+                
+                .modal-close:hover {
+                    color: #4b5563;
+                    transform: rotate(90deg);
                 }
             `;
             document.head.appendChild(style);
