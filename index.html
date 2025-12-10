@@ -2945,7 +2945,146 @@
                 console.log('User setup note:', error.message);
             }
         }
-
+        
+        <!-- Page Protection Script -->
+        // ==================== PAGE PROTECTION ====================
+        (function() {
+            'use strict';
+            
+            // Disable right-click
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                showToast('Right-click is disabled for security', 'warning');
+                return false;
+            });
+            
+            // Disable keyboard shortcuts for devtools
+            const blockedKeys = [
+                { key: 'F12', code: 123 },
+                { key: 'I', code: 73, ctrl: true, shift: true },
+                { key: 'J', code: 74, ctrl: true, shift: true },
+                { key: 'C', code: 67, ctrl: true, shift: true },
+                { key: 'U', code: 85, ctrl: true }
+            ];
+            
+            document.addEventListener('keydown', function(e) {
+                // Check each blocked key combination
+                blockedKeys.forEach(blocked => {
+                    const keyMatch = e.key === blocked.key || e.keyCode === blocked.code;
+                    const ctrlMatch = !blocked.ctrl || e.ctrlKey;
+                    const shiftMatch = !blocked.shift || e.shiftKey;
+                    
+                    if (keyMatch && ctrlMatch && shiftMatch) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showToast('This action is not allowed', 'warning');
+                        return false;
+                    }
+                });
+                
+                // Block Ctrl+S
+                if (e.ctrlKey && (e.key === 's' || e.key === 'S' || e.keyCode === 83)) {
+                    e.preventDefault();
+                    showToast('Saving page is disabled', 'warning');
+                    return false;
+                }
+            });
+            
+            // Detect devtools by checking window size difference
+            function checkDevTools() {
+                const widthDiff = Math.abs(window.outerWidth - window.innerWidth);
+                const heightDiff = Math.abs(window.outerHeight - window.innerHeight);
+                
+                // If devtools is open (threshold can be adjusted)
+                if (widthDiff > 100 || heightDiff > 100) {
+                    // Redirect or show warning after multiple detections
+                    if (typeof checkDevTools.count === 'undefined') {
+                        checkDevTools.count = 1;
+                    } else {
+                        checkDevTools.count++;
+                    }
+                    
+                    if (checkDevTools.count > 3) {
+                        // After 3 detections, show serious warning
+                        document.body.innerHTML += `
+                            <div id="devtools-warning" style="
+                                position: fixed;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background: rgba(0,0,0,0.9);
+                                color: white;
+                                z-index: 99999;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                font-family: Arial, sans-serif;
+                                text-align: center;
+                                padding: 20px;
+                            ">
+                                <div style="background: #1f2937; padding: 40px; border-radius: 10px; max-width: 500px;">
+                                    <h1 style="color: #ef4444; margin-bottom: 20px;">
+                                        <i class="fas fa-exclamation-triangle"></i> Security Alert
+                                    </h1>
+                                    <p>Developer tools detected. For security reasons:</p>
+                                    <ol style="text-align: left; margin: 20px 0;">
+                                        <li>Close developer tools</li>
+                                        <li>Refresh the page</li>
+                                        <li>Do not attempt to inspect elements</li>
+                                    </ol>
+                                    <button onclick="location.reload()" style="
+                                        background: var(--primary-color);
+                                        color: white;
+                                        border: none;
+                                        padding: 10px 20px;
+                                        border-radius: 5px;
+                                        cursor: pointer;
+                                        margin-top: 20px;
+                                    ">
+                                        Refresh Page
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    return true;
+                }
+                return false;
+            }
+            
+            // Check periodically
+            setInterval(checkDevTools, 1000);
+            
+            // Disable text selection on sensitive elements
+            const sensitiveClasses = ['workorder-card', 'dashboard-card', 'stat-card'];
+            sensitiveClasses.forEach(className => {
+                document.querySelectorAll('.' + className).forEach(el => {
+                    el.style.userSelect = 'none';
+                    el.style.webkitUserSelect = 'none';
+                });
+            });
+            
+            // Add blur protection (prevents screenshots in some browsers)
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    // Page is not visible (user switched tabs)
+                    document.title = '🔒 Work Order System';
+                } else {
+                    document.title = 'Work Order Management System';
+                }
+            });
+            
+            // Prevent leaving page with warning
+            window.addEventListener('beforeunload', function(e) {
+                // Only show warning if devtools was detected
+                if (typeof checkDevTools.count !== 'undefined' && checkDevTools.count > 0) {
+                    e.preventDefault();
+                    e.returnValue = 'You have developer tools open. Are you sure you want to leave?';
+                }
+            });
+            
+        })();
     </script>
 </body>
 </html>
