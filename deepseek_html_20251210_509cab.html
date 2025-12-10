@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Admin - Work Order System</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwXNGrJsBqQ2RslAkdWWPSOubUw13QcRI",
+            authDomain: "workorder-mon.firebaseapp.com",
+            projectId: "workorder-mon",
+            storageBucket: "workorder-mon.firebasestorage.app",
+            messagingSenderId: "226391173482",
+            appId: "1:226391173482:web:9ea9c68c1e31c84f50dd13"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        async function setupAdmin() {
+            const email = 'admin@genetek.co.id';
+            const password = 'GenetekAdmin2024!'; // Ganti dengan password yang aman
+            
+            try {
+                // Cek apakah user sudah ada
+                const signInMethods = await auth.fetchSignInMethodsForEmail(email);
+                
+                if (signInMethods.length > 0) {
+                    // User sudah ada, update role ke admin
+                    console.log('User already exists, updating role...');
+                    
+                    // Login dulu
+                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    
+                    // Update role di Firestore
+                    await db.collection('users').doc(user.uid).set({
+                        email: email,
+                        role: 'admin',
+                        fullName: 'System Administrator',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                    
+                    alert('Admin role updated successfully!');
+                } else {
+                    // Buat user baru
+                    console.log('Creating new admin user...');
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    
+                    // Set role admin di Firestore
+                    await db.collection('users').doc(user.uid).set({
+                        email: email,
+                        role: 'admin',
+                        fullName: 'System Administrator',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    alert('Admin user created successfully!');
+                }
+                
+                console.log('Setup completed successfully');
+                
+            } catch (error) {
+                console.error('Error during setup:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function testAdminLogin() {
+            const email = 'admin@genetek.co.id';
+            const password = 'GenetekAdmin2024!'; // Ganti dengan password yang sama
+            
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Get user role
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+                
+                alert(`Login successful!\n\nEmail: ${user.email}\nRole: ${userData.role}\nUID: ${user.uid}`);
+                
+                // Logout
+                await auth.signOut();
+                
+            } catch (error) {
+                alert('Login failed: ' + error.message);
+            }
+        }
+
+        async function createTestUsers() {
+            const testUsers = [
+                {
+                    email: 'manager@genetek.co.id',
+                    password: 'Manager123!',
+                    role: 'manager',
+                    fullName: 'Operations Manager'
+                },
+                {
+                    email: 'technician@genetek.co.id',
+                    password: 'Tech123!',
+                    role: 'user',
+                    fullName: 'Technician Staff'
+                },
+                {
+                    email: 'supervisor@genetek.co.id',
+                    password: 'Supervisor123!',
+                    role: 'supervisor',
+                    fullName: 'Field Supervisor'
+                }
+            ];
+
+            for (const userData of testUsers) {
+                try {
+                    // Cek apakah user sudah ada
+                    const signInMethods = await auth.fetchSignInMethodsForEmail(userData.email);
+                    
+                    if (signInMethods.length === 0) {
+                        // Buat user baru
+                        const userCredential = await auth.createUserWithEmailAndPassword(
+                            userData.email, 
+                            userData.password
+                        );
+                        
+                        const user = userCredential.user;
+                        
+                        // Simpan data user
+                        await db.collection('users').doc(user.uid).set({
+                            email: userData.email,
+                            role: userData.role,
+                            fullName: userData.fullName,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        console.log(`Created user: ${userData.email}`);
+                    } else {
+                        console.log(`User already exists: ${userData.email}`);
+                    }
+                    
+                } catch (error) {
+                    console.error(`Error creating user ${userData.email}:`, error);
+                }
+            }
+            
+            alert('Test users created successfully!');
+        }
+
+        function resetPassword() {
+            const email = prompt('Enter email to reset password:');
+            if (email) {
+                auth.sendPasswordResetEmail(email)
+                    .then(() => {
+                        alert(`Password reset email sent to ${email}`);
+                    })
+                    .catch(error => {
+                        alert('Error: ' + error.message);
+                    });
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .button {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+        .danger {
+            background: #f44336;
+        }
+        .danger:hover {
+            background: #d32f2f;
+        }
+        .warning {
+            background: #ff9800;
+        }
+        .warning:hover {
+            background: #f57c00;
+        }
+        .info {
+            background: #2196F3;
+        }
+        .info:hover {
+            background: #1976D2;
+        }
+        .log {
+            background: #f5f5f5;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Firebase Admin Setup</h1>
+        <p>Setup administrator account for Work Order Management System</p>
+        
+        <div style="margin: 30px 0;">
+            <h3>Admin Account:</h3>
+            <p><strong>Email:</strong> admin@genetek.co.id</p>
+            <p><strong>Default Password:</strong> GenetekAdmin2024!</p>
+            <p><em>Note: Change password after first login!</em></p>
+        </div>
+        
+        <div style="margin: 30px 0;">
+            <button class="button" onclick="setupAdmin()">1. Setup Admin Account</button>
+            <button class="button info" onclick="testAdminLogin()">2. Test Admin Login</button>
+            <button class="button warning" onclick="createTestUsers()">3. Create Test Users</button>
+            <button class="button danger" onclick="resetPassword()">4. Reset Password</button>
+        </div>
+        
+        <div class="log" id="logOutput">
+            Console output will appear here...
+        </div>
+        
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+            <h3>Next Steps:</h3>
+            <ol>
+                <li>Run "Setup Admin Account" once</li>
+                <li>Test login with "Test Admin Login"</li>
+                <li>Update Firestore rules in Firebase Console</li>
+                <li>Delete this setup page after configuration</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Override console.log to show in UI
+        const originalLog = console.log;
+        const logOutput = document.getElementById('logOutput');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg
+            ).join(' ');
+            
+            const timestamp = new Date().toLocaleTimeString();
+            logOutput.innerHTML = `<strong>[${timestamp}]</strong> ${message}\n` + logOutput.innerHTML;
+        };
+        
+        console.error = function(...args) {
+            originalLog.apply(console, args);
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg
+            ).join(' ');
+            
+            const timestamp = new Date().toLocaleTimeString();
+            logOutput.innerHTML = `<strong style="color: red;">[${timestamp}] ERROR:</strong> ${message}\n` + logOutput.innerHTML;
+        };
+        
+        console.log('Setup page loaded. Ready to configure Firebase.');
+    </script>
+</body>
+</html>
