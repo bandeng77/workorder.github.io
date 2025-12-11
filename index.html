@@ -1929,6 +1929,52 @@
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
         }
 
+        // ==================== FIX USER ROLE FUNCTIONS ====================
+        async function fixUserRoleIfNeeded(userId, userEmail) {
+            try {
+                const userDoc = await usersCollection.doc(userId).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    let correctRole = 'user';
+                    
+                    console.log('Checking email for role fix:', userEmail);
+                    
+                    // Tentukan role yang benar berdasarkan email
+                    if (userEmail === 'admin@genetek.co.id') {
+                        correctRole = 'admin';
+                    } else if (userEmail === 'm_husni@genetek.co.id') {
+                        correctRole = 'manager';
+                    } else if (userEmail === 'galih@genetek.co.id') {
+                        correctRole = 'user';
+                    }
+                    
+                    console.log('Current role:', userData.role, 'Correct role:', correctRole);
+                    
+                    // Jika role di database tidak sesuai, perbaiki
+                    if (userData.role !== correctRole) {
+                        console.log(`Fixing role for ${userEmail}: from ${userData.role} to ${correctRole}`);
+                        
+                        await usersCollection.doc(userId).update({
+                            role: correctRole,
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        currentUserRole = correctRole;
+                        console.log('Role fixed successfully');
+                        return correctRole;
+                    } else {
+                        currentUserRole = userData.role;
+                        return userData.role;
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Error fixing user role:', error);
+                return null;
+            }
+        }
+
         // ==================== ROLE-BASED ACCESS CONTROL ====================
         function setupUserRolePermissions() {
             console.log('Setting up permissions for role:', currentUserRole);
@@ -1994,6 +2040,8 @@
                     // Default seperti user
                     break;
             }
+            
+            console.log('Permissions set for role:', currentUserRole);
         }
 
         function canCreateWorkOrder() {
@@ -2041,8 +2089,16 @@
                     currentUser = user;
                     
                     try {
-                        // Get user role from Firestore
-                        await getUserRoleFromFirestore(user.uid);
+                        // FIX: Panggil fungsi fix role terlebih dahulu
+                        const fixedRole = await fixUserRoleIfNeeded(user.uid, user.email);
+                        
+                        if (fixedRole) {
+                            currentUserRole = fixedRole;
+                            console.log('Role after fix:', currentUserRole);
+                        } else {
+                            // Get user role from Firestore
+                            await getUserRoleFromFirestore(user.uid);
+                        }
                         
                         // Update UI
                         document.getElementById('userWelcome').textContent = user.email;
@@ -2147,6 +2203,7 @@
 
         async function getUserRoleFromFirestore(userId) {
             console.log('Getting user role for:', userId);
+            console.log('Current user email:', currentUser?.email);
             
             try {
                 const userDoc = await usersCollection.doc(userId).get();
@@ -2164,22 +2221,28 @@
                     // Create user document if it doesn't exist
                     console.log('Creating new user document...');
                     
-                    // Default role based on email - FIXED FOR SPECIFIC USERS
+                    // Default role based on email - FIXED LOGIC
                     let defaultRole = 'user';
+                    const userEmail = currentUser.email;
                     
-                    if (currentUser.email === 'admin@genetek.co.id') {
+                    console.log('Checking email for role assignment:', userEmail);
+                    
+                    if (userEmail === 'admin@genetek.co.id') {
                         defaultRole = 'admin';
-                        console.log('Setting role to admin for admin@genetek.co.id');
-                    } else if (currentUser.email === 'm_husni@genetek.co.id') {
+                        console.log('Setting role to admin for', userEmail);
+                    } else if (userEmail === 'm_husni@genetek.co.id') {
                         defaultRole = 'manager';
-                        console.log('Setting role to manager for m_husni@genetek.co.id');
-                    } else if (currentUser.email === 'galih@genetek.co.id') {
+                        console.log('Setting role to manager for', userEmail);
+                    } else if (userEmail === 'galih@genetek.co.id') {
                         defaultRole = 'user';
-                        console.log('Setting role to user for galih@genetek.co.id');
+                        console.log('Setting role to user for', userEmail);
+                    } else {
+                        // Untuk email lainnya, default tetap 'user'
+                        console.log('Default role user for unknown email:', userEmail);
                     }
                     
                     await usersCollection.doc(userId).set({
-                        email: currentUser.email,
+                        email: userEmail,
                         role: defaultRole,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                         lastLogin: firebase.firestore.FieldValue.serverTimestamp()
@@ -3899,6 +3962,51 @@
             }
         }
 
+        // ==================== MIGRATION FUNCTION ====================
+        // Fungsi ini bisa dijalankan dari console browser untuk memperbaiki semua role
+        async function migrateAllUsersRoles() {
+            console.log('Starting migration of all user roles...');
+            showLoading();
+            
+            try {
+                const usersSnapshot = await usersCollection.get();
+                let migratedCount = 0;
+                
+                usersSnapshot.forEach(async (doc) => {
+                    const userData = doc.data();
+                    const email = userData.email;
+                    let correctRole = 'user';
+                    
+                    if (email === 'admin@genetek.co.id') {
+                        correctRole = 'admin';
+                    } else if (email === 'm_husni@genetek.co.id') {
+                        correctRole = 'manager';
+                    } else if (email === 'galih@genetek.co.id') {
+                        correctRole = 'user';
+                    }
+                    
+                    if (userData.role !== correctRole) {
+                        console.log(`Migrating ${email}: ${userData.role} → ${correctRole}`);
+                        await usersCollection.doc(doc.id).update({
+                            role: correctRole
+                        });
+                        migratedCount++;
+                    }
+                });
+                
+                setTimeout(() => {
+                    hideLoading();
+                    showToast(`Migration complete! ${migratedCount} users migrated. Please refresh the page.`, 'success');
+                    console.log(`Migration complete! ${migratedCount} users migrated.`);
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Migration error:', error);
+                hideLoading();
+                showToast('Migration failed. Check console.', 'error');
+            }
+        }
+
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Work Order Management System initializing...');
@@ -3920,7 +4028,11 @@
             // Setup auth state observer
             setupAuthStateObserver();
             
+            // Expose migration function to global scope (for debugging)
+            window.migrateAllUsersRoles = migrateAllUsersRoles;
+            
             console.log('System initialization complete');
+            console.log('Note: If roles are still incorrect, run migrateAllUsersRoles() from console');
         });
 
     </script>
