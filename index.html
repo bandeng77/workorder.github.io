@@ -863,6 +863,112 @@
         .z-\[9999\] {
             z-index: 9999;
         }
+
+        /* Role-based styles */
+        .role-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .role-admin {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .role-manager {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: white;
+        }
+
+        .role-user {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        /* Status History Timeline */
+        .status-history-item {
+            padding: 0.75rem;
+            border-left: 3px solid var(--primary-color);
+            margin-bottom: 0.75rem;
+            background: #f8fafc;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .status-history-item.running { border-left-color: var(--primary-color); }
+        .status-history-item.done { border-left-color: var(--secondary-color); }
+        .status-history-item.close { border-left-color: #6b7280; }
+
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* View toggle */
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-toggle-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .view-toggle-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Detail item */
+        .detail-item {
+            margin-bottom: 1rem;
+        }
+
+        .detail-item label {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-item p {
+            font-size: 0.95rem;
+            color: #1f2937;
+        }
+
+        /* Animation */
+        .animate-spin-slow {
+            animation: spin 20s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="gradient-bg">
@@ -952,24 +1058,39 @@
                         </div>
                     </div>
                     
-                    <!-- Button group yang lebih kompak -->
-                    <div class="flex flex-wrap gap-2">
+                    <!-- Button group dengan kontrol berdasarkan role -->
+                    <div class="flex flex-wrap gap-2" id="actionButtons">
+                        <!-- New Work Order - untuk admin dan manager -->
                         <button id="newWorkOrderBtn" class="btn btn-primary shadow-lg text-sm py-2 px-4">
                             <i class="fas fa-plus-circle"></i>
                             <span>New Work Order</span>
                         </button>
-                        <button id="exportExcelBtn" class="btn btn-success shadow-lg text-sm py-2 px-4">
+                        
+                        <!-- Export Excel - hanya untuk admin -->
+                        <button id="exportExcelBtn" class="btn btn-success shadow-lg text-sm py-2 px-4 hidden">
                             <i class="fas fa-file-excel"></i>
                             <span>Export Excel</span>
                         </button>
+                        
+                        <!-- Analytics - untuk semua role -->
                         <button id="analyticsBtn" class="btn btn-warning shadow-lg text-sm py-2 px-4">
                             <i class="fas fa-chart-bar"></i>
                             <span>Analytics</span>
                         </button>
+                        
+                        <!-- Recent Activity - untuk semua role -->
                         <button id="activityBtn" class="btn btn-secondary shadow-lg text-sm py-2 px-4">
                             <i class="fas fa-history"></i>
                             <span>Recent Activity</span>
                         </button>
+                        
+                        <!-- Status History - untuk semua role -->
+                        <button id="statusHistoryBtn" class="btn btn-primary shadow-lg text-sm py-2 px-4">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Status History</span>
+                        </button>
+                        
+                        <!-- Logout - untuk semua role -->
                         <button id="authButton" class="btn btn-danger shadow-lg text-sm py-2 px-4">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Logout</span>
@@ -982,7 +1103,7 @@
                     <div class="flex-1">
                         <div class="glass-effect-app rounded-xl p-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center" id="userAvatar">
                                     <i class="fas fa-user text-white"></i>
                                 </div>
                                 <div>
@@ -990,9 +1111,8 @@
                                     <p id="userWelcome" class="font-semibold text-gray-900"></p>
                                 </div>
                                 <div class="ml-auto flex items-center gap-2">
-                                    <span class="px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm font-medium">
-                                        <i class="fas fa-shield-alt mr-1"></i>
-                                        <span id="userRole">Loading...</span>
+                                    <span id="userRoleBadge" class="role-badge role-user">
+                                        Loading...
                                     </span>
                                 </div>
                             </div>
@@ -1006,9 +1126,6 @@
                                    placeholder="Search work orders..." 
                                    class="w-full p-4 pl-12 rounded-xl border-2 border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:ring-opacity-50 transition-all duration-300">
                             <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                            <button id="advancedSearchBtn" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600 hover:text-teal-800">
-                                <i class="fas fa-filter"></i>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -1045,7 +1162,6 @@
                         </div>
                     </div>
 
-                    <!-- Changed from Pending to Closed -->
                     <div class="stat-card">
                         <div class="stat-icon" style="background: #6b7280;">
                             <i class="fas fa-times-circle"></i>
@@ -1107,6 +1223,7 @@
                             <option value="workOrderNumber">Sort by WO Number</option>
                             <option value="status">Sort by Status</option>
                             <option value="customer">Sort by Customer</option>
+                            <option value="priority">Sort by Priority</option>
                         </select>
                         <select id="sortOrder" class="form-input-app py-2 px-3 text-sm">
                             <option value="desc">Newest First</option>
@@ -1167,21 +1284,86 @@
                             <option value="month" selected>Last Month</option>
                             <option value="quarter">Last Quarter</option>
                             <option value="year">Last Year</option>
+                            <option value="all">All Time</option>
                         </select>
+                        <div class="text-sm text-gray-600">
+                            <i class="fas fa-calendar-alt mr-2"></i>
+                            Data updated: <span id="dataUpdatedTime"></span>
+                        </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <!-- Status Distribution Chart -->
                         <div class="chart-container">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-pie text-teal-600"></i>
+                                Work Order Status Distribution
+                            </div>
                             <canvas id="statusChart"></canvas>
+                            <div class="text-sm text-gray-600 mt-3" id="statusChartInfo"></div>
                         </div>
+                        
+                        <!-- Division Distribution Chart -->
                         <div class="chart-container">
+                            <div class="chart-title">
+                                <i class="fas fa-sitemap text-blue-600"></i>
+                                Division-wise Distribution
+                            </div>
                             <canvas id="divisionChart"></canvas>
                         </div>
+                        
+                        <!-- Monthly Trend Chart -->
                         <div class="chart-container">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-line text-green-600"></i>
+                                Monthly Work Order Trend
+                            </div>
+                            <canvas id="monthlyTrendChart"></canvas>
+                        </div>
+                        
+                        <!-- Company Distribution Chart -->
+                        <div class="chart-container">
+                            <div class="chart-title">
+                                <i class="fas fa-building text-purple-600"></i>
+                                Company-wise Distribution
+                            </div>
                             <canvas id="companyChart"></canvas>
                         </div>
-                        <div class="chart-container">
-                            <canvas id="timelineChart"></canvas>
+                        
+                        <!-- Completion Time Analysis -->
+                        <div class="chart-container lg:col-span-2">
+                            <div class="chart-title">
+                                <i class="fas fa-clock text-orange-600"></i>
+                                Completion Time Analysis (Days)
+                            </div>
+                            <canvas id="completionTimeChart"></canvas>
+                            <div class="text-sm text-gray-600 mt-3" id="completionTimeInfo"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Analytics Summary -->
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <i class="fas fa-chart-bar text-indigo-600"></i>
+                            Analytics Summary
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                            <div class="text-center p-4 bg-teal-50 rounded-lg">
+                                <div class="text-2xl font-bold text-teal-700" id="avgCompletionTime">0</div>
+                                <div class="text-sm text-teal-600">Avg. Completion (Days)</div>
+                            </div>
+                            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                <div class="text-2xl font-bold text-blue-700" id="mostActiveDivision">-</div>
+                                <div class="text-sm text-blue-600">Most Active Division</div>
+                            </div>
+                            <div class="text-center p-4 bg-green-50 rounded-lg">
+                                <div class="text-2xl font-bold text-green-700" id="completionRate">0%</div>
+                                <div class="text-sm text-green-600">Completion Rate</div>
+                            </div>
+                            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                                <div class="text-2xl font-bold text-purple-700" id="topCustomer">-</div>
+                                <div class="text-sm text-purple-600">Top Customer</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1214,6 +1396,49 @@
         </div>
     </div>
 
+    <!-- Status History Modal -->
+    <div id="statusHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <div class="bg-white rounded-xl shadow-2xl" id="statusHistoryModalContent">
+                <div class="sticky top-0 bg-white z-10 border-b">
+                    <div class="flex justify-between items-center p-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Status Change History</h2>
+                            <p class="text-gray-600 mt-1">Track all status changes across work orders</p>
+                        </div>
+                        <button id="closeStatusHistoryModal" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6 overflow-y-auto max-h-[60vh] custom-scrollbar">
+                    <div class="mb-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="relative">
+                                <select id="statusHistoryFilter" class="form-input-app py-2 px-3 pr-10">
+                                    <option value="all">All Status Changes</option>
+                                    <option value="Running">Running Only</option>
+                                    <option value="Done">Completed Only</option>
+                                    <option value="Close">Closed Only</option>
+                                </select>
+                                <i class="fas fa-filter absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <input type="text" 
+                                   id="statusHistorySearch" 
+                                   placeholder="Search by WO Number..." 
+                                   class="form-input-app py-2 px-3 flex-1">
+                        </div>
+                    </div>
+                    
+                    <div id="statusHistoryFeed" class="space-y-4">
+                        <!-- Status history items will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Add/Edit Work Order Modal -->
     <div id="workorderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="w-full max-w-6xl max-h-[90vh] overflow-hidden">
@@ -1233,6 +1458,7 @@
                 <div class="p-6 overflow-y-auto max-h-[60vh] custom-scrollbar">
                     <form id="workorderForm">
                         <input type="hidden" id="workorderId">
+                        <input type="hidden" id="originalStatus">
                         
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                             <!-- Column 1 -->
@@ -1293,6 +1519,8 @@
                                         <option value="Testcom">Testcom</option>
                                         <option value="Installation">Installation</option>
                                         <option value="Commissioning">Commissioning</option>
+                                        <option value="Engineering">Engineering</option>
+                                        <option value="Quality Control">Quality Control</option>
                                     </select>
                                 </div>
 
@@ -1304,6 +1532,8 @@
                                         <option value="">Select Company</option>
                                         <option value="Genetek Intratama">Genetek Intratama</option>
                                         <option value="Effrensindo Kencana">Effrensindo Kencana</option>
+                                        <option value="PT Genetek">PT Genetek</option>
+                                        <option value="CV Genetek Mandiri">CV Genetek Mandiri</option>
                                     </select>
                                 </div>
 
@@ -1311,11 +1541,16 @@
                                     <label class="form-label-app" for="workType">
                                         <span class="text-red-500">*</span> Jenis Pekerjaan
                                     </label>
-                                    <input type="text" 
-                                           id="workType" 
-                                           class="form-input-app w-full p-3"
-                                           required
-                                           placeholder="Enter work type">
+                                    <select id="workType" class="form-input-app w-full p-3" required>
+                                        <option value="">Select Work Type</option>
+                                        <option value="Preventive Maintenance">Preventive Maintenance</option>
+                                        <option value="Corrective Maintenance">Corrective Maintenance</option>
+                                        <option value="Installation">Installation</option>
+                                        <option value="Testing & Commissioning">Testing & Commissioning</option>
+                                        <option value="Troubleshooting">Troubleshooting</option>
+                                        <option value="Inspection">Inspection</option>
+                                        <option value="Calibration">Calibration</option>
+                                    </select>
                                 </div>
 
                                 <div class="form-group">
@@ -1329,6 +1564,9 @@
                                         <option value="Indra Kurniawan">Indra Kurniawan</option>
                                         <option value="Putra">Putra</option>
                                         <option value="Wahyu Sujoko">Wahyu Sujoko</option>
+                                        <option value="Galih">Galih</option>
+                                        <option value="Budi Santoso">Budi Santoso</option>
+                                        <option value="Ahmad Rizki">Ahmad Rizki</option>
                                     </select>
                                 </div>
                             </div>
@@ -1387,6 +1625,7 @@
                                         <option value="Normal">Normal</option>
                                         <option value="High">High</option>
                                         <option value="Urgent">Urgent</option>
+                                        <option value="Low">Low</option>
                                     </select>
                                 </div>
                             </div>
@@ -1502,6 +1741,14 @@
                         <div id="detailNotes" class="bg-gray-50 rounded-lg p-4 text-gray-700"></div>
                     </div>
 
+                    <!-- Status History Section -->
+                    <div class="mb-6">
+                        <label class="text-sm font-medium text-gray-500 mb-2 block">Status History</label>
+                        <div id="detailStatusHistory" class="space-y-3">
+                            <!-- Status history will be loaded here -->
+                        </div>
+                    </div>
+
                     <div class="flex justify-end gap-3 pt-6 mt-6 border-t">
                         <button type="button" 
                                 id="closeDetailBtn" 
@@ -1534,7 +1781,7 @@
 
     <script>
         // ==================== GLOBAL VARIABLES ====================
-        let db, auth, workordersCollection, activitiesCollection, usersCollection;
+        let db, auth, workordersCollection, activitiesCollection, usersCollection, statusHistoryCollection;
         let currentUser = null;
         let currentUserRole = 'user';
         let workorders = [];
@@ -1542,6 +1789,7 @@
         let currentView = 'card';
         let currentTab = 'all';
         let activeFilters = {};
+        let charts = {};
 
         // ==================== INITIALIZE FIREBASE ====================
         function initializeFirebase() {
@@ -1567,6 +1815,7 @@
                 workordersCollection = db.collection('workorders');
                 activitiesCollection = db.collection('activities');
                 usersCollection = db.collection('users');
+                statusHistoryCollection = db.collection('statusHistory');
                 
                 console.log('Firebase initialized successfully');
                 return true;
@@ -1610,6 +1859,29 @@
                 });
             } catch (e) {
                 return '-';
+            }
+        }
+
+        function formatTimeAgo(date) {
+            if (!date) return 'Just now';
+            try {
+                if (date.toDate) {
+                    date = date.toDate();
+                }
+                const now = new Date();
+                const diffMs = now - date;
+                const diffSec = Math.floor(diffMs / 1000);
+                const diffMin = Math.floor(diffSec / 60);
+                const diffHour = Math.floor(diffMin / 60);
+                const diffDay = Math.floor(diffHour / 24);
+                
+                if (diffSec < 60) return 'Just now';
+                if (diffMin < 60) return `${diffMin}m ago`;
+                if (diffHour < 24) return `${diffHour}h ago`;
+                if (diffDay < 7) return `${diffDay}d ago`;
+                return formatDate(date);
+            } catch (e) {
+                return 'Some time ago';
             }
         }
 
@@ -1657,6 +1929,71 @@
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
         }
 
+        // ==================== ROLE-BASED ACCESS CONTROL ====================
+        function setupUserRolePermissions() {
+            console.log('Setting up permissions for role:', currentUserRole);
+            
+            const exportBtn = document.getElementById('exportExcelBtn');
+            const newWorkOrderBtn = document.getElementById('newWorkOrderBtn');
+            
+            // Update user avatar color based on role
+            const userAvatar = document.getElementById('userAvatar');
+            if (userAvatar) {
+                userAvatar.className = 'w-10 h-10 rounded-full flex items-center justify-center';
+                if (currentUserRole === 'admin') {
+                    userAvatar.classList.add('bg-purple-500');
+                } else if (currentUserRole === 'manager') {
+                    userAvatar.classList.add('bg-blue-500');
+                } else {
+                    userAvatar.classList.add('bg-teal-500');
+                }
+            }
+            
+            // Update role badge
+            const roleBadge = document.getElementById('userRoleBadge');
+            if (roleBadge) {
+                roleBadge.className = `role-badge role-${currentUserRole}`;
+                roleBadge.textContent = currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1);
+            }
+            
+            // Set permissions based on role
+            switch(currentUserRole) {
+                case 'admin':
+                    // Admin can do everything
+                    if (exportBtn) exportBtn.classList.remove('hidden');
+                    if (newWorkOrderBtn) newWorkOrderBtn.classList.remove('hidden');
+                    break;
+                    
+                case 'manager':
+                    // Manager can create and edit, but cannot delete or export
+                    if (exportBtn) exportBtn.classList.add('hidden');
+                    if (newWorkOrderBtn) newWorkOrderBtn.classList.remove('hidden');
+                    break;
+                    
+                case 'user':
+                    // User can only view
+                    if (exportBtn) exportBtn.classList.add('hidden');
+                    if (newWorkOrderBtn) newWorkOrderBtn.classList.add('hidden');
+                    break;
+            }
+        }
+
+        function canCreateWorkOrder() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canEditWorkOrder() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canDeleteWorkOrder() {
+            return currentUserRole === 'admin';
+        }
+
+        function canExportData() {
+            return currentUserRole === 'admin';
+        }
+
         // ==================== AUTH FUNCTIONS ====================
         function setupAuthStateObserver() {
             if (!auth) {
@@ -1679,7 +2016,9 @@
                         
                         // Update UI
                         document.getElementById('userWelcome').textContent = user.email;
-                        document.getElementById('userRole').textContent = currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1);
+                        
+                        // Setup role-based permissions
+                        setupUserRolePermissions();
                         
                         // Show app page
                         document.getElementById('loginPage').classList.add('hidden');
@@ -1689,6 +2028,9 @@
                         initApp();
                         
                         showToast('Login successful! Welcome back.', 'success');
+                        
+                        // Log login activity
+                        logActivity('login', `User logged in: ${user.email}`);
                         
                     } catch (error) {
                         console.error('Error in auth observer:', error);
@@ -1783,15 +2125,22 @@
                     const userData = userDoc.data();
                     currentUserRole = userData.role || 'user';
                     console.log('User role from Firestore:', currentUserRole);
+                    
+                    // Update last login time
+                    await usersCollection.doc(userId).update({
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
                 } else {
                     // Create user document if it doesn't exist
                     console.log('Creating new user document...');
                     
                     // Default role based on email
                     let defaultRole = 'user';
-                    if (currentUser.email === 'admin@genetek.co.id' || currentUser.email === 'admin@genetek.co.id') {
+                    if (email === 'admin@genetek.co.id') {
                         defaultRole = 'admin';
-                    } else if (currentUser.email === 'm_husni@genetek.co.id') {
+                    } else if (email === 'm_husni@genetek.co.id') {
+                        defaultRole = 'manager';
+                    } else if (email === 'galih@genetek.co.id') {
                         defaultRole = 'user';
                     }
                     
@@ -1844,7 +2193,7 @@
             }
         }
 
-        // ==================== ACTIVITY FUNCTIONS ====================
+        // ==================== ACTIVITY & STATUS HISTORY FUNCTIONS ====================
         async function logActivity(action, details, workorderId = null) {
             try {
                 if (!currentUser) return;
@@ -1867,6 +2216,32 @@
                 
             } catch (error) {
                 console.error('Error logging activity:', error);
+            }
+        }
+
+        async function logStatusChange(workorderId, workOrderNumber, oldStatus, newStatus) {
+            try {
+                if (!currentUser) return;
+                
+                const statusChangeData = {
+                    workorderId: workorderId,
+                    workOrderNumber: workOrderNumber,
+                    oldStatus: oldStatus,
+                    newStatus: newStatus,
+                    changedBy: currentUser.email,
+                    userRole: currentUserRole,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await statusHistoryCollection.add(statusChangeData);
+                
+                // Update status history if modal is open
+                if (!document.getElementById('statusHistoryModal').classList.contains('hidden')) {
+                    loadStatusHistory();
+                }
+                
+            } catch (error) {
+                console.error('Error logging status change:', error);
             }
         }
 
@@ -1909,12 +2284,108 @@
             }
         }
 
+        async function loadStatusHistory(filter = 'all', searchTerm = '') {
+            try {
+                let query = statusHistoryCollection.orderBy('timestamp', 'desc').limit(50);
+                
+                if (filter !== 'all') {
+                    query = query.where('newStatus', '==', filter);
+                }
+                
+                const querySnapshot = await query.get();
+                const statusHistoryFeed = document.getElementById('statusHistoryFeed');
+                
+                if (!statusHistoryFeed) return;
+                
+                statusHistoryFeed.innerHTML = '';
+                
+                if (querySnapshot.empty) {
+                    statusHistoryFeed.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-exchange-alt text-4xl mb-4 opacity-30"></i>
+                            <p>No status change history recorded yet</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let filteredItems = [];
+                querySnapshot.forEach((doc) => {
+                    const statusChange = doc.data();
+                    
+                    // Apply search filter
+                    if (searchTerm && !statusChange.workOrderNumber.toLowerCase().includes(searchTerm.toLowerCase())) {
+                        return;
+                    }
+                    
+                    filteredItems.push(statusChange);
+                });
+                
+                if (filteredItems.length === 0) {
+                    statusHistoryFeed.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-search text-4xl mb-4 opacity-30"></i>
+                            <p>No status changes found matching your search</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                filteredItems.forEach((statusChange) => {
+                    const statusItem = createStatusHistoryItem(statusChange);
+                    statusHistoryFeed.appendChild(statusItem);
+                });
+                
+            } catch (error) {
+                console.error('Error loading status history:', error);
+                document.getElementById('statusHistoryFeed').innerHTML = `
+                    <div class="text-center py-8 text-red-500">
+                        <i class="fas fa-exclamation-circle text-2xl mb-2"></i>
+                        <p>Failed to load status history</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadWorkOrderStatusHistory(workorderId) {
+            try {
+                const querySnapshot = await statusHistoryCollection
+                    .where('workorderId', '==', workorderId)
+                    .orderBy('timestamp', 'desc')
+                    .get();
+                
+                const container = document.getElementById('detailStatusHistory');
+                if (!container) return;
+                
+                container.innerHTML = '';
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = `
+                        <div class="text-center py-4 text-gray-500">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            No status change history available
+                        </div>
+                    `;
+                    return;
+                }
+                
+                querySnapshot.forEach((doc) => {
+                    const statusChange = doc.data();
+                    const statusItem = createWorkOrderStatusHistoryItem(statusChange);
+                    container.appendChild(statusItem);
+                });
+                
+            } catch (error) {
+                console.error('Error loading work order status history:', error);
+            }
+        }
+
         function createActivityItem(activity) {
             const item = document.createElement('div');
             item.className = 'flex items-start gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors';
             
             const icon = getActivityIcon(activity.action);
-            const timeAgo = getTimeAgo(activity.timestamp);
+            const timeAgo = formatTimeAgo(activity.timestamp);
             
             item.innerHTML = `
                 <div class="w-10 h-10 rounded-full ${getUserColor(activity.userRole)} flex items-center justify-center flex-shrink-0">
@@ -1938,6 +2409,60 @@
             return item;
         }
 
+        function createStatusHistoryItem(statusChange) {
+            const item = document.createElement('div');
+            item.className = 'flex items-start gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors';
+            
+            const timeAgo = formatTimeAgo(statusChange.timestamp);
+            const statusColor = getStatusColor(statusChange.newStatus);
+            
+            item.innerHTML = `
+                <div class="w-10 h-10 rounded-full ${statusColor} flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-exchange-alt text-white"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900">
+                        Status changed from 
+                        <span class="font-bold ${getStatusTextColor(statusChange.oldStatus)}">${statusChange.oldStatus}</span>
+                        to
+                        <span class="font-bold ${getStatusTextColor(statusChange.newStatus)}">${statusChange.newStatus}</span>
+                    </p>
+                    <p class="text-sm text-gray-600 mt-1">Work Order: ${statusChange.workOrderNumber}</p>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-xs text-gray-500">
+                            <i class="fas fa-user mr-1"></i>
+                            ${statusChange.changedBy} (${statusChange.userRole})
+                        </span>
+                        <span class="text-xs text-gray-500">
+                            <i class="far fa-clock mr-1"></i>
+                            ${timeAgo}
+                        </span>
+                    </div>
+                </div>
+            `;
+            
+            return item;
+        }
+
+        function createWorkOrderStatusHistoryItem(statusChange) {
+            const item = document.createElement('div');
+            item.className = `status-history-item ${statusChange.newStatus.toLowerCase()}`;
+            
+            const timeAgo = formatTimeAgo(statusChange.timestamp);
+            
+            item.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="font-medium text-gray-900">Status changed to <span class="font-bold">${statusChange.newStatus}</span></span>
+                        <p class="text-xs text-gray-600 mt-1">Changed by: ${statusChange.changedBy} (${statusChange.userRole})</p>
+                    </div>
+                    <span class="text-xs text-gray-500">${timeAgo}</span>
+                </div>
+            `;
+            
+            return item;
+        }
+
         function getActivityIcon(action) {
             const icons = {
                 'create': 'fa-plus-circle',
@@ -1946,30 +2471,35 @@
                 'login': 'fa-sign-in-alt',
                 'logout': 'fa-sign-out-alt',
                 'export': 'fa-file-export',
-                'view': 'fa-eye'
+                'view': 'fa-eye',
+                'status_change': 'fa-exchange-alt'
             };
             return icons[action.toLowerCase()] || 'fa-history';
         }
 
         function getUserColor(role) {
-            return role === 'admin' ? 'bg-teal-500' : 'bg-blue-500';
+            switch(role) {
+                case 'admin': return 'bg-purple-500';
+                case 'manager': return 'bg-blue-500';
+                default: return 'bg-teal-500';
+            }
         }
 
-        function getTimeAgo(timestamp) {
-            if (!timestamp) return 'Just now';
-            
-            try {
-                const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-                const now = new Date();
-                const seconds = Math.floor((now - date) / 1000);
-                
-                if (seconds < 60) return 'Just now';
-                if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-                if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-                if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
-                return date.toLocaleDateString();
-            } catch (e) {
-                return 'Some time ago';
+        function getStatusColor(status) {
+            switch(status.toLowerCase()) {
+                case 'running': return 'bg-teal-500';
+                case 'done': return 'bg-green-500';
+                case 'close': return 'bg-gray-500';
+                default: return 'bg-gray-500';
+            }
+        }
+
+        function getStatusTextColor(status) {
+            switch(status.toLowerCase()) {
+                case 'running': return 'text-teal-600';
+                case 'done': return 'text-green-600';
+                case 'close': return 'text-gray-600';
+                default: return 'text-gray-600';
             }
         }
 
@@ -2053,7 +2583,8 @@
                     (wo.customer && wo.customer.toLowerCase().includes(searchTerm)) ||
                     (wo.building && wo.building.toLowerCase().includes(searchTerm)) ||
                     (wo.personnel && wo.personnel.toLowerCase().includes(searchTerm)) ||
-                    (wo.workType && wo.workType.toLowerCase().includes(searchTerm))
+                    (wo.workType && wo.workType.toLowerCase().includes(searchTerm)) ||
+                    (wo.division && wo.division.toLowerCase().includes(searchTerm))
                 );
             }
             
@@ -2107,10 +2638,11 @@
                         <i class="fas fa-inbox text-5xl mb-4 opacity-30"></i>
                         <p class="text-lg font-medium">No work orders found</p>
                         <p class="text-sm mt-1">Try adjusting your search or filters</p>
+                        ${canCreateWorkOrder() ? `
                         <button id="createFirstWorkOrder" class="mt-6 btn btn-primary">
                             <i class="fas fa-plus"></i>
                             Create First Work Order
-                        </button>
+                        </button>` : ''}
                     </div>
                 `;
                 
@@ -2235,7 +2767,7 @@
                         <button class="view-detail-btn px-3 py-1 bg-teal-100 text-teal-700 rounded text-xs hover:bg-teal-200 transition-colors" data-id="${workorder.id}">
                             <i class="fas fa-eye mr-1"></i> View
                         </button>
-                        ${currentUserRole === 'admin' ? `
+                        ${canEditWorkOrder() ? `
                         <button class="edit-workorder-btn px-3 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition-colors" data-id="${workorder.id}">
                             <i class="fas fa-edit mr-1"></i> Edit
                         </button>` : ''}
@@ -2244,15 +2776,6 @@
             `;
             
             return item;
-        }
-
-        function getStatusColor(status) {
-            switch(status.toLowerCase()) {
-                case 'running': return 'bg-teal-500';
-                case 'done': return 'bg-green-500';
-                case 'close': return 'bg-gray-500';
-                default: return 'bg-gray-500';
-            }
         }
 
         function createWorkOrderCard(workorder) {
@@ -2310,10 +2833,11 @@
                             <button class="view-detail-btn p-2 text-teal-600 hover:bg-teal-50 rounded-lg transition-colors">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            ${currentUserRole === 'admin' ? `
+                            ${canEditWorkOrder() ? `
                             <button class="edit-workorder-btn p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
                                 <i class="fas fa-edit"></i>
-                            </button>
+                            </button>` : ''}
+                            ${canDeleteWorkOrder() ? `
                             <button class="delete-workorder-btn p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                                 <i class="fas fa-trash"></i>
                             </button>` : ''}
@@ -2378,10 +2902,11 @@
                             <button class="view-detail-btn p-2 text-teal-600 hover:bg-teal-50 rounded-lg">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            ${currentUserRole === 'admin' ? `
+                            ${canEditWorkOrder() ? `
                             <button class="edit-workorder-btn p-2 text-green-600 hover:bg-green-50 rounded-lg">
                                 <i class="fas fa-edit"></i>
-                            </button>
+                            </button>` : ''}
+                            ${canDeleteWorkOrder() ? `
                             <button class="delete-workorder-btn p-2 text-red-600 hover:bg-red-50 rounded-lg">
                                 <i class="fas fa-trash"></i>
                             </button>` : ''}
@@ -2401,13 +2926,460 @@
             switch(priority) {
                 case 'High': return 'bg-orange-100 text-orange-800';
                 case 'Urgent': return 'bg-red-100 text-red-800';
+                case 'Low': return 'bg-gray-100 text-gray-800';
                 default: return 'bg-teal-100 text-teal-800';
             }
+        }
+
+        // ==================== ANALYTICS FUNCTIONS ====================
+        async function loadAnalytics() {
+            console.log('Loading analytics data...');
+            showLoading();
+            
+            try {
+                // Get all work orders for analytics
+                const querySnapshot = await workordersCollection.get();
+                const allWorkOrders = [];
+                querySnapshot.forEach((doc) => {
+                    allWorkOrders.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                // Update data updated time
+                document.getElementById('dataUpdatedTime').textContent = new Date().toLocaleString('id-ID');
+                
+                // Generate charts
+                generateStatusChart(allWorkOrders);
+                generateDivisionChart(allWorkOrders);
+                generateMonthlyTrendChart(allWorkOrders);
+                generateCompanyChart(allWorkOrders);
+                generateCompletionTimeChart(allWorkOrders);
+                
+                // Update analytics summary
+                updateAnalyticsSummary(allWorkOrders);
+                
+                showToast('Analytics data loaded successfully', 'success');
+                
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                showToast('Failed to load analytics data', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function generateStatusChart(workOrders) {
+            const ctx = document.getElementById('statusChart');
+            if (!ctx) return;
+            
+            // Destroy existing chart if it exists
+            if (charts.statusChart) {
+                charts.statusChart.destroy();
+            }
+            
+            // Count by status
+            const statusCounts = {
+                'Running': 0,
+                'Done': 0,
+                'Close': 0
+            };
+            
+            workOrders.forEach(wo => {
+                if (statusCounts[wo.status] !== undefined) {
+                    statusCounts[wo.status]++;
+                }
+            });
+            
+            const total = workOrders.length;
+            const completionRate = total > 0 ? Math.round((statusCounts['Done'] / total) * 100) : 0;
+            
+            // Update chart info
+            document.getElementById('statusChartInfo').innerHTML = `
+                <div class="grid grid-cols-3 gap-2 text-xs">
+                    <div class="text-center">
+                        <div class="font-semibold text-teal-600">${statusCounts['Running']}</div>
+                        <div class="text-gray-500">Running</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="font-semibold text-green-600">${statusCounts['Done']}</div>
+                        <div class="text-gray-500">Done</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="font-semibold text-gray-600">${statusCounts['Close']}</div>
+                        <div class="text-gray-500">Closed</div>
+                    </div>
+                </div>
+            `;
+            
+            charts.statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Running', 'Done', 'Closed'],
+                    datasets: [{
+                        data: [statusCounts['Running'], statusCounts['Done'], statusCounts['Close']],
+                        backgroundColor: [
+                            'rgba(32, 201, 172, 0.8)',  // Tosca
+                            'rgba(16, 185, 129, 0.8)',  // Green
+                            'rgba(107, 114, 128, 0.8)'  // Gray
+                        ],
+                        borderColor: [
+                            'rgb(32, 201, 172)',
+                            'rgb(16, 185, 129)',
+                            'rgb(107, 114, 128)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        title: {
+                            display: true,
+                            text: `Completion Rate: ${completionRate}%`,
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        }
+
+        function generateDivisionChart(workOrders) {
+            const ctx = document.getElementById('divisionChart');
+            if (!ctx) return;
+            
+            if (charts.divisionChart) {
+                charts.divisionChart.destroy();
+            }
+            
+            // Count by division
+            const divisionCounts = {};
+            workOrders.forEach(wo => {
+                if (wo.division) {
+                    divisionCounts[wo.division] = (divisionCounts[wo.division] || 0) + 1;
+                }
+            });
+            
+            // Sort by count
+            const sortedDivisions = Object.entries(divisionCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 8); // Top 8 divisions
+            
+            const colors = generateColors(sortedDivisions.length);
+            
+            charts.divisionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedDivisions.map(d => d[0]),
+                    datasets: [{
+                        label: 'Work Orders',
+                        data: sortedDivisions.map(d => d[1]),
+                        backgroundColor: colors,
+                        borderColor: colors.map(c => c.replace('0.8', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Work Orders'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateMonthlyTrendChart(workOrders) {
+            const ctx = document.getElementById('monthlyTrendChart');
+            if (!ctx) return;
+            
+            if (charts.monthlyTrendChart) {
+                charts.monthlyTrendChart.destroy();
+            }
+            
+            // Group by month
+            const monthlyData = {};
+            workOrders.forEach(wo => {
+                if (wo.createdAt) {
+                    const date = wo.createdAt.toDate();
+                    const monthYear = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                    monthlyData[monthYear] = (monthlyData[monthYear] || 0) + 1;
+                }
+            });
+            
+            // Sort by date
+            const sortedMonths = Object.keys(monthlyData).sort();
+            const last6Months = sortedMonths.slice(-6); // Last 6 months
+            
+            charts.monthlyTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: last6Months.map(m => {
+                        const [year, month] = m.split('-');
+                        return `${month}/${year.slice(2)}`;
+                    }),
+                    datasets: [{
+                        label: 'Work Orders Created',
+                        data: last6Months.map(m => monthlyData[m] || 0),
+                        borderColor: 'rgb(32, 201, 172)',
+                        backgroundColor: 'rgba(32, 201, 172, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Work Orders'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateCompanyChart(workOrders) {
+            const ctx = document.getElementById('companyChart');
+            if (!ctx) return;
+            
+            if (charts.companyChart) {
+                charts.companyChart.destroy();
+            }
+            
+            // Count by company
+            const companyCounts = {};
+            workOrders.forEach(wo => {
+                if (wo.company) {
+                    companyCounts[wo.company] = (companyCounts[wo.company] || 0) + 1;
+                }
+            });
+            
+            const colors = generateColors(Object.keys(companyCounts).length);
+            
+            charts.companyChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(companyCounts),
+                    datasets: [{
+                        data: Object.values(companyCounts),
+                        backgroundColor: colors,
+                        borderColor: colors.map(c => c.replace('0.8', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateCompletionTimeChart(workOrders) {
+            const ctx = document.getElementById('completionTimeChart');
+            if (!ctx) return;
+            
+            if (charts.completionTimeChart) {
+                charts.completionTimeChart.destroy();
+            }
+            
+            // Calculate completion time for completed work orders
+            const completionTimes = [];
+            workOrders.forEach(wo => {
+                if (wo.status === 'Done' && wo.startDate && wo.endDate) {
+                    const start = wo.startDate.toDate();
+                    const end = wo.endDate.toDate();
+                    const diffTime = Math.abs(end - start);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    completionTimes.push(diffDays);
+                }
+            });
+            
+            // Group completion times
+            const timeGroups = {
+                '0-1 days': 0,
+                '2-3 days': 0,
+                '4-7 days': 0,
+                '1-2 weeks': 0,
+                '2+ weeks': 0
+            };
+            
+            completionTimes.forEach(days => {
+                if (days <= 1) timeGroups['0-1 days']++;
+                else if (days <= 3) timeGroups['2-3 days']++;
+                else if (days <= 7) timeGroups['4-7 days']++;
+                else if (days <= 14) timeGroups['1-2 weeks']++;
+                else timeGroups['2+ weeks']++;
+            });
+            
+            // Calculate average completion time
+            const avgCompletionTime = completionTimes.length > 0 
+                ? Math.round(completionTimes.reduce((a, b) => a + b, 0) / completionTimes.length * 10) / 10
+                : 0;
+            
+            // Update completion time info
+            document.getElementById('completionTimeInfo').innerHTML = `
+                <div class="text-center">
+                    <div class="font-semibold text-teal-600">Average Completion Time: ${avgCompletionTime} days</div>
+                    <div class="text-xs text-gray-500">Based on ${completionTimes.length} completed work orders</div>
+                </div>
+            `;
+            
+            charts.completionTimeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(timeGroups),
+                    datasets: [{
+                        label: 'Number of Work Orders',
+                        data: Object.values(timeGroups),
+                        backgroundColor: 'rgba(32, 201, 172, 0.8)',
+                        borderColor: 'rgb(32, 201, 172)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Work Orders'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateColors(count) {
+            const baseColors = [
+                'rgba(32, 201, 172, 0.8)',   // Tosca
+                'rgba(16, 185, 129, 0.8)',   // Green
+                'rgba(245, 158, 11, 0.8)',   // Yellow/Orange
+                'rgba(239, 68, 68, 0.8)',    // Red
+                'rgba(139, 92, 246, 0.8)',   // Purple
+                'rgba(14, 165, 233, 0.8)',   // Blue
+                'rgba(251, 191, 36, 0.8)',   // Amber
+                'rgba(34, 197, 94, 0.8)'     // Emerald
+            ];
+            
+            // Repeat colors if needed
+            const colors = [];
+            for (let i = 0; i < count; i++) {
+                colors.push(baseColors[i % baseColors.length]);
+            }
+            return colors;
+        }
+
+        function updateAnalyticsSummary(workOrders) {
+            // Calculate average completion time
+            const completedOrders = workOrders.filter(wo => wo.status === 'Done');
+            const completionTimes = [];
+            completedOrders.forEach(wo => {
+                if (wo.startDate && wo.endDate) {
+                    const start = wo.startDate.toDate();
+                    const end = wo.endDate.toDate();
+                    const diffTime = Math.abs(end - start);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    completionTimes.push(diffDays);
+                }
+            });
+            
+            const avgCompletionTime = completionTimes.length > 0 
+                ? Math.round(completionTimes.reduce((a, b) => a + b, 0) / completionTimes.length * 10) / 10
+                : 0;
+            
+            // Find most active division
+            const divisionCounts = {};
+            workOrders.forEach(wo => {
+                if (wo.division) {
+                    divisionCounts[wo.division] = (divisionCounts[wo.division] || 0) + 1;
+                }
+            });
+            
+            let mostActiveDivision = '-';
+            let maxCount = 0;
+            Object.entries(divisionCounts).forEach(([division, count]) => {
+                if (count > maxCount) {
+                    maxCount = count;
+                    mostActiveDivision = division;
+                }
+            });
+            
+            // Calculate completion rate
+            const totalOrders = workOrders.length;
+            const completedCount = completedOrders.length;
+            const completionRate = totalOrders > 0 ? Math.round((completedCount / totalOrders) * 100) : 0;
+            
+            // Find top customer
+            const customerCounts = {};
+            workOrders.forEach(wo => {
+                if (wo.customer) {
+                    customerCounts[wo.customer] = (customerCounts[wo.customer] || 0) + 1;
+                }
+            });
+            
+            let topCustomer = '-';
+            let topCustomerCount = 0;
+            Object.entries(customerCounts).forEach(([customer, count]) => {
+                if (count > topCustomerCount) {
+                    topCustomerCount = count;
+                    topCustomer = customer;
+                }
+            });
+            
+            // Update summary elements
+            document.getElementById('avgCompletionTime').textContent = avgCompletionTime;
+            document.getElementById('mostActiveDivision').textContent = mostActiveDivision;
+            document.getElementById('completionRate').textContent = `${completionRate}%`;
+            document.getElementById('topCustomer').textContent = topCustomer;
         }
 
         // ==================== MODAL FUNCTIONS ====================
         function createNewWorkOrder() {
             console.log('Creating new work order');
+            
+            if (!canCreateWorkOrder()) {
+                showToast('You do not have permission to create work orders', 'warning');
+                return;
+            }
+            
             openWorkOrderModal();
         }
 
@@ -2420,14 +3392,12 @@
             // Reset form
             document.getElementById('workorderForm').reset();
             document.getElementById('workorderId').value = '';
+            document.getElementById('originalStatus').value = '';
             
-            // Hide edit/delete buttons for users (non-admin)
-            if (currentUserRole !== 'admin') {
-                // User can only create new, not edit
-                if (workorderId) {
-                    showToast('Only admins can edit work orders', 'warning');
-                    return;
-                }
+            // Check permissions for edit
+            if (workorderId && !canEditWorkOrder()) {
+                showToast('You do not have permission to edit work orders', 'warning');
+                return;
             }
             
             if (workorderId) {
@@ -2436,6 +3406,7 @@
                 const workorder = workorders.find(wo => wo.id === workorderId);
                 if (workorder) {
                     populateModalForm(workorder);
+                    document.getElementById('originalStatus').value = workorder.status;
                 }
             } else {
                 // Create mode
@@ -2500,6 +3471,7 @@
             }
             
             const workorderId = document.getElementById('workorderId').value;
+            const originalStatus = document.getElementById('originalStatus').value;
             const isEdit = !!workorderId;
             
             const workorderData = {
@@ -2536,6 +3508,15 @@
                 if (isEdit) {
                     // Update existing work order
                     await workordersCollection.doc(workorderId).update(workorderData);
+                    
+                    // Log status change if status was modified
+                    const newStatus = workorderData.status;
+                    if (originalStatus !== newStatus) {
+                        const workOrderNumber = workorderData.workOrderNumber;
+                        await logStatusChange(workorderId, workOrderNumber, originalStatus, newStatus);
+                        logActivity('status_change', `Status changed from ${originalStatus} to ${newStatus} for ${workOrderNumber}`, workorderId);
+                    }
+                    
                     showToast('Work order updated successfully', 'success');
                     logActivity('update', `Updated work order ${workorderData.workOrderNumber}`, workorderId);
                 } else {
@@ -2543,6 +3524,10 @@
                     workorderData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                     workorderData.createdBy = currentUser.email;
                     const result = await workordersCollection.add(workorderData);
+                    
+                    // Log initial status
+                    await logStatusChange(result.id, workorderData.workOrderNumber, 'New', workorderData.status);
+                    
                     showToast('Work order created successfully', 'success');
                     logActivity('create', `Created new work order ${workorderData.workOrderNumber}`, result.id);
                 }
@@ -2597,12 +3582,15 @@
             const editBtn = document.getElementById('editDetailBtn');
             editBtn.dataset.id = workorderId;
             
-            // Hide edit button for non-admin users
-            if (currentUserRole !== 'admin') {
+            // Hide edit button for non-editable roles
+            if (!canEditWorkOrder()) {
                 editBtn.style.display = 'none';
             } else {
                 editBtn.style.display = 'inline-flex';
             }
+            
+            // Load status history
+            loadWorkOrderStatusHistory(workorderId);
             
             modal.classList.remove('hidden');
             
@@ -2617,11 +3605,19 @@
         function openAnalyticsModal() {
             console.log('Opening analytics modal');
             document.getElementById('analyticsModal').classList.remove('hidden');
-            showToast('Analytics feature coming soon!', 'info');
+            loadAnalytics();
         }
 
         function closeAnalyticsModal() {
             document.getElementById('analyticsModal').classList.add('hidden');
+            
+            // Destroy all charts to free memory
+            Object.values(charts).forEach(chart => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+            charts = {};
         }
 
         function openActivityModal() {
@@ -2634,7 +3630,22 @@
             document.getElementById('activityModal').classList.add('hidden');
         }
 
+        function openStatusHistoryModal() {
+            console.log('Opening status history modal');
+            document.getElementById('statusHistoryModal').classList.remove('hidden');
+            loadStatusHistory();
+        }
+
+        function closeStatusHistoryModal() {
+            document.getElementById('statusHistoryModal').classList.add('hidden');
+        }
+
         async function deleteWorkOrder(workorderId) {
+            if (!canDeleteWorkOrder()) {
+                showToast('You do not have permission to delete work orders', 'warning');
+                return;
+            }
+            
             if (!confirm('Are you sure you want to delete this work order?')) return;
             
             try {
@@ -2653,7 +3664,7 @@
         function exportToExcel() {
             console.log('Exporting to Excel');
             
-            if (currentUserRole !== 'admin') {
+            if (!canExportData()) {
                 showToast('Only admins can export data', 'warning');
                 return;
             }
@@ -2681,7 +3692,9 @@
                     'Priority': wo.priority || '',
                     'Notes': wo.notes || '',
                     'Created At': formatDateTime(wo.createdAt),
-                    'Created By': wo.createdBy || ''
+                    'Created By': wo.createdBy || '',
+                    'Last Updated': formatDateTime(wo.updatedAt),
+                    'Updated By': wo.updatedBy || ''
                 }));
                 
                 // Create worksheet
@@ -2719,6 +3732,7 @@
             document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
             document.getElementById('analyticsBtn').addEventListener('click', openAnalyticsModal);
             document.getElementById('activityBtn').addEventListener('click', openActivityModal);
+            document.getElementById('statusHistoryBtn').addEventListener('click', openStatusHistoryModal);
             document.getElementById('authButton').addEventListener('click', logout);
             
             // Search
@@ -2773,6 +3787,22 @@
             
             // Activity modal
             document.getElementById('closeActivityModal').addEventListener('click', closeActivityModal);
+            
+            // Status History modal
+            document.getElementById('closeStatusHistoryModal').addEventListener('click', closeStatusHistoryModal);
+            
+            // Status History filters
+            document.getElementById('statusHistoryFilter').addEventListener('change', function() {
+                const filter = this.value;
+                const searchTerm = document.getElementById('statusHistorySearch').value;
+                loadStatusHistory(filter, searchTerm);
+            });
+            
+            document.getElementById('statusHistorySearch').addEventListener('input', function() {
+                const filter = document.getElementById('statusHistoryFilter').value;
+                const searchTerm = this.value;
+                loadStatusHistory(filter, searchTerm);
+            });
             
             // Close modals when clicking outside
             document.querySelectorAll('.fixed').forEach(modal => {
@@ -2838,113 +3868,14 @@
             // Setup auth state observer
             setupAuthStateObserver();
             
-            // Setup default users (for testing)
-            setupDefaultUsers();
-            
-            // Add CSS animations
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes shake {
-                    0%, 100% { transform: translateX(0); }
-                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                    20%, 40%, 60%, 80% { transform: translateX(5px); }
-                }
-                
-                .view-toggle {
-                    display: flex;
-                    gap: 0.5rem;
-                }
-                
-                .view-toggle-btn {
-                    padding: 0.75rem 1.5rem;
-                    border-radius: 8px;
-                    background: #f8fafc;
-                    border: 1px solid #e5e7eb;
-                    cursor: pointer;
-                    transition: all 0.3s;
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    font-weight: 500;
-                }
-
-                .view-toggle-btn.active {
-                    background: var(--primary-color);
-                    color: white;
-                    border-color: var(--primary-color);
-                }
-                
-                .chart-container {
-                    background: white;
-                    border-radius: 12px;
-                    padding: 1.5rem;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-                }
-                
-                .detail-item {
-                    margin-bottom: 1rem;
-                }
-                
-                .detail-item label {
-                    display: block;
-                    margin-bottom: 0.25rem;
-                }
-                
-                .detail-item p {
-                    font-size: 0.95rem;
-                    color: #1f2937;
-                }
-                
-                .animate-spin-slow {
-                    animation: spin 20s linear infinite;
-                }
-                
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-            `;
-            document.head.appendChild(style);
+            // NO AUTO USER CREATION - Users should be created manually in Firebase Console
             
             console.log('System initialization complete');
+            console.log('Note: Create users manually in Firebase Authentication Console');
+            console.log('1. admin@genetek.co.id (role: admin)');
+            console.log('2. m_husni@genetek.co.id (role: manager)');
+            console.log('3. galih@genetek.co.id (role: user)');
         });
-
-        // Function to setup default users (for testing)
-        async function setupDefaultUsers() {
-            try {
-                // Default admin user
-                const adminEmail = 'admin@genetek.com';
-                const adminPassword = 'Admin123!';
-                
-                // Default regular user
-                const userEmail = 'm_husni@genetek.co.id';
-                const userPassword = 'Husni123!';
-                
-                // Try to create users if they don't exist
-                try {
-                    // Create admin user
-                    await auth.createUserWithEmailAndPassword(adminEmail, adminPassword);
-                    console.log('Admin user created/verified');
-                } catch (error) {
-                    if (error.code !== 'auth/email-already-in-use') {
-                        console.log('Admin user exists or error:', error.message);
-                    }
-                }
-                
-                try {
-                    // Create regular user
-                    await auth.createUserWithEmailAndPassword(userEmail, userPassword);
-                    console.log('Regular user created/verified');
-                } catch (error) {
-                    if (error.code !== 'auth/email-already-in-use') {
-                        console.log('Regular user exists or error:', error.message);
-                    }
-                }
-                
-            } catch (error) {
-                console.log('User setup note:', error.message);
-            }
-        }
 
     </script>
 </body>
