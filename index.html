@@ -1072,20 +1072,20 @@
                             <span>Export Excel</span>
                         </button>
                         
-                        <!-- Analytics - untuk semua role -->
-                        <button id="analyticsBtn" class="btn btn-warning shadow-lg text-sm py-2 px-4">
+                        <!-- Analytics - untuk admin dan manager saja -->
+                        <button id="analyticsBtn" class="btn btn-warning shadow-lg text-sm py-2 px-4 hidden">
                             <i class="fas fa-chart-bar"></i>
                             <span>Analytics</span>
                         </button>
                         
-                        <!-- Recent Activity - untuk semua role -->
-                        <button id="activityBtn" class="btn btn-secondary shadow-lg text-sm py-2 px-4">
+                        <!-- Recent Activity - untuk admin dan manager saja -->
+                        <button id="activityBtn" class="btn btn-secondary shadow-lg text-sm py-2 px-4 hidden">
                             <i class="fas fa-history"></i>
                             <span>Recent Activity</span>
                         </button>
                         
-                        <!-- Status History - untuk semua role -->
-                        <button id="statusHistoryBtn" class="btn btn-primary shadow-lg text-sm py-2 px-4">
+                        <!-- Status History - untuk admin dan manager saja -->
+                        <button id="statusHistoryBtn" class="btn btn-primary shadow-lg text-sm py-2 px-4 hidden">
                             <i class="fas fa-exchange-alt"></i>
                             <span>Status History</span>
                         </button>
@@ -1935,6 +1935,9 @@
             
             const exportBtn = document.getElementById('exportExcelBtn');
             const newWorkOrderBtn = document.getElementById('newWorkOrderBtn');
+            const analyticsBtn = document.getElementById('analyticsBtn');
+            const activityBtn = document.getElementById('activityBtn');
+            const statusHistoryBtn = document.getElementById('statusHistoryBtn');
             
             // Update user avatar color based on role
             const userAvatar = document.getElementById('userAvatar');
@@ -1956,24 +1959,39 @@
                 roleBadge.textContent = currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1);
             }
             
+            // Reset semua tombol dulu
+            if (exportBtn) exportBtn.classList.add('hidden');
+            if (newWorkOrderBtn) newWorkOrderBtn.classList.add('hidden');
+            if (analyticsBtn) analyticsBtn.classList.add('hidden');
+            if (activityBtn) activityBtn.classList.add('hidden');
+            if (statusHistoryBtn) statusHistoryBtn.classList.add('hidden');
+            
             // Set permissions based on role
             switch(currentUserRole) {
                 case 'admin':
-                    // Admin can do everything
+                    // Admin bisa semua
                     if (exportBtn) exportBtn.classList.remove('hidden');
                     if (newWorkOrderBtn) newWorkOrderBtn.classList.remove('hidden');
+                    if (analyticsBtn) analyticsBtn.classList.remove('hidden');
+                    if (activityBtn) activityBtn.classList.remove('hidden');
+                    if (statusHistoryBtn) statusHistoryBtn.classList.remove('hidden');
                     break;
                     
                 case 'manager':
-                    // Manager can create and edit, but cannot delete or export
-                    if (exportBtn) exportBtn.classList.add('hidden');
+                    // Manager bisa create, edit, analytics, activity, status history
                     if (newWorkOrderBtn) newWorkOrderBtn.classList.remove('hidden');
+                    if (analyticsBtn) analyticsBtn.classList.remove('hidden');
+                    if (activityBtn) activityBtn.classList.remove('hidden');
+                    if (statusHistoryBtn) statusHistoryBtn.classList.remove('hidden');
                     break;
                     
                 case 'user':
-                    // User can only view
-                    if (exportBtn) exportBtn.classList.add('hidden');
-                    if (newWorkOrderBtn) newWorkOrderBtn.classList.add('hidden');
+                    // User hanya bisa view (semua tombol feature tetap hidden)
+                    // Tombol New Work Order, Export, Analytics, Activity, Status History tetap hidden
+                    break;
+                    
+                default:
+                    // Default seperti user
                     break;
             }
         }
@@ -1992,6 +2010,18 @@
 
         function canExportData() {
             return currentUserRole === 'admin';
+        }
+
+        function canViewAnalytics() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canViewActivity() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canViewStatusHistory() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
         }
 
         // ==================== AUTH FUNCTIONS ====================
@@ -2134,14 +2164,18 @@
                     // Create user document if it doesn't exist
                     console.log('Creating new user document...');
                     
-                    // Default role based on email
+                    // Default role based on email - FIXED FOR SPECIFIC USERS
                     let defaultRole = 'user';
-                    if (email === 'admin@genetek.co.id') {
+                    
+                    if (currentUser.email === 'admin@genetek.co.id') {
                         defaultRole = 'admin';
-                    } else if (email === 'm_husni@genetek.co.id') {
+                        console.log('Setting role to admin for admin@genetek.co.id');
+                    } else if (currentUser.email === 'm_husni@genetek.co.id') {
                         defaultRole = 'manager';
-                    } else if (email === 'galih@genetek.co.id') {
+                        console.log('Setting role to manager for m_husni@genetek.co.id');
+                    } else if (currentUser.email === 'galih@genetek.co.id') {
                         defaultRole = 'user';
+                        console.log('Setting role to user for galih@genetek.co.id');
                     }
                     
                     await usersCollection.doc(userId).set({
@@ -3604,6 +3638,12 @@
 
         function openAnalyticsModal() {
             console.log('Opening analytics modal');
+            
+            if (!canViewAnalytics()) {
+                showToast('You do not have permission to view analytics', 'warning');
+                return;
+            }
+            
             document.getElementById('analyticsModal').classList.remove('hidden');
             loadAnalytics();
         }
@@ -3622,6 +3662,12 @@
 
         function openActivityModal() {
             console.log('Opening activity modal');
+            
+            if (!canViewActivity()) {
+                showToast('You do not have permission to view activity logs', 'warning');
+                return;
+            }
+            
             document.getElementById('activityModal').classList.remove('hidden');
             loadRecentActivities();
         }
@@ -3632,6 +3678,12 @@
 
         function openStatusHistoryModal() {
             console.log('Opening status history modal');
+            
+            if (!canViewStatusHistory()) {
+                showToast('You do not have permission to view status history', 'warning');
+                return;
+            }
+            
             document.getElementById('statusHistoryModal').classList.remove('hidden');
             loadStatusHistory();
         }
@@ -3868,13 +3920,7 @@
             // Setup auth state observer
             setupAuthStateObserver();
             
-            // NO AUTO USER CREATION - Users should be created manually in Firebase Console
-            
             console.log('System initialization complete');
-            console.log('Note: Create users manually in Firebase Authentication Console');
-            console.log('1. admin@genetek.co.id (role: admin)');
-            console.log('2. m_husni@genetek.co.id (role: manager)');
-            console.log('3. galih@genetek.co.id (role: user)');
         });
 
     </script>
