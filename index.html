@@ -1517,10 +1517,6 @@
                                         <option value="">Select Division</option>
                                         <option value="Maintenance">Maintenance</option>
                                         <option value="Testcom">Testcom</option>
-                                        <option value="Installation">Installation</option>
-                                        <option value="Commissioning">Commissioning</option>
-                                        <option value="Engineering">Engineering</option>
-                                        <option value="Quality Control">Quality Control</option>
                                     </select>
                                 </div>
 
@@ -1532,8 +1528,6 @@
                                         <option value="">Select Company</option>
                                         <option value="Genetek Intratama">Genetek Intratama</option>
                                         <option value="Effrensindo Kencana">Effrensindo Kencana</option>
-                                        <option value="PT Genetek">PT Genetek</option>
-                                        <option value="CV Genetek Mandiri">CV Genetek Mandiri</option>
                                     </select>
                                 </div>
 
@@ -1541,16 +1535,11 @@
                                     <label class="form-label-app" for="workType">
                                         <span class="text-red-500">*</span> Jenis Pekerjaan
                                     </label>
-                                    <select id="workType" class="form-input-app w-full p-3" required>
-                                        <option value="">Select Work Type</option>
-                                        <option value="Preventive Maintenance">Preventive Maintenance</option>
-                                        <option value="Corrective Maintenance">Corrective Maintenance</option>
-                                        <option value="Installation">Installation</option>
-                                        <option value="Testing & Commissioning">Testing & Commissioning</option>
-                                        <option value="Troubleshooting">Troubleshooting</option>
-                                        <option value="Inspection">Inspection</option>
-                                        <option value="Calibration">Calibration</option>
-                                    </select>
+                                    <input type="text" 
+                                           id="workType" 
+                                           class="form-input-app w-full p-3"
+                                           required
+                                           placeholder="Enter Job Desk">
                                 </div>
 
                                 <div class="form-group">
@@ -1564,9 +1553,11 @@
                                         <option value="Indra Kurniawan">Indra Kurniawan</option>
                                         <option value="Putra">Putra</option>
                                         <option value="Wahyu Sujoko">Wahyu Sujoko</option>
-                                        <option value="Galih">Galih</option>
-                                        <option value="Budi Santoso">Budi Santoso</option>
-                                        <option value="Ahmad Rizki">Ahmad Rizki</option>
+                                        <option value="Fiki">Fiki</option>
+                                        <option value="Edwin">Edwin</option>
+                                        <option value="Yudiono">Yudiono</option>
+                                        <option value="Harianto">Harianto</option>
+                                        <option value="Haryo">Haryo</option>
                                     </select>
                                 </div>
                             </div>
@@ -1596,7 +1587,7 @@
 
                                 <div class="form-group">
                                     <label class="form-label-app" for="estimatedTime">
-                                        Estimasi Waktu (Jam)
+                                        Estimasi Waktu (Hari)
                                     </label>
                                     <input type="number" 
                                            id="estimatedTime" 
