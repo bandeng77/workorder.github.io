@@ -1021,57 +1021,141 @@
             margin-top: 0.25rem;
         }
 
-        /* Data History Panel */
+        /* Data History Panel - DISEMBUNYIKAN */
         .data-history-panel {
-            background: #f8fafc;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 0.5rem;
-            max-height: 150px;
-            overflow-y: auto;
-            display: none;
+            display: none !important;
         }
 
-        .data-history-panel.show {
-            display: block;
+        /* Progress bar */
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
         }
 
-        .data-history-title {
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color); /* Solid color */
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--primary-color); /* Solid color */
+            border-radius: 3px;
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1f2937;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary-color); /* Solid color */
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            border: 2px solid white;
+            box-shadow: 0 0 0 3px var(--primary-color);
+        }
+
+        .timeline-date {
             font-size: 0.75rem;
             color: #6b7280;
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 0.25rem;
         }
 
-        .data-history-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .data-history-tag {
+        .timeline-content {
             background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .data-history-tag:hover {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .data-history-tag i {
-            font-size: 0.625rem;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -1585,7 +1669,7 @@
                                         </button>
                                     </div>
                                     <div class="text-xs text-gray-500 mt-1">
-                                        Format: 001/GI-GEN/FAS/I/2025
+                                        Format: 001, 002, 003, dst.
                                     </div>
                                 </div>
 
@@ -1599,7 +1683,7 @@
                                            placeholder="SO-2024-001">
                                 </div>
 
-                                <!-- Customer with Autocomplete -->
+                                <!-- Customer dengan Autocomplete -->
                                 <div class="form-group">
                                     <label class="form-label-app" for="customer">
                                         <span class="text-red-500">*</span> Customer
@@ -1612,10 +1696,9 @@
                                                placeholder="Type to search or add new">
                                         <div id="customerAutocomplete" class="autocomplete-dropdown"></div>
                                     </div>
-                                    <div id="customerHistory" class="data-history-panel"></div>
                                 </div>
 
-                                <!-- Building with Autocomplete -->
+                                <!-- Building dengan Autocomplete -->
                                 <div class="form-group">
                                     <label class="form-label-app" for="building">
                                         <span class="text-red-500">*</span> Gedung
@@ -1628,7 +1711,6 @@
                                                placeholder="Type to search or add new">
                                         <div id="buildingAutocomplete" class="autocomplete-dropdown"></div>
                                     </div>
-                                    <div id="buildingHistory" class="data-history-panel"></div>
                                 </div>
                             </div>
 
@@ -1656,7 +1738,7 @@
                                     </select>
                                 </div>
 
-                                <!-- Work Type with Autocomplete -->
+                                <!-- Work Type dengan Autocomplete -->
                                 <div class="form-group">
                                     <label class="form-label-app" for="workType">
                                         <span class="text-red-500">*</span> Jenis Pekerjaan
@@ -1669,7 +1751,6 @@
                                                placeholder="Type to search or add new">
                                         <div id="workTypeAutocomplete" class="autocomplete-dropdown"></div>
                                     </div>
-                                    <div id="workTypeHistory" class="data-history-panel"></div>
                                 </div>
 
                                 <div class="form-group">
@@ -2057,60 +2138,19 @@
         }
 
         // ==================== WORK ORDER NUMBER GENERATION ====================
-        function generateWorkOrderNumber(startDate, company) {
-            // Get company prefix
-            let companyPrefix = 'GI-GEN';
-            if (company === 'Effrensindo Kencana') {
-                companyPrefix = 'GI-EFK';
-            }
-            
-            // Get current year
-            const date = startDate ? new Date(startDate) : new Date();
-            const year = date.getFullYear();
-            
-            // Get Roman numeral for month
-            const month = date.getMonth() + 1;
-            const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
-            const romanMonth = romanMonths[month - 1];
-            
-            // Get next sequence number
-            const sequence = getNextSequenceNumber(year, company);
-            
-            return `${sequence.toString().padStart(3, '0')}/${companyPrefix}/FAS/${romanMonth}/${year}`;
-        }
-
-        async function getNextSequenceNumber(year, company) {
+        async function generateWorkOrderNumber() {
             try {
-                // Get work orders for this year and company
-                const startOfYear = new Date(year, 0, 1);
-                const endOfYear = new Date(year, 11, 31, 23, 59, 59);
+                // Hitung total work orders yang sudah ada
+                const querySnapshot = await workordersCollection.get();
+                const totalWorkOrders = querySnapshot.size;
                 
-                const querySnapshot = await workordersCollection
-                    .where('company', '==', company)
-                    .where('createdAt', '>=', firebase.firestore.Timestamp.fromDate(startOfYear))
-                    .where('createdAt', '<=', firebase.firestore.Timestamp.fromDate(endOfYear))
-                    .orderBy('createdAt', 'desc')
-                    .limit(1)
-                    .get();
-                
-                if (querySnapshot.empty) {
-                    return 1; // First work order for this year/company
-                }
-                
-                // Parse sequence number from existing work order
-                const lastWorkOrder = querySnapshot.docs[0].data();
-                const woNumber = lastWorkOrder.workOrderNumber;
-                const match = woNumber.match(/^(\d{3})\//);
-                
-                if (match) {
-                    return parseInt(match[1]) + 1;
-                }
-                
-                return 1;
+                // Format: 001, 002, 003, dst.
+                return (totalWorkOrders + 1).toString().padStart(3, '0');
                 
             } catch (error) {
-                console.error('Error getting sequence number:', error);
-                return 1;
+                console.error('Error generating work order number:', error);
+                // Fallback: gunakan timestamp jika error
+                return Date.now().toString().slice(-6);
             }
         }
 
@@ -2197,38 +2237,6 @@
             }
         }
 
-        function renderDataHistoryPanel(type, containerId) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            
-            const values = dataHistory[type] || [];
-            
-            if (values.length === 0) {
-                container.innerHTML = '';
-                container.classList.remove('show');
-                return;
-            }
-            
-            container.innerHTML = `
-                <div class="data-history-title">
-                    <span>Recently used:</span>
-                    <button type="button" class="text-xs text-teal-600 hover:text-teal-800" onclick="clearDataHistory('${type}')">
-                        Clear History
-                    </button>
-                </div>
-                <div class="data-history-list">
-                    ${values.map(value => `
-                        <div class="data-history-tag" onclick="selectDataHistory('${type}', '${value.replace(/'/g, "\\'")}')">
-                            ${value}
-                            <i class="fas fa-history"></i>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            
-            container.classList.add('show');
-        }
-
         function selectDataHistory(type, value) {
             const input = document.getElementById(type);
             if (input) {
@@ -2248,7 +2256,6 @@
                 }, { merge: true });
                 
                 dataHistory[type] = [];
-                renderDataHistoryPanel(type, `${type}History`);
                 showToast(`History cleared for ${type}`, 'success');
                 
             } catch (error) {
@@ -2279,20 +2286,11 @@
                 if (value.length >= 2) {
                     showAutocomplete(type, value);
                 }
-                // Show history panel when focused
-                renderDataHistoryPanel(type, `${type}History`);
             });
             
             input.addEventListener('blur', function() {
                 setTimeout(() => {
                     hideAutocomplete(type);
-                    // Hide history panel after delay
-                    setTimeout(() => {
-                        const historyPanel = document.getElementById(`${type}History`);
-                        if (historyPanel) {
-                            historyPanel.classList.remove('show');
-                        }
-                    }, 200);
                 }, 200);
             });
             
@@ -3939,7 +3937,7 @@
             openWorkOrderModal();
         }
 
-        function openWorkOrderModal(workorderId = null) {
+        async function openWorkOrderModal(workorderId = null) {
             console.log('Opening work order modal:', workorderId ? 'edit' : 'create');
             
             const modal = document.getElementById('workorderModal');
@@ -3978,19 +3976,19 @@
                 document.getElementById('status').value = 'Running';
                 document.getElementById('priority').value = 'Normal';
                 // Generate work order number
-                updateWorkOrderNumber();
+                await updateWorkOrderNumber();
             }
             
             modal.classList.remove('hidden');
         }
 
         async function updateWorkOrderNumber() {
-            const startDate = document.getElementById('startDate').value;
-            const company = document.getElementById('company').value;
-            
-            if (startDate && company) {
-                const woNumber = generateWorkOrderNumber(startDate, company);
+            try {
+                const woNumber = await generateWorkOrderNumber();
                 document.getElementById('workOrderNumber').value = woNumber;
+            } catch (error) {
+                console.error('Error updating work order number:', error);
+                document.getElementById('workOrderNumber').value = '001';
             }
         }
 
@@ -4022,12 +4020,6 @@
                 const endDate = workorder.endDate.toDate();
                 document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
             }
-            
-            // Hide history panels initially
-            ['customer', 'building', 'workType'].forEach(type => {
-                const panel = document.getElementById(`${type}History`);
-                if (panel) panel.classList.remove('show');
-            });
         }
 
         async function saveWorkOrder() {
@@ -4104,7 +4096,7 @@
                     logActivity('create', `Created new work order ${workorderData.workOrderNumber}`, result.id);
                 }
                 
-                // Save to data history
+                // Save to data history (untuk autocomplete)
                 await saveToDataHistory('customer', customer);
                 await saveToDataHistory('building', building);
                 await saveToDataHistory('workType', workType);
@@ -4333,10 +4325,6 @@
             
             // Work order number refresh button
             document.getElementById('refreshWorkOrderNumber').addEventListener('click', updateWorkOrderNumber);
-            
-            // Auto-update work order number when date or company changes
-            document.getElementById('startDate').addEventListener('change', updateWorkOrderNumber);
-            document.getElementById('company').addEventListener('change', updateWorkOrderNumber);
             
             // Search
             document.getElementById('searchWorkOrders').addEventListener('input', applyFiltersAndRender);
