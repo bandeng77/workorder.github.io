@@ -969,6 +969,110 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+
+        /* Custom Autocomplete Styles */
+        .autocomplete-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-dropdown.show {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item .highlight {
+            background-color: #d1fae5;
+            font-weight: 600;
+        }
+
+        .autocomplete-info {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        /* Data History Panel */
+        .data-history-panel {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .data-history-panel.show {
+            display: block;
+        }
+
+        .data-history-title {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .data-history-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .data-history-tag {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .data-history-tag:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .data-history-tag i {
+            font-size: 0.625rem;
+        }
     </style>
 </head>
 <body class="gradient-bg">
@@ -1174,7 +1278,7 @@
                 </div>
             </header>
 
-            <!-- Tabs -->
+            <!-- Tabs - PERUBAHAN: completed menjadi done -->
             <div class="tabs mb-8">
                 <button class="tab active" data-tab="all">
                     <i class="fas fa-list"></i>
@@ -1186,9 +1290,9 @@
                     <span>Running</span>
                     <span class="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-full">0</span>
                 </button>
-                <button class="tab" data-tab="completed">
+                <button class="tab" data-tab="done">
                     <i class="fas fa-check-circle"></i>
-                    <span>Completed</span>
+                    <span>Done</span>
                     <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">0</span>
                 </button>
                 <button class="tab" data-tab="close">
@@ -1419,7 +1523,7 @@
                                 <select id="statusHistoryFilter" class="form-input-app py-2 px-3 pr-10">
                                     <option value="all">All Status Changes</option>
                                     <option value="Running">Running Only</option>
-                                    <option value="Done">Completed Only</option>
+                                    <option value="Done">Done Only</option>
                                     <option value="Close">Closed Only</option>
                                 </select>
                                 <i class="fas fa-filter absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -1467,11 +1571,22 @@
                                     <label class="form-label-app" for="workOrderNumber">
                                         <span class="text-red-500">*</span> No Work Order
                                     </label>
-                                    <input type="text" 
-                                           id="workOrderNumber" 
-                                           class="form-input-app w-full p-3"
-                                           required
-                                           placeholder="WO-2024-001">
+                                    <div class="relative">
+                                        <input type="text" 
+                                               id="workOrderNumber" 
+                                               class="form-input-app w-full p-3 pr-10"
+                                               required
+                                               placeholder="Auto-generated"
+                                               readonly>
+                                        <button type="button" 
+                                                id="refreshWorkOrderNumber" 
+                                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-teal-600 hover:text-teal-800">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                    </div>
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        Format: 001/GI-GEN/FAS/I/2025
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
@@ -1484,26 +1599,36 @@
                                            placeholder="SO-2024-001">
                                 </div>
 
+                                <!-- Customer with Autocomplete -->
                                 <div class="form-group">
                                     <label class="form-label-app" for="customer">
                                         <span class="text-red-500">*</span> Customer
                                     </label>
-                                    <input type="text" 
-                                           id="customer" 
-                                           class="form-input-app w-full p-3"
-                                           required
-                                           placeholder="Enter customer name">
+                                    <div class="autocomplete-container">
+                                        <input type="text" 
+                                               id="customer" 
+                                               class="form-input-app w-full p-3"
+                                               required
+                                               placeholder="Type to search or add new">
+                                        <div id="customerAutocomplete" class="autocomplete-dropdown"></div>
+                                    </div>
+                                    <div id="customerHistory" class="data-history-panel"></div>
                                 </div>
 
+                                <!-- Building with Autocomplete -->
                                 <div class="form-group">
                                     <label class="form-label-app" for="building">
                                         <span class="text-red-500">*</span> Gedung
                                     </label>
-                                    <input type="text" 
-                                           id="building" 
-                                           class="form-input-app w-full p-3"
-                                           required
-                                           placeholder="Enter building name">
+                                    <div class="autocomplete-container">
+                                        <input type="text" 
+                                               id="building" 
+                                               class="form-input-app w-full p-3"
+                                               required
+                                               placeholder="Type to search or add new">
+                                        <div id="buildingAutocomplete" class="autocomplete-dropdown"></div>
+                                    </div>
+                                    <div id="buildingHistory" class="data-history-panel"></div>
                                 </div>
                             </div>
 
@@ -1531,15 +1656,20 @@
                                     </select>
                                 </div>
 
+                                <!-- Work Type with Autocomplete -->
                                 <div class="form-group">
                                     <label class="form-label-app" for="workType">
                                         <span class="text-red-500">*</span> Jenis Pekerjaan
                                     </label>
-                                    <input type="text" 
-                                           id="workType" 
-                                           class="form-input-app w-full p-3"
-                                           required
-                                           placeholder="Enter Job Desk">
+                                    <div class="autocomplete-container">
+                                        <input type="text" 
+                                               id="workType" 
+                                               class="form-input-app w-full p-3"
+                                               required
+                                               placeholder="Type to search or add new">
+                                        <div id="workTypeAutocomplete" class="autocomplete-dropdown"></div>
+                                    </div>
+                                    <div id="workTypeHistory" class="data-history-panel"></div>
                                 </div>
 
                                 <div class="form-group">
@@ -1772,7 +1902,7 @@
 
     <script>
         // ==================== GLOBAL VARIABLES ====================
-        let db, auth, workordersCollection, activitiesCollection, usersCollection, statusHistoryCollection;
+        let db, auth, workordersCollection, activitiesCollection, usersCollection, statusHistoryCollection, dataHistoryCollection;
         let currentUser = null;
         let currentUserRole = 'user';
         let workorders = [];
@@ -1781,6 +1911,11 @@
         let currentTab = 'all';
         let activeFilters = {};
         let charts = {};
+        let dataHistory = {
+            customer: [],
+            building: [],
+            workType: []
+        };
 
         // ==================== INITIALIZE FIREBASE ====================
         function initializeFirebase() {
@@ -1807,6 +1942,7 @@
                 activitiesCollection = db.collection('activities');
                 usersCollection = db.collection('users');
                 statusHistoryCollection = db.collection('statusHistory');
+                dataHistoryCollection = db.collection('dataHistory');
                 
                 console.log('Firebase initialized successfully');
                 return true;
@@ -1918,6 +2054,338 @@
         function hideLoading() {
             const loadingOverlay = document.getElementById('loadingOverlay');
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
+        }
+
+        // ==================== WORK ORDER NUMBER GENERATION ====================
+        function generateWorkOrderNumber(startDate, company) {
+            // Get company prefix
+            let companyPrefix = 'GI-GEN';
+            if (company === 'Effrensindo Kencana') {
+                companyPrefix = 'GI-EFK';
+            }
+            
+            // Get current year
+            const date = startDate ? new Date(startDate) : new Date();
+            const year = date.getFullYear();
+            
+            // Get Roman numeral for month
+            const month = date.getMonth() + 1;
+            const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+            const romanMonth = romanMonths[month - 1];
+            
+            // Get next sequence number
+            const sequence = getNextSequenceNumber(year, company);
+            
+            return `${sequence.toString().padStart(3, '0')}/${companyPrefix}/FAS/${romanMonth}/${year}`;
+        }
+
+        async function getNextSequenceNumber(year, company) {
+            try {
+                // Get work orders for this year and company
+                const startOfYear = new Date(year, 0, 1);
+                const endOfYear = new Date(year, 11, 31, 23, 59, 59);
+                
+                const querySnapshot = await workordersCollection
+                    .where('company', '==', company)
+                    .where('createdAt', '>=', firebase.firestore.Timestamp.fromDate(startOfYear))
+                    .where('createdAt', '<=', firebase.firestore.Timestamp.fromDate(endOfYear))
+                    .orderBy('createdAt', 'desc')
+                    .limit(1)
+                    .get();
+                
+                if (querySnapshot.empty) {
+                    return 1; // First work order for this year/company
+                }
+                
+                // Parse sequence number from existing work order
+                const lastWorkOrder = querySnapshot.docs[0].data();
+                const woNumber = lastWorkOrder.workOrderNumber;
+                const match = woNumber.match(/^(\d{3})\//);
+                
+                if (match) {
+                    return parseInt(match[1]) + 1;
+                }
+                
+                return 1;
+                
+            } catch (error) {
+                console.error('Error getting sequence number:', error);
+                return 1;
+            }
+        }
+
+        // ==================== DATA HISTORY FUNCTIONS ====================
+        async function loadDataHistory() {
+            try {
+                const querySnapshot = await dataHistoryCollection.get();
+                if (querySnapshot.empty) {
+                    // Initialize with default data if none exists
+                    await initializeDefaultDataHistory();
+                    return;
+                }
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    dataHistory[data.type] = data.values || [];
+                });
+                
+                console.log('Data history loaded:', dataHistory);
+                
+            } catch (error) {
+                console.error('Error loading data history:', error);
+            }
+        }
+
+        async function initializeDefaultDataHistory() {
+            try {
+                const defaultData = {
+                    customer: ['Customer A', 'Customer B', 'Customer C'],
+                    building: ['Building X', 'Building Y', 'Building Z'],
+                    workType: ['Installation', 'Maintenance', 'Repair']
+                };
+                
+                for (const [type, values] of Object.entries(defaultData)) {
+                    await dataHistoryCollection.doc(type).set({
+                        type: type,
+                        values: values,
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    dataHistory[type] = values;
+                }
+                
+                console.log('Default data history initialized');
+                
+            } catch (error) {
+                console.error('Error initializing default data:', error);
+            }
+        }
+
+        async function saveToDataHistory(type, value) {
+            try {
+                if (!value || value.trim() === '') return;
+                
+                value = value.trim();
+                
+                // Get current values
+                const doc = await dataHistoryCollection.doc(type).get();
+                let currentValues = [];
+                
+                if (doc.exists) {
+                    currentValues = doc.data().values || [];
+                }
+                
+                // Add new value if not already exists
+                if (!currentValues.includes(value)) {
+                    currentValues.unshift(value); // Add to beginning
+                    // Keep only last 20 items
+                    if (currentValues.length > 20) {
+                        currentValues = currentValues.slice(0, 20);
+                    }
+                    
+                    await dataHistoryCollection.doc(type).set({
+                        type: type,
+                        values: currentValues,
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                    
+                    dataHistory[type] = currentValues;
+                    console.log(`Saved to ${type} history:`, value);
+                }
+                
+            } catch (error) {
+                console.error(`Error saving to ${type} history:`, error);
+            }
+        }
+
+        function renderDataHistoryPanel(type, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const values = dataHistory[type] || [];
+            
+            if (values.length === 0) {
+                container.innerHTML = '';
+                container.classList.remove('show');
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="data-history-title">
+                    <span>Recently used:</span>
+                    <button type="button" class="text-xs text-teal-600 hover:text-teal-800" onclick="clearDataHistory('${type}')">
+                        Clear History
+                    </button>
+                </div>
+                <div class="data-history-list">
+                    ${values.map(value => `
+                        <div class="data-history-tag" onclick="selectDataHistory('${type}', '${value.replace(/'/g, "\\'")}')">
+                            ${value}
+                            <i class="fas fa-history"></i>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            container.classList.add('show');
+        }
+
+        function selectDataHistory(type, value) {
+            const input = document.getElementById(type);
+            if (input) {
+                input.value = value;
+                hideAutocomplete(type);
+            }
+        }
+
+        async function clearDataHistory(type) {
+            if (!confirm('Clear all history for this field?')) return;
+            
+            try {
+                await dataHistoryCollection.doc(type).set({
+                    type: type,
+                    values: [],
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                
+                dataHistory[type] = [];
+                renderDataHistoryPanel(type, `${type}History`);
+                showToast(`History cleared for ${type}`, 'success');
+                
+            } catch (error) {
+                console.error(`Error clearing ${type} history:`, error);
+                showToast('Failed to clear history', 'error');
+            }
+        }
+
+        // ==================== AUTOCOMPLETE FUNCTIONS ====================
+        function setupAutocomplete(type) {
+            const input = document.getElementById(type);
+            const dropdown = document.getElementById(`${type}Autocomplete`);
+            
+            if (!input || !dropdown) return;
+            
+            input.addEventListener('input', function() {
+                const value = this.value.trim();
+                if (value.length < 2) {
+                    hideAutocomplete(type);
+                    return;
+                }
+                
+                showAutocomplete(type, value);
+            });
+            
+            input.addEventListener('focus', function() {
+                const value = this.value.trim();
+                if (value.length >= 2) {
+                    showAutocomplete(type, value);
+                }
+                // Show history panel when focused
+                renderDataHistoryPanel(type, `${type}History`);
+            });
+            
+            input.addEventListener('blur', function() {
+                setTimeout(() => {
+                    hideAutocomplete(type);
+                    // Hide history panel after delay
+                    setTimeout(() => {
+                        const historyPanel = document.getElementById(`${type}History`);
+                        if (historyPanel) {
+                            historyPanel.classList.remove('show');
+                        }
+                    }, 200);
+                }, 200);
+            });
+            
+            // Handle keyboard navigation
+            input.addEventListener('keydown', function(e) {
+                const items = dropdown.querySelectorAll('.autocomplete-item');
+                let activeItem = dropdown.querySelector('.autocomplete-item.active');
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (!activeItem) {
+                        items[0]?.classList.add('active');
+                    } else {
+                        const next = activeItem.nextElementSibling;
+                        if (next) {
+                            activeItem.classList.remove('active');
+                            next.classList.add('active');
+                        }
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (activeItem) {
+                        const prev = activeItem.previousElementSibling;
+                        if (prev) {
+                            activeItem.classList.remove('active');
+                            prev.classList.add('active');
+                        }
+                    }
+                } else if (e.key === 'Enter' && activeItem) {
+                    e.preventDefault();
+                    const value = activeItem.dataset.value;
+                    input.value = value;
+                    hideAutocomplete(type);
+                } else if (e.key === 'Escape') {
+                    hideAutocomplete(type);
+                }
+            });
+        }
+
+        function showAutocomplete(type, searchTerm) {
+            const dropdown = document.getElementById(`${type}Autocomplete`);
+            if (!dropdown) return;
+            
+            const values = dataHistory[type] || [];
+            const filtered = values.filter(value => 
+                value.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            if (filtered.length === 0) {
+                dropdown.innerHTML = `
+                    <div class="autocomplete-item">
+                        <div>No suggestions found</div>
+                        <div class="autocomplete-info">Press Enter to save as new</div>
+                    </div>
+                `;
+            } else {
+                dropdown.innerHTML = filtered.map(value => {
+                    const regex = new RegExp(`(${searchTerm})`, 'gi');
+                    const highlighted = value.replace(regex, '<span class="highlight">$1</span>');
+                    return `
+                        <div class="autocomplete-item" data-value="${value.replace(/"/g, '&quot;')}">
+                            <div>${highlighted}</div>
+                            <div class="autocomplete-info">Click to select</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Add click handlers
+            dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
+                item.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+                    const input = document.getElementById(type);
+                    if (input && this.dataset.value) {
+                        input.value = this.dataset.value;
+                        hideAutocomplete(type);
+                    }
+                });
+                
+                item.addEventListener('mouseenter', function() {
+                    dropdown.querySelectorAll('.autocomplete-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            dropdown.classList.add('show');
+        }
+
+        function hideAutocomplete(type) {
+            const dropdown = document.getElementById(`${type}Autocomplete`);
+            if (dropdown) {
+                dropdown.classList.remove('show');
+            }
         }
 
         // ==================== FIX USER ROLE FUNCTIONS ====================
@@ -2633,13 +3101,13 @@
             document.getElementById('runningWorkOrders').textContent = running;
             document.getElementById('closedWorkOrders').textContent = closed;
 
-            // Update tab counts
+            // Update tab counts - PERUBAHAN: completed menjadi done
             document.querySelectorAll('.tab').forEach(tab => {
                 const tabType = tab.dataset.tab;
                 let count = 0;
                 switch(tabType) {
                     case 'all': count = total; break;
-                    case 'completed': count = completed; break;
+                    case 'done': count = completed; break;
                     case 'running': count = running; break;
                     case 'close': count = closed; break;
                 }
@@ -3488,6 +3956,11 @@
                 return;
             }
             
+            // Setup autocomplete
+            setupAutocomplete('customer');
+            setupAutocomplete('building');
+            setupAutocomplete('workType');
+            
             if (workorderId) {
                 // Edit mode
                 modalTitle.textContent = 'Edit Work Order';
@@ -3504,21 +3977,21 @@
                 document.getElementById('startDate').value = today;
                 document.getElementById('status').value = 'Running';
                 document.getElementById('priority').value = 'Normal';
-                document.getElementById('workOrderNumber').value = generateWorkOrderNumber();
+                // Generate work order number
+                updateWorkOrderNumber();
             }
             
             modal.classList.remove('hidden');
         }
 
-        function generateWorkOrderNumber() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const count = workorders.filter(wo => {
-                const woDate = wo.createdAt?.toDate();
-                return woDate && woDate.getMonth() === now.getMonth() && woDate.getFullYear() === year;
-            }).length + 1;
-            return `WO-${year}${month}-${count.toString().padStart(3, '0')}`;
+        async function updateWorkOrderNumber() {
+            const startDate = document.getElementById('startDate').value;
+            const company = document.getElementById('company').value;
+            
+            if (startDate && company) {
+                const woNumber = generateWorkOrderNumber(startDate, company);
+                document.getElementById('workOrderNumber').value = woNumber;
+            }
         }
 
         function closeWorkOrderModal() {
@@ -3549,6 +4022,12 @@
                 const endDate = workorder.endDate.toDate();
                 document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
             }
+            
+            // Hide history panels initially
+            ['customer', 'building', 'workType'].forEach(type => {
+                const panel = document.getElementById(`${type}History`);
+                if (panel) panel.classList.remove('show');
+            });
         }
 
         async function saveWorkOrder() {
@@ -3562,14 +4041,19 @@
             const originalStatus = document.getElementById('originalStatus').value;
             const isEdit = !!workorderId;
             
+            // Get form values
+            const customer = document.getElementById('customer').value.trim();
+            const building = document.getElementById('building').value.trim();
+            const workType = document.getElementById('workType').value.trim();
+            
             const workorderData = {
                 workOrderNumber: document.getElementById('workOrderNumber').value,
                 soNumber: document.getElementById('soNumber').value || '',
-                customer: document.getElementById('customer').value,
-                building: document.getElementById('building').value,
+                customer: customer,
+                building: building,
                 division: document.getElementById('division').value,
                 company: document.getElementById('company').value,
-                workType: document.getElementById('workType').value,
+                workType: workType,
                 personnel: document.getElementById('personnel').value || '',
                 status: document.getElementById('status').value,
                 priority: document.getElementById('priority').value || 'Normal',
@@ -3619,6 +4103,11 @@
                     showToast('Work order created successfully', 'success');
                     logActivity('create', `Created new work order ${workorderData.workOrderNumber}`, result.id);
                 }
+                
+                // Save to data history
+                await saveToDataHistory('customer', customer);
+                await saveToDataHistory('building', building);
+                await saveToDataHistory('workType', workType);
                 
                 // Reload data
                 await loadWorkOrders();
@@ -3832,6 +4321,7 @@
             
             // Load initial data
             loadWorkOrders();
+            loadDataHistory();
             
             // Setup menu button listeners
             document.getElementById('newWorkOrderBtn').addEventListener('click', createNewWorkOrder);
@@ -3840,6 +4330,13 @@
             document.getElementById('activityBtn').addEventListener('click', openActivityModal);
             document.getElementById('statusHistoryBtn').addEventListener('click', openStatusHistoryModal);
             document.getElementById('authButton').addEventListener('click', logout);
+            
+            // Work order number refresh button
+            document.getElementById('refreshWorkOrderNumber').addEventListener('click', updateWorkOrderNumber);
+            
+            // Auto-update work order number when date or company changes
+            document.getElementById('startDate').addEventListener('change', updateWorkOrderNumber);
+            document.getElementById('company').addEventListener('change', updateWorkOrderNumber);
             
             // Search
             document.getElementById('searchWorkOrders').addEventListener('input', applyFiltersAndRender);
@@ -4021,6 +4518,8 @@
             
             // Expose migration function to global scope (for debugging)
             window.migrateAllUsersRoles = migrateAllUsersRoles;
+            window.selectDataHistory = selectDataHistory;
+            window.clearDataHistory = clearDataHistory;
             
             console.log('System initialization complete');
             console.log('Note: If roles are still incorrect, run migrateAllUsersRoles() from console');
