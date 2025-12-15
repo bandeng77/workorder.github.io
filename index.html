@@ -1669,7 +1669,7 @@
                                         </button>
                                     </div>
                                     <div class="text-xs text-gray-500 mt-1">
-                                        Format: 001, 002, 003, dst.
+                                        Format: 001/GI-GEN/FAS/I/2025
                                     </div>
                                 </div>
 
@@ -2137,20 +2137,68 @@
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
         }
 
-        // ==================== WORK ORDER NUMBER GENERATION ====================
-        async function generateWorkOrderNumber() {
+        // ==================== WORK ORDER NUMBER GENERATION (INTEGRATED) ====================
+        async function getNextIntegratedSequenceNumber(year) {
             try {
-                // Hitung total work orders yang sudah ada
-                const querySnapshot = await workordersCollection.get();
-                const totalWorkOrders = querySnapshot.size;
+                // Get all work orders for this year regardless of company
+                const startOfYear = new Date(year, 0, 1);
+                const endOfYear = new Date(year, 11, 31, 23, 59, 59);
                 
-                // Format: 001, 002, 003, dst.
-                return (totalWorkOrders + 1).toString().padStart(3, '0');
+                const querySnapshot = await workordersCollection
+                    .where('createdAt', '>=', firebase.firestore.Timestamp.fromDate(startOfYear))
+                    .where('createdAt', '<=', firebase.firestore.Timestamp.fromDate(endOfYear))
+                    .orderBy('createdAt', 'desc')
+                    .limit(1)
+                    .get();
+                
+                if (querySnapshot.empty) {
+                    return 1; // First work order for this year
+                }
+                
+                // Parse sequence number from existing work order
+                const lastWorkOrder = querySnapshot.docs[0].data();
+                const woNumber = lastWorkOrder.workOrderNumber;
+                
+                // Extract sequence number from format: 001/GI-GEN/FAS/I/2025
+                const match = woNumber.match(/^(\d{3})\//);
+                
+                if (match) {
+                    return parseInt(match[1]) + 1;
+                }
+                
+                return 1;
                 
             } catch (error) {
-                console.error('Error generating work order number:', error);
-                // Fallback: gunakan timestamp jika error
-                return Date.now().toString().slice(-6);
+                console.error('Error getting integrated sequence number:', error);
+                return 1;
+            }
+        }
+
+        async function generateIntegratedWorkOrderNumber(startDate, company) {
+            try {
+                // Get company prefix
+                let companyPrefix = 'GI-GEN';
+                if (company === 'Effrensindo Kencana') {
+                    companyPrefix = 'GI-EFK';
+                }
+                
+                // Get current year from start date or current date
+                const date = startDate ? new Date(startDate) : new Date();
+                const year = date.getFullYear();
+                
+                // Get Roman numeral for month
+                const month = date.getMonth() + 1;
+                const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+                const romanMonth = romanMonths[month - 1];
+                
+                // Get next integrated sequence number for the year
+                const sequence = await getNextIntegratedSequenceNumber(year);
+                
+                return `${sequence.toString().padStart(3, '0')}/${companyPrefix}/FAS/${romanMonth}/${year}`;
+            } catch (error) {
+                console.error('Error generating integrated work order number:', error);
+                // Fallback
+                return `001/${company === 'Effrensindo Kencana' ? 'GI-EFK' : 'GI-GEN'}/FAS/I/${new Date().getFullYear()}`;
             }
         }
 
@@ -3975,20 +4023,27 @@
                 document.getElementById('startDate').value = today;
                 document.getElementById('status').value = 'Running';
                 document.getElementById('priority').value = 'Normal';
-                // Generate work order number
-                await updateWorkOrderNumber();
+                // Generate work order number using INTEGRATED function
+                await updateIntegratedWorkOrderNumber();
             }
             
             modal.classList.remove('hidden');
         }
 
-        async function updateWorkOrderNumber() {
+        async function updateIntegratedWorkOrderNumber() {
             try {
-                const woNumber = await generateWorkOrderNumber();
-                document.getElementById('workOrderNumber').value = woNumber;
+                const startDate = document.getElementById('startDate').value;
+                const company = document.getElementById('company').value;
+                
+                if (startDate && company) {
+                    const woNumber = await generateIntegratedWorkOrderNumber(startDate, company);
+                    document.getElementById('workOrderNumber').value = woNumber;
+                } else {
+                    document.getElementById('workOrderNumber').value = '001/GI-GEN/FAS/I/2025';
+                }
             } catch (error) {
-                console.error('Error updating work order number:', error);
-                document.getElementById('workOrderNumber').value = '001';
+                console.error('Error updating integrated work order number:', error);
+                document.getElementById('workOrderNumber').value = '001/GI-GEN/FAS/I/2025';
             }
         }
 
@@ -4323,8 +4378,12 @@
             document.getElementById('statusHistoryBtn').addEventListener('click', openStatusHistoryModal);
             document.getElementById('authButton').addEventListener('click', logout);
             
-            // Work order number refresh button
-            document.getElementById('refreshWorkOrderNumber').addEventListener('click', updateWorkOrderNumber);
+            // Work order number refresh button - sekarang menggunakan fungsi terintegrasi
+            document.getElementById('refreshWorkOrderNumber').addEventListener('click', updateIntegratedWorkOrderNumber);
+            
+            // Auto-update work order number when date or company changes
+            document.getElementById('startDate').addEventListener('change', updateIntegratedWorkOrderNumber);
+            document.getElementById('company').addEventListener('change', updateIntegratedWorkOrderNumber);
             
             // Search
             document.getElementById('searchWorkOrders').addEventListener('input', applyFiltersAndRender);
@@ -4483,6 +4542,83 @@
             }
         }
 
+        // ==================== WORK ORDER NUMBER FIX FUNCTION ====================
+        // Fungsi untuk mengintegrasikan semua nomor work order yang sudah ada
+        async function fixAllWorkOrderNumbers() {
+            console.log('Starting to fix all work order numbers...');
+            showLoading();
+            
+            try {
+                const querySnapshot = await workordersCollection.orderBy('createdAt', 'asc').get();
+                let counter = 1;
+                let processed = 0;
+                
+                // Group by year first
+                const workOrdersByYear = {};
+                
+                querySnapshot.forEach((doc) => {
+                    const wo = doc.data();
+                    const createdAt = wo.createdAt?.toDate() || new Date();
+                    const year = createdAt.getFullYear();
+                    
+                    if (!workOrdersByYear[year]) {
+                        workOrdersByYear[year] = [];
+                    }
+                    
+                    workOrdersByYear[year].push({
+                        id: doc.id,
+                        ...wo,
+                        createdDate: createdAt
+                    });
+                });
+                
+                // Process each year separately
+                for (const year in workOrdersByYear) {
+                    // Sort by creation date within each year
+                    workOrdersByYear[year].sort((a, b) => a.createdDate - b.createdDate);
+                    
+                    let yearCounter = 1;
+                    
+                    // Update each work order in the year
+                    for (const wo of workOrdersByYear[year]) {
+                        const company = wo.company || 'Genetek Intratama';
+                        const companyPrefix = company === 'Effrensindo Kencana' ? 'GI-EFK' : 'GI-GEN';
+                        
+                        // Get month for Roman numeral
+                        const month = wo.createdDate.getMonth() + 1;
+                        const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+                        const romanMonth = romanMonths[month - 1];
+                        
+                        // Generate new integrated number
+                        const newNumber = `${yearCounter.toString().padStart(3, '0')}/${companyPrefix}/FAS/${romanMonth}/${year}`;
+                        
+                        // Update if number has changed
+                        if (wo.workOrderNumber !== newNumber) {
+                            console.log(`Updating ${wo.id}: ${wo.workOrderNumber} → ${newNumber}`);
+                            await workordersCollection.doc(wo.id).update({
+                                workOrderNumber: newNumber
+                            });
+                            processed++;
+                        }
+                        
+                        yearCounter++;
+                        counter++;
+                    }
+                }
+                
+                setTimeout(() => {
+                    hideLoading();
+                    showToast(`Fixed ${processed} work order numbers! Please refresh the page.`, 'success');
+                    console.log(`Fixed ${processed} work order numbers.`);
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Error fixing work order numbers:', error);
+                hideLoading();
+                showToast('Failed to fix work order numbers. Check console.', 'error');
+            }
+        }
+
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Work Order Management System initializing...');
@@ -4508,9 +4644,10 @@
             window.migrateAllUsersRoles = migrateAllUsersRoles;
             window.selectDataHistory = selectDataHistory;
             window.clearDataHistory = clearDataHistory;
+            window.fixAllWorkOrderNumbers = fixAllWorkOrderNumbers;
             
             console.log('System initialization complete');
-            console.log('Note: If roles are still incorrect, run migrateAllUsersRoles() from console');
+            console.log('Note: To fix all work order numbers to integrated system, run fixAllWorkOrderNumbers() from console');
         });
 
     </script>
