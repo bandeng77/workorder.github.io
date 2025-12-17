@@ -656,15 +656,15 @@
             color: #374151;
         }
 
-        /* Man Power Tags */
-        .manpower-tags {
+        /* Personnel Tags */
+        .personnel-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
             margin-top: 0.5rem;
         }
 
-        .manpower-tag {
+        .personnel-tag {
             background: #d1fae5; /* Tosca light */
             color: #065f46; /* Tosca dark */
             padding: 0.5rem 1rem;
@@ -677,7 +677,7 @@
             transition: all 0.3s;
         }
 
-        .manpower-tag:hover {
+        .personnel-tag:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(32, 201, 172, 0.2); /* Tosca shadow */
         }
@@ -1021,141 +1021,70 @@
             margin-top: 0.25rem;
         }
 
-        /* Data History Panel - DISEMBUNYIKAN */
-        .data-history-panel {
-            display: none !important;
+        /* Multi-select styles */
+        .multi-select-container {
+            position: relative;
+            width: 100%;
         }
 
-        /* Progress bar */
-        .progress-bar {
-            height: 8px;
-            background: #e5e7eb;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 0.5rem 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--primary-color); /* Solid color */
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
-        /* Custom scrollbar */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: var(--primary-color); /* Solid color */
-            border-radius: 3px;
-        }
-
-        /* Stats cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
+        .multi-select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            overflow-y: auto;
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+        }
+
+        .multi-select-dropdown.show {
+            display: block;
+        }
+
+        .multi-select-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #f3f4f6;
             display: flex;
             align-items: center;
-            gap: 1rem;
-            transition: all 0.3s;
+            gap: 0.5rem;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        .multi-select-item:hover {
+            background-color: #f9fafb;
         }
 
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
+        .multi-select-item:last-child {
+            border-bottom: none;
+        }
+
+        .multi-select-item input[type="checkbox"] {
+            cursor: pointer;
+        }
+
+        /* Personnel list in work orders */
+        .personnel-list {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .stat-content {
-            flex: 1;
-        }
-
-        .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #1f2937;
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: #6b7280;
+            flex-wrap: wrap;
+            gap: 0.25rem;
             margin-top: 0.25rem;
         }
 
-        /* Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-            margin: 2rem 0;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--primary-color); /* Solid color */
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 1.5rem;
-            padding-left: 1rem;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -2rem;
-            top: 0.5rem;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            border: 2px solid white;
-            box-shadow: 0 0 0 3px var(--primary-color);
-        }
-
-        .timeline-date {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin-bottom: 0.25rem;
-        }
-
-        .timeline-content {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        .personnel-item {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
         }
     </style>
 </head>
@@ -1754,12 +1683,13 @@
                                     </div>
                                 </div>
 
+                                <!-- PERUBAHAN: Nama Personil diubah menjadi Nama PIC -->
                                 <div class="form-group">
-                                    <label class="form-label-app" for="personnel">
-                                        Nama Personil
+                                    <label class="form-label-app" for="pic">
+                                        Nama PIC
                                     </label>
-                                    <select id="personnel" class="form-input-app w-full p-3">
-                                        <option value="">Select Personnel</option>
+                                    <select id="pic" class="form-input-app w-full p-3">
+                                        <option value="">Select PIC</option>
                                         <option value="Husni">Husni</option>
                                         <option value="Heksi">Heksi</option>
                                         <option value="Indra Kurniawan">Indra Kurniawan</option>
@@ -1832,6 +1762,46 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- PERUBAHAN: Form Nama Personil (Multiple Selection) -->
+                        <div class="mb-8">
+                            <label class="form-label-app mb-3" for="personnel">
+                                Nama Personil
+                                <span class="text-sm text-gray-500 ml-2">(Dapat memilih lebih dari satu)</span>
+                            </label>
+                            
+                            <div class="multi-select-container">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <input type="text" 
+                                           id="personnelSearch" 
+                                           class="form-input-app w-full p-3"
+                                           placeholder="Cari atau ketik nama personil...">
+                                    <button type="button" 
+                                            id="addNewPersonnel" 
+                                            class="btn btn-primary py-2 px-4 whitespace-nowrap">
+                                        <i class="fas fa-plus"></i>
+                                        <span>Tambah</span>
+                                    </button>
+                                </div>
+                                
+                                <!-- Selected personnel tags -->
+                                <div id="selectedPersonnelTags" class="personnel-tags mb-3">
+                                    <!-- Tags will be added here -->
+                                </div>
+                                
+                                <!-- Personnel dropdown -->
+                                <div id="personnelDropdown" class="multi-select-dropdown"></div>
+                                
+                                <!-- Personnel list for selection -->
+                                <div class="bg-gray-50 rounded-lg p-4 max-h-40 overflow-y-auto">
+                                    <div id="personnelList" class="space-y-2">
+                                        <!-- Personnel checkboxes will be added here -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <input type="hidden" id="personnel" name="personnel">
                         </div>
 
                         <!-- Notes Section -->
@@ -1918,9 +1888,15 @@
                                 <label class="text-sm font-medium text-gray-500">Company</label>
                                 <p id="detailCompany" class="text-gray-900"></p>
                             </div>
+                            <!-- PERUBAHAN: PIC -->
+                            <div class="detail-item">
+                                <label class="text-sm font-medium text-gray-500">PIC</label>
+                                <p id="detailPIC" class="text-gray-900"></p>
+                            </div>
+                            <!-- PERUBAHAN: Personnel -->
                             <div class="detail-item">
                                 <label class="text-sm font-medium text-gray-500">Personnel</label>
-                                <p id="detailPersonnel" class="text-gray-900"></p>
+                                <div id="detailPersonnel" class="personnel-list"></div>
                             </div>
                             <div class="detail-item">
                                 <label class="text-sm font-medium text-gray-500">Timeline</label>
@@ -1996,8 +1972,23 @@
         let dataHistory = {
             customer: [],
             building: [],
-            workType: []
+            workType: [],
+            personnel: [] // Menyimpan history personil
         };
+        
+        // Daftar personil yang tersedia
+        const availablePersonnel = [
+            "Husni",
+            "Heksi",
+            "Indra Kurniawan",
+            "Putra",
+            "Wahyu Sujoko",
+            "Fiki",
+            "Edwin",
+            "Yudiono",
+            "Harianto",
+            "Haryo"
+        ];
 
         // ==================== INITIALIZE FIREBASE ====================
         function initializeFirebase() {
@@ -2230,7 +2221,8 @@
                 const defaultData = {
                     customer: ['Customer A', 'Customer B', 'Customer C'],
                     building: ['Building X', 'Building Y', 'Building Z'],
-                    workType: ['Installation', 'Maintenance', 'Repair']
+                    workType: ['Installation', 'Maintenance', 'Repair'],
+                    personnel: availablePersonnel // Initialize with available personnel
                 };
                 
                 for (const [type, values] of Object.entries(defaultData)) {
@@ -2311,6 +2303,122 @@
                 console.error(`Error clearing ${type} history:`, error);
                 showToast('Failed to clear history', 'error');
             }
+        }
+
+        // ==================== PERSONNEL MULTI-SELECT FUNCTIONS ====================
+        function setupPersonnelMultiSelect() {
+            const personnelSearch = document.getElementById('personnelSearch');
+            const personnelDropdown = document.getElementById('personnelDropdown');
+            const selectedPersonnelTags = document.getElementById('selectedPersonnelTags');
+            const personnelList = document.getElementById('personnelList');
+            const addNewPersonnelBtn = document.getElementById('addNewPersonnel');
+            const personnelHiddenInput = document.getElementById('personnel');
+            
+            // Initialize with available personnel
+            renderPersonnelList();
+            
+            // Search functionality
+            personnelSearch.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                renderPersonnelList(searchTerm);
+            });
+            
+            // Add new personnel
+            addNewPersonnelBtn.addEventListener('click', function() {
+                const newPersonnel = personnelSearch.value.trim();
+                if (newPersonnel && !availablePersonnel.includes(newPersonnel)) {
+                    availablePersonnel.push(newPersonnel);
+                    saveToDataHistory('personnel', newPersonnel);
+                    renderPersonnelList();
+                    personnelSearch.value = '';
+                    showToast(`Personil "${newPersonnel}" berhasil ditambahkan`, 'success');
+                }
+            });
+            
+            // Render personnel list
+            function renderPersonnelList(searchTerm = '') {
+                personnelList.innerHTML = '';
+                
+                const filteredPersonnel = availablePersonnel.filter(person => 
+                    searchTerm === '' || person.toLowerCase().includes(searchTerm)
+                );
+                
+                filteredPersonnel.forEach(person => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center gap-3 p-2 hover:bg-gray-100 rounded';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = person;
+                    checkbox.id = `personnel-${person}`;
+                    checkbox.className = 'rounded border-gray-300 text-teal-600 focus:ring-teal-500';
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `personnel-${person}`;
+                    label.className = 'text-sm text-gray-700 cursor-pointer';
+                    label.textContent = person;
+                    
+                    div.appendChild(checkbox);
+                    div.appendChild(label);
+                    personnelList.appendChild(div);
+                    
+                    // Add event listener to update selected personnel
+                    checkbox.addEventListener('change', updateSelectedPersonnel);
+                });
+            }
+            
+            // Update selected personnel
+            function updateSelectedPersonnel() {
+                const selectedPersonnel = [];
+                selectedPersonnelTags.innerHTML = '';
+                
+                // Get all checked checkboxes
+                document.querySelectorAll('#personnelList input[type="checkbox"]:checked').forEach(checkbox => {
+                    const person = checkbox.value;
+                    selectedPersonnel.push(person);
+                    
+                    // Add tag
+                    const tag = document.createElement('div');
+                    tag.className = 'personnel-tag';
+                    tag.innerHTML = `
+                        <span>${person}</span>
+                        <span class="remove-tag" data-person="${person}">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    `;
+                    selectedPersonnelTags.appendChild(tag);
+                });
+                
+                // Add remove tag functionality
+                selectedPersonnelTags.querySelectorAll('.remove-tag').forEach(removeBtn => {
+                    removeBtn.addEventListener('click', function() {
+                        const personToRemove = this.dataset.person;
+                        const checkbox = document.getElementById(`personnel-${personToRemove}`);
+                        if (checkbox) {
+                            checkbox.checked = false;
+                            updateSelectedPersonnel();
+                        }
+                    });
+                });
+                
+                // Update hidden input
+                personnelHiddenInput.value = JSON.stringify(selectedPersonnel);
+            }
+            
+            // Load existing personnel when editing
+            function loadExistingPersonnel(personnelArray) {
+                if (!personnelArray || !Array.isArray(personnelArray)) return;
+                
+                personnelArray.forEach(person => {
+                    const checkbox = document.getElementById(`personnel-${person}`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+                updateSelectedPersonnel();
+            }
+            
+            return { loadExistingPersonnel };
         }
 
         // ==================== AUTOCOMPLETE FUNCTIONS ====================
@@ -3185,7 +3293,8 @@
                     (wo.workOrderNumber && wo.workOrderNumber.toLowerCase().includes(searchTerm)) ||
                     (wo.customer && wo.customer.toLowerCase().includes(searchTerm)) ||
                     (wo.building && wo.building.toLowerCase().includes(searchTerm)) ||
-                    (wo.personnel && wo.personnel.toLowerCase().includes(searchTerm)) ||
+                    (wo.pic && wo.pic.toLowerCase().includes(searchTerm)) ||
+                    (wo.personnel && JSON.stringify(wo.personnel).toLowerCase().includes(searchTerm)) ||
                     (wo.workType && wo.workType.toLowerCase().includes(searchTerm)) ||
                     (wo.division && wo.division.toLowerCase().includes(searchTerm))
                 );
@@ -3201,8 +3310,8 @@
             if (activeFilters.company) {
                 filtered = filtered.filter(wo => wo.company === activeFilters.company);
             }
-            if (activeFilters.personnel) {
-                filtered = filtered.filter(wo => wo.personnel === activeFilters.personnel);
+            if (activeFilters.pic) {
+                filtered = filtered.filter(wo => wo.pic === activeFilters.pic);
             }
             
             // Apply sorting
@@ -3352,6 +3461,15 @@
             
             const statusColor = getStatusColor(workorder.status);
             
+            // Parse personnel array
+            let personnelDisplay = '';
+            if (workorder.personnel && Array.isArray(workorder.personnel) && workorder.personnel.length > 0) {
+                personnelDisplay = workorder.personnel.join(', ');
+            } else if (workorder.personnel) {
+                // Handle old format (string)
+                personnelDisplay = workorder.personnel;
+            }
+            
             item.innerHTML = `
                 <div class="timeline-content">
                     <div class="flex justify-between items-start mb-2">
@@ -3362,7 +3480,8 @@
                     </div>
                     <p class="text-sm text-gray-700 mb-2">${workorder.customer} - ${workorder.building}</p>
                     <div class="flex items-center gap-4 text-xs text-gray-500">
-                        <span><i class="fas fa-user-tie mr-1"></i> ${workorder.personnel || 'Unassigned'}</span>
+                        <span><i class="fas fa-user-tie mr-1"></i> ${workorder.pic || 'No PIC'}</span>
+                        <span><i class="fas fa-users mr-1"></i> ${workorder.personnel && workorder.personnel.length > 0 ? workorder.personnel.length + ' personil' : 'No personil'}</span>
                         <span><i class="fas fa-briefcase mr-1"></i> ${workorder.workType}</span>
                         <span><i class="fas fa-calendar mr-1"></i> ${formatDate(workorder.startDate)}</span>
                     </div>
@@ -3387,6 +3506,20 @@
             card.dataset.id = workorder.id;
             
             const priorityColor = getPriorityColor(workorder.priority);
+            
+            // Parse personnel array
+            let personnelArray = [];
+            if (workorder.personnel) {
+                if (Array.isArray(workorder.personnel)) {
+                    personnelArray = workorder.personnel;
+                } else if (typeof workorder.personnel === 'string') {
+                    try {
+                        personnelArray = JSON.parse(workorder.personnel);
+                    } catch (e) {
+                        personnelArray = [workorder.personnel];
+                    }
+                }
+            }
             
             card.innerHTML = `
                 <div class="flex justify-between items-start mb-3">
@@ -3414,10 +3547,23 @@
                         <i class="fas fa-briefcase text-gray-400"></i>
                         <span class="truncate">${workorder.workType || 'No work type'}</span>
                     </p>
+                    <!-- PERUBAHAN: PIC -->
                     <p>
                         <i class="fas fa-user-tie text-gray-400"></i>
-                        <span class="truncate">${workorder.personnel || 'Unassigned'}</span>
+                        <span class="truncate">${workorder.pic || 'No PIC'}</span>
                     </p>
+                    <!-- PERUBAHAN: Personnel List -->
+                    <div>
+                        <i class="fas fa-users text-gray-400"></i>
+                        <div class="personnel-list">
+                            ${personnelArray.length > 0 ? 
+                                personnelArray.map(person => 
+                                    `<span class="personnel-item">${person}</span>`
+                                ).join('') : 
+                                '<span class="text-gray-500 text-xs">No personnel</span>'
+                            }
+                        </div>
+                    </div>
                     <p>
                         <i class="fas fa-calendar text-gray-400"></i>
                         <span>${formatDate(workorder.startDate)}</span>
@@ -3464,6 +3610,7 @@
                     <th>Building</th>
                     <th>Work Type</th>
                     <th>Division</th>
+                    <th>PIC</th>
                     <th>Personnel</th>
                     <th>Start Date</th>
                     <th>Status</th>
@@ -3479,6 +3626,20 @@
                 
                 const priorityColor = getPriorityColor(workorder.priority);
                 
+                // Parse personnel array
+                let personnelArray = [];
+                if (workorder.personnel) {
+                    if (Array.isArray(workorder.personnel)) {
+                        personnelArray = workorder.personnel;
+                    } else if (typeof workorder.personnel === 'string') {
+                        try {
+                            personnelArray = JSON.parse(workorder.personnel);
+                        } catch (e) {
+                            personnelArray = [workorder.personnel];
+                        }
+                    }
+                }
+                
                 row.innerHTML = `
                     <td>
                         <div class="font-semibold text-gray-900">${workorder.workOrderNumber}</div>
@@ -3493,7 +3654,20 @@
                     <td>${workorder.building || '-'}</td>
                     <td>${workorder.workType || '-'}</td>
                     <td>${workorder.division || '-'}</td>
-                    <td>${workorder.personnel || '-'}</td>
+                    <td>${workorder.pic || '-'}</td>
+                    <td>
+                        ${personnelArray.length > 0 ? 
+                            `<div class="personnel-list">
+                                ${personnelArray.slice(0, 3).map(person => 
+                                    `<span class="personnel-item">${person}</span>`
+                                ).join('')}
+                                ${personnelArray.length > 3 ? 
+                                    `<span class="personnel-item">+${personnelArray.length - 3}</span>` : ''
+                                }
+                            </div>` : 
+                            '-'
+                        }
+                    </td>
                     <td>${formatDate(workorder.startDate)}</td>
                     <td>
                         <span class="status-badge ${workorder.status.toLowerCase()}">
@@ -4008,6 +4182,9 @@
             setupAutocomplete('building');
             setupAutocomplete('workType');
             
+            // Setup personnel multi-select
+            const personnelManager = setupPersonnelMultiSelect();
+            
             if (workorderId) {
                 // Edit mode
                 modalTitle.textContent = 'Edit Work Order';
@@ -4015,6 +4192,21 @@
                 if (workorder) {
                     populateModalForm(workorder);
                     document.getElementById('originalStatus').value = workorder.status;
+                    
+                    // Load existing personnel
+                    if (workorder.personnel) {
+                        let personnelArray = [];
+                        if (Array.isArray(workorder.personnel)) {
+                            personnelArray = workorder.personnel;
+                        } else if (typeof workorder.personnel === 'string') {
+                            try {
+                                personnelArray = JSON.parse(workorder.personnel);
+                            } catch (e) {
+                                personnelArray = [workorder.personnel];
+                            }
+                        }
+                        personnelManager.loadExistingPersonnel(personnelArray);
+                    }
                 }
             } else {
                 // Create mode
@@ -4061,7 +4253,8 @@
             document.getElementById('division').value = workorder.division || '';
             document.getElementById('company').value = workorder.company || '';
             document.getElementById('workType').value = workorder.workType || '';
-            document.getElementById('personnel').value = workorder.personnel || '';
+            // PERUBAHAN: PIC
+            document.getElementById('pic').value = workorder.pic || '';
             document.getElementById('status').value = workorder.status || 'Running';
             document.getElementById('priority').value = workorder.priority || 'Normal';
             document.getElementById('estimatedTime').value = workorder.estimatedTime || '';
@@ -4094,6 +4287,17 @@
             const building = document.getElementById('building').value.trim();
             const workType = document.getElementById('workType').value.trim();
             
+            // Get personnel from hidden input (JSON array)
+            const personnelJSON = document.getElementById('personnel').value;
+            let personnelArray = [];
+            if (personnelJSON) {
+                try {
+                    personnelArray = JSON.parse(personnelJSON);
+                } catch (e) {
+                    personnelArray = [];
+                }
+            }
+            
             const workorderData = {
                 workOrderNumber: document.getElementById('workOrderNumber').value,
                 soNumber: document.getElementById('soNumber').value || '',
@@ -4102,7 +4306,10 @@
                 division: document.getElementById('division').value,
                 company: document.getElementById('company').value,
                 workType: workType,
-                personnel: document.getElementById('personnel').value || '',
+                // PERUBAHAN: PIC
+                pic: document.getElementById('pic').value || '',
+                // PERUBAHAN: Personnel as array
+                personnel: personnelArray,
                 status: document.getElementById('status').value,
                 priority: document.getElementById('priority').value || 'Normal',
                 estimatedTime: parseFloat(document.getElementById('estimatedTime').value) || 0,
@@ -4157,6 +4364,11 @@
                 await saveToDataHistory('building', building);
                 await saveToDataHistory('workType', workType);
                 
+                // Save personnel to history
+                personnelArray.forEach(async person => {
+                    await saveToDataHistory('personnel', person);
+                });
+                
                 // Reload data
                 await loadWorkOrders();
                 closeWorkOrderModal();
@@ -4180,6 +4392,20 @@
                 return;
             }
             
+            // Parse personnel array
+            let personnelArray = [];
+            if (workorder.personnel) {
+                if (Array.isArray(workorder.personnel)) {
+                    personnelArray = workorder.personnel;
+                } else if (typeof workorder.personnel === 'string') {
+                    try {
+                        personnelArray = JSON.parse(workorder.personnel);
+                    } catch (e) {
+                        personnelArray = [workorder.personnel];
+                    }
+                }
+            }
+            
             // Populate details
             document.getElementById('workorderDetailTitle').textContent = 
                 `Work Order: ${workorder.workOrderNumber}`;
@@ -4190,7 +4416,21 @@
             document.getElementById('detailWorkType').textContent = workorder.workType || '-';
             document.getElementById('detailDivision').textContent = workorder.division || '-';
             document.getElementById('detailCompany').textContent = workorder.company || '-';
-            document.getElementById('detailPersonnel').textContent = workorder.personnel || '-';
+            // PERUBAHAN: PIC
+            document.getElementById('detailPIC').textContent = workorder.pic || '-';
+            // PERUBAHAN: Personnel
+            const detailPersonnel = document.getElementById('detailPersonnel');
+            detailPersonnel.innerHTML = '';
+            if (personnelArray.length > 0) {
+                personnelArray.forEach(person => {
+                    const span = document.createElement('span');
+                    span.className = 'personnel-item';
+                    span.textContent = person;
+                    detailPersonnel.appendChild(span);
+                });
+            } else {
+                detailPersonnel.innerHTML = '<span class="text-gray-500">No personnel assigned</span>';
+            }
             document.getElementById('detailPriority').textContent = workorder.priority || 'Normal';
             document.getElementById('detailStartDate').textContent = formatDate(workorder.startDate);
             document.getElementById('detailEndDate').textContent = workorder.endDate ? formatDate(workorder.endDate) : '-';
@@ -4319,26 +4559,43 @@
                 }
                 
                 // Create worksheet data
-                const worksheetData = filteredWorkorders.map(wo => ({
-                    'Work Order Number': wo.workOrderNumber,
-                    'SO Number': wo.soNumber || '',
-                    'Customer': wo.customer,
-                    'Building': wo.building,
-                    'Division': wo.division,
-                    'Company': wo.company,
-                    'Work Type': wo.workType,
-                    'Personnel': wo.personnel || '',
-                    'Start Date': formatDate(wo.startDate),
-                    'End Date': formatDate(wo.endDate),
-                    'Estimated Time': wo.estimatedTime || '',
-                    'Status': wo.status,
-                    'Priority': wo.priority || '',
-                    'Notes': wo.notes || '',
-                    'Created At': formatDateTime(wo.createdAt),
-                    'Created By': wo.createdBy || '',
-                    'Last Updated': formatDateTime(wo.updatedAt),
-                    'Updated By': wo.updatedBy || ''
-                }));
+                const worksheetData = filteredWorkorders.map(wo => {
+                    // Parse personnel array
+                    let personnelArray = [];
+                    if (wo.personnel) {
+                        if (Array.isArray(wo.personnel)) {
+                            personnelArray = wo.personnel;
+                        } else if (typeof wo.personnel === 'string') {
+                            try {
+                                personnelArray = JSON.parse(wo.personnel);
+                            } catch (e) {
+                                personnelArray = [wo.personnel];
+                            }
+                        }
+                    }
+                    
+                    return {
+                        'Work Order Number': wo.workOrderNumber,
+                        'SO Number': wo.soNumber || '',
+                        'Customer': wo.customer,
+                        'Building': wo.building,
+                        'Division': wo.division,
+                        'Company': wo.company,
+                        'Work Type': wo.workType,
+                        'PIC': wo.pic || '', // PERUBAHAN
+                        'Personnel': personnelArray.join(', '), // PERUBAHAN
+                        'Start Date': formatDate(wo.startDate),
+                        'End Date': formatDate(wo.endDate),
+                        'Estimated Time': wo.estimatedTime || '',
+                        'Status': wo.status,
+                        'Priority': wo.priority || '',
+                        'Notes': wo.notes || '',
+                        'Created At': formatDateTime(wo.createdAt),
+                        'Created By': wo.createdBy || '',
+                        'Last Updated': formatDateTime(wo.updatedAt),
+                        'Updated By': wo.updatedBy || ''
+                    };
+                });
                 
                 // Create worksheet
                 const ws = XLSX.utils.json_to_sheet(worksheetData);
