@@ -470,17 +470,55 @@
             border-radius: 16px 16px 0 0;
         }
 
+        /* Fullscreen Modal Styles */
+        .fullscreen-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: white;
+            overflow-y: auto;
+        }
+
+        .fullscreen-modal-content {
+            min-height: 100vh;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Form elements */
         .form-input-app {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 2px solid #e5e7eb;
             border-radius: 10px;
+            width: 100%;
+            padding: 0.875rem 1rem;
+            font-size: 0.95rem;
+            background: white;
         }
 
         .form-input-app:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(32, 201, 172, 0.1); /* Tosca shadow */
             outline: none;
+            background: white;
         }
 
         .form-label-app {
@@ -488,6 +526,28 @@
             color: #374151;
             margin-bottom: 0.5rem;
             display: block;
+            font-size: 0.9rem;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         /* Button styles */
@@ -1021,51 +1081,55 @@
             margin-top: 0.25rem;
         }
 
-        /* Multi-select styles */
-        .multi-select-container {
-            position: relative;
-            width: 100%;
+        /* Personnel Multi-select Styles */
+        .personnel-multi-select {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 0.5rem;
         }
 
-        .multi-select-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
+        .personnel-search-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .personnel-list-container {
             max-height: 200px;
             overflow-y: auto;
-            background: white;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            display: none;
+            padding: 0.75rem;
+            background: #f9fafb;
         }
 
-        .multi-select-dropdown.show {
-            display: block;
-        }
-
-        .multi-select-item {
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            border-bottom: 1px solid #f3f4f6;
+        .personnel-checkbox-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-        }
-
-        .multi-select-item:hover {
-            background-color: #f9fafb;
-        }
-
-        .multi-select-item:last-child {
-            border-bottom: none;
-        }
-
-        .multi-select-item input[type="checkbox"] {
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: background-color 0.2s;
             cursor: pointer;
+        }
+
+        .personnel-checkbox-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .personnel-checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 2px solid #d1d5db;
+            cursor: pointer;
+        }
+
+        .personnel-checkbox-item input[type="checkbox"]:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
         }
 
         /* Personnel list in work orders */
@@ -1085,6 +1149,40 @@
             display: inline-flex;
             align-items: center;
             gap: 0.25rem;
+        }
+
+        /* Fullscreen modal header */
+        .fullscreen-modal-header {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .fullscreen-modal-body {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Form row */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Required field indicator */
+        .required-field::after {
+            content: ' *';
+            color: #ef4444;
         }
     </style>
 </head>
@@ -1556,281 +1654,321 @@
         </div>
     </div>
 
-    <!-- Add/Edit Work Order Modal -->
-    <div id="workorderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div class="w-full max-w-6xl max-h-[90vh] overflow-hidden">
-            <div class="bg-white rounded-xl shadow-2xl" id="workorderModalContent">
-                <div class="sticky top-0 bg-white z-10 border-b">
-                    <div class="flex justify-between items-center p-6">
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900" id="modalTitle">Create New Work Order</h2>
-                            <p class="text-gray-600 mt-1">Fill in all required information below</p>
-                        </div>
-                        <button id="closeWorkOrderModal" class="text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-times text-2xl"></i>
-                        </button>
+    <!-- Add/Edit Work Order Modal - FULLSCREEN -->
+    <div id="workorderModal" class="fullscreen-modal hidden">
+        <div class="fullscreen-modal-content">
+            <!-- Header -->
+            <div class="fullscreen-modal-header">
+                <div class="flex items-center gap-3">
+                    <button id="closeWorkOrderModal" class="text-white hover:text-gray-300 p-2 rounded-lg hover:bg-white/10 transition-colors">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-2xl font-bold" id="modalTitle">Create New Work Order</h2>
+                        <p class="text-gray-300 text-sm">Fill in all required information below</p>
                     </div>
                 </div>
-                
-                <div class="p-6 overflow-y-auto max-h-[60vh] custom-scrollbar">
-                    <form id="workorderForm">
-                        <input type="hidden" id="workorderId">
-                        <input type="hidden" id="originalStatus">
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                            <!-- Column 1 -->
-                            <div class="space-y-4">
-                                <div class="form-group">
-                                    <label class="form-label-app" for="workOrderNumber">
-                                        <span class="text-red-500">*</span> No Work Order
-                                    </label>
-                                    <div class="relative">
-                                        <input type="text" 
-                                               id="workOrderNumber" 
-                                               class="form-input-app w-full p-3 pr-10"
-                                               required
-                                               placeholder="Auto-generated"
-                                               readonly>
-                                        <button type="button" 
-                                                id="refreshWorkOrderNumber" 
-                                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-teal-600 hover:text-teal-800">
-                                            <i class="fas fa-sync-alt"></i>
-                                        </button>
-                                    </div>
-                                    <div class="text-xs text-gray-500 mt-1">
-                                        Format: 001/GI-GEN/FAS/I/2025
-                                    </div>
-                                </div>
+                <div class="flex items-center gap-3">
+                    <button type="button" 
+                            id="cancelWorkOrderBtn" 
+                            class="btn btn-secondary bg-white/20 hover:bg-white/30 border-0">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            form="workorderForm"
+                            class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Work Order
+                    </button>
+                </div>
+            </div>
 
-                                <div class="form-group">
-                                    <label class="form-label-app" for="soNumber">
-                                        Nomor SO
-                                    </label>
-                                    <input type="text" 
-                                           id="soNumber" 
-                                           class="form-input-app w-full p-3"
-                                           placeholder="SO-2024-001">
-                                </div>
-
-                                <!-- Customer dengan Autocomplete -->
-                                <div class="form-group">
-                                    <label class="form-label-app" for="customer">
-                                        <span class="text-red-500">*</span> Customer
-                                    </label>
-                                    <div class="autocomplete-container">
-                                        <input type="text" 
-                                               id="customer" 
-                                               class="form-input-app w-full p-3"
-                                               required
-                                               placeholder="Type to search or add new">
-                                        <div id="customerAutocomplete" class="autocomplete-dropdown"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Building dengan Autocomplete -->
-                                <div class="form-group">
-                                    <label class="form-label-app" for="building">
-                                        <span class="text-red-500">*</span> Gedung
-                                    </label>
-                                    <div class="autocomplete-container">
-                                        <input type="text" 
-                                               id="building" 
-                                               class="form-input-app w-full p-3"
-                                               required
-                                               placeholder="Type to search or add new">
-                                        <div id="buildingAutocomplete" class="autocomplete-dropdown"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Column 2 -->
-                            <div class="space-y-4">
-                                <div class="form-group">
-                                    <label class="form-label-app" for="division">
-                                        <span class="text-red-500">*</span> Divisi
-                                    </label>
-                                    <select id="division" class="form-input-app w-full p-3" required>
-                                        <option value="">Select Division</option>
-                                        <option value="Maintenance">Maintenance</option>
-                                        <option value="Testcom">Testcom</option>
-                                        <option value="Project">Project</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label-app" for="company">
-                                        <span class="text-red-500">*</span> Perusahaan
-                                    </label>
-                                    <select id="company" class="form-input-app w-full p-3" required>
-                                        <option value="">Select Company</option>
-                                        <option value="Genetek Intratama">Genetek Intratama</option>
-                                        <option value="Effrensindo Kencana">Effrensindo Kencana</option>
-                                    </select>
-                                </div>
-
-                                <!-- Work Type dengan Autocomplete -->
-                                <div class="form-group">
-                                    <label class="form-label-app" for="workType">
-                                        <span class="text-red-500">*</span> Jenis Pekerjaan
-                                    </label>
-                                    <div class="autocomplete-container">
-                                        <input type="text" 
-                                               id="workType" 
-                                               class="form-input-app w-full p-3"
-                                               required
-                                               placeholder="Type to search or add new">
-                                        <div id="workTypeAutocomplete" class="autocomplete-dropdown"></div>
-                                    </div>
-                                </div>
-
-                                <!-- PERUBAHAN: Nama Personil diubah menjadi Nama PIC -->
-                                <div class="form-group">
-                                    <label class="form-label-app" for="pic">
-                                        Nama PIC
-                                    </label>
-                                    <select id="pic" class="form-input-app w-full p-3">
-                                        <option value="">Select PIC</option>
-                                        <option value="Husni">Husni</option>
-                                        <option value="Heksi">Heksi</option>
-                                        <option value="Indra Kurniawan">Indra Kurniawan</option>
-                                        <option value="Putra">Putra</option>
-                                        <option value="Wahyu Sujoko">Wahyu Sujoko</option>
-                                        <option value="Fiki">Fiki</option>
-                                        <option value="Edwin">Edwin</option>
-                                        <option value="Yudiono">Yudiono</option>
-                                        <option value="Harianto">Harianto</option>
-                                        <option value="Haryo">Haryo</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Column 3 -->
-                            <div class="space-y-4">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="form-group">
-                                        <label class="form-label-app" for="startDate">
-                                            <span class="text-red-500">*</span> Tanggal Mulai
-                                        </label>
-                                        <input type="date" 
-                                               id="startDate" 
-                                               class="form-input-app w-full p-3"
-                                               required>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="form-label-app" for="endDate">
-                                            Tanggal Selesai
-                                        </label>
-                                        <input type="date" 
-                                               id="endDate" 
-                                               class="form-input-app w-full p-3">
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label-app" for="estimatedTime">
-                                        Estimasi Waktu (Hari)
-                                    </label>
-                                    <input type="number" 
-                                           id="estimatedTime" 
-                                           class="form-input-app w-full p-3"
-                                           min="0"
-                                           step="0.5"
-                                           placeholder="e.g., 8">
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label-app" for="status">
-                                        <span class="text-red-500">*</span> Status
-                                    </label>
-                                    <select id="status" class="form-input-app w-full p-3" required>
-                                        <option value="Running">Running</option>
-                                        <option value="Done">Done</option>
-                                        <option value="Close">Close</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label-app" for="priority">
-                                        Priority
-                                    </label>
-                                    <select id="priority" class="form-input-app w-full p-3">
-                                        <option value="Normal">Normal</option>
-                                        <option value="High">High</option>
-                                        <option value="Urgent">Urgent</option>
-                                        <option value="Low">Low</option>
-                                    </select>
-                                </div>
-                            </div>
+            <!-- Form Content -->
+            <div class="fullscreen-modal-body">
+                <form id="workorderForm" class="space-y-6">
+                    <input type="hidden" id="workorderId">
+                    <input type="hidden" id="originalStatus">
+                    
+                    <!-- Section 1: Basic Information -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="fas fa-info-circle text-teal-600"></i>
+                            Basic Information
                         </div>
-
-                        <!-- PERUBAHAN: Form Nama Personil (Multiple Selection) -->
-                        <div class="mb-8">
-                            <label class="form-label-app mb-3" for="personnel">
-                                Nama Personil
-                                <span class="text-sm text-gray-500 ml-2">(Dapat memilih lebih dari satu)</span>
-                            </label>
-                            
-                            <div class="multi-select-container">
-                                <div class="flex items-center gap-2 mb-3">
+                        
+                        <div class="form-row">
+                            <!-- Work Order Number -->
+                            <div class="form-group">
+                                <label class="form-label-app required-field" for="workOrderNumber">
+                                    No Work Order
+                                </label>
+                                <div class="relative">
                                     <input type="text" 
-                                           id="personnelSearch" 
-                                           class="form-input-app w-full p-3"
-                                           placeholder="Cari atau ketik nama personil...">
+                                           id="workOrderNumber" 
+                                           class="form-input-app"
+                                           required
+                                           placeholder="Auto-generated"
+                                           readonly>
                                     <button type="button" 
-                                            id="addNewPersonnel" 
-                                            class="btn btn-primary py-2 px-4 whitespace-nowrap">
-                                        <i class="fas fa-plus"></i>
-                                        <span>Tambah</span>
+                                            id="refreshWorkOrderNumber" 
+                                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-teal-600 hover:text-teal-800 bg-transparent border-0">
+                                        <i class="fas fa-sync-alt"></i>
                                     </button>
                                 </div>
-                                
-                                <!-- Selected personnel tags -->
-                                <div id="selectedPersonnelTags" class="personnel-tags mb-3">
-                                    <!-- Tags will be added here -->
+                                <div class="text-xs text-gray-500 mt-1">
+                                    Format: 001/GI-GEN/FAS/I/2025
                                 </div>
-                                
-                                <!-- Personnel dropdown -->
-                                <div id="personnelDropdown" class="multi-select-dropdown"></div>
-                                
-                                <!-- Personnel list for selection -->
-                                <div class="bg-gray-50 rounded-lg p-4 max-h-40 overflow-y-auto">
-                                    <div id="personnelList" class="space-y-2">
-                                        <!-- Personnel checkboxes will be added here -->
+                            </div>
+
+                            <!-- SO Number -->
+                            <div class="form-group">
+                                <label class="form-label-app" for="soNumber">
+                                    Nomor SO
+                                </label>
+                                <input type="text" 
+                                       id="soNumber" 
+                                       class="form-input-app"
+                                       placeholder="SO-2024-001">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <!-- Customer dengan Autocomplete -->
+                            <div class="form-group">
+                                <label class="form-label-app required-field" for="customer">
+                                    Customer
+                                </label>
+                                <div class="autocomplete-container">
+                                    <input type="text" 
+                                           id="customer" 
+                                           class="form-input-app"
+                                           required
+                                           placeholder="Type to search or add new">
+                                    <div id="customerAutocomplete" class="autocomplete-dropdown"></div>
+                                </div>
+                            </div>
+
+                            <!-- Building dengan Autocomplete -->
+                            <div class="form-group">
+                                <label class="form-label-app required-field" for="building">
+                                    Gedung
+                                </label>
+                                <div class="autocomplete-container">
+                                    <input type="text" 
+                                           id="building" 
+                                           class="form-input-app"
+                                           required
+                                           placeholder="Type to search or add new">
+                                    <div id="buildingAutocomplete" class="autocomplete-dropdown"></div>
+                                </div>
+                            </div>
+
+                            <!-- Work Type dengan Autocomplete -->
+                            <div class="form-group">
+                                <label class="form-label-app required-field" for="workType">
+                                    Jenis Pekerjaan
+                                </label>
+                                <div class="autocomplete-container">
+                                    <input type="text" 
+                                           id="workType" 
+                                           class="form-input-app"
+                                           required
+                                           placeholder="Type to search or add new">
+                                    <div id="workTypeAutocomplete" class="autocomplete-dropdown"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Organization & Personnel -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="fas fa-sitemap text-blue-600"></i>
+                            Organization & Personnel
+                        </div>
+                        
+                        <div class="form-row">
+                            <!-- Division -->
+                            <div class="form-group">
+                                <label class="form-label-app required-field" for="division">
+                                    Divisi
+                                </label>
+                                <select id="division" class="form-input-app" required>
+                                    <option value="">Select Division</option>
+                                    <option value="Maintenance">Maintenance</option>
+                                    <option value="Testcom">Testcom</option>
+                                    <option value="Project">Project</option>
+                                </select>
+                            </div>
+
+                            <!-- Company -->
+                            <div class="form-group">
+                                <label class="form-label-app required-field" for="company">
+                                    Perusahaan
+                                </label>
+                                <select id="company" class="form-input-app" required>
+                                    <option value="">Select Company</option>
+                                    <option value="Genetek Intratama">Genetek Intratama</option>
+                                    <option value="Effrensindo Kencana">Effrensindo Kencana</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <!-- PIC & Personnel Combined Section -->
+                            <div class="form-group col-span-2">
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <!-- PIC -->
+                                    <div>
+                                        <label class="form-label-app" for="pic">
+                                            Nama PIC
+                                        </label>
+                                        <select id="pic" class="form-input-app">
+                                            <option value="">Select PIC</option>
+                                            <option value="Husni">Husni</option>
+                                            <option value="Heksi">Heksi</option>
+                                            <option value="Indra Kurniawan">Indra Kurniawan</option>
+                                            <option value="Putra">Putra</option>
+                                            <option value="Wahyu Sujoko">Wahyu Sujoko</option>
+                                            <option value="Fiki">Fiki</option>
+                                            <option value="Edwin">Edwin</option>
+                                            <option value="Yudiono">Yudiono</option>
+                                            <option value="Harianto">Harianto</option>
+                                            <option value="Haryo">Haryo</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Personnel Multi-select -->
+                                    <div>
+                                        <label class="form-label-app">
+                                            Nama Personil
+                                            <span class="text-sm text-gray-500">(Dapat memilih lebih dari satu)</span>
+                                        </label>
+                                        
+                                        <div class="personnel-multi-select">
+                                            <!-- Selected tags -->
+                                            <div id="selectedPersonnelTags" class="personnel-tags mb-3">
+                                                <!-- Tags will be added here -->
+                                            </div>
+                                            
+                                            <!-- Search and add -->
+                                            <div class="personnel-search-container">
+                                                <input type="text" 
+                                                       id="personnelSearch" 
+                                                       class="form-input-app flex-1"
+                                                       placeholder="Cari personil...">
+                                                <button type="button" 
+                                                        id="addNewPersonnel" 
+                                                        class="btn btn-primary whitespace-nowrap">
+                                                    <i class="fas fa-plus"></i>
+                                                    Tambah
+                                                </button>
+                                            </div>
+                                            
+                                            <!-- Personnel list -->
+                                            <div class="personnel-list-container" id="personnelList">
+                                                <!-- Personnel checkboxes will be added here -->
+                                            </div>
+                                        </div>
+                                        
+                                        <input type="hidden" id="personnel" name="personnel">
                                     </div>
                                 </div>
                             </div>
-                            
-                            <input type="hidden" id="personnel" name="personnel">
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Timeline & Status -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="fas fa-calendar-alt text-green-600"></i>
+                            Timeline & Status
+                        </div>
+                        
+                        <div class="form-row">
+                            <!-- Start Date -->
+                            <div class="form-group">
+                                <label class="form-label-app required-field" for="startDate">
+                                    Tanggal Mulai
+                                </label>
+                                <input type="date" 
+                                       id="startDate" 
+                                       class="form-input-app"
+                                       required>
+                            </div>
+
+                            <!-- End Date -->
+                            <div class="form-group">
+                                <label class="form-label-app" for="endDate">
+                                    Tanggal Selesai
+                                </label>
+                                <input type="date" 
+                                       id="endDate" 
+                                       class="form-input-app">
+                            </div>
+
+                            <!-- Estimated Time -->
+                            <div class="form-group">
+                                <label class="form-label-app" for="estimatedTime">
+                                    Estimasi Waktu (Hari)
+                                </label>
+                                <input type="number" 
+                                       id="estimatedTime" 
+                                       class="form-input-app"
+                                       min="0"
+                                       step="0.5"
+                                       placeholder="e.g., 8">
+                            </div>
                         </div>
 
-                        <!-- Notes Section -->
-                        <div class="mb-8">
-                            <label class="form-label-app mb-3" for="notes">
-                                Notes
+                        <div class="form-row">
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label class="form-label-app required-field" for="status">
+                                    Status
+                                </label>
+                                <select id="status" class="form-input-app" required>
+                                    <option value="Running">Running</option>
+                                    <option value="Done">Done</option>
+                                    <option value="Close">Close</option>
+                                </select>
+                            </div>
+
+                            <!-- Priority -->
+                            <div class="form-group">
+                                <label class="form-label-app" for="priority">
+                                    Priority
+                                </label>
+                                <select id="priority" class="form-input-app">
+                                    <option value="Normal">Normal</option>
+                                    <option value="High">High</option>
+                                    <option value="Urgent">Urgent</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Notes -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="fas fa-sticky-note text-purple-600"></i>
+                            Notes
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label-app" for="notes">
+                                Additional Notes
                                 <span class="text-sm text-gray-500 ml-2">(Optional)</span>
                             </label>
                             <textarea id="notes" 
-                                      class="form-input-app w-full p-3" 
-                                      rows="4"
+                                      class="form-input-app" 
+                                      rows="6"
                                       placeholder="Add any additional notes or instructions..."></textarea>
                         </div>
-
-                        <div class="flex justify-end gap-3 pt-8 mt-8 border-t">
-                            <button type="button" 
-                                    id="cancelWorkOrderBtn" 
-                                    class="btn btn-secondary">
-                                <i class="fas fa-times"></i>
-                                Cancel
-                            </button>
-                            <button type="submit" 
-                                    class="btn btn-primary">
-                                <i class="fas fa-save"></i>
-                                Save Work Order
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -1973,7 +2111,7 @@
             customer: [],
             building: [],
             workType: [],
-            personnel: [] // Menyimpan history personil
+            personnel: []
         };
         
         // Daftar personil yang tersedia
@@ -2222,7 +2360,7 @@
                     customer: ['Customer A', 'Customer B', 'Customer C'],
                     building: ['Building X', 'Building Y', 'Building Z'],
                     workType: ['Installation', 'Maintenance', 'Repair'],
-                    personnel: availablePersonnel // Initialize with available personnel
+                    personnel: availablePersonnel
                 };
                 
                 for (const [type, values] of Object.entries(defaultData)) {
@@ -2257,8 +2395,7 @@
                 
                 // Add new value if not already exists
                 if (!currentValues.includes(value)) {
-                    currentValues.unshift(value); // Add to beginning
-                    // Keep only last 20 items
+                    currentValues.unshift(value);
                     if (currentValues.length > 20) {
                         currentValues = currentValues.slice(0, 20);
                     }
@@ -2278,43 +2415,15 @@
             }
         }
 
-        function selectDataHistory(type, value) {
-            const input = document.getElementById(type);
-            if (input) {
-                input.value = value;
-                hideAutocomplete(type);
-            }
-        }
-
-        async function clearDataHistory(type) {
-            if (!confirm('Clear all history for this field?')) return;
-            
-            try {
-                await dataHistoryCollection.doc(type).set({
-                    type: type,
-                    values: [],
-                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-                
-                dataHistory[type] = [];
-                showToast(`History cleared for ${type}`, 'success');
-                
-            } catch (error) {
-                console.error(`Error clearing ${type} history:`, error);
-                showToast('Failed to clear history', 'error');
-            }
-        }
-
         // ==================== PERSONNEL MULTI-SELECT FUNCTIONS ====================
         function setupPersonnelMultiSelect() {
             const personnelSearch = document.getElementById('personnelSearch');
-            const personnelDropdown = document.getElementById('personnelDropdown');
             const selectedPersonnelTags = document.getElementById('selectedPersonnelTags');
             const personnelList = document.getElementById('personnelList');
             const addNewPersonnelBtn = document.getElementById('addNewPersonnel');
             const personnelHiddenInput = document.getElementById('personnel');
             
-            // Initialize with available personnel
+            // Initialize personnel list
             renderPersonnelList();
             
             // Search functionality
@@ -2343,9 +2452,19 @@
                     searchTerm === '' || person.toLowerCase().includes(searchTerm)
                 );
                 
+                if (filteredPersonnel.length === 0) {
+                    personnelList.innerHTML = `
+                        <div class="text-center py-4 text-gray-500">
+                            <i class="fas fa-search mr-2"></i>
+                            Tidak ditemukan personil
+                        </div>
+                    `;
+                    return;
+                }
+                
                 filteredPersonnel.forEach(person => {
                     const div = document.createElement('div');
-                    div.className = 'flex items-center gap-3 p-2 hover:bg-gray-100 rounded';
+                    div.className = 'personnel-checkbox-item';
                     
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
@@ -2355,7 +2474,7 @@
                     
                     const label = document.createElement('label');
                     label.htmlFor = `personnel-${person}`;
-                    label.className = 'text-sm text-gray-700 cursor-pointer';
+                    label.className = 'text-sm text-gray-700 cursor-pointer flex-1';
                     label.textContent = person;
                     
                     div.appendChild(checkbox);
@@ -2418,7 +2537,7 @@
                 updateSelectedPersonnel();
             }
             
-            return { loadExistingPersonnel };
+            return { loadExistingPersonnel, updateSelectedPersonnel };
         }
 
         // ==================== AUTOCOMPLETE FUNCTIONS ====================
@@ -2499,8 +2618,8 @@
             if (filtered.length === 0) {
                 dropdown.innerHTML = `
                     <div class="autocomplete-item">
-                        <div>No suggestions found</div>
-                        <div class="autocomplete-info">Press Enter to save as new</div>
+                        <div>Tidak ditemukan</div>
+                        <div class="autocomplete-info">Tekan Enter untuk menambahkan baru</div>
                     </div>
                 `;
             } else {
@@ -2510,7 +2629,7 @@
                     return `
                         <div class="autocomplete-item" data-value="${value.replace(/"/g, '&quot;')}">
                             <div>${highlighted}</div>
-                            <div class="autocomplete-info">Click to select</div>
+                            <div class="autocomplete-info">Klik untuk memilih</div>
                         </div>
                     `;
                 }).join('');
@@ -2554,7 +2673,6 @@
                     
                     console.log('Checking email for role fix:', userEmail);
                     
-                    // Tentukan role yang benar berdasarkan email
                     if (userEmail === 'admin@genetek.co.id') {
                         correctRole = 'admin';
                     } else if (userEmail === 'm_husni@genetek.co.id') {
@@ -2565,7 +2683,6 @@
                     
                     console.log('Current role:', userData.role, 'Correct role:', correctRole);
                     
-                    // Jika role di database tidak sesuai, perbaiki
                     if (userData.role !== correctRole) {
                         console.log(`Fixing role for ${userEmail}: from ${userData.role} to ${correctRole}`);
                         
@@ -2629,7 +2746,6 @@
             // Set permissions based on role
             switch(currentUserRole) {
                 case 'admin':
-                    // Admin bisa semua
                     if (exportBtn) exportBtn.classList.remove('hidden');
                     if (newWorkOrderBtn) newWorkOrderBtn.classList.remove('hidden');
                     if (analyticsBtn) analyticsBtn.classList.remove('hidden');
@@ -2638,7 +2754,6 @@
                     break;
                     
                 case 'manager':
-                    // Manager bisa create, edit, analytics, activity, status history
                     if (newWorkOrderBtn) newWorkOrderBtn.classList.remove('hidden');
                     if (analyticsBtn) analyticsBtn.classList.remove('hidden');
                     if (activityBtn) activityBtn.classList.remove('hidden');
@@ -2646,12 +2761,9 @@
                     break;
                     
                 case 'user':
-                    // User hanya bisa view (semua tombol feature tetap hidden)
-                    // Tombol New Work Order, Export, Analytics, Activity, Status History tetap hidden
                     break;
                     
                 default:
-                    // Default seperti user
                     break;
             }
             
@@ -2699,37 +2811,24 @@
                 console.log('Auth state changed:', user ? 'User logged in' : 'User logged out');
                 
                 if (user) {
-                    // User is signed in
                     currentUser = user;
                     
                     try {
-                        // FIX: Panggil fungsi fix role terlebih dahulu
                         const fixedRole = await fixUserRoleIfNeeded(user.uid, user.email);
                         
                         if (fixedRole) {
                             currentUserRole = fixedRole;
                             console.log('Role after fix:', currentUserRole);
                         } else {
-                            // Get user role from Firestore
                             await getUserRoleFromFirestore(user.uid);
                         }
                         
-                        // Update UI
                         document.getElementById('userWelcome').textContent = user.email;
-                        
-                        // Setup role-based permissions
                         setupUserRolePermissions();
-                        
-                        // Show app page
                         document.getElementById('loginPage').classList.add('hidden');
                         document.getElementById('appPage').classList.remove('hidden');
-                        
-                        // Initialize app
                         initApp();
-                        
                         showToast('Login successful! Welcome back.', 'success');
-                        
-                        // Log login activity
                         logActivity('login', `User logged in: ${user.email}`);
                         
                     } catch (error) {
@@ -2737,16 +2836,12 @@
                         showToast('Error loading user data', 'error');
                     }
                 } else {
-                    // User is signed out
                     console.log('User signed out');
                     currentUser = null;
                     currentUserRole = 'user';
-                    
-                    // Show login page
                     document.getElementById('appPage').classList.add('hidden');
                     document.getElementById('loginPage').classList.remove('hidden');
                     
-                    // Reset login form
                     const loginForm = document.getElementById('loginForm');
                     if (loginForm) {
                         loginForm.reset();
@@ -2767,10 +2862,8 @@
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('loginError');
 
-            // Hide any previous error
             if (errorDiv) errorDiv.classList.add('hidden');
 
-            // Basic validation
             if (!email || !password) {
                 showError('Please enter both email and password');
                 return;
@@ -2779,13 +2872,8 @@
             try {
                 showLoading();
                 console.log('Attempting login with email:', email);
-                
-                // Sign in with Firebase Auth
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                
                 console.log('Login successful:', userCredential.user.email);
-                
-                // Auth observer will handle the rest
                 
             } catch (error) {
                 console.error('Login error:', error);
@@ -2827,15 +2915,11 @@
                     currentUserRole = userData.role || 'user';
                     console.log('User role from Firestore:', currentUserRole);
                     
-                    // Update last login time
                     await usersCollection.doc(userId).update({
                         lastLogin: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 } else {
-                    // Create user document if it doesn't exist
                     console.log('Creating new user document...');
-                    
-                    // Default role based on email - FIXED LOGIC
                     let defaultRole = 'user';
                     const userEmail = currentUser.email;
                     
@@ -2851,7 +2935,6 @@
                         defaultRole = 'user';
                         console.log('Setting role to user for', userEmail);
                     } else {
-                        // Untuk email lainnya, default tetap 'user'
                         console.log('Default role user for unknown email:', userEmail);
                     }
                     
@@ -2869,7 +2952,7 @@
                 
             } catch (error) {
                 console.error('Error getting user role:', error);
-                currentUserRole = 'user'; // Default fallback
+                currentUserRole = 'user';
                 return 'user';
             }
         }
@@ -2895,7 +2978,6 @@
                     showToast('Error signing out', 'error');
                 });
             } else {
-                // Fallback logout
                 currentUser = null;
                 currentUserRole = 'user';
                 document.getElementById('appPage').classList.add('hidden');
@@ -2920,7 +3002,6 @@
                 
                 await activitiesCollection.add(activityData);
                 
-                // Update activity feed if modal is open
                 if (!document.getElementById('activityModal').classList.contains('hidden')) {
                     loadRecentActivities();
                 }
@@ -2946,7 +3027,6 @@
                 
                 await statusHistoryCollection.add(statusChangeData);
                 
-                // Update status history if modal is open
                 if (!document.getElementById('statusHistoryModal').classList.contains('hidden')) {
                     loadStatusHistory();
                 }
@@ -3024,7 +3104,6 @@
                 querySnapshot.forEach((doc) => {
                     const statusChange = doc.data();
                     
-                    // Apply search filter
                     if (searchTerm && !statusChange.workOrderNumber.toLowerCase().includes(searchTerm.toLowerCase())) {
                         return;
                     }
@@ -3256,7 +3335,6 @@
             document.getElementById('runningWorkOrders').textContent = running;
             document.getElementById('closedWorkOrders').textContent = closed;
 
-            // Update tab counts - PERUBAHAN: completed menjadi done
             document.querySelectorAll('.tab').forEach(tab => {
                 const tabType = tab.dataset.tab;
                 let count = 0;
@@ -3281,12 +3359,10 @@
         function applyFiltersAndRender() {
             let filtered = [...workorders];
             
-            // Apply tab filter
             if (currentTab !== 'all') {
                 filtered = filtered.filter(wo => wo.status === currentTab.charAt(0).toUpperCase() + currentTab.slice(1));
             }
             
-            // Apply search filter
             const searchTerm = document.getElementById('searchWorkOrders').value.toLowerCase();
             if (searchTerm) {
                 filtered = filtered.filter(wo => 
@@ -3300,7 +3376,6 @@
                 );
             }
             
-            // Apply advanced filters
             if (activeFilters.status) {
                 filtered = filtered.filter(wo => wo.status === activeFilters.status);
             }
@@ -3314,7 +3389,6 @@
                 filtered = filtered.filter(wo => wo.pic === activeFilters.pic);
             }
             
-            // Apply sorting
             const sortBy = document.getElementById('sortBy').value;
             const sortOrder = document.getElementById('sortOrder').value;
             filtered.sort((a, b) => {
@@ -3358,7 +3432,6 @@
                     </div>
                 `;
                 
-                // Add event listener to create button
                 const createBtn = document.getElementById('createFirstWorkOrder');
                 if (createBtn) {
                     createBtn.addEventListener('click', createNewWorkOrder);
@@ -3379,7 +3452,6 @@
                 renderTimelineView();
             }
             
-            // Add event listeners to action buttons
             setTimeout(() => {
                 document.querySelectorAll('.view-detail-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
@@ -3409,7 +3481,6 @@
             const cardListView = document.getElementById('cardListView');
             const timelineContent = document.getElementById('timelineContent');
             
-            // Show timeline view, hide card/list view
             timelineView.classList.remove('hidden');
             cardListView.classList.add('hidden');
             
@@ -3426,7 +3497,6 @@
                 return;
             }
             
-            // Group by date
             const groupedByDate = {};
             filteredWorkorders.forEach(wo => {
                 const dateKey = formatDate(wo.createdAt);
@@ -3436,12 +3506,10 @@
                 groupedByDate[dateKey].push(wo);
             });
             
-            // Sort dates
             const sortedDates = Object.keys(groupedByDate).sort((a, b) => {
                 return new Date(b) - new Date(a);
             });
             
-            // Create timeline items
             sortedDates.forEach(date => {
                 const dateHeader = document.createElement('div');
                 dateHeader.className = 'timeline-date font-bold text-teal-600 mb-2';
@@ -3460,13 +3528,10 @@
             item.className = 'timeline-item';
             
             const statusColor = getStatusColor(workorder.status);
-            
-            // Parse personnel array
             let personnelDisplay = '';
             if (workorder.personnel && Array.isArray(workorder.personnel) && workorder.personnel.length > 0) {
                 personnelDisplay = workorder.personnel.join(', ');
             } else if (workorder.personnel) {
-                // Handle old format (string)
                 personnelDisplay = workorder.personnel;
             }
             
@@ -3506,8 +3571,6 @@
             card.dataset.id = workorder.id;
             
             const priorityColor = getPriorityColor(workorder.priority);
-            
-            // Parse personnel array
             let personnelArray = [];
             if (workorder.personnel) {
                 if (Array.isArray(workorder.personnel)) {
@@ -3547,12 +3610,10 @@
                         <i class="fas fa-briefcase text-gray-400"></i>
                         <span class="truncate">${workorder.workType || 'No work type'}</span>
                     </p>
-                    <!-- PERUBAHAN: PIC -->
                     <p>
                         <i class="fas fa-user-tie text-gray-400"></i>
                         <span class="truncate">${workorder.pic || 'No PIC'}</span>
                     </p>
-                    <!-- PERUBAHAN: Personnel List -->
                     <div>
                         <i class="fas fa-users text-gray-400"></i>
                         <div class="personnel-list">
@@ -3625,8 +3686,6 @@
                 row.dataset.id = workorder.id;
                 
                 const priorityColor = getPriorityColor(workorder.priority);
-                
-                // Parse personnel array
                 let personnelArray = [];
                 if (workorder.personnel) {
                     if (Array.isArray(workorder.personnel)) {
@@ -3714,7 +3773,6 @@
             showLoading();
             
             try {
-                // Get all work orders for analytics
                 const querySnapshot = await workordersCollection.get();
                 const allWorkOrders = [];
                 querySnapshot.forEach((doc) => {
@@ -3724,17 +3782,12 @@
                     });
                 });
 
-                // Update data updated time
                 document.getElementById('dataUpdatedTime').textContent = new Date().toLocaleString('id-ID');
-                
-                // Generate charts
                 generateStatusChart(allWorkOrders);
                 generateDivisionChart(allWorkOrders);
                 generateMonthlyTrendChart(allWorkOrders);
                 generateCompanyChart(allWorkOrders);
                 generateCompletionTimeChart(allWorkOrders);
-                
-                // Update analytics summary
                 updateAnalyticsSummary(allWorkOrders);
                 
                 showToast('Analytics data loaded successfully', 'success');
@@ -3751,12 +3804,10 @@
             const ctx = document.getElementById('statusChart');
             if (!ctx) return;
             
-            // Destroy existing chart if it exists
             if (charts.statusChart) {
                 charts.statusChart.destroy();
             }
             
-            // Count by status
             const statusCounts = {
                 'Running': 0,
                 'Done': 0,
@@ -3772,7 +3823,6 @@
             const total = workOrders.length;
             const completionRate = total > 0 ? Math.round((statusCounts['Done'] / total) * 100) : 0;
             
-            // Update chart info
             document.getElementById('statusChartInfo').innerHTML = `
                 <div class="grid grid-cols-3 gap-2 text-xs">
                     <div class="text-center">
@@ -3797,9 +3847,9 @@
                     datasets: [{
                         data: [statusCounts['Running'], statusCounts['Done'], statusCounts['Close']],
                         backgroundColor: [
-                            'rgba(32, 201, 172, 0.8)',  // Tosca
-                            'rgba(16, 185, 129, 0.8)',  // Green
-                            'rgba(107, 114, 128, 0.8)'  // Gray
+                            'rgba(32, 201, 172, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(107, 114, 128, 0.8)'
                         ],
                         borderColor: [
                             'rgb(32, 201, 172)',
@@ -3836,7 +3886,6 @@
                 charts.divisionChart.destroy();
             }
             
-            // Count by division
             const divisionCounts = {};
             workOrders.forEach(wo => {
                 if (wo.division) {
@@ -3844,10 +3893,9 @@
                 }
             });
             
-            // Sort by count
             const sortedDivisions = Object.entries(divisionCounts)
                 .sort((a, b) => b[1] - a[1])
-                .slice(0, 8); // Top 8 divisions
+                .slice(0, 8);
             
             const colors = generateColors(sortedDivisions.length);
             
@@ -3891,7 +3939,6 @@
                 charts.monthlyTrendChart.destroy();
             }
             
-            // Group by month
             const monthlyData = {};
             workOrders.forEach(wo => {
                 if (wo.createdAt) {
@@ -3901,9 +3948,8 @@
                 }
             });
             
-            // Sort by date
             const sortedMonths = Object.keys(monthlyData).sort();
-            const last6Months = sortedMonths.slice(-6); // Last 6 months
+            const last6Months = sortedMonths.slice(-6);
             
             charts.monthlyTrendChart = new Chart(ctx, {
                 type: 'line',
@@ -3950,7 +3996,6 @@
                 charts.companyChart.destroy();
             }
             
-            // Count by company
             const companyCounts = {};
             workOrders.forEach(wo => {
                 if (wo.company) {
@@ -3990,7 +4035,6 @@
                 charts.completionTimeChart.destroy();
             }
             
-            // Calculate completion time for completed work orders
             const completionTimes = [];
             workOrders.forEach(wo => {
                 if (wo.status === 'Done' && wo.startDate && wo.endDate) {
@@ -4002,7 +4046,6 @@
                 }
             });
             
-            // Group completion times
             const timeGroups = {
                 '0-1 days': 0,
                 '2-3 days': 0,
@@ -4019,12 +4062,10 @@
                 else timeGroups['2+ weeks']++;
             });
             
-            // Calculate average completion time
             const avgCompletionTime = completionTimes.length > 0 
                 ? Math.round(completionTimes.reduce((a, b) => a + b, 0) / completionTimes.length * 10) / 10
                 : 0;
             
-            // Update completion time info
             document.getElementById('completionTimeInfo').innerHTML = `
                 <div class="text-center">
                     <div class="font-semibold text-teal-600">Average Completion Time: ${avgCompletionTime} days</div>
@@ -4066,17 +4107,16 @@
 
         function generateColors(count) {
             const baseColors = [
-                'rgba(32, 201, 172, 0.8)',   // Tosca
-                'rgba(16, 185, 129, 0.8)',   // Green
-                'rgba(245, 158, 11, 0.8)',   // Yellow/Orange
-                'rgba(239, 68, 68, 0.8)',    // Red
-                'rgba(139, 92, 246, 0.8)',   // Purple
-                'rgba(14, 165, 233, 0.8)',   // Blue
-                'rgba(251, 191, 36, 0.8)',   // Amber
-                'rgba(34, 197, 94, 0.8)'     // Emerald
+                'rgba(32, 201, 172, 0.8)',
+                'rgba(16, 185, 129, 0.8)',
+                'rgba(245, 158, 11, 0.8)',
+                'rgba(239, 68, 68, 0.8)',
+                'rgba(139, 92, 246, 0.8)',
+                'rgba(14, 165, 233, 0.8)',
+                'rgba(251, 191, 36, 0.8)',
+                'rgba(34, 197, 94, 0.8)'
             ];
             
-            // Repeat colors if needed
             const colors = [];
             for (let i = 0; i < count; i++) {
                 colors.push(baseColors[i % baseColors.length]);
@@ -4085,7 +4125,6 @@
         }
 
         function updateAnalyticsSummary(workOrders) {
-            // Calculate average completion time
             const completedOrders = workOrders.filter(wo => wo.status === 'Done');
             const completionTimes = [];
             completedOrders.forEach(wo => {
@@ -4102,7 +4141,6 @@
                 ? Math.round(completionTimes.reduce((a, b) => a + b, 0) / completionTimes.length * 10) / 10
                 : 0;
             
-            // Find most active division
             const divisionCounts = {};
             workOrders.forEach(wo => {
                 if (wo.division) {
@@ -4119,12 +4157,10 @@
                 }
             });
             
-            // Calculate completion rate
             const totalOrders = workOrders.length;
             const completedCount = completedOrders.length;
             const completionRate = totalOrders > 0 ? Math.round((completedCount / totalOrders) * 100) : 0;
             
-            // Find top customer
             const customerCounts = {};
             workOrders.forEach(wo => {
                 if (wo.customer) {
@@ -4141,7 +4177,6 @@
                 }
             });
             
-            // Update summary elements
             document.getElementById('avgCompletionTime').textContent = avgCompletionTime;
             document.getElementById('mostActiveDivision').textContent = mostActiveDivision;
             document.getElementById('completionRate').textContent = `${completionRate}%`;
@@ -4216,11 +4251,12 @@
                 document.getElementById('startDate').value = today;
                 document.getElementById('status').value = 'Running';
                 document.getElementById('priority').value = 'Normal';
-                // Generate work order number using INTEGRATED function
+                // Generate work order number
                 await updateIntegratedWorkOrderNumber();
             }
             
             modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
         }
 
         async function updateIntegratedWorkOrderNumber() {
@@ -4242,6 +4278,7 @@
 
         function closeWorkOrderModal() {
             document.getElementById('workorderModal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Restore scrolling
         }
 
         function populateModalForm(workorder) {
@@ -4253,7 +4290,6 @@
             document.getElementById('division').value = workorder.division || '';
             document.getElementById('company').value = workorder.company || '';
             document.getElementById('workType').value = workorder.workType || '';
-            // PERUBAHAN: PIC
             document.getElementById('pic').value = workorder.pic || '';
             document.getElementById('status').value = workorder.status || 'Running';
             document.getElementById('priority').value = workorder.priority || 'Normal';
@@ -4306,9 +4342,7 @@
                 division: document.getElementById('division').value,
                 company: document.getElementById('company').value,
                 workType: workType,
-                // PERUBAHAN: PIC
                 pic: document.getElementById('pic').value || '',
-                // PERUBAHAN: Personnel as array
                 personnel: personnelArray,
                 status: document.getElementById('status').value,
                 priority: document.getElementById('priority').value || 'Normal',
@@ -4359,7 +4393,7 @@
                     logActivity('create', `Created new work order ${workorderData.workOrderNumber}`, result.id);
                 }
                 
-                // Save to data history (untuk autocomplete)
+                // Save to data history
                 await saveToDataHistory('customer', customer);
                 await saveToDataHistory('building', building);
                 await saveToDataHistory('workType', workType);
@@ -4416,9 +4450,7 @@
             document.getElementById('detailWorkType').textContent = workorder.workType || '-';
             document.getElementById('detailDivision').textContent = workorder.division || '-';
             document.getElementById('detailCompany').textContent = workorder.company || '-';
-            // PERUBAHAN: PIC
             document.getElementById('detailPIC').textContent = workorder.pic || '-';
-            // PERUBAHAN: Personnel
             const detailPersonnel = document.getElementById('detailPersonnel');
             detailPersonnel.innerHTML = '';
             if (personnelArray.length > 0) {
@@ -4560,7 +4592,6 @@
                 
                 // Create worksheet data
                 const worksheetData = filteredWorkorders.map(wo => {
-                    // Parse personnel array
                     let personnelArray = [];
                     if (wo.personnel) {
                         if (Array.isArray(wo.personnel)) {
@@ -4582,8 +4613,8 @@
                         'Division': wo.division,
                         'Company': wo.company,
                         'Work Type': wo.workType,
-                        'PIC': wo.pic || '', // PERUBAHAN
-                        'Personnel': personnelArray.join(', '), // PERUBAHAN
+                        'PIC': wo.pic || '',
+                        'Personnel': personnelArray.join(', '),
                         'Start Date': formatDate(wo.startDate),
                         'End Date': formatDate(wo.endDate),
                         'Estimated Time': wo.estimatedTime || '',
@@ -4636,7 +4667,7 @@
             document.getElementById('statusHistoryBtn').addEventListener('click', openStatusHistoryModal);
             document.getElementById('authButton').addEventListener('click', logout);
             
-            // Work order number refresh button - sekarang menggunakan fungsi terintegrasi
+            // Work order number refresh button
             document.getElementById('refreshWorkOrderNumber').addEventListener('click', updateIntegratedWorkOrderNumber);
             
             // Auto-update work order number when date or company changes
@@ -4712,15 +4743,6 @@
                 loadStatusHistory(filter, searchTerm);
             });
             
-            // Close modals when clicking outside
-            document.querySelectorAll('.fixed').forEach(modal => {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        this.classList.add('hidden');
-                    }
-                });
-            });
-            
             console.log('App initialization complete');
         }
 
@@ -4756,7 +4778,6 @@
         }
 
         // ==================== MIGRATION FUNCTION ====================
-        // Fungsi ini bisa dijalankan dari console browser untuk memperbaiki semua role
         async function migrateAllUsersRoles() {
             console.log('Starting migration of all user roles...');
             showLoading();
@@ -4801,7 +4822,6 @@
         }
 
         // ==================== WORK ORDER NUMBER FIX FUNCTION ====================
-        // Fungsi untuk mengintegrasikan semua nomor work order yang sudah ada
         async function fixAllWorkOrderNumbers() {
             console.log('Starting to fix all work order numbers...');
             showLoading();
@@ -4811,7 +4831,6 @@
                 let counter = 1;
                 let processed = 0;
                 
-                // Group by year first
                 const workOrdersByYear = {};
                 
                 querySnapshot.forEach((doc) => {
@@ -4830,27 +4849,21 @@
                     });
                 });
                 
-                // Process each year separately
                 for (const year in workOrdersByYear) {
-                    // Sort by creation date within each year
                     workOrdersByYear[year].sort((a, b) => a.createdDate - b.createdDate);
                     
                     let yearCounter = 1;
                     
-                    // Update each work order in the year
                     for (const wo of workOrdersByYear[year]) {
                         const company = wo.company || 'Genetek Intratama';
                         const companyPrefix = company === 'Effrensindo Kencana' ? 'GI-EFK' : 'GI-GEN';
                         
-                        // Get month for Roman numeral
                         const month = wo.createdDate.getMonth() + 1;
                         const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
                         const romanMonth = romanMonths[month - 1];
                         
-                        // Generate new integrated number
                         const newNumber = `${yearCounter.toString().padStart(3, '0')}/${companyPrefix}/FAS/${romanMonth}/${year}`;
                         
-                        // Update if number has changed
                         if (wo.workOrderNumber !== newNumber) {
                             console.log(`Updating ${wo.id}: ${wo.workOrderNumber} → ${newNumber}`);
                             await workordersCollection.doc(wo.id).update({
