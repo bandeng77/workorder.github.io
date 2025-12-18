@@ -520,58 +520,91 @@
             gap: 0.75rem;
         }
 
-        /* ==================== DASHBOARD CARDS ==================== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.75rem;
+        /* ==================== ENHANCED HEADER STYLES ==================== */
+        .main-header {
+            position: relative;
+            padding: 2rem 0;
             margin-bottom: 2rem;
+            overflow: hidden;
         }
 
-        .stat-card {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            box-shadow: var(--shadow-md);
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-            transition: var(--transition);
-            border: 1px solid rgba(0, 0, 0, 0.05);
+        .header-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+            opacity: 0.1;
+            z-index: 1;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
+        .header-content {
+            position: relative;
+            z-index: 2;
         }
 
-        .stat-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: var(--radius-md);
+        .app-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(26, 179, 148, 0.2);
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .app-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            border-radius: 2px;
+        }
+
+        .app-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-medium);
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        .logo-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.75rem;
+            box-shadow: 0 10px 30px rgba(26, 179, 148, 0.3);
+            overflow: hidden;
+        }
+
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite linear;
+        }
+
+        .logo-icon {
+            position: relative;
+            z-index: 2;
             color: white;
-            background: var(--primary-color);
-        }
-
-        .stat-content {
-            flex: 1;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--text-dark);
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 0.95rem;
-            color: var(--text-light);
-            margin-top: 0.5rem;
+            font-size: 2.5rem;
         }
 
         /* ==================== TABS ==================== */
@@ -1047,15 +1080,15 @@
             .form-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            .app-title {
+                font-size: 2.8rem;
+            }
         }
 
         @media (max-width: 1024px) {
             .form-row {
                 grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -1068,10 +1101,6 @@
                 grid-template-columns: 1fr;
             }
             
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .tabs {
                 flex-wrap: wrap;
             }
@@ -1079,6 +1108,19 @@
             .tab {
                 flex: 1;
                 min-width: 140px;
+            }
+            
+            .app-title {
+                font-size: 2.2rem;
+            }
+            
+            .logo-container {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .logo-icon {
+                font-size: 2rem;
             }
         }
 
@@ -1100,6 +1142,14 @@
             .view-toggle-btn {
                 flex: 1;
                 min-width: 120px;
+            }
+            
+            .app-title {
+                font-size: 1.8rem;
+            }
+            
+            .app-subtitle {
+                font-size: 1rem;
             }
         }
 
@@ -1205,6 +1255,66 @@
             background: #f3f4f6;
             color: #6b7280;
         }
+        
+        /* ==================== USER INFO CARD ==================== */
+        .user-info-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+        
+        .user-info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .user-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        /* ==================== SEARCH BOX ==================== */
+        .search-box {
+            position: relative;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+        
+        .search-box:hover {
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1.25rem 1.25rem 1.25rem 3.5rem;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            background: transparent;
+            outline: none;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 1.25rem;
+        }
     </style>
 </head>
 <body class="gradient-bg">
@@ -1219,10 +1329,10 @@
         <div class="relative z-10 w-full max-w-md mx-4">
             <div class="glass-effect p-10 rounded-3xl">
                 <div class="text-center mb-12">
-                    <div class="w-24 h-24 bg-gradient-to-br from-teal-400 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
-                        <i class="fas fa-clipboard-list text-white text-4xl"></i>
+                    <div class="logo-container mx-auto mb-8">
+                        <i class="logo-icon fas fa-clipboard-list"></i>
                     </div>
-                    <h1 class="text-3xl font-bold text-gray-900 mb-3">Work Order System</h1>
+                    <h1 class="app-title mb-4">Work Order System</h1>
                     <p class="text-gray-600 text-lg">Genetek Management Platform</p>
                 </div>
 
@@ -1277,134 +1387,92 @@
     <!-- Main Application Page (Hidden Initially) -->
     <div id="appPage" class="hidden">
         <div class="max-w-7xl mx-auto px-4 py-8">
-            <!-- Header -->
-            <header class="mb-10">
-                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-8">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-6 mb-4">
-                            <div class="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-700 rounded-2xl flex items-center justify-center shadow-lg">
-                                <i class="fas fa-clipboard-list text-white text-2xl"></i>
-                            </div>
-                            <div>
-                                <h1 class="text-4xl lg:text-5xl font-bold text-gray-900">
-                                    Work Order Management
-                                </h1>
-                                <p class="text-gray-600 mt-3 text-lg">Track and manage all work orders efficiently</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Button group dengan kontrol berdasarkan role -->
-                    <div class="flex flex-wrap gap-3" id="actionButtons">
-                        <!-- New Work Order - untuk admin dan manager -->
-                        <button id="newWorkOrderBtn" class="btn btn-primary shadow-lg text-sm py-3 px-5">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>New Work Order</span>
-                        </button>
-                        
-                        <!-- Export Excel - hanya untuk admin -->
-                        <button id="exportExcelBtn" class="btn btn-success shadow-lg text-sm py-3 px-5 hidden">
-                            <i class="fas fa-file-excel"></i>
-                            <span>Export Excel</span>
-                        </button>
-                        
-                        <!-- Analytics - untuk admin dan manager saja -->
-                        <button id="analyticsBtn" class="btn btn-warning shadow-lg text-sm py-3 px-5 hidden">
-                            <i class="fas fa-chart-bar"></i>
-                            <span>Analytics</span>
-                        </button>
-                        
-                        <!-- Recent Activity - untuk admin dan manager saja -->
-                        <button id="activityBtn" class="btn btn-secondary shadow-lg text-sm py-3 px-5 hidden">
-                            <i class="fas fa-history"></i>
-                            <span>Recent Activity</span>
-                        </button>
-                        
-                        <!-- Status History - untuk admin dan manager saja -->
-                        <button id="statusHistoryBtn" class="btn btn-primary shadow-lg text-sm py-3 px-5 hidden">
-                            <i class="fas fa-exchange-alt"></i>
-                            <span>Status History</span>
-                        </button>
-                        
-                        <!-- Logout - untuk semua role -->
-                        <button id="authButton" class="btn btn-danger shadow-lg text-sm py-3 px-5">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Logout</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- User Info & Search -->
-                <div class="flex flex-col lg:flex-row gap-6 mb-8">
-                    <div class="flex-1">
-                        <div class="glass-effect-app rounded-2xl p-6">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-br from-teal-500 to-teal-700" id="userAvatar">
-                                    <i class="fas fa-user text-white text-lg"></i>
+            <!-- Enhanced Header -->
+            <header class="main-header mb-10">
+                <div class="header-background"></div>
+                <div class="header-content">
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-8">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-6 mb-6">
+                                <div class="logo-container">
+                                    <i class="logo-icon fas fa-clipboard-list"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm text-gray-600 mb-1">Welcome back</p>
-                                    <p id="userWelcome" class="font-semibold text-gray-900 text-lg"></p>
-                                </div>
-                                <div class="ml-auto flex items-center gap-3">
-                                    <span id="userRoleBadge" class="role-badge role-user">
-                                        Loading...
-                                    </span>
+                                    <h1 class="app-title">Work Order Management</h1>
+                                    <p class="app-subtitle">Track and manage all work orders efficiently</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="flex-1">
-                        <div class="relative">
-                            <input type="text" 
-                                   id="searchWorkOrders" 
-                                   placeholder="Search work orders..." 
-                                   class="w-full p-5 pl-14 rounded-2xl border-2 border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-200 focus:ring-opacity-30 transition-all duration-300 text-lg">
-                            <i class="fas fa-search absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Stats Cards -->
-                <div class="stats-grid mb-10">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-gradient-to-br from-teal-500 to-teal-700">
-                            <i class="fas fa-tasks"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-value" id="totalWorkOrders">0</div>
-                            <div class="stat-label">Total Work Orders</div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon bg-gradient-to-br from-green-500 to-green-700">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-value" id="completedWorkOrders">0</div>
-                            <div class="stat-label">Completed</div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon bg-gradient-to-br from-teal-400 to-teal-600">
-                            <i class="fas fa-sync-alt"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-value" id="runningWorkOrders">0</div>
-                            <div class="stat-label">Running</div>
+                        
+                        <!-- Button group dengan kontrol berdasarkan role -->
+                        <div class="flex flex-wrap gap-3" id="actionButtons">
+                            <!-- New Work Order - untuk admin dan manager -->
+                            <button id="newWorkOrderBtn" class="btn btn-primary shadow-lg text-sm py-3 px-5">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>New Work Order</span>
+                            </button>
+                            
+                            <!-- Export Excel - hanya untuk admin -->
+                            <button id="exportExcelBtn" class="btn btn-success shadow-lg text-sm py-3 px-5 hidden">
+                                <i class="fas fa-file-excel"></i>
+                                <span>Export Excel</span>
+                            </button>
+                            
+                            <!-- Analytics - untuk admin dan manager saja -->
+                            <button id="analyticsBtn" class="btn btn-warning shadow-lg text-sm py-3 px-5 hidden">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Analytics</span>
+                            </button>
+                            
+                            <!-- Recent Activity - untuk admin dan manager saja -->
+                            <button id="activityBtn" class="btn btn-secondary shadow-lg text-sm py-3 px-5 hidden">
+                                <i class="fas fa-history"></i>
+                                <span>Recent Activity</span>
+                            </button>
+                            
+                            <!-- Status History - untuk admin dan manager saja -->
+                            <button id="statusHistoryBtn" class="btn btn-primary shadow-lg text-sm py-3 px-5 hidden">
+                                <i class="fas fa-exchange-alt"></i>
+                                <span>Status History</span>
+                            </button>
+                            
+                            <!-- Logout - untuk semua role -->
+                            <button id="authButton" class="btn btn-danger shadow-lg text-sm py-3 px-5">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </button>
                         </div>
                     </div>
 
-                    <div class="stat-card">
-                        <div class="stat-icon bg-gradient-to-br from-gray-500 to-gray-700">
-                            <i class="fas fa-times-circle"></i>
+                    <!-- User Info & Search -->
+                    <div class="flex flex-col lg:flex-row gap-6">
+                        <div class="flex-1">
+                            <div class="user-info-card">
+                                <div class="flex items-center gap-4">
+                                    <div class="user-avatar" id="userAvatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-gray-600 mb-1">Welcome back</p>
+                                        <p id="userWelcome" class="font-semibold text-gray-900 text-lg truncate"></p>
+                                    </div>
+                                    <div class="flex items-center gap-3 flex-shrink-0">
+                                        <span id="userRoleBadge" class="role-badge role-user">
+                                            Loading...
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="stat-content">
-                            <div class="stat-value" id="closedWorkOrders">0</div>
-                            <div class="stat-label">Closed</div>
+                        
+                        <div class="flex-1">
+                            <div class="search-box">
+                                <i class="search-icon fas fa-search"></i>
+                                <input type="text" 
+                                       id="searchWorkOrders" 
+                                       placeholder="Search work orders..." 
+                                       class="search-input">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2738,7 +2806,7 @@
             // Update user avatar color based on role
             const userAvatar = document.getElementById('userAvatar');
             if (userAvatar) {
-                userAvatar.className = 'w-12 h-12 rounded-full flex items-center justify-center';
+                userAvatar.className = 'user-avatar';
                 if (currentUserRole === 'admin') {
                     userAvatar.classList.add('bg-gradient-to-br', 'from-purple-500', 'to-purple-700');
                 } else if (currentUserRole === 'manager') {
@@ -3348,11 +3416,6 @@
             const completed = workorders.filter(wo => wo.status === 'Done').length;
             const running = workorders.filter(wo => wo.status === 'Running').length;
             const closed = workorders.filter(wo => wo.status === 'Close').length;
-
-            document.getElementById('totalWorkOrders').textContent = total;
-            document.getElementById('completedWorkOrders').textContent = completed;
-            document.getElementById('runningWorkOrders').textContent = running;
-            document.getElementById('closedWorkOrders').textContent = closed;
 
             document.querySelectorAll('.tab').forEach(tab => {
                 const tabType = tab.dataset.tab;
