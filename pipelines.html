@@ -556,6 +556,93 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
+        /* ==================== CUSTOM DROPDOWN STYLES ==================== */
+        .custom-dropdown {
+            position: relative;
+        }
+
+        .custom-dropdown-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            font-size: 0.95rem;
+            background: white;
+            transition: var(--transition-base);
+            color: var(--neutral-800);
+            cursor: pointer;
+        }
+
+        .custom-dropdown-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .custom-dropdown-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+        }
+
+        .custom-dropdown-options.show {
+            display: block;
+        }
+
+        .custom-dropdown-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .custom-dropdown-option:hover {
+            background: var(--primary-50);
+        }
+
+        .custom-dropdown-option.selected {
+            background: var(--primary-100);
+            font-weight: 600;
+        }
+
+        .custom-dropdown-search {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .custom-dropdown-search input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-md);
+        }
+
+        /* ==================== CURRENCY INPUT STYLES ==================== */
+        .currency-input-group {
+            position: relative;
+        }
+
+        .currency-prefix {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral-600);
+            font-weight: 600;
+        }
+
+        .currency-input {
+            padding-left: 3.5rem !important;
+        }
+
         /* ==================== COLORFUL MODALS ==================== */
         .modal-overlay {
             position: fixed;
@@ -1091,14 +1178,134 @@
                         
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div>
-                                <label class="form-label required-field" for="pipelineTitle">
-                                    Title
+                                <label class="form-label required-field" for="pipelineNo">
+                                    No
                                 </label>
-                                <input type="text" 
-                                       id="pipelineTitle" 
+                                <input type="number" 
+                                       id="pipelineNo" 
                                        class="form-input"
                                        required
-                                       placeholder="Enter item title">
+                                       placeholder="Enter item number">
+                            </div>
+                            
+                            <div>
+                                <label class="form-label required-field" for="pipelineQuotation">
+                                    No. Quotation
+                                </label>
+                                <input type="text" 
+                                       id="pipelineQuotation" 
+                                       class="form-input"
+                                       required
+                                       placeholder="Enter quotation number">
+                            </div>
+                            
+                            <div>
+                                <label class="form-label required-field" for="pipelineCompany">
+                                    Company
+                                </label>
+                                <select id="pipelineCompany" class="form-input" required>
+                                    <option value="">Select Company</option>
+                                    <option value="Genetek">Genetek</option>
+                                    <option value="Effrensindo">Effrensindo</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="form-label required-field" for="pipelineSOW">
+                                    SOW
+                                </label>
+                                <select id="pipelineSOW" class="form-input" required>
+                                    <option value="">Select SOW</option>
+                                    <option value="FAS">FAS</option>
+                                    <option value="Vesda">Vesda</option>
+                                    <option value="FSS">FSS</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 2: PIC and Customer -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <div class="form-section-icon form-section-icon-secondary">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <span>Person In Charge & Customer</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label class="form-label required-field" for="pipelinePIC">
+                                    PIC
+                                </label>
+                                <div class="custom-dropdown">
+                                    <input type="text" 
+                                           id="pipelinePIC" 
+                                           class="custom-dropdown-input"
+                                           required
+                                           placeholder="Search or select PIC"
+                                           autocomplete="off">
+                                    <div class="custom-dropdown-options" id="picDropdownOptions">
+                                        <div class="custom-dropdown-search">
+                                            <input type="text" 
+                                                   placeholder="Search PIC..."
+                                                   class="form-input"
+                                                   id="picSearchInput">
+                                        </div>
+                                        <!-- PIC options will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="form-label required-field" for="pipelineCustomer">
+                                    Customer
+                                </label>
+                                <div class="custom-dropdown">
+                                    <input type="text" 
+                                           id="pipelineCustomer" 
+                                           class="custom-dropdown-input"
+                                           required
+                                           placeholder="Search or select customer"
+                                           autocomplete="off">
+                                    <div class="custom-dropdown-options" id="customerDropdownOptions">
+                                        <div class="custom-dropdown-search">
+                                            <input type="text" 
+                                                   placeholder="Search customer..."
+                                                   class="form-input"
+                                                   id="customerSearchInput">
+                                            <button type="button" 
+                                                    id="addNewCustomerBtn" 
+                                                    class="btn btn-primary btn-sm mt-2 w-full">
+                                                <i class="fas fa-plus"></i> Add New Customer
+                                            </button>
+                                        </div>
+                                        <!-- Customer options will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 3: Project and Status -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <div class="form-section-icon form-section-icon-success">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <span>Project & Status</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label class="form-label required-field" for="pipelineProject">
+                                    Project
+                                </label>
+                                <input type="text" 
+                                       id="pipelineProject" 
+                                       class="form-input"
+                                       required
+                                       placeholder="Enter project name">
                             </div>
                             
                             <div>
@@ -1106,105 +1313,65 @@
                                     Status
                                 </label>
                                 <select id="pipelineStatus" class="form-input" required>
-                                    <option value="backlog">Backlog</option>
-                                    <option value="planning">Planning</option>
-                                    <option value="development">Development</option>
-                                    <option value="testing">Testing</option>
-                                    <option value="deployment">Deployment</option>
-                                    <option value="completed">Completed</option>
+                                    <option value="Open">Open</option>
+                                    <option value="Close">Close</option>
                                 </select>
-                            </div>
-                            
-                            <div>
-                                <label class="form-label" for="pipelineWorkOrder">
-                                    Work Order Reference
-                                </label>
-                                <input type="text" 
-                                       id="pipelineWorkOrder" 
-                                       class="form-input"
-                                       placeholder="WO-001/GI-GEN/FAS/I/2025">
-                            </div>
-                            
-                            <div>
-                                <label class="form-label" for="pipelineCustomer">
-                                    Customer
-                                </label>
-                                <input type="text" 
-                                       id="pipelineCustomer" 
-                                       class="form-input"
-                                       placeholder="Enter customer name">
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Section 2: Details -->
+                    <!-- Section 4: Financial Information -->
                     <div class="form-section">
                         <div class="form-section-title">
-                            <div class="form-section-icon form-section-icon-secondary">
-                                <i class="fas fa-list"></i>
+                            <div class="form-section-icon form-section-icon-warning">
+                                <i class="fas fa-money-bill-wave"></i>
                             </div>
-                            <span>Details</span>
+                            <span>Financial Information</span>
                         </div>
                         
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div>
-                                <label class="form-label" for="pipelineDivision">
-                                    Division
+                                <label class="form-label required-field" for="pipelineValueQuotation">
+                                    Value Quotation
                                 </label>
-                                <select id="pipelineDivision" class="form-input">
-                                    <option value="">Select Division</option>
-                                    <option value="Maintenance">Maintenance</option>
-                                    <option value="Testcom">Testcom</option>
-                                    <option value="Project">Project</option>
-                                </select>
+                                <div class="currency-input-group">
+                                    <span class="currency-prefix">IDR</span>
+                                    <input type="text" 
+                                           id="pipelineValueQuotation" 
+                                           class="form-input currency-input"
+                                           required
+                                           placeholder="Enter quotation value"
+                                           data-thousands-separator=".">
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        Format: 7.000.000 (7 juta)
+                                    </div>
+                                </div>
                             </div>
                             
                             <div>
-                                <label class="form-label" for="pipelinePriority">
-                                    Priority
+                                <label class="form-label required-field" for="pipelineValuePO">
+                                    Value PO
                                 </label>
-                                <select id="pipelinePriority" class="form-input">
-                                    <option value="Normal">Normal</option>
-                                    <option value="High">High</option>
-                                    <option value="Urgent">Urgent</option>
-                                    <option value="Low">Low</option>
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="form-label" for="pipelineAssignee">
-                                    Assignee
-                                </label>
-                                <select id="pipelineAssignee" class="form-input">
-                                    <option value="">Select Assignee</option>
-                                    <option value="Husni">Husni</option>
-                                    <option value="Heksi">Heksi</option>
-                                    <option value="Indra Kurniawan">Indra Kurniawan</option>
-                                    <option value="Putra">Putra</option>
-                                    <option value="Wahyu Sujoko">Wahyu Sujoko</option>
-                                    <option value="Fiki">Fiki</option>
-                                    <option value="Edwin">Edwin</option>
-                                    <option value="Yudiono">Yudiono</option>
-                                    <option value="Harianto">Harianto</option>
-                                    <option value="Haryo">Haryo</option>
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="form-label" for="pipelineDueDate">
-                                    Due Date
-                                </label>
-                                <input type="date" 
-                                       id="pipelineDueDate" 
-                                       class="form-input">
+                                <div class="currency-input-group">
+                                    <span class="currency-prefix">IDR</span>
+                                    <input type="text" 
+                                           id="pipelineValuePO" 
+                                           class="form-input currency-input"
+                                           required
+                                           placeholder="Enter PO value"
+                                           data-thousands-separator=".">
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        Format: 7.000.000 (7 juta)
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Section 3: Description -->
+                    <!-- Section 5: Description -->
                     <div class="form-section">
                         <div class="form-section-title">
-                            <div class="form-section-icon form-section-icon-success">
+                            <div class="form-section-icon form-section-icon-info">
                                 <i class="fas fa-align-left"></i>
                             </div>
                             <span>Description</span>
@@ -1221,7 +1388,7 @@
                         </div>
                     </div>
                     
-                    <!-- Section 4: Progress & Notes -->
+                    <!-- Section 6: Progress & Notes -->
                     <div class="form-section">
                         <div class="form-section-title">
                             <div class="form-section-icon form-section-icon-info">
@@ -1271,6 +1438,68 @@
                     <button type="submit" form="pipelineItemForm" class="btn btn-primary">
                         <i class="fas fa-save"></i>
                         Save Pipeline Item
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Customer Modal -->
+    <div id="addCustomerModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-md">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Add New Customer</h2>
+                    <p class="text-gray-300 mt-1">Add new customer to the list</p>
+                </div>
+                <button id="closeAddCustomerModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addCustomerForm" class="space-y-6">
+                    <div>
+                        <label class="form-label required-field" for="newCustomerName">
+                            Customer Name
+                        </label>
+                        <input type="text" 
+                               id="newCustomerName" 
+                               class="form-input"
+                               required
+                               placeholder="Enter customer name">
+                    </div>
+                    
+                    <div>
+                        <label class="form-label" for="newCustomerAddress">
+                            Address
+                        </label>
+                        <textarea id="newCustomerAddress" 
+                                  class="form-input" 
+                                  rows="3"
+                                  placeholder="Enter customer address"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="form-label" for="newCustomerContact">
+                            Contact Person
+                        </label>
+                        <input type="text" 
+                               id="newCustomerContact" 
+                               class="form-input"
+                               placeholder="Enter contact person">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-header">
+                <div></div>
+                <div class="flex gap-3">
+                    <button id="cancelAddCustomerBtn" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" form="addCustomerForm" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Add Customer
                     </button>
                 </div>
             </div>
@@ -1383,13 +1612,267 @@
     </div>
 <script>
         // ==================== GLOBAL VARIABLES ====================
-        let db, auth, pipelinesCollection, pipelineHistoryCollection, usersCollection;
+        let db, auth, pipelinesCollection, pipelineHistoryCollection, usersCollection, customersCollection;
         let currentUser = null;
         let currentUserRole = 'user';
         let pipelineItems = [];
         let filteredPipelineItems = [];
         let draggedItem = null;
         let charts = {};
+        
+        // Data for dropdowns
+        const PIC_LIST = [
+            "Wahyu Sujoko",
+            "Proboadi hariyo wicaksono", 
+            "Fiki hernawan",
+            "Indra kurniawan",
+            "Aries A Bastian",
+            "Mochammad Gorwantoro Putra", 
+            "Yudiyono", 
+            "Muhamad husni", 
+            "edwin qomarudin", 
+            "Edy Amin",
+            "Heksi Prasetyo", 
+            "Hery Syah Putra"
+        ];
+        
+        const CUSTOMER_LIST = [
+            "PT. GUDANG GARAM Tbk",
+            "PERSEROAN TERBATAS BADAN BANK CENTRAL ASIA TBK",
+            "PT. FRISIAN FLAG INDONESIA",
+            "PT. GRIYA SIRA INDAH",
+            "PT. PUTRA SINAR PERMAJA",
+            "PT. PLAZA INDONESIA REALTY Tbk",
+            "CV. KROSS SARANA TEKNIK",
+            "PT. GEMILANG CIPTA ABADI",
+            "PT. MARYO MAKMUR TEHNIK",
+            "PT. SOUTH PACIFIC VISCOSE",
+            "PT. HOTEL CANDI BARU",
+            "PT. SMILE BRIGHT WHITE (LAND OF SMILES CLINIC)",
+            "PT. PURI MATAHARI",
+            "PT. MENARA ASTRA",
+            "PT. PLAZA INDONESIA MANDIRI",
+            "PT. WYNNCOR BALI",
+            "PT. JONES LANG LASALLE",
+            "PT. SATAHI CIPTA MANDIRI",
+            "YAYASAN BUDDHA TZU CHI MEDIKA INDONESIA",
+            "PT. INDONESIA MOC SERVICE",
+            "PT. RAMA KUTA HOTEL",
+            "PT. HANDAL UTAMA BUANA",
+            "PT. SURYA MARGA LUHUR",
+            "PT. GRAHA SIDANG PRATAMA",
+            "PT. LASALLEFOOD INDONESIA",
+            "SARULLA OPERATIONS LTD",
+            "SHM FIRE SAFETY Pte.Ltd",
+            "PT. WAHANA NUSANTARA",
+            "PT. YOGYA CENTRAL TERPADU",
+            "PT. DONGGI SENORO LNG",
+            "PT. PT. INDONESIA MOROWALI INDUSTRIAL PARK",
+            "CAKRA NUSA UTAMA",
+            "PT. BIMANTARA CITRA",
+            "PT. ALAM BALI INTERNATIONAL",
+            "PT. ASIA PROPERTINDO BUILDING",
+            "P3SRS-KC KERATON APARTMENT PLAZA INDONESIA",
+            "PT. TRIGUNA MANDALA",
+            "PT. PATRA JASA",
+            "PT. TOTAL FIRE INDONESIA",
+            "PERHIMPUNAN PEMILIK DAN PENGHUNI SATUAN RUMAH SUSUN APARTEMEN CIPUTRA WORLD 2 JAKARTA",
+            "PT. SPECTRO PRATAMA INDONESIA",
+            "PT. PAKUWON PERMAI",
+            "PT. BINA GRAHA MAKMUR",
+            "PT. JAFA KARYA TEKNIK",
+            "PT. MINH GIA CONSORSIUM",
+            "PERHIMPUNAN PENGHUNI APARTEMEN BATAVIA",
+            "PT. SURYA ANDALAN BUMI PERSADA",
+            "PT. SINAR CEMERLANG GEMILANG",
+            "PT. SINAR GALAXY",
+            "PT. MELFICON PERSADA ABADI",
+            "PT. APICAL KAO CHEMICAL",
+            "PT. GRAHA BENGKULU MAKMUR",
+            "PT. VOPAK TERMINAL MERAK",
+            "PT. PLAZA LIFESTYLE PRIMA",
+            "PT. BLUEMOON INTERNASIONAL",
+            "PT. HONEYWELL INDONESIA",
+            "PT. BUNGASARI FLOUR MILLS INDONESIA",
+            "PT. ROYAL PACIFIC NUSANTARA",
+            "PT. IDEA SEJAHTERA INDONESIA",
+            "PT. BERCA MANDIRI PERKASA",
+            "PT. LAX TEKNOLOGI INDONESIA",
+            "MU RESEARCH AND CONSULTING INDONESIA",
+            "PT. PROMATRIX FACILITIES MANAGEMENT",
+            "PT. JISK PERSADA SOLUSI",
+            "PT. SEMEN INDONESIA LOGISTIK",
+            "PT. MANE INDONESIA",
+            "PT. JGC INDONESIA",
+            "PT. JOHNSON CONTROLS INDONESIA",
+            "PT. WIFGASINDO DINAMIKA INSTRUMENT ENGINEERING",
+            "PT. BAHANASEMESTA CITRANUSANTARA",
+            "PT. INDOKO PERKASA PRIMA",
+            "PT. ARKADIA SINERGI INDONESIA",
+            "PT. NURBAIZ RIZKY SEJAHTERA",
+            "PT. PILAR GARBA INTI",
+            "PT. CITRA PUTRA REALTY",
+            "JADESTONE ENERGY (LEMANG) PTE LTD",
+            "PT. LANGGENG KREASI JAYA PRIMA",
+            "RUMAH SAKIT JANTUNG HARAPAN KITA JAKARTA DITJEN PELAYANAN KESEHATAN KEMENTRIAN KESEHATAN",
+            "PT. GELYN SIDNI",
+            "YUSKITAMA LESTARI",
+            "PPPSRS APARTEMEN THE ELEMENTS",
+            "PPPSRS PERKANTORAN EKSEKUTIF SATRIO TOWER",
+            "PT. BORNEO PROPERTINDO MANDIRI",
+            "PT. KARTA WADANA ABADI",
+            "PT. KUSUMA INTI ABADI",
+            "PT. HANJAYA MANDALA SAMPOERNA TBK",
+            "PT. SENA AVINDO",
+            "PT. INDOSAFE TIRTA MAKMUR",
+            "PT. INDONESIA ANEKATAMA MANDIRI",
+            "PT. JAYA BONS ABADI",
+            "PT. GRAHA ALAM LESTARI",
+            "PT. MEGA HOTEL LESTARI",
+            "PT. PARA BALI PROPERTINDO",
+            "PT. MATTEL INDONESIA",
+            "PT. GRAHA WAHANA NUSANTARA",
+            "PT. BINARA GUNA MEDIKTAMA",
+            "PT. SODEXO SINERGI INDONESIA",
+            "PT. MULIA KARYA GEMILANG",
+            "PT. RAMAYANA HARTA PRATAMA",
+            "PT. SIMEX PHARMACEUTICAL INDONESIA",
+            "PT. MIRAMA WISATA",
+            "PPPSRS THE PAKUBUWONO VIEW",
+            "PT. MUTIARA PERMATA MULIA",
+            "PT. CBRE CONSULTANCY SERVICES",
+            "PT. KARANG MAS SEJAHTERA",
+            "PT. RUMAH SAKIT PONDOK INDAH",
+            "PT. YUSKITAMA LESTARI",
+            "PT. TAIYO SINAR RAYA TEKNIK",
+            "PT. SHR HOTEL INDONESIA",
+            "PPRSH FOUR SEASONS REGENT RESIDENCES",
+            "PP THE PAKUBUWONO RESIDENCE",
+            "PT. SARIARTHAMAS HOTEL INTERNATIONAL",
+            "PT. PT. BENTENG TEGUH PERKASA",
+            "BHUMI PRAMA ARJASA",
+            "PT. AFG VENTURA TEKNOLOGI",
+            "PT. TARANA REKSA CIPTAKARYA",
+            "MARS SYMBIOSCIENCE INDONESIA",
+            "PT. KREASI CIPTA KARSA",
+            "PT. WIRA EKA BHAKTI",
+            "PERKUMPULAN PENGHUNI RUMAH SUSUN REGATTA-VB",
+            "CV. ZULFIRA KREASINDO",
+            "PT. REICON WIRAINDO PRATAMA",
+            "PT. PURI ZUQNI",
+            "PT. SILOAM INTERNATIONAL HOSPITALS Tbk",
+            "PT. KARUNIA ARTHA PRATAMA",
+            "PT. KAWASAN MANDIRI BERSAMA",
+            "PT. JAYA BINARA MEDIKTAMA",
+            "PT. CENTRE POINT MEDAN",
+            "PT. SRIBOGA FLOUR MILL",
+            "HYUNDAI ENGINEERING & CONSTRUCTION CO,LTD",
+            "PT. EPCON GRAHA GUNA",
+            "PT. YAS KONSULTAN INDONESIA",
+            "PT. KARYA PROPERTINDO INVESTAMA",
+            "PT. BUMI SERPONG DAMAI",
+            "PT. PAKUWON PERMAI",
+            "PT. API METRA GRAHA",
+            "EUROASIATIC JAYA",
+            "PT. MUSTIKA MEMADATA",
+            "PT. ISS INDONESIA",
+            "PERHIMPUNAN PENGHUNI PERKANTORAN PLAZA ASIA",
+            "PT. EMPAT PILAR ADIDAYA",
+            "PT. SUMBER MESIN RAYA",
+            "PT. SARANA UTAMA ADIMANDIRI",
+            "PT. BARNABY KONSTRUKSI SEJAHTERA",
+            "CV. ANEKA MANDIRI",
+            "PERKUMPULAN HUSADA",
+            "PT. FINUSOLPRIMA FARMA INTERNASIONAL",
+            "CV. LENTERA TILAS TEHNIK",
+            "PT. VILLAS HOTEL",
+            "PT. ARISTA PRATAMA JAYA",
+            "PT. WIKA REALTY MINOR DEVELOPMENT",
+            "PT. INTEGRA METRICON MANDIRI",
+            "PT. SENTRATEK ADIPRESTASI",
+            "PT. PT. BANK CENTRAL ASIA TBK",
+            "PT. HARAPAN GLOBAL NIAGA",
+            "PT. PAKUWON JATI TBK",
+            "PERHIMPUNAN PEMILIK DAN PENGHUNI SATUAN RUMAH SUSUN SEMENTARA CIPUTRA INTERNATIONAL - 1",
+            "BPK. ROHMADI",
+            "PT. DUA CAHAYA SAKTI",
+            "PT. CIPTAKARYA MANDIRI JAYA",
+            "PT. MANGGALA GELORA PERKASA",
+            "PT. SAMAMANTAP SEJAHTERA",
+            "PT. TELKOM LANDMARK TOWER",
+            "PT. ANUMANA GRAHA CANTIKA",
+            "PT. PRIMA PRATAMA CITRA",
+            "RS EVASARI",
+            "PT. DUTA ANGGADA REALTY TBK",
+            "PT. TIGA DUA DELAPAN",
+            "PT. DWITAMA ALAM SEJAHTERA",
+            "PT. WAHANA ADIREKSA PRATAMA",
+            "PERSEROAN TERBATAS - BADAN SURYA BAYU SAKTI",
+            "PT. PANTRAYA",
+            "PT. KIEVIT INDONESIA",
+            "PT. ALLTECH SOLUSINDO",
+            "PT. KALBE FARMA TBK",
+            "PT. SURYA GRAHA PERTIWI",
+            "PT. ANDAL MAKMUR AGUNG",
+            "KAP PAUL HADIWINATA, HIDAJAT, ARSONO, RETNO, PALILINGAN & REKAN",
+            "PT. ALFA PRIMA TEHNINDO",
+            "PT. BUMITANGERANG MESINDOTAMA",
+            "PT. SETYA SOLUSI SEJAHTERA",
+            "PT. ADITYRA ROKKO KENCANA",
+            "PT. MANDIRI ANDAL SEJAHTERA",
+            "PT. GRHA HATTEN DUASATU",
+            "PT. SEMESTA INDAH PERMATA",
+            "PT. GEMA GRAHA SARANA",
+            "PERSEK. OENTOENG SURIA & PARTNERS",
+            "PT. METROPOLITAN KENTJANA TBK",
+            "PT. DUTA ANGGADA REALTY - CHASE PLAZA",
+            "PT. CIPUTRA RESIDENCE",
+            "PT. GENTAMULIA INFRA",
+            "PT. KAMADJAJA LOGISTICS",
+            "PT. PESONA PURI PROPERTI",
+            "PT. HEXALINDO MITRA PERKASA",
+            "PT. SUMMARECON HOTELINDO",
+            "PT. KUSUMA INTI ABADI",
+            "PT. JELL ENGINEERING KARYA",
+            "PT. SURYAMAS DUTA MAKMUR TBK",
+            "PT. CENTRAL TEHNIK SOLUSINDO",
+            "PT. SINAR MAS AGRO RESOURCES AND TECHNOLOGY TBK",
+            "PT. UNITA BRANINDO",
+            "PT. PENGELOLA LANDMARK PLUIT",
+            "PT. GRAHA LAYAR PRIMA TBK",
+            "DASATRIA UTAMA",
+            "PT. KIDE INTERNATIONAL INDONESIA",
+            "PT. PRIMASATYA REKSACIPTA TEHNIKA",
+            "PT. CONSTRUCTA BUILDERS",
+            "PT. PUTERA SAMPOERNA",
+            "PT. TOTALFIRE INDONESIA",
+            "PT. OPHTHALINDO JAYA",
+            "PT. BUANA MITRA GLOBALINDO",
+            "PT. TEKNIKA INTI PERKASA",
+            "PT. MEGA MULIA MULTIABADI",
+            "PT. SANGGRAHA DHIKA",
+            "PT. AZBIL BERCA INDONESIA",
+            "PT. ESPANIKA DWI SENTOSA",
+            "PPPSRS HUNIAN APARTEMEN SOUTH HILLS",
+            "PERSEROAN TERBATAS BADAN GRAHA SENGGIGI (ARUNA SENGGIGI RESORT & CONVENTION)",
+            "PT. SUCCESS VENTURE HOTEL INVESTMENTS",
+            "PT. SUCCESS VENTURE SERVICED SUITES INVESTMENTS",
+            "PT. SURYA INTER WISESA",
+            "PT. MHG BALANGAN",
+            "PT. TOA COATING INDONESIA",
+            "PT. GEMA INTERMULIA SEJAHTERA",
+            "PT. PARIDAN INTI SOLUSI PERSADA",
+            "PT. SANTOS JAYA ABADI",
+            "PT. SUPRA BOGA LESTARI TBk",
+            "PT. YESTAR KARYA UTAMA",
+            "PT. JON MERELL JAYA",
+            "PT. INDOAGRI DAITOCACAO",
+            "PT. OCS GLOBAL SERVICES",
+            "PT. ADEMCO SECURITY INDONESIA",
+            "PERHIMPUNAN PENGHUNI RUMAH SUSUN (SEMENTARA) APARTEMEN PURI ORCHARD",
+            "PT. KIAN MULIA MANUNGGAL",
+            "BPK. LIE EDDY"
+        ];
         
         // Pipeline stages configuration
         const pipelineStages = [
@@ -1422,6 +1905,7 @@
                 pipelinesCollection = db.collection('pipelines');
                 pipelineHistoryCollection = db.collection('pipelineHistory');
                 usersCollection = db.collection('users');
+                customersCollection = db.collection('customers');
                 
                 console.log('Firebase initialized successfully for Pipelines');
                 return true;
@@ -1491,6 +1975,29 @@
             }
         }
 
+        function formatCurrency(value) {
+            if (!value) return '0';
+            const num = parseInt(value.toString().replace(/\./g, ''));
+            return new Intl.NumberFormat('id-ID').format(num);
+        }
+
+        function parseCurrency(value) {
+            if (!value) return 0;
+            return parseInt(value.toString().replace(/\./g, '')) || 0;
+        }
+
+        function formatCurrencyInput(value) {
+            // Remove all non-digit characters
+            let num = value.replace(/\D/g, '');
+            
+            // Format with thousand separators
+            if (num.length > 3) {
+                num = num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            
+            return num;
+        }
+
         function showToast(message, type = 'info', duration = 3000) {
             console.log(`Toast [${type}]:`, message);
             
@@ -1541,6 +2048,266 @@
         function hideLoading() {
             const loadingOverlay = document.getElementById('loadingOverlay');
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
+        }
+
+        // ==================== DROPDOWN FUNCTIONS ====================
+        function setupDropdowns() {
+            // Setup PIC dropdown
+            const picInput = document.getElementById('pipelinePIC');
+            const picDropdown = document.getElementById('picDropdownOptions');
+            const picSearchInput = document.getElementById('picSearchInput');
+            
+            if (picInput) {
+                // Populate PIC options
+                populatePICOptions();
+                
+                picInput.addEventListener('click', function(e) {
+                    picDropdown.classList.toggle('show');
+                    e.stopPropagation();
+                });
+                
+                picInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const options = picDropdown.querySelectorAll('.custom-dropdown-option');
+                    
+                    options.forEach(option => {
+                        const text = option.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            option.style.display = 'block';
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+                    
+                    picDropdown.classList.add('show');
+                });
+                
+                picSearchInput.addEventListener('input', function(e) {
+                    const searchTerm = this.value.toLowerCase();
+                    const options = picDropdown.querySelectorAll('.custom-dropdown-option');
+                    
+                    options.forEach(option => {
+                        const text = option.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            option.style.display = 'block';
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+                    
+                    e.stopPropagation();
+                });
+            }
+            
+            // Setup Customer dropdown
+            const customerInput = document.getElementById('pipelineCustomer');
+            const customerDropdown = document.getElementById('customerDropdownOptions');
+            const customerSearchInput = document.getElementById('customerSearchInput');
+            
+            if (customerInput) {
+                // Load customers from Firestore
+                loadCustomers();
+                
+                customerInput.addEventListener('click', function(e) {
+                    customerDropdown.classList.toggle('show');
+                    e.stopPropagation();
+                });
+                
+                customerInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const options = customerDropdown.querySelectorAll('.custom-dropdown-option');
+                    
+                    options.forEach(option => {
+                        const text = option.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            option.style.display = 'block';
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+                    
+                    customerDropdown.classList.add('show');
+                });
+                
+                customerSearchInput.addEventListener('input', function(e) {
+                    const searchTerm = this.value.toLowerCase();
+                    const options = customerDropdown.querySelectorAll('.custom-dropdown-option');
+                    
+                    options.forEach(option => {
+                        const text = option.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            option.style.display = 'block';
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+                    
+                    e.stopPropagation();
+                });
+            }
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.custom-dropdown')) {
+                    document.querySelectorAll('.custom-dropdown-options').forEach(dropdown => {
+                        dropdown.classList.remove('show');
+                    });
+                }
+            });
+        }
+
+        function populatePICOptions() {
+            const picDropdown = document.getElementById('picDropdownOptions');
+            if (!picDropdown) return;
+            
+            // Clear existing options except search
+            const searchDiv = picDropdown.querySelector('.custom-dropdown-search');
+            picDropdown.innerHTML = '';
+            if (searchDiv) picDropdown.appendChild(searchDiv);
+            
+            // Add PIC options
+            PIC_LIST.forEach(pic => {
+                const option = document.createElement('div');
+                option.className = 'custom-dropdown-option';
+                option.textContent = pic;
+                option.addEventListener('click', function() {
+                    document.getElementById('pipelinePIC').value = pic;
+                    picDropdown.classList.remove('show');
+                });
+                picDropdown.appendChild(option);
+            });
+        }
+
+        async function loadCustomers() {
+            try {
+                const querySnapshot = await customersCollection.orderBy('name').get();
+                const customerDropdown = document.getElementById('customerDropdownOptions');
+                if (!customerDropdown) return;
+                
+                // Clear existing options except search
+                const searchDiv = customerDropdown.querySelector('.custom-dropdown-search');
+                customerDropdown.innerHTML = '';
+                if (searchDiv) customerDropdown.appendChild(searchDiv);
+                
+                // Add customer options from Firestore
+                querySnapshot.forEach((doc) => {
+                    const customerData = doc.data();
+                    const option = document.createElement('div');
+                    option.className = 'custom-dropdown-option';
+                    option.textContent = customerData.name;
+                    option.dataset.id = doc.id;
+                    option.addEventListener('click', function() {
+                        document.getElementById('pipelineCustomer').value = customerData.name;
+                        customerDropdown.classList.remove('show');
+                    });
+                    customerDropdown.appendChild(option);
+                });
+                
+                // Add default customers if Firestore is empty
+                if (querySnapshot.empty) {
+                    CUSTOMER_LIST.forEach(customer => {
+                        const option = document.createElement('div');
+                        option.className = 'custom-dropdown-option';
+                        option.textContent = customer;
+                        option.addEventListener('click', function() {
+                            document.getElementById('pipelineCustomer').value = customer;
+                            customerDropdown.classList.remove('show');
+                        });
+                        customerDropdown.appendChild(option);
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error loading customers:', error);
+                // Fallback to default list
+                const customerDropdown = document.getElementById('customerDropdownOptions');
+                if (customerDropdown) {
+                    // Clear existing options except search
+                    const searchDiv = customerDropdown.querySelector('.custom-dropdown-search');
+                    customerDropdown.innerHTML = '';
+                    if (searchDiv) customerDropdown.appendChild(searchDiv);
+                    
+                    CUSTOMER_LIST.forEach(customer => {
+                        const option = document.createElement('div');
+                        option.className = 'custom-dropdown-option';
+                        option.textContent = customer;
+                        option.addEventListener('click', function() {
+                            document.getElementById('pipelineCustomer').value = customer;
+                            customerDropdown.classList.remove('show');
+                        });
+                        customerDropdown.appendChild(option);
+                    });
+                }
+            }
+        }
+
+        async function addNewCustomer(customerData) {
+            try {
+                showLoading();
+                
+                // Check if customer already exists
+                const existingCustomer = await customersCollection
+                    .where('name', '==', customerData.name)
+                    .get();
+                
+                if (!existingCustomer.empty) {
+                    showToast('Customer already exists', 'warning');
+                    return;
+                }
+                
+                // Add new customer to Firestore
+                await customersCollection.add({
+                    name: customerData.name,
+                    address: customerData.address || '',
+                    contact: customerData.contact || '',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: currentUser.email
+                });
+                
+                showToast('Customer added successfully', 'success');
+                
+                // Reload customer dropdown
+                await loadCustomers();
+                
+                // Set the new customer as selected
+                document.getElementById('pipelineCustomer').value = customerData.name;
+                
+            } catch (error) {
+                console.error('Error adding new customer:', error);
+                showToast('Failed to add customer', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ==================== CURRENCY INPUT HANDLING ====================
+        function setupCurrencyInputs() {
+            const quotationInput = document.getElementById('pipelineValueQuotation');
+            const poInput = document.getElementById('pipelineValuePO');
+            
+            if (quotationInput) {
+                quotationInput.addEventListener('input', function() {
+                    this.value = formatCurrencyInput(this.value);
+                });
+                
+                quotationInput.addEventListener('blur', function() {
+                    if (this.value) {
+                        this.value = formatCurrencyInput(this.value);
+                    }
+                });
+            }
+            
+            if (poInput) {
+                poInput.addEventListener('input', function() {
+                    this.value = formatCurrencyInput(this.value);
+                });
+                
+                poInput.addEventListener('blur', function() {
+                    if (this.value) {
+                        this.value = formatCurrencyInput(this.value);
+                    }
+                });
+            }
         }
 
         // ==================== PIPELINE FUNCTIONS ====================
@@ -1913,6 +2680,11 @@
                 document.getElementById('pipelineStatus').value = 'backlog';
                 document.getElementById('pipelinePriority').value = 'Normal';
                 document.getElementById('pipelineProgress').value = 0;
+                
+                // Set default values for new fields
+                document.getElementById('pipelineCompany').value = '';
+                document.getElementById('pipelineSOW').value = '';
+                document.getElementById('pipelineStatus').value = 'Open';
             }
             
             // Setup progress slider
@@ -1929,13 +2701,16 @@
 
         function populatePipelineModalForm(item) {
             document.getElementById('pipelineItemId').value = item.id;
-            document.getElementById('pipelineTitle').value = item.title || '';
-            document.getElementById('pipelineStatus').value = item.status || 'backlog';
-            document.getElementById('pipelineWorkOrder').value = item.workOrder || '';
+            document.getElementById('pipelineNo').value = item.no || '';
+            document.getElementById('pipelineQuotation').value = item.quotation || '';
+            document.getElementById('pipelineCompany').value = item.company || '';
+            document.getElementById('pipelineSOW').value = item.sow || '';
+            document.getElementById('pipelinePIC').value = item.pic || '';
             document.getElementById('pipelineCustomer').value = item.customer || '';
-            document.getElementById('pipelineDivision').value = item.division || '';
-            document.getElementById('pipelinePriority').value = item.priority || 'Normal';
-            document.getElementById('pipelineAssignee').value = item.assignee || '';
+            document.getElementById('pipelineProject').value = item.project || '';
+            document.getElementById('pipelineStatus').value = item.status || 'Open';
+            document.getElementById('pipelineValueQuotation').value = item.valueQuotation ? formatCurrency(item.valueQuotation) : '';
+            document.getElementById('pipelineValuePO').value = item.valuePO ? formatCurrency(item.valuePO) : '';
             document.getElementById('pipelineDescription').value = item.description || '';
             document.getElementById('pipelineNotes').value = item.notes || '';
             document.getElementById('pipelineProgress').value = item.progress || 0;
@@ -1964,13 +2739,16 @@
             const isEdit = !!itemId;
             
             const pipelineData = {
-                title: document.getElementById('pipelineTitle').value.trim(),
+                no: parseInt(document.getElementById('pipelineNo').value) || 0,
+                quotation: document.getElementById('pipelineQuotation').value.trim(),
+                company: document.getElementById('pipelineCompany').value,
+                sow: document.getElementById('pipelineSOW').value,
+                pic: document.getElementById('pipelinePIC').value.trim(),
+                customer: document.getElementById('pipelineCustomer').value.trim(),
+                project: document.getElementById('pipelineProject').value.trim(),
                 status: document.getElementById('pipelineStatus').value,
-                workOrder: document.getElementById('pipelineWorkOrder').value.trim() || '',
-                customer: document.getElementById('pipelineCustomer').value.trim() || '',
-                division: document.getElementById('pipelineDivision').value || '',
-                priority: document.getElementById('pipelinePriority').value || 'Normal',
-                assignee: document.getElementById('pipelineAssignee').value || '',
+                valueQuotation: parseCurrency(document.getElementById('pipelineValueQuotation').value),
+                valuePO: parseCurrency(document.getElementById('pipelineValuePO').value),
                 description: document.getElementById('pipelineDescription').value.trim() || '',
                 notes: document.getElementById('pipelineNotes').value.trim() || '',
                 progress: parseInt(document.getElementById('pipelineProgress').value) || 0,
@@ -1991,7 +2769,7 @@
                     
                     const newStatus = pipelineData.status;
                     if (originalStatus !== newStatus) {
-                        await logPipelineStatusChange(itemId, pipelineData.title, originalStatus, newStatus);
+                        await logPipelineStatusChange(itemId, pipelineData.project, originalStatus, newStatus);
                     }
                     
                     showToast('Pipeline item updated successfully', 'success');
@@ -2000,7 +2778,7 @@
                     pipelineData.createdBy = currentUser.email;
                     const result = await pipelinesCollection.add(pipelineData);
                     
-                    await logPipelineStatusChange(result.id, pipelineData.title, 'New', pipelineData.status);
+                    await logPipelineStatusChange(result.id, pipelineData.project, 'New', pipelineData.status);
                     
                     showToast('Pipeline item created successfully', 'success');
                 }
@@ -2043,6 +2821,35 @@
             } finally {
                 hideLoading();
             }
+        }
+
+        // ==================== ADD CUSTOMER MODAL FUNCTIONS ====================
+        function openAddCustomerModal() {
+            document.getElementById('addCustomerForm').reset();
+            document.getElementById('addCustomerModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAddCustomerModal() {
+            document.getElementById('addCustomerModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        async function saveNewCustomer() {
+            const form = document.getElementById('addCustomerForm');
+            if (!form.checkValidity()) {
+                showToast('Please fill in customer name', 'warning');
+                return;
+            }
+            
+            const customerData = {
+                name: document.getElementById('newCustomerName').value.trim(),
+                address: document.getElementById('newCustomerAddress').value.trim() || '',
+                contact: document.getElementById('newCustomerContact').value.trim() || ''
+            };
+            
+            await addNewCustomer(customerData);
+            closeAddCustomerModal();
         }
 
         // ==================== PIPELINE ANALYTICS ====================
@@ -2504,6 +3311,8 @@
             
             loadPipelineItems();
             setupDragAndDrop();
+            setupDropdowns();
+            setupCurrencyInputs();
             
             // Add event listeners
             document.getElementById('newPipelineItemBtn').addEventListener('click', createNewPipelineItem);
@@ -2523,6 +3332,15 @@
             });
             
             document.getElementById('closePipelinesAnalyticsModal').addEventListener('click', closePipelinesAnalyticsModal);
+            
+            // Add customer modal event listeners
+            document.getElementById('addNewCustomerBtn').addEventListener('click', openAddCustomerModal);
+            document.getElementById('closeAddCustomerModal').addEventListener('click', closeAddCustomerModal);
+            document.getElementById('cancelAddCustomerBtn').addEventListener('click', closeAddCustomerModal);
+            document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveNewCustomer();
+            });
             
             console.log('Pipelines app initialization complete');
         }
