@@ -1,1 +1,2548 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Order Pipelines</title>
+    
+    <!-- Load Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+    <style>
+        /* ==================== VARIABLES ==================== */
+        :root {
+            /* Color Palette - Modern & Professional */
+            --primary-50: #f0f9ff;
+            --primary-100: #e0f2fe;
+            --primary-200: #bae6fd;
+            --primary-300: #7dd3fc;
+            --primary-400: #38bdf8;
+            --primary-500: #0ea5e9;
+            --primary-600: #0284c7;
+            --primary-700: #0369a1;
+            --primary-800: #075985;
+            --primary-900: #0c4a6e;
+            
+            --secondary-50: #fdf2f8;
+            --secondary-100: #fce7f3;
+            --secondary-200: #fbcfe8;
+            --secondary-300: #f9a8d4;
+            --secondary-400: #f472b6;
+            --secondary-500: #ec4899;
+            --secondary-600: #db2777;
+            --secondary-700: #be185d;
+            --secondary-800: #9d174d;
+            --secondary-900: #831843;
+            
+            --accent-50: #f0fdf4;
+            --accent-100: #dcfce7;
+            --accent-200: #bbf7d0;
+            --accent-300: #86efac;
+            --accent-400: #4ade80;
+            --accent-500: #22c55e;
+            --accent-600: #16a34a;
+            --accent-700: #15803d;
+            --accent-800: #166534;
+            --accent-900: #14532d;
+            
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            --neutral-400: #94a3b8;
+            --neutral-500: #64748b;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1e293b;
+            --neutral-900: #0f172a;
+            
+            /* Pipeline Status Colors */
+            --pipeline-backlog: #8b5cf6;
+            --pipeline-planning: #3b82f6;
+            --pipeline-development: #0ea5e9;
+            --pipeline-testing: #f59e0b;
+            --pipeline-deployment: #10b981;
+            --pipeline-completed: #64748b;
+            
+            /* Priority Colors */
+            --priority-high: #f87171;
+            --priority-urgent: #ef4444;
+            --priority-normal: #3b82f6;
+            --priority-low: #94a3b8;
+            
+            /* UI Variables */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ==================== BASE STYLES ==================== */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--neutral-50) 0%, #ffffff 100%);
+            min-height: 100vh;
+            color: var(--neutral-800);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* ==================== PIPELINE BOARD STYLES ==================== */
+        .pipeline-board {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            overflow-x: auto;
+            min-height: calc(100vh - 200px);
+        }
+
+        .pipeline-column {
+            flex: 0 0 320px;
+            background: var(--neutral-100);
+            border-radius: var(--radius-xl);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--neutral-200);
+        }
+
+        .pipeline-column-header {
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .pipeline-column-backlog {
+            background: linear-gradient(135deg, var(--pipeline-backlog), #7c3aed);
+        }
+
+        .pipeline-column-planning {
+            background: linear-gradient(135deg, var(--pipeline-planning), #2563eb);
+        }
+
+        .pipeline-column-development {
+            background: linear-gradient(135deg, var(--pipeline-development), #0284c7);
+        }
+
+        .pipeline-column-testing {
+            background: linear-gradient(135deg, var(--pipeline-testing), #d97706);
+        }
+
+        .pipeline-column-deployment {
+            background: linear-gradient(135deg, var(--pipeline-deployment), #059669);
+        }
+
+        .pipeline-column-completed {
+            background: linear-gradient(135deg, var(--pipeline-completed), #475569);
+        }
+
+        .pipeline-items-container {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .pipeline-item {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--neutral-200);
+            cursor: grab;
+            transition: var(--transition-base);
+            position: relative;
+        }
+
+        .pipeline-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--neutral-300);
+        }
+
+        .pipeline-item:active {
+            cursor: grabbing;
+        }
+
+        .pipeline-item.dragging {
+            opacity: 0.5;
+            transform: rotate(3deg);
+        }
+
+        .pipeline-item-over {
+            border: 2px dashed var(--primary-500);
+            background: var(--primary-50);
+        }
+
+        /* ==================== PIPELINE ITEM STYLES ==================== */
+        .pipeline-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pipeline-backlog-badge {
+            background: linear-gradient(135deg, #ede9fe, #f5f3ff);
+            color: var(--pipeline-backlog);
+            border: 1px solid #c4b5fd;
+        }
+
+        .pipeline-planning-badge {
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            color: var(--pipeline-planning);
+            border: 1px solid #93c5fd;
+        }
+
+        .pipeline-development-badge {
+            background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+            color: var(--pipeline-development);
+            border: 1px solid #7dd3fc;
+        }
+
+        .pipeline-testing-badge {
+            background: linear-gradient(135deg, #fef3c7, #fffbeb);
+            color: var(--pipeline-testing);
+            border: 1px solid #fbbf24;
+        }
+
+        .pipeline-deployment-badge {
+            background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+            color: var(--pipeline-deployment);
+            border: 1px solid #86efac;
+        }
+
+        .pipeline-completed-badge {
+            background: linear-gradient(135deg, #f1f5f9, #f8fafc);
+            color: var(--pipeline-completed);
+            border: 1px solid #cbd5e1;
+        }
+
+        /* ==================== GRADIENT BACKGROUNDS ==================== */
+        .gradient-bg-primary {
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+        }
+
+        .gradient-bg-secondary {
+            background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-700) 100%);
+        }
+
+        .gradient-bg-accent {
+            background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-700) 100%);
+        }
+
+        /* ==================== ELEGANT HEADER ==================== */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+            color: white;
+            padding: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
+        }
+
+        .app-logo {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .app-title {
+            font-weight: 800;
+            font-size: 2.25rem;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.9) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* ==================== COLORFUL BUTTONS ==================== */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: var(--transition-slow);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-500);
+            color: var(--primary-600);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-500);
+            color: white;
+        }
+
+        /* ==================== COLORFUL CARDS ==================== */
+        .card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            transition: var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-500), var(--secondary-500), var(--accent-500));
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        }
+
+        /* ==================== USER INFO CARD ==================== */
+        .user-card {
+            background: linear-gradient(135deg, var(--primary-50), var(--secondary-50));
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--primary-200);
+            transition: var(--transition-base);
+        }
+
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-300);
+        }
+
+        .user-avatar {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+        }
+
+        .user-avatar.admin {
+            background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
+        }
+
+        .user-avatar.manager {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        }
+
+        .user-avatar.user {
+            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+        }
+
+        /* ==================== SEARCH BOX ==================== */
+        .search-box {
+            position: relative;
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            transition: var(--transition-base);
+        }
+
+        .search-box:focus-within {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-500);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3.5rem;
+            border: none;
+            border-radius: var(--radius-xl);
+            font-size: 0.95rem;
+            background: transparent;
+            outline: none;
+            color: var(--neutral-800);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-500);
+            font-size: 1.25rem;
+        }
+
+        /* ==================== FORM STYLES ==================== */
+        .form-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-500), var(--secondary-500));
+        }
+
+        .form-section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--neutral-800);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            font-size: 0.9rem;
+            transition: var(--transition-fast);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            font-size: 0.95rem;
+            background: white;
+            transition: var(--transition-base);
+            color: var(--neutral-800);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* ==================== COLORFUL MODALS ==================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary-500), var(--secondary-500), var(--accent-500));
+        }
+
+        .modal-header {
+            padding: 1.75rem 2rem;
+            background: linear-gradient(135deg, var(--neutral-800), var(--neutral-900));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 2rem;
+            right: 2rem;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, rgba(255,255,255,0.9));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: calc(90vh - 8rem);
+        }
+
+        /* ==================== TOAST NOTIFICATIONS ==================== */
+        .toast-container {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .toast {
+            background: white;
+            color: var(--neutral-800);
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 320px;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: var(--transition-base);
+            border-left: 4px solid var(--primary-500);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left-color: var(--accent-500);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning-500);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger-500);
+        }
+
+        .toast.info {
+            border-left-color: var(--info-500);
+        }
+
+        .toast-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .toast-icon.success {
+            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+        }
+
+        .toast-icon.warning {
+            background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
+        }
+
+        .toast-icon.error {
+            background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
+        }
+
+        .toast-icon.info {
+            background: linear-gradient(135deg, var(--info-500), var(--info-600));
+        }
+
+        /* ==================== LOADING OVERLAY ==================== */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+        }
+
+        .loading-spinner {
+            width: 5rem;
+            height: 5rem;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-500);
+            animation: spin 1s linear infinite;
+            position: relative;
+        }
+
+        .loading-spinner::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: var(--secondary-500);
+            animation: spin 1.5s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ==================== CUSTOM SCROLLBAR ==================== */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: var(--neutral-100);
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--primary-400), var(--secondary-400));
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, var(--primary-500), var(--secondary-500));
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-slide-in-right {
+            animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* ==================== UTILITY CLASSES ==================== */
+        .hidden {
+            display: none !important;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--primary-600), var(--secondary-600));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 768px) {
+            .pipeline-board {
+                flex-direction: column;
+            }
+            
+            .pipeline-column {
+                flex: 1;
+                min-width: 100%;
+            }
+            
+            .app-title {
+                font-size: 1.75rem;
+            }
+            
+            .modal-body {
+                padding: 1.5rem;
+            }
+            
+            .form-section {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .btn {
+                padding: 0.75rem 1rem;
+            }
+            
+            .card {
+                padding: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Application Page -->
+    <div id="appPage">
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="app-logo">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <div>
+                                <h1 class="app-title">Work Order Pipelines</h1>
+                                <p class="app-subtitle">Visual Pipeline Management System</p>
+                            </div>
+                        </div>
+                        
+                        <!-- User Info Card -->
+                        <div class="user-card inline-block">
+                            <div class="flex items-center gap-4">
+                                <div class="user-avatar user" id="userAvatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm text-purple-600 font-medium mb-1">Welcome to Pipelines</p>
+                                    <p id="userWelcome" class="font-semibold text-gray-900 truncate"></p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span id="userRoleBadge" class="badge-primary">
+                                        <i class="fas fa-user-tag"></i>
+                                        <span>User</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex flex-wrap gap-2" id="actionButtons">
+                        <button id="newPipelineItemBtn" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>New Pipeline Item</span>
+                        </button>
+                        <button id="backToDashboardBtn" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back to Dashboard</span>
+                        </button>
+                        <button id="pipelinesAnalyticsBtn" class="btn btn-info hidden">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Pipeline Analytics</span>
+                        </button>
+                        <button id="authButton" class="btn btn-danger">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Search and Filter Box -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="search-box">
+                        <i class="search-icon fas fa-search"></i>
+                        <input type="text" 
+                               id="searchPipelineItems" 
+                               placeholder="Search pipeline items..."
+                               class="search-input">
+                    </div>
+                    <div>
+                        <select id="filterByDivision" class="form-input w-full">
+                            <option value="">All Divisions</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Testcom">Testcom</option>
+                            <option value="Project">Project</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="filterByPriority" class="form-input w-full">
+                            <option value="">All Priorities</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                            <option value="Normal">Normal</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pipeline Board -->
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
+                <div class="card text-center">
+                    <div class="text-2xl font-bold text-purple-600" id="backlogCount">0</div>
+                    <div class="text-sm text-gray-600 mt-1">Backlog</div>
+                </div>
+                <div class="card text-center">
+                    <div class="text-2xl font-bold text-blue-600" id="planningCount">0</div>
+                    <div class="text-sm text-gray-600 mt-1">Planning</div>
+                </div>
+                <div class="card text-center">
+                    <div class="text-2xl font-bold text-cyan-600" id="developmentCount">0</div>
+                    <div class="text-sm text-gray-600 mt-1">Development</div>
+                </div>
+                <div class="card text-center">
+                    <div class="text-2xl font-bold text-yellow-600" id="testingCount">0</div>
+                    <div class="text-sm text-gray-600 mt-1">Testing</div>
+                </div>
+                <div class="card text-center">
+                    <div class="text-2xl font-bold text-green-600" id="deploymentCount">0</div>
+                    <div class="text-sm text-gray-600 mt-1">Deployment</div>
+                </div>
+                <div class="card text-center">
+                    <div class="text-2xl font-bold text-gray-600" id="completedCount">0</div>
+                    <div class="text-sm text-gray-600 mt-1">Completed</div>
+                </div>
+            </div>
+            
+            <!-- Pipeline Board -->
+            <div class="pipeline-board custom-scrollbar">
+                <!-- Backlog Column -->
+                <div class="pipeline-column" data-status="backlog">
+                    <div class="pipeline-column-header pipeline-column-backlog">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-inbox"></i>
+                            <span>Backlog</span>
+                        </div>
+                        <span class="text-white bg-white/20 px-2 py-1 rounded text-sm" id="backlogBadge">0</span>
+                    </div>
+                    <div class="pipeline-items-container" id="backlogItems">
+                        <!-- Backlog items will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Planning Column -->
+                <div class="pipeline-column" data-status="planning">
+                    <div class="pipeline-column-header pipeline-column-planning">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Planning</span>
+                        </div>
+                        <span class="text-white bg-white/20 px-2 py-1 rounded text-sm" id="planningBadge">0</span>
+                    </div>
+                    <div class="pipeline-items-container" id="planningItems">
+                        <!-- Planning items will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Development Column -->
+                <div class="pipeline-column" data-status="development">
+                    <div class="pipeline-column-header pipeline-column-development">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-code"></i>
+                            <span>Development</span>
+                        </div>
+                        <span class="text-white bg-white/20 px-2 py-1 rounded text-sm" id="developmentBadge">0</span>
+                    </div>
+                    <div class="pipeline-items-container" id="developmentItems">
+                        <!-- Development items will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Testing Column -->
+                <div class="pipeline-column" data-status="testing">
+                    <div class="pipeline-column-header pipeline-column-testing">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-vial"></i>
+                            <span>Testing</span>
+                        </div>
+                        <span class="text-white bg-white/20 px-2 py-1 rounded text-sm" id="testingBadge">0</span>
+                    </div>
+                    <div class="pipeline-items-container" id="testingItems">
+                        <!-- Testing items will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Deployment Column -->
+                <div class="pipeline-column" data-status="deployment">
+                    <div class="pipeline-column-header pipeline-column-deployment">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-rocket"></i>
+                            <span>Deployment</span>
+                        </div>
+                        <span class="text-white bg-white/20 px-2 py-1 rounded text-sm" id="deploymentBadge">0</span>
+                    </div>
+                    <div class="pipeline-items-container" id="deploymentItems">
+                        <!-- Deployment items will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Completed Column -->
+                <div class="pipeline-column" data-status="completed">
+                    <div class="pipeline-column-header pipeline-column-completed">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Completed</span>
+                        </div>
+                        <span class="text-white bg-white/20 px-2 py-1 rounded text-sm" id="completedBadge">0</span>
+                    </div>
+                    <div class="pipeline-items-container" id="completedItems">
+                        <!-- Completed items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Pipeline Item Modal -->
+    <div id="pipelineItemModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-4xl">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title" id="pipelineModalTitle">New Pipeline Item</h2>
+                    <p class="text-gray-300 mt-1">Create or edit pipeline item</p>
+                </div>
+                <button id="closePipelineModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="pipelineItemForm" class="space-y-8">
+                    <input type="hidden" id="pipelineItemId">
+                    <input type="hidden" id="originalPipelineStatus">
+                    
+                    <!-- Section 1: Basic Information -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <div class="form-section-icon form-section-icon-primary">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <span>Basic Information</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label class="form-label required-field" for="pipelineTitle">
+                                    Title
+                                </label>
+                                <input type="text" 
+                                       id="pipelineTitle" 
+                                       class="form-input"
+                                       required
+                                       placeholder="Enter item title">
+                            </div>
+                            
+                            <div>
+                                <label class="form-label required-field" for="pipelineStatus">
+                                    Status
+                                </label>
+                                <select id="pipelineStatus" class="form-input" required>
+                                    <option value="backlog">Backlog</option>
+                                    <option value="planning">Planning</option>
+                                    <option value="development">Development</option>
+                                    <option value="testing">Testing</option>
+                                    <option value="deployment">Deployment</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="form-label" for="pipelineWorkOrder">
+                                    Work Order Reference
+                                </label>
+                                <input type="text" 
+                                       id="pipelineWorkOrder" 
+                                       class="form-input"
+                                       placeholder="WO-001/GI-GEN/FAS/I/2025">
+                            </div>
+                            
+                            <div>
+                                <label class="form-label" for="pipelineCustomer">
+                                    Customer
+                                </label>
+                                <input type="text" 
+                                       id="pipelineCustomer" 
+                                       class="form-input"
+                                       placeholder="Enter customer name">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 2: Details -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <div class="form-section-icon form-section-icon-secondary">
+                                <i class="fas fa-list"></i>
+                            </div>
+                            <span>Details</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label class="form-label" for="pipelineDivision">
+                                    Division
+                                </label>
+                                <select id="pipelineDivision" class="form-input">
+                                    <option value="">Select Division</option>
+                                    <option value="Maintenance">Maintenance</option>
+                                    <option value="Testcom">Testcom</option>
+                                    <option value="Project">Project</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="form-label" for="pipelinePriority">
+                                    Priority
+                                </label>
+                                <select id="pipelinePriority" class="form-input">
+                                    <option value="Normal">Normal</option>
+                                    <option value="High">High</option>
+                                    <option value="Urgent">Urgent</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="form-label" for="pipelineAssignee">
+                                    Assignee
+                                </label>
+                                <select id="pipelineAssignee" class="form-input">
+                                    <option value="">Select Assignee</option>
+                                    <option value="Husni">Husni</option>
+                                    <option value="Heksi">Heksi</option>
+                                    <option value="Indra Kurniawan">Indra Kurniawan</option>
+                                    <option value="Putra">Putra</option>
+                                    <option value="Wahyu Sujoko">Wahyu Sujoko</option>
+                                    <option value="Fiki">Fiki</option>
+                                    <option value="Edwin">Edwin</option>
+                                    <option value="Yudiono">Yudiono</option>
+                                    <option value="Harianto">Harianto</option>
+                                    <option value="Haryo">Haryo</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="form-label" for="pipelineDueDate">
+                                    Due Date
+                                </label>
+                                <input type="date" 
+                                       id="pipelineDueDate" 
+                                       class="form-input">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 3: Description -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <div class="form-section-icon form-section-icon-success">
+                                <i class="fas fa-align-left"></i>
+                            </div>
+                            <span>Description</span>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label" for="pipelineDescription">
+                                Description
+                            </label>
+                            <textarea id="pipelineDescription" 
+                                      class="form-input" 
+                                      rows="6"
+                                      placeholder="Describe the pipeline item..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 4: Progress & Notes -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <div class="form-section-icon form-section-icon-info">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <span>Progress & Notes</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label class="form-label" for="pipelineProgress">
+                                    Progress (%)
+                                </label>
+                                <input type="range" 
+                                       id="pipelineProgress" 
+                                       class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                       min="0" 
+                                       max="100" 
+                                       value="0">
+                                <div class="flex justify-between text-sm text-gray-600 mt-2">
+                                    <span>0%</span>
+                                    <span id="progressValue">0%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="form-label" for="pipelineNotes">
+                                    Notes
+                                </label>
+                                <textarea id="pipelineNotes" 
+                                          class="form-input" 
+                                          rows="3"
+                                          placeholder="Additional notes..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-header">
+                <div></div>
+                <div class="flex gap-3">
+                    <button id="cancelPipelineBtn" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" form="pipelineItemForm" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Pipeline Item
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pipeline Analytics Modal -->
+    <div id="pipelinesAnalyticsModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-6xl">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Pipeline Analytics</h2>
+                    <p class="text-gray-300 mt-1">Pipeline performance and insights</p>
+                </div>
+                <button id="closePipelinesAnalyticsModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="flex justify-between items-center mb-8">
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        Data updated: <span id="pipelinesDataUpdatedTime"></span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="card">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
+                                <i class="fas fa-chart-pie text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900">Status Distribution</h3>
+                                <p class="text-sm text-gray-600">Across all pipeline items</p>
+                            </div>
+                        </div>
+                        <canvas id="pipelineStatusChart"></canvas>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                                <i class="fas fa-chart-bar text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900">Priority Distribution</h3>
+                                <p class="text-sm text-gray-600">By priority level</p>
+                            </div>
+                        </div>
+                        <canvas id="pipelinePriorityChart"></canvas>
+                    </div>
+                    
+                    <div class="card lg:col-span-2">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                                <i class="fas fa-chart-line text-green-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900">Flow Analysis</h3>
+                                <p class="text-sm text-gray-600">Item movement between stages</p>
+                            </div>
+                        </div>
+                        <canvas id="pipelineFlowChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center">
+                            <i class="fas fa-tachometer-alt text-yellow-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900">Performance Metrics</h3>
+                            <p class="text-sm text-gray-600">Key pipeline performance indicators</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="text-center p-4 bg-purple-50 rounded-xl">
+                            <div class="text-2xl font-bold text-purple-700" id="avgCycleTime">0</div>
+                            <div class="text-sm text-purple-600 mt-1">Avg. Cycle Time (Days)</div>
+                        </div>
+                        <div class="text-center p-4 bg-blue-50 rounded-xl">
+                            <div class="text-2xl font-bold text-blue-700" id="throughput">0</div>
+                            <div class="text-sm text-blue-600 mt-1">Weekly Throughput</div>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-xl">
+                            <div class="text-2xl font-bold text-green-700" id="completionRate">0%</div>
+                            <div class="text-sm text-green-600 mt-1">Completion Rate</div>
+                        </div>
+                        <div class="text-center p-4 bg-yellow-50 rounded-xl">
+                            <div class="text-2xl font-bold text-yellow-700" id="wipLimit">∞</div>
+                            <div class="text-sm text-yellow-600 mt-1">Current WIP</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="text-center">
+            <div class="loading-spinner mb-4"></div>
+            <p class="text-white text-lg font-medium">Loading Pipelines...</p>
+        </div>
+    </div>
+<script>
+        // ==================== GLOBAL VARIABLES ====================
+        let db, auth, pipelinesCollection, pipelineHistoryCollection, usersCollection;
+        let currentUser = null;
+        let currentUserRole = 'user';
+        let pipelineItems = [];
+        let filteredPipelineItems = [];
+        let draggedItem = null;
+        let charts = {};
+        
+        // Pipeline stages configuration
+        const pipelineStages = [
+            { id: 'backlog', name: 'Backlog', icon: 'fa-inbox', color: 'purple' },
+            { id: 'planning', name: 'Planning', icon: 'fa-clipboard-list', color: 'blue' },
+            { id: 'development', name: 'Development', icon: 'fa-code', color: 'cyan' },
+            { id: 'testing', name: 'Testing', icon: 'fa-vial', color: 'yellow' },
+            { id: 'deployment', name: 'Deployment', icon: 'fa-rocket', color: 'green' },
+            { id: 'completed', name: 'Completed', icon: 'fa-check-circle', color: 'gray' }
+        ];
+
+        // ==================== INITIALIZE FIREBASE ====================
+        function initializeFirebase() {
+            try {
+                console.log('Initializing Firebase for Pipelines...');
+                
+                const firebaseConfig = {
+                    apiKey: "AIzaSyAwXNGrJsBqQ2RslAkdWWPSOubUw13QcRI",
+                    authDomain: "workorder-mon.firebaseapp.com",
+                    projectId: "workorder-mon",
+                    storageBucket: "workorder-mon.firebasestorage.app",
+                    messagingSenderId: "226391173482",
+                    appId: "1:226391173482:web:9ea9c68c1e31c84f50dd13"
+                };
+
+                const app = firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore(app);
+                auth = firebase.auth(app);
+                
+                pipelinesCollection = db.collection('pipelines');
+                pipelineHistoryCollection = db.collection('pipelineHistory');
+                usersCollection = db.collection('users');
+                
+                console.log('Firebase initialized successfully for Pipelines');
+                return true;
+                
+            } catch (error) {
+                console.error('Error initializing Firebase:', error);
+                showToast('Firebase initialization failed. Please check console.', 'error');
+                return false;
+            }
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function formatDate(date) {
+            if (!date) return '-';
+            try {
+                if (date.toDate) {
+                    date = date.toDate();
+                }
+                return date.toLocaleDateString('id-ID', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            } catch (e) {
+                return '-';
+            }
+        }
+
+        function formatDateTime(date) {
+            if (!date) return '-';
+            try {
+                if (date.toDate) {
+                    date = date.toDate();
+                }
+                return date.toLocaleDateString('id-ID', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return '-';
+            }
+        }
+
+        function formatTimeAgo(date) {
+            if (!date) return 'Just now';
+            try {
+                if (date.toDate) {
+                    date = date.toDate();
+                }
+                const now = new Date();
+                const diffMs = now - date;
+                const diffSec = Math.floor(diffMs / 1000);
+                const diffMin = Math.floor(diffSec / 60);
+                const diffHour = Math.floor(diffMin / 60);
+                const diffDay = Math.floor(diffHour / 24);
+                
+                if (diffSec < 60) return 'Just now';
+                if (diffMin < 60) return `${diffMin}m ago`;
+                if (diffHour < 24) return `${diffHour}h ago`;
+                if (diffDay < 7) return `${diffDay}d ago`;
+                return formatDate(date);
+            } catch (e) {
+                return 'Some time ago';
+            }
+        }
+
+        function showToast(message, type = 'info', duration = 3000) {
+            console.log(`Toast [${type}]:`, message);
+            
+            const toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            
+            const colors = {
+                success: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                error: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                warning: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                info: 'linear-gradient(135deg, #3b82f6, #2563eb)'
+            };
+            
+            toast.innerHTML = `
+                <div class="toast-icon ${type}" style="background: ${colors[type] || colors.info}">
+                    <i class="fas ${icons[type] || 'fa-info-circle'}"></i>
+                </div>
+                <div>
+                    <p class="font-medium">${message}</p>
+                    <p class="text-sm text-gray-600 mt-1">${new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})}</p>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        function showLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.classList.add('hidden');
+        }
+
+        // ==================== PIPELINE FUNCTIONS ====================
+        async function loadPipelineItems() {
+            console.log('Loading pipeline items...');
+            
+            showLoading();
+            try {
+                const querySnapshot = await pipelinesCollection.orderBy('updatedAt', 'desc').get();
+                pipelineItems = [];
+                
+                querySnapshot.forEach((doc) => {
+                    pipelineItems.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                filteredPipelineItems = [...pipelineItems];
+                updatePipelineStats();
+                renderPipelineBoard();
+                
+                console.log('Pipeline items loaded:', pipelineItems.length);
+                
+            } catch (error) {
+                console.error('Error loading pipeline items:', error);
+                showToast('Failed to load pipeline items', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function updatePipelineStats() {
+            // Update count badges
+            pipelineStages.forEach(stage => {
+                const count = pipelineItems.filter(item => item.status === stage.id).length;
+                document.getElementById(`${stage.id}Count`).textContent = count;
+                document.getElementById(`${stage.id}Badge`).textContent = count;
+            });
+        }
+
+        function filterPipelineItems() {
+            const searchTerm = document.getElementById('searchPipelineItems').value.toLowerCase();
+            const divisionFilter = document.getElementById('filterByDivision').value;
+            const priorityFilter = document.getElementById('filterByPriority').value;
+            
+            let filtered = [...pipelineItems];
+            
+            // Apply search filter
+            if (searchTerm) {
+                filtered = filtered.filter(item => 
+                    (item.title && item.title.toLowerCase().includes(searchTerm)) ||
+                    (item.customer && item.customer.toLowerCase().includes(searchTerm)) ||
+                    (item.workOrder && item.workOrder.toLowerCase().includes(searchTerm)) ||
+                    (item.description && item.description.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            // Apply division filter
+            if (divisionFilter) {
+                filtered = filtered.filter(item => item.division === divisionFilter);
+            }
+            
+            // Apply priority filter
+            if (priorityFilter) {
+                filtered = filtered.filter(item => item.priority === priorityFilter);
+            }
+            
+            filteredPipelineItems = filtered;
+            renderPipelineBoard();
+        }
+
+        function renderPipelineBoard() {
+            // Clear all columns
+            pipelineStages.forEach(stage => {
+                const container = document.getElementById(`${stage.id}Items`);
+                if (container) {
+                    container.innerHTML = '';
+                }
+            });
+            
+            // Add items to respective columns
+            filteredPipelineItems.forEach(item => {
+                const pipelineItem = createPipelineItemElement(item);
+                const container = document.getElementById(`${item.status}Items`);
+                if (container) {
+                    container.appendChild(pipelineItem);
+                }
+            });
+            
+            // Update stats
+            updatePipelineStats();
+        }
+
+        function createPipelineItemElement(item) {
+            const div = document.createElement('div');
+            div.className = 'pipeline-item animate-fade-in';
+            div.dataset.id = item.id;
+            div.draggable = true;
+            
+            const priorityClass = getPriorityClass(item.priority);
+            const badgeClass = getPipelineBadgeClass(item.status);
+            const timeAgo = formatTimeAgo(item.updatedAt);
+            const progress = item.progress || 0;
+            
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-gray-900 text-sm truncate" title="${item.title}">${item.title}</h4>
+                        ${item.customer ? `<p class="text-xs text-gray-600 truncate mt-1">${item.customer}</p>` : ''}
+                    </div>
+                    <div class="flex flex-col items-end gap-1">
+                        <span class="pipeline-badge ${badgeClass}">
+                            ${item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                        </span>
+                        ${item.priority ? `<span class="priority-badge ${priorityClass} text-xs">${item.priority}</span>` : ''}
+                    </div>
+                </div>
+                
+                ${item.description ? `<p class="text-xs text-gray-700 mb-3 line-clamp-2">${item.description}</p>` : ''}
+                
+                <div class="space-y-2">
+                    ${item.assignee ? `
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                            <i class="fas fa-user text-blue-600 text-xs"></i>
+                        </div>
+                        <span class="text-xs text-gray-600">${item.assignee}</span>
+                    </div>` : ''}
+                    
+                    ${item.dueDate ? `
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-yellow-100 flex items-center justify-center">
+                            <i class="fas fa-calendar text-yellow-600 text-xs"></i>
+                        </div>
+                        <span class="text-xs text-gray-600">Due: ${formatDate(item.dueDate)}</span>
+                    </div>` : ''}
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="text-xs text-gray-500">
+                            <i class="far fa-clock mr-1"></i>
+                            ${timeAgo}
+                        </div>
+                        <div class="text-xs font-medium ${progress >= 100 ? 'text-green-600' : 'text-blue-600'}">
+                            ${progress}%
+                        </div>
+                    </div>
+                    
+                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                        <div class="bg-blue-600 h-1.5 rounded-full" style="width: ${progress}%"></div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end gap-2 mt-3 pt-3 border-t border-gray-100">
+                    <button class="view-pipeline-item-btn text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="edit-pipeline-item-btn text-green-600 hover:text-green-800 text-sm">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    ${currentUserRole === 'admin' ? `
+                    <button class="delete-pipeline-item-btn text-red-600 hover:text-red-800 text-sm">
+                        <i class="fas fa-trash"></i>
+                    </button>` : ''}
+                </div>
+            `;
+            
+            // Add event listeners
+            const viewBtn = div.querySelector('.view-pipeline-item-btn');
+            const editBtn = div.querySelector('.edit-pipeline-item-btn');
+            const deleteBtn = div.querySelector('.delete-pipeline-item-btn');
+            
+            if (viewBtn) {
+                viewBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openPipelineItemDetail(item.id);
+                });
+            }
+            
+            if (editBtn) {
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openPipelineItemModal(item.id);
+                });
+            }
+            
+            if (deleteBtn && currentUserRole === 'admin') {
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deletePipelineItem(item.id);
+                });
+            }
+            
+            // Drag and drop events
+            div.addEventListener('dragstart', handleDragStart);
+            div.addEventListener('dragend', handleDragEnd);
+            div.addEventListener('click', () => {
+                openPipelineItemDetail(item.id);
+            });
+            
+            return div;
+        }
+
+        function getPipelineBadgeClass(status) {
+            switch(status) {
+                case 'backlog': return 'pipeline-backlog-badge';
+                case 'planning': return 'pipeline-planning-badge';
+                case 'development': return 'pipeline-development-badge';
+                case 'testing': return 'pipeline-testing-badge';
+                case 'deployment': return 'pipeline-deployment-badge';
+                case 'completed': return 'pipeline-completed-badge';
+                default: return 'pipeline-backlog-badge';
+            }
+        }
+
+        function getPriorityClass(priority) {
+            switch(priority) {
+                case 'High': return 'priority-high';
+                case 'Urgent': return 'priority-urgent';
+                case 'Low': return 'priority-low';
+                default: return 'priority-normal';
+            }
+        }
+
+        // ==================== DRAG AND DROP FUNCTIONS ====================
+        function handleDragStart(e) {
+            draggedItem = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', this.dataset.id);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            draggedItem = null;
+            
+            // Remove overlay class from all columns
+            document.querySelectorAll('.pipeline-column').forEach(col => {
+                col.classList.remove('pipeline-item-over');
+            });
+        }
+
+        function setupDragAndDrop() {
+            const columns = document.querySelectorAll('.pipeline-column');
+            
+            columns.forEach(column => {
+                column.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    column.classList.add('pipeline-item-over');
+                });
+                
+                column.addEventListener('dragleave', () => {
+                    column.classList.remove('pipeline-item-over');
+                });
+                
+                column.addEventListener('drop', async (e) => {
+                    e.preventDefault();
+                    column.classList.remove('pipeline-item-over');
+                    
+                    if (draggedItem) {
+                        const itemId = draggedItem.dataset.id;
+                        const newStatus = column.dataset.status;
+                        
+                        try {
+                            await updatePipelineItemStatus(itemId, newStatus);
+                        } catch (error) {
+                            console.error('Error updating pipeline item status:', error);
+                            showToast('Failed to move item', 'error');
+                        }
+                    }
+                });
+            });
+        }
+
+        // ==================== PIPELINE ITEM MANAGEMENT ====================
+        async function updatePipelineItemStatus(itemId, newStatus) {
+            try {
+                showLoading();
+                
+                const item = pipelineItems.find(i => i.id === itemId);
+                if (!item) {
+                    throw new Error('Item not found');
+                }
+                
+                const oldStatus = item.status;
+                
+                // Update in Firebase
+                await pipelinesCollection.doc(itemId).update({
+                    status: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser.email
+                });
+                
+                // Log status change
+                await logPipelineStatusChange(itemId, item.title, oldStatus, newStatus);
+                
+                // Reload items
+                await loadPipelineItems();
+                
+                showToast(`Moved to ${newStatus}`, 'success');
+                
+            } catch (error) {
+                console.error('Error updating pipeline item status:', error);
+                showToast('Failed to move item', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function logPipelineStatusChange(itemId, title, oldStatus, newStatus) {
+            try {
+                if (!currentUser) return;
+                
+                const historyData = {
+                    pipelineItemId: itemId,
+                    pipelineItemTitle: title,
+                    oldStatus: oldStatus,
+                    newStatus: newStatus,
+                    changedBy: currentUser.email,
+                    userRole: currentUserRole,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await pipelineHistoryCollection.add(historyData);
+                
+            } catch (error) {
+                console.error('Error logging pipeline status change:', error);
+            }
+        }
+
+        // ==================== MODAL FUNCTIONS ====================
+        function createNewPipelineItem() {
+            console.log('Creating new pipeline item');
+            
+            if (!canCreatePipelineItem()) {
+                showToast('You do not have permission to create pipeline items', 'warning');
+                return;
+            }
+            
+            openPipelineItemModal();
+        }
+
+        function openPipelineItemModal(itemId = null) {
+            console.log('Opening pipeline item modal:', itemId ? 'edit' : 'create');
+            
+            const modal = document.getElementById('pipelineItemModal');
+            const modalTitle = document.getElementById('pipelineModalTitle');
+            
+            document.getElementById('pipelineItemForm').reset();
+            document.getElementById('pipelineItemId').value = '';
+            document.getElementById('originalPipelineStatus').value = '';
+            document.getElementById('progressValue').textContent = '0%';
+            
+            if (itemId && !canEditPipelineItem()) {
+                showToast('You do not have permission to edit pipeline items', 'warning');
+                return;
+            }
+            
+            if (itemId) {
+                modalTitle.textContent = 'Edit Pipeline Item';
+                const item = pipelineItems.find(i => i.id === itemId);
+                if (item) {
+                    populatePipelineModalForm(item);
+                    document.getElementById('originalPipelineStatus').value = item.status;
+                }
+            } else {
+                modalTitle.textContent = 'New Pipeline Item';
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('pipelineDueDate').value = today;
+                document.getElementById('pipelineStatus').value = 'backlog';
+                document.getElementById('pipelinePriority').value = 'Normal';
+                document.getElementById('pipelineProgress').value = 0;
+            }
+            
+            // Setup progress slider
+            const progressSlider = document.getElementById('pipelineProgress');
+            const progressValue = document.getElementById('progressValue');
+            
+            progressSlider.addEventListener('input', function() {
+                progressValue.textContent = `${this.value}%`;
+            });
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function populatePipelineModalForm(item) {
+            document.getElementById('pipelineItemId').value = item.id;
+            document.getElementById('pipelineTitle').value = item.title || '';
+            document.getElementById('pipelineStatus').value = item.status || 'backlog';
+            document.getElementById('pipelineWorkOrder').value = item.workOrder || '';
+            document.getElementById('pipelineCustomer').value = item.customer || '';
+            document.getElementById('pipelineDivision').value = item.division || '';
+            document.getElementById('pipelinePriority').value = item.priority || 'Normal';
+            document.getElementById('pipelineAssignee').value = item.assignee || '';
+            document.getElementById('pipelineDescription').value = item.description || '';
+            document.getElementById('pipelineNotes').value = item.notes || '';
+            document.getElementById('pipelineProgress').value = item.progress || 0;
+            document.getElementById('progressValue').textContent = `${item.progress || 0}%`;
+            
+            if (item.dueDate) {
+                const dueDate = item.dueDate.toDate();
+                document.getElementById('pipelineDueDate').value = dueDate.toISOString().split('T')[0];
+            }
+        }
+
+        function closePipelineItemModal() {
+            document.getElementById('pipelineItemModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        async function savePipelineItem() {
+            const form = document.getElementById('pipelineItemForm');
+            if (!form.checkValidity()) {
+                showToast('Please fill in all required fields', 'warning');
+                return;
+            }
+            
+            const itemId = document.getElementById('pipelineItemId').value;
+            const originalStatus = document.getElementById('originalPipelineStatus').value;
+            const isEdit = !!itemId;
+            
+            const pipelineData = {
+                title: document.getElementById('pipelineTitle').value.trim(),
+                status: document.getElementById('pipelineStatus').value,
+                workOrder: document.getElementById('pipelineWorkOrder').value.trim() || '',
+                customer: document.getElementById('pipelineCustomer').value.trim() || '',
+                division: document.getElementById('pipelineDivision').value || '',
+                priority: document.getElementById('pipelinePriority').value || 'Normal',
+                assignee: document.getElementById('pipelineAssignee').value || '',
+                description: document.getElementById('pipelineDescription').value.trim() || '',
+                notes: document.getElementById('pipelineNotes').value.trim() || '',
+                progress: parseInt(document.getElementById('pipelineProgress').value) || 0,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedBy: currentUser.email
+            };
+            
+            const dueDate = document.getElementById('pipelineDueDate').value;
+            if (dueDate) {
+                pipelineData.dueDate = firebase.firestore.Timestamp.fromDate(new Date(dueDate));
+            }
+            
+            try {
+                showLoading();
+                
+                if (isEdit) {
+                    await pipelinesCollection.doc(itemId).update(pipelineData);
+                    
+                    const newStatus = pipelineData.status;
+                    if (originalStatus !== newStatus) {
+                        await logPipelineStatusChange(itemId, pipelineData.title, originalStatus, newStatus);
+                    }
+                    
+                    showToast('Pipeline item updated successfully', 'success');
+                } else {
+                    pipelineData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    pipelineData.createdBy = currentUser.email;
+                    const result = await pipelinesCollection.add(pipelineData);
+                    
+                    await logPipelineStatusChange(result.id, pipelineData.title, 'New', pipelineData.status);
+                    
+                    showToast('Pipeline item created successfully', 'success');
+                }
+                
+                await loadPipelineItems();
+                closePipelineItemModal();
+                
+            } catch (error) {
+                console.error('Error saving pipeline item:', error);
+                showToast('Failed to save pipeline item', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function openPipelineItemDetail(itemId) {
+            console.log('Opening pipeline item detail:', itemId);
+            
+            // For now, we'll just open the edit modal
+            // In a complete implementation, you might want a separate detail modal
+            openPipelineItemModal(itemId);
+        }
+
+        async function deletePipelineItem(itemId) {
+            if (!canDeletePipelineItem()) {
+                showToast('Only admins can delete pipeline items', 'warning');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to delete this pipeline item?')) return;
+            
+            try {
+                showLoading();
+                await pipelinesCollection.doc(itemId).delete();
+                showToast('Pipeline item deleted successfully', 'success');
+                await loadPipelineItems();
+            } catch (error) {
+                console.error('Error deleting pipeline item:', error);
+                showToast('Failed to delete pipeline item', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ==================== PIPELINE ANALYTICS ====================
+        function openPipelinesAnalytics() {
+            console.log('Opening pipeline analytics');
+            
+            if (!canViewPipelineAnalytics()) {
+                showToast('You do not have permission to view pipeline analytics', 'warning');
+                return;
+            }
+            
+            document.getElementById('pipelinesAnalyticsModal').classList.remove('hidden');
+            loadPipelineAnalytics();
+        }
+
+        function closePipelinesAnalyticsModal() {
+            document.getElementById('pipelinesAnalyticsModal').classList.add('hidden');
+            
+            Object.values(charts).forEach(chart => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+            charts = {};
+        }
+
+        async function loadPipelineAnalytics() {
+            console.log('Loading pipeline analytics...');
+            showLoading();
+            
+            try {
+                const querySnapshot = await pipelinesCollection.get();
+                const allItems = [];
+                querySnapshot.forEach((doc) => {
+                    allItems.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                document.getElementById('pipelinesDataUpdatedTime').textContent = new Date().toLocaleString('id-ID');
+                generatePipelineStatusChart(allItems);
+                generatePipelinePriorityChart(allItems);
+                generatePipelineFlowChart(allItems);
+                updatePipelineMetrics(allItems);
+                
+                showToast('Pipeline analytics loaded successfully', 'success');
+                
+            } catch (error) {
+                console.error('Error loading pipeline analytics:', error);
+                showToast('Failed to load pipeline analytics', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function generatePipelineStatusChart(pipelineItems) {
+            const ctx = document.getElementById('pipelineStatusChart');
+            if (!ctx) return;
+            
+            if (charts.pipelineStatusChart) {
+                charts.pipelineStatusChart.destroy();
+            }
+            
+            const statusCounts = {};
+            pipelineStages.forEach(stage => {
+                statusCounts[stage.name] = pipelineItems.filter(item => item.status === stage.id).length;
+            });
+            
+            const colors = [
+                'rgba(139, 92, 246, 0.9)',    // Purple
+                'rgba(59, 130, 246, 0.9)',    // Blue
+                'rgba(14, 165, 233, 0.9)',    // Cyan
+                'rgba(245, 158, 11, 0.9)',    // Yellow
+                'rgba(34, 197, 94, 0.9)',     // Green
+                'rgba(100, 116, 139, 0.9)'    // Gray
+            ];
+            
+            charts.pipelineStatusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(statusCounts),
+                    datasets: [{
+                        data: Object.values(statusCounts),
+                        backgroundColor: colors,
+                        borderColor: colors.map(c => c.replace('0.9', '1')),
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                font: {
+                                    size: 11
+                                },
+                                padding: 15
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        }
+
+        function generatePipelinePriorityChart(pipelineItems) {
+            const ctx = document.getElementById('pipelinePriorityChart');
+            if (!ctx) return;
+            
+            if (charts.pipelinePriorityChart) {
+                charts.pipelinePriorityChart.destroy();
+            }
+            
+            const priorityCounts = {
+                'High': 0,
+                'Urgent': 0,
+                'Normal': 0,
+                'Low': 0
+            };
+            
+            pipelineItems.forEach(item => {
+                if (item.priority && priorityCounts[item.priority] !== undefined) {
+                    priorityCounts[item.priority]++;
+                } else {
+                    priorityCounts['Normal']++;
+                }
+            });
+            
+            charts.pipelinePriorityChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(priorityCounts),
+                    datasets: [{
+                        label: 'Items',
+                        data: Object.values(priorityCounts),
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.9)',    // Red
+                            'rgba(248, 113, 113, 0.9)',  // Light Red
+                            'rgba(59, 130, 246, 0.9)',   // Blue
+                            'rgba(148, 163, 184, 0.9)'   // Gray
+                        ],
+                        borderColor: [
+                            'rgb(239, 68, 68)',
+                            'rgb(248, 113, 113)',
+                            'rgb(59, 130, 246)',
+                            'rgb(148, 163, 184)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Items',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generatePipelineFlowChart(pipelineItems) {
+            const ctx = document.getElementById('pipelineFlowChart');
+            if (!ctx) return;
+            
+            if (charts.pipelineFlowChart) {
+                charts.pipelineFlowChart.destroy();
+            }
+            
+            // This is a simplified flow chart showing items created per day
+            const dailyCounts = {};
+            pipelineItems.forEach(item => {
+                if (item.createdAt) {
+                    const date = item.createdAt.toDate();
+                    const dateKey = date.toISOString().split('T')[0];
+                    dailyCounts[dateKey] = (dailyCounts[dateKey] || 0) + 1;
+                }
+            });
+            
+            const sortedDates = Object.keys(dailyCounts).sort();
+            const last7Dates = sortedDates.slice(-7);
+            
+            charts.pipelineFlowChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: last7Dates.map(date => {
+                        const d = new Date(date);
+                        return `${d.getDate()}/${d.getMonth() + 1}`;
+                    }),
+                    datasets: [{
+                        label: 'Items Created',
+                        data: last7Dates.map(date => dailyCounts[date] || 0),
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: 'rgb(34, 197, 94)',
+                        pointBorderColor: 'white',
+                        pointBorderWidth: 2,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Items',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updatePipelineMetrics(pipelineItems) {
+            // Calculate average cycle time (simplified)
+            const completedItems = pipelineItems.filter(item => item.status === 'completed');
+            let totalCycleTime = 0;
+            let completedWithDates = 0;
+            
+            completedItems.forEach(item => {
+                if (item.createdAt && item.updatedAt) {
+                    const created = item.createdAt.toDate();
+                    const updated = item.updatedAt.toDate();
+                    const cycleTime = Math.ceil((updated - created) / (1000 * 60 * 60 * 24));
+                    totalCycleTime += cycleTime;
+                    completedWithDates++;
+                }
+            });
+            
+            const avgCycleTime = completedWithDates > 0 ? Math.round(totalCycleTime / completedWithDates) : 0;
+            
+            // Calculate weekly throughput (last 7 days)
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            const weeklyItems = pipelineItems.filter(item => {
+                if (item.createdAt) {
+                    const created = item.createdAt.toDate();
+                    return created > oneWeekAgo;
+                }
+                return false;
+            });
+            
+            // Calculate completion rate (completed vs total)
+            const totalItems = pipelineItems.length;
+            const completedCount = completedItems.length;
+            const completionRate = totalItems > 0 ? Math.round((completedCount / totalItems) * 100) : 0;
+            
+            // Calculate current WIP (items not in backlog or completed)
+            const wipItems = pipelineItems.filter(item => 
+                item.status !== 'backlog' && item.status !== 'completed'
+            ).length;
+            
+            document.getElementById('avgCycleTime').textContent = avgCycleTime;
+            document.getElementById('throughput').textContent = weeklyItems.length;
+            document.getElementById('completionRate').textContent = `${completionRate}%`;
+            document.getElementById('wipLimit').textContent = wipItems;
+        }
+
+        // ==================== USER MANAGEMENT ====================
+        async function getUserRoleFromFirestore(userId) {
+            console.log('Getting user role for:', userId);
+            
+            try {
+                const userDoc = await usersCollection.doc(userId).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    currentUserRole = userData.role || 'user';
+                    console.log('User role from Firestore:', currentUserRole);
+                    
+                    await usersCollection.doc(userId).update({
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } else {
+                    console.log('Creating new user document...');
+                    let defaultRole = 'user';
+                    const userEmail = currentUser.email;
+                    
+                    if (userEmail === 'admin@genetek.co.id') {
+                        defaultRole = 'admin';
+                    } else if (userEmail === 'm_husni@genetek.co.id') {
+                        defaultRole = 'manager';
+                    } else if (userEmail === 'galih@genetek.co.id') {
+                        defaultRole = 'user';
+                    }
+                    
+                    await usersCollection.doc(userId).set({
+                        email: userEmail,
+                        role: defaultRole,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    currentUserRole = defaultRole;
+                    console.log('Created new user with role:', currentUserRole);
+                }
+                
+                return currentUserRole;
+                
+            } catch (error) {
+                console.error('Error getting user role:', error);
+                currentUserRole = 'user';
+                return 'user';
+            }
+        }
+
+        function setupUserRolePermissions() {
+            console.log('Setting up pipeline permissions for role:', currentUserRole);
+            
+            const newPipelineBtn = document.getElementById('newPipelineItemBtn');
+            const analyticsBtn = document.getElementById('pipelinesAnalyticsBtn');
+            
+            const userAvatar = document.getElementById('userAvatar');
+            if (userAvatar) {
+                userAvatar.className = 'user-avatar';
+                if (currentUserRole === 'admin') {
+                    userAvatar.classList.add('admin');
+                } else if (currentUserRole === 'manager') {
+                    userAvatar.classList.add('manager');
+                } else {
+                    userAvatar.classList.add('user');
+                }
+            }
+            
+            const roleBadge = document.getElementById('userRoleBadge');
+            if (roleBadge) {
+                roleBadge.className = `badge badge-${currentUserRole === 'admin' ? 'secondary' : currentUserRole === 'manager' ? 'primary' : 'info'}`;
+                roleBadge.innerHTML = `<i class="fas fa-user-tag"></i><span>${currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}</span>`;
+            }
+            
+            if (newPipelineBtn) newPipelineBtn.classList.remove('hidden');
+            if (analyticsBtn) analyticsBtn.classList.add('hidden');
+            
+            switch(currentUserRole) {
+                case 'admin':
+                case 'manager':
+                    if (analyticsBtn) analyticsBtn.classList.remove('hidden');
+                    break;
+                case 'user':
+                    // Users can view and create items
+                    break;
+                default:
+                    break;
+            }
+            
+            console.log('Pipeline permissions set for role:', currentUserRole);
+        }
+
+        function canCreatePipelineItem() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager' || currentUserRole === 'user';
+        }
+
+        function canEditPipelineItem() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager' || currentUserRole === 'user';
+        }
+
+        function canDeletePipelineItem() {
+            return currentUserRole === 'admin';
+        }
+
+        function canViewPipelineAnalytics() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        // ==================== AUTH FUNCTIONS ====================
+        function setupAuthStateObserver() {
+            if (!auth) {
+                console.error('Auth not available');
+                return;
+            }
+
+            console.log('Setting up auth state observer for Pipelines...');
+            
+            auth.onAuthStateChanged(async (user) => {
+                console.log('Auth state changed:', user ? 'User logged in' : 'User logged out');
+                
+                if (user) {
+                    currentUser = user;
+                    
+                    try {
+                        await getUserRoleFromFirestore(user.uid);
+                        
+                        document.getElementById('userWelcome').textContent = user.email;
+                        setupUserRolePermissions();
+                        
+                        // Initialize the app
+                        initPipelinesApp();
+                        showToast('Welcome to Pipelines!', 'success');
+                        
+                    } catch (error) {
+                        console.error('Error in auth observer:', error);
+                        showToast('Error loading user data', 'error');
+                    }
+                } else {
+                    console.log('User signed out - redirecting to login');
+                    // Redirect back to main app for login
+                    window.location.href = 'index.html';
+                }
+            }, (error) => {
+                console.error('Auth observer error:', error);
+            });
+        }
+
+        function logout() {
+            console.log('Logging out from Pipelines...');
+            
+            if (auth && currentUser) {
+                auth.signOut().then(() => {
+                    console.log('Logout successful');
+                    showToast('Logged out successfully', 'success');
+                }).catch(error => {
+                    console.error('Logout error:', error);
+                    showToast('Error signing out', 'error');
+                });
+            }
+        }
+
+        function backToDashboard() {
+            console.log('Returning to main dashboard...');
+            window.location.href = 'index.html';
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        function initPipelinesApp() {
+            console.log('Initializing Pipelines app...');
+            
+            loadPipelineItems();
+            setupDragAndDrop();
+            
+            // Add event listeners
+            document.getElementById('newPipelineItemBtn').addEventListener('click', createNewPipelineItem);
+            document.getElementById('backToDashboardBtn').addEventListener('click', backToDashboard);
+            document.getElementById('pipelinesAnalyticsBtn').addEventListener('click', openPipelinesAnalytics);
+            document.getElementById('authButton').addEventListener('click', logout);
+            
+            document.getElementById('searchPipelineItems').addEventListener('input', filterPipelineItems);
+            document.getElementById('filterByDivision').addEventListener('change', filterPipelineItems);
+            document.getElementById('filterByPriority').addEventListener('change', filterPipelineItems);
+            
+            document.getElementById('closePipelineModal').addEventListener('click', closePipelineItemModal);
+            document.getElementById('cancelPipelineBtn').addEventListener('click', closePipelineItemModal);
+            document.getElementById('pipelineItemForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                savePipelineItem();
+            });
+            
+            document.getElementById('closePipelinesAnalyticsModal').addEventListener('click', closePipelinesAnalyticsModal);
+            
+            console.log('Pipelines app initialization complete');
+        }
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Work Order Pipelines initializing...');
+            
+            const firebaseInitialized = initializeFirebase();
+            
+            if (!firebaseInitialized) {
+                showToast('Firebase initialization failed. Please check console.', 'error');
+                return;
+            }
+            
+            setupAuthStateObserver();
+            
+            console.log('Pipelines initialization complete');
+        });
+
+    </script>
+</body>
+</html>
