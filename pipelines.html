@@ -1215,82 +1215,82 @@
                         </div>
                     </div>
                     
-                    <!-- Section 2: PIC and Customer -->
-                    <div class="form-section">
-                        <div class="form-section-title">
-                            <div class="form-section-icon form-section-icon-secondary">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <span>Person In Charge & Customer</span>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div>
-                                <label class="form-label required-field" for="pipelinePIC">
-                                    PIC
-                                </label>
-                                <div class="custom-dropdown">
-                                    <input type="text" 
-                                           id="pipelinePIC" 
-                                           class="custom-dropdown-input"
-                                           required
-                                           placeholder="Search or select PIC"
-                                           autocomplete="off"
-                                           readonly>
-                                    <div class="custom-dropdown-options" id="picDropdownOptions">
-                                        <div class="custom-dropdown-options-header">
-                                            <span>Select PIC</span>
-                                            <span class="dropdown-count" id="picCount">0</span>
-                                        </div>
-                                        <div class="custom-dropdown-search">
-                                            <input type="text" 
-                                                   placeholder="Type to search PIC..."
-                                                   class="form-input"
-                                                   id="picSearchInput">
-                                        </div>
-                                        <div class="custom-dropdown-options-container" id="picOptionsContainer">
-                                            <!-- PIC options will be populated by JavaScript -->
-                                        </div>
-                                    </div>
+            <!-- Section 2: PIC and Customer -->
+            <div class="form-section" style="padding-bottom: 400px;">
+                <div class="form-section-title">
+                    <div class="form-section-icon form-section-icon-secondary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <span>Person In Charge & Customer</span>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <label class="form-label required-field" for="pipelinePIC">
+                            PIC
+                        </label>
+                        <div class="custom-dropdown">
+                            <input type="text" 
+                                   id="pipelinePIC" 
+                                   class="custom-dropdown-input"
+                                   required
+                                   placeholder="Search or select PIC"
+                                   autocomplete="off"
+                                   readonly>
+                            <div class="custom-dropdown-options" id="picDropdownOptions">
+                                <div class="custom-dropdown-options-header">
+                                    <span>Select PIC</span>
+                                    <span class="dropdown-count" id="picCount">0</span>
                                 </div>
-                            </div>
-                            
-                            <div>
-                                <label class="form-label required-field" for="pipelineCustomer">
-                                    Customer
-                                </label>
-                                <div class="custom-dropdown">
+                                <div class="custom-dropdown-search">
                                     <input type="text" 
-                                           id="pipelineCustomer" 
-                                           class="custom-dropdown-input"
-                                           required
-                                           placeholder="Search or select customer"
-                                           autocomplete="off"
-                                           readonly>
-                                    <div class="custom-dropdown-options" id="customerDropdownOptions">
-                                        <div class="custom-dropdown-options-header">
-                                            <span>Select Customer</span>
-                                            <span class="dropdown-count" id="customerCount">0</span>
-                                        </div>
-                                        <div class="custom-dropdown-search">
-                                            <input type="text" 
-                                                   placeholder="Type to search customer..."
-                                                   class="form-input"
-                                                   id="customerSearchInput">
-                                            <button type="button" 
-                                                    id="addNewCustomerBtn" 
-                                                    class="btn btn-primary btn-sm mt-2 w-full">
-                                                <i class="fas fa-plus"></i> Add New Customer
-                                            </button>
-                                        </div>
-                                        <div class="custom-dropdown-options-container" id="customerOptionsContainer">
-                                            <!-- Customer options will be populated by JavaScript -->
-                                        </div>
-                                    </div>
+                                           placeholder="Type to search PIC..."
+                                           class="form-input"
+                                           id="picSearchInput">
+                                </div>
+                                <div class="custom-dropdown-options-container" id="picOptionsContainer">
+                                    <!-- PIC options will be populated by JavaScript -->
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <div>
+                        <label class="form-label required-field" for="pipelineCustomer">
+                            Customer
+                        </label>
+                        <div class="custom-dropdown">
+                            <input type="text" 
+                                   id="pipelineCustomer" 
+                                   class="custom-dropdown-input"
+                                   required
+                                   placeholder="Search or select customer"
+                                   autocomplete="off"
+                                   readonly>
+                            <div class="custom-dropdown-options" id="customerDropdownOptions">
+                                <div class="custom-dropdown-options-header">
+                                    <span>Select Customer</span>
+                                    <span class="dropdown-count" id="customerCount">0</span>
+                                </div>
+                                <div class="custom-dropdown-search">
+                                    <input type="text" 
+                                           placeholder="Type to search customer..."
+                                           class="form-input"
+                                           id="customerSearchInput">
+                                    <button type="button" 
+                                            id="addNewCustomerBtn" 
+                                            class="btn btn-primary btn-sm mt-2 w-full">
+                                        <i class="fas fa-plus"></i> Add New Customer
+                                    </button>
+                                </div>
+                                <div class="custom-dropdown-options-container" id="customerOptionsContainer">
+                                    <!-- Customer options will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
                     
                     <!-- Section 3: Project and Status -->
                     <div class="form-section">
