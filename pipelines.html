@@ -101,6 +101,169 @@
             overflow-x: hidden;
         }
 
+        /* ==================== IMPROVED DROPDOWN STYLES ==================== */
+        .custom-dropdown {
+            position: relative;
+        }
+
+        .custom-dropdown-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            font-size: 0.95rem;
+            background: white;
+            transition: var(--transition-base);
+            color: var(--neutral-800);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .custom-dropdown-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .custom-dropdown-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            max-height: 350px;
+            overflow-y: auto;
+            z-index: 9999;
+            display: none;
+            margin-top: 0.25rem;
+            animation: dropdownFadeIn 0.2s ease-out;
+        }
+
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .custom-dropdown-options.show {
+            display: block;
+        }
+
+        .custom-dropdown-options-header {
+            padding: 0.75rem 1rem;
+            background: var(--neutral-50);
+            border-bottom: 1px solid var(--neutral-200);
+            font-weight: 600;
+            color: var(--neutral-700);
+            font-size: 0.875rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-count {
+            background: var(--primary-100);
+            color: var(--primary-700);
+            padding: 0.125rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .custom-dropdown-search {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--neutral-200);
+            background: var(--neutral-50);
+        }
+
+        .custom-dropdown-search input {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            transition: var(--transition-fast);
+        }
+
+        .custom-dropdown-search input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .custom-dropdown-options-container {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .custom-dropdown-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            border-bottom: 1px solid var(--neutral-100);
+            font-size: 0.9rem;
+            display: block;
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .custom-dropdown-option:last-child {
+            border-bottom: none;
+        }
+
+        .custom-dropdown-option:hover {
+            background: var(--primary-50);
+            color: var(--primary-700);
+        }
+
+        .custom-dropdown-option.selected {
+            background: var(--primary-100);
+            color: var(--primary-800);
+            font-weight: 600;
+            border-left: 3px solid var(--primary-500);
+        }
+
+        .dropdown-empty-state {
+            padding: 2rem 1rem;
+            text-align: center;
+            color: var(--neutral-500);
+            font-size: 0.9rem;
+        }
+
+        .dropdown-empty-state i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+
+        .custom-dropdown-input::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral-500);
+            font-size: 0.8rem;
+            pointer-events: none;
+            transition: var(--transition-fast);
+        }
+
+        .custom-dropdown-input.open::after {
+            transform: translateY(-50%) rotate(180deg);
+            color: var(--primary-500);
+        }
+
         /* ==================== PIPELINE BOARD STYLES ==================== */
         .pipeline-board {
             display: grid;
@@ -468,7 +631,7 @@
             box-shadow: var(--shadow-md);
             border: 1px solid var(--neutral-200);
             position: relative;
-            overflow: visible; /* CHANGED: Allow dropdown to overflow */
+            overflow: hidden;
         }
 
         .form-section::before {
@@ -517,154 +680,6 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        /* ==================== FIXED DROPDOWN STYLES - GUARANTEED VISIBLE ==================== */
-        .custom-dropdown {
-            position: relative;
-            width: 100%;
-            z-index: 1000; /* High z-index */
-        }
-
-        .custom-dropdown-input {
-            width: 100%;
-            padding: 0.875rem 1rem 0.875rem 3rem;
-            border: 2px solid var(--neutral-200);
-            border-radius: var(--radius-lg);
-            font-size: 0.95rem;
-            background: white;
-            transition: var(--transition-base);
-            color: var(--neutral-800);
-            cursor: pointer;
-            text-align: left;
-            position: relative;
-        }
-
-        .custom-dropdown-input:focus {
-            outline: none;
-            border-color: var(--primary-500);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .dropdown-arrow {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--neutral-500);
-            transition: var(--transition-fast);
-            pointer-events: none;
-        }
-
-        .dropdown-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary-500);
-            pointer-events: none;
-        }
-
-        .custom-dropdown-input:focus + .dropdown-arrow {
-            color: var(--primary-500);
-            transform: translateY(-50%) rotate(180deg);
-        }
-
-        /* DROPDOWN OPTIONS - GUARANTEED TO SHOW FULLY */
-        .custom-dropdown-options {
-            position: absolute;
-            top: calc(100% + 5px);
-            left: 0;
-            right: 0;
-            background: white;
-            border: 2px solid var(--primary-300);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-xl);
-            max-height: 400px;
-            overflow-y: auto;
-            z-index: 9999; /* Very high z-index */
-            display: none;
-            animation: slideDown 0.2s ease-out;
-            transform-origin: top;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .custom-dropdown-options.show {
-            display: block;
-        }
-
-        .custom-dropdown-option {
-            padding: 0.875rem 1rem;
-            cursor: pointer;
-            transition: var(--transition-fast);
-            border-bottom: 1px solid var(--neutral-100);
-            display: flex;
-            align-items: center;
-            min-height: 44px; /* Minimum touch target size */
-        }
-
-        .custom-dropdown-option:last-child {
-            border-bottom: none;
-        }
-
-        .custom-dropdown-option:hover {
-            background: var(--primary-50);
-            color: var(--primary-700);
-        }
-
-        .custom-dropdown-option.selected {
-            background: var(--primary-100);
-            font-weight: 600;
-            color: var(--primary-800);
-            border-left: 3px solid var(--primary-500);
-        }
-
-        .custom-dropdown-option i {
-            width: 20px;
-            margin-right: 10px;
-            color: var(--neutral-500);
-        }
-
-        /* DROPDOWN SEARCH - FIXED */
-        .dropdown-search-container {
-            padding: 1rem;
-            border-bottom: 2px solid var(--neutral-200);
-            background: var(--neutral-50);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .dropdown-search-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--neutral-300);
-            border-radius: var(--radius-md);
-            font-size: 0.95rem;
-            background: white;
-            margin-bottom: 0.5rem;
-        }
-
-        .dropdown-search-input:focus {
-            outline: none;
-            border-color: var(--primary-500);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-        }
-
-        .dropdown-add-btn {
-            width: 100%;
-            padding: 0.75rem;
-            font-size: 0.9rem;
-        }
-
         /* ==================== CURRENCY INPUT STYLES ==================== */
         .currency-input-group {
             position: relative;
@@ -683,7 +698,7 @@
             padding-left: 3.5rem !important;
         }
 
-        /* ==================== MODAL FIXES ==================== */
+        /* ==================== COLORFUL MODALS ==================== */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -692,7 +707,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 99999; /* Higher than dropdown */
+            z-index: 100;
             padding: 1rem;
         }
 
@@ -703,9 +718,8 @@
             max-width: 800px;
             width: 100%;
             max-height: 90vh;
-            overflow-y: auto;
+            overflow: hidden;
             position: relative;
-            z-index: 100000; /* Highest */
         }
 
         .modal-content::before {
@@ -751,7 +765,6 @@
             padding: 2rem;
             overflow-y: auto;
             max-height: calc(90vh - 8rem);
-            position: relative;
         }
 
         /* ==================== TOAST NOTIFICATIONS ==================== */
@@ -759,7 +772,7 @@
             position: fixed;
             top: 1.5rem;
             right: 1.5rem;
-            z-index: 999999; /* Highest of all */
+            z-index: 9999;
             display: flex;
             flex-direction: column;
             gap: 1rem;
@@ -791,15 +804,15 @@
         }
 
         .toast.warning {
-            border-left-color: #f59e0b;
+            border-left-color: var(--warning-500);
         }
 
         .toast.error {
-            border-left-color: #ef4444;
+            border-left-color: var(--danger-500);
         }
 
         .toast.info {
-            border-left-color: #3b82f6;
+            border-left-color: var(--info-500);
         }
 
         .toast-icon {
@@ -819,15 +832,15 @@
         }
 
         .toast-icon.warning {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
         }
 
         .toast-icon.error {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
         }
 
         .toast-icon.info {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: linear-gradient(135deg, var(--info-500), var(--info-600));
         }
 
         /* ==================== LOADING OVERLAY ==================== */
@@ -839,7 +852,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 9999999; /* Highest possible */
+            z-index: 99999;
         }
 
         .loading-spinner {
@@ -947,38 +960,6 @@
             background-clip: text;
         }
 
-        .required-field::after {
-            content: " *";
-            color: #ef4444;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            padding: 0.375rem 0.75rem;
-            border-radius: var(--radius-md);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .badge-primary {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-            color: white;
-        }
-
-        .badge-secondary {
-            background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
-            color: white;
-        }
-
-        .badge-success {
-            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
-            color: white;
-        }
-
         /* ==================== RESPONSIVE DESIGN ==================== */
         @media (max-width: 768px) {
             .pipeline-board {
@@ -1003,26 +984,14 @@
                 padding: 1.5rem;
             }
             
-            .modal-content {
-                margin: 1rem;
-                max-height: calc(100vh - 2rem);
-            }
-            
-            /* Mobile dropdown fixes */
             .custom-dropdown-options {
-                position: fixed !important;
-                top: 50% !important;
-                left: 1rem !important;
-                right: 1rem !important;
-                transform: translateY(-50%) !important;
-                max-height: 70vh !important;
-                z-index: 999999 !important;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            }
-            
-            .dropdown-search-container {
-                position: sticky;
-                top: 0;
+                position: fixed;
+                top: 50%;
+                left: 1rem;
+                right: 1rem;
+                transform: translateY(-50%);
+                max-height: 70vh;
+                z-index: 10000;
             }
         }
 
@@ -1034,23 +1003,6 @@
             .card {
                 padding: 1.25rem;
             }
-            
-            .modal-header {
-                padding: 1.25rem 1.5rem;
-            }
-            
-            .modal-body {
-                padding: 1.25rem;
-            }
-            
-            .custom-dropdown-options {
-                max-height: 60vh !important;
-            }
-        }
-
-        /* Ensure dropdown is always on top in all situations */
-        .modal-overlay * {
-            z-index: inherit;
         }
     </style>
 </head>
@@ -1083,7 +1035,7 @@
                                     <p id="userWelcome" class="font-semibold text-gray-900 truncate"></p>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <span id="userRoleBadge" class="badge badge-primary">
+                                    <span id="userRoleBadge" class="badge-primary">
                                         <i class="fas fa-user-tag"></i>
                                         <span>User</span>
                                     </span>
@@ -1263,7 +1215,7 @@
                         </div>
                     </div>
                     
-                    <!-- Section 2: PIC and Customer - IMPROVED DROPDOWN -->
+                    <!-- Section 2: PIC and Customer -->
                     <div class="form-section">
                         <div class="form-section-title">
                             <div class="form-section-icon form-section-icon-secondary">
@@ -1273,61 +1225,67 @@
                         </div>
                         
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- PIC Dropdown - FIXED -->
                             <div>
                                 <label class="form-label required-field" for="pipelinePIC">
                                     PIC
                                 </label>
                                 <div class="custom-dropdown">
-                                    <i class="fas fa-user dropdown-icon"></i>
                                     <input type="text" 
                                            id="pipelinePIC" 
                                            class="custom-dropdown-input"
                                            required
-                                           placeholder="Click to select PIC"
+                                           placeholder="Search or select PIC"
                                            autocomplete="off"
                                            readonly>
-                                    <i class="fas fa-chevron-down dropdown-arrow"></i>
                                     <div class="custom-dropdown-options" id="picDropdownOptions">
-                                        <div class="dropdown-search-container">
+                                        <div class="custom-dropdown-options-header">
+                                            <span>Select PIC</span>
+                                            <span class="dropdown-count" id="picCount">0</span>
+                                        </div>
+                                        <div class="custom-dropdown-search">
                                             <input type="text" 
-                                                   placeholder="Search PIC..."
-                                                   class="dropdown-search-input"
+                                                   placeholder="Type to search PIC..."
+                                                   class="form-input"
                                                    id="picSearchInput">
                                         </div>
-                                        <!-- PIC options will be populated by JavaScript -->
+                                        <div class="custom-dropdown-options-container" id="picOptionsContainer">
+                                            <!-- PIC options will be populated by JavaScript -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Customer Dropdown - FIXED -->
                             <div>
                                 <label class="form-label required-field" for="pipelineCustomer">
                                     Customer
                                 </label>
                                 <div class="custom-dropdown">
-                                    <i class="fas fa-building dropdown-icon"></i>
                                     <input type="text" 
                                            id="pipelineCustomer" 
                                            class="custom-dropdown-input"
                                            required
-                                           placeholder="Click to select customer"
+                                           placeholder="Search or select customer"
                                            autocomplete="off"
                                            readonly>
-                                    <i class="fas fa-chevron-down dropdown-arrow"></i>
                                     <div class="custom-dropdown-options" id="customerDropdownOptions">
-                                        <div class="dropdown-search-container">
+                                        <div class="custom-dropdown-options-header">
+                                            <span>Select Customer</span>
+                                            <span class="dropdown-count" id="customerCount">0</span>
+                                        </div>
+                                        <div class="custom-dropdown-search">
                                             <input type="text" 
-                                                   placeholder="Search customer..."
-                                                   class="dropdown-search-input"
+                                                   placeholder="Type to search customer..."
+                                                   class="form-input"
                                                    id="customerSearchInput">
                                             <button type="button" 
                                                     id="addNewCustomerBtn" 
-                                                    class="btn btn-primary btn-sm dropdown-add-btn">
+                                                    class="btn btn-primary btn-sm mt-2 w-full">
                                                 <i class="fas fa-plus"></i> Add New Customer
                                             </button>
                                         </div>
-                                        <!-- Customer options will be populated by JavaScript -->
+                                        <div class="custom-dropdown-options-container" id="customerOptionsContainer">
+                                            <!-- Customer options will be populated by JavaScript -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1657,7 +1615,6 @@
             <p class="text-white text-lg font-medium">Loading Pipelines...</p>
         </div>
     </div>
-
 <script>
         // ==================== GLOBAL VARIABLES ====================
         let db, auth, pipelinesCollection, pipelineHistoryCollection, usersCollection, customersCollection;
@@ -1667,7 +1624,6 @@
         let filteredPipelineItems = [];
         let draggedItem = null;
         let charts = {};
-        let activeDropdown = null;
         
         // Data for dropdowns
         const PIC_LIST = [
@@ -1787,7 +1743,7 @@
             "PT. RAMAYANA HARTA PRATAMA",
             "PT. SIMEX PHARMACEUTICAL INDONESIA",
             "PT. MIRAMA WISATA",
-            "PPPSRS THE PAKUBUWON VIEW",
+            "PPPSRS THE PAKUBUWONO VIEW",
             "PT. MUTIARA PERMATA MULIA",
             "PT. CBRE CONSULTANCY SERVICES",
             "PT. KARANG MAS SEJAHTERA",
@@ -1796,7 +1752,7 @@
             "PT. TAIYO SINAR RAYA TEKNIK",
             "PT. SHR HOTEL INDONESIA",
             "PPRSH FOUR SEASONS REGENT RESIDENCES",
-            "PP THE PAKUBUWON RESIDENCE",
+            "PP THE PAKUBUWONO RESIDENCE",
             "PT. SARIARTHAMAS HOTEL INTERNATIONAL",
             "PT. PT. BENTENG TEGUH PERKASA",
             "BHUMI PRAMA ARJASA",
@@ -2100,295 +2056,333 @@
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
         }
 
-        // ==================== FIXED DROPDOWN FUNCTIONS ====================
+        // ==================== IMPROVED DROPDOWN FUNCTIONS ====================
         function setupDropdowns() {
-            console.log('Setting up dropdowns with guaranteed visibility...');
-            
             // Setup PIC dropdown
-            const picInput = document.getElementById('pipelinePIC');
-            const picDropdown = document.getElementById('picDropdownOptions');
-            const picSearchInput = document.getElementById('picSearchInput');
-            
-            if (picInput && picDropdown) {
-                console.log('Setting up PIC dropdown...');
-                
-                // Populate PIC options
-                populatePICOptions();
-                
-                picInput.addEventListener('click', function(e) {
-                    console.log('PIC dropdown clicked');
-                    e.stopPropagation();
-                    closeAllDropdowns();
-                    picDropdown.classList.toggle('show');
-                    activeDropdown = picDropdown;
-                    
-                    // Force z-index and visibility
-                    picDropdown.style.zIndex = '999999';
-                    picDropdown.style.visibility = 'visible';
-                    picDropdown.style.opacity = '1';
-                    
-                    if (picSearchInput) {
-                        setTimeout(() => {
-                            picSearchInput.focus();
-                            console.log('PIC search input focused');
-                        }, 10);
-                    }
-                });
-                
-                if (picSearchInput) {
-                    picSearchInput.addEventListener('input', function(e) {
-                        const searchTerm = this.value.toLowerCase();
-                        const options = picDropdown.querySelectorAll('.custom-dropdown-option');
-                        console.log('Searching PIC:', searchTerm);
-                        
-                        options.forEach(option => {
-                            const text = option.textContent.toLowerCase();
-                            if (text.includes(searchTerm)) {
-                                option.style.display = 'flex';
-                            } else {
-                                option.style.display = 'none';
-                            }
-                        });
-                        
-                        e.stopPropagation();
-                    });
-                }
-            }
+            setupPICDropdown();
             
             // Setup Customer dropdown
-            const customerInput = document.getElementById('pipelineCustomer');
-            const customerDropdown = document.getElementById('customerDropdownOptions');
-            const customerSearchInput = document.getElementById('customerSearchInput');
-            const addCustomerBtn = document.getElementById('addNewCustomerBtn');
-            
-            if (customerInput && customerDropdown) {
-                console.log('Setting up Customer dropdown...');
-                
-                // Load customers from Firestore
-                loadCustomers();
-                
-                customerInput.addEventListener('click', function(e) {
-                    console.log('Customer dropdown clicked');
-                    e.stopPropagation();
-                    closeAllDropdowns();
-                    customerDropdown.classList.toggle('show');
-                    activeDropdown = customerDropdown;
-                    
-                    // Force z-index and visibility
-                    customerDropdown.style.zIndex = '999999';
-                    customerDropdown.style.visibility = 'visible';
-                    customerDropdown.style.opacity = '1';
-                    
-                    if (customerSearchInput) {
-                        setTimeout(() => {
-                            customerSearchInput.focus();
-                            console.log('Customer search input focused');
-                        }, 10);
-                    }
-                });
-                
-                if (customerSearchInput) {
-                    customerSearchInput.addEventListener('input', function(e) {
-                        const searchTerm = this.value.toLowerCase();
-                        const options = customerDropdown.querySelectorAll('.custom-dropdown-option');
-                        console.log('Searching customer:', searchTerm);
-                        
-                        options.forEach(option => {
-                            const text = option.textContent.toLowerCase();
-                            if (text.includes(searchTerm)) {
-                                option.style.display = 'flex';
-                            } else {
-                                option.style.display = 'none';
-                            }
-                        });
-                        
-                        e.stopPropagation();
-                    });
-                }
-                
-                if (addCustomerBtn) {
-                    addCustomerBtn.addEventListener('click', function(e) {
-                        console.log('Add customer button clicked');
-                        e.stopPropagation();
-                        closeAllDropdowns();
-                        openAddCustomerModal();
-                    });
-                }
-            }
+            setupCustomerDropdown();
             
             // Close dropdowns when clicking outside
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.custom-dropdown')) {
-                    console.log('Clicked outside dropdown, closing all');
                     closeAllDropdowns();
                 }
             });
             
-            // Close dropdowns with Escape key
+            // Close dropdowns on escape key
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
-                    console.log('Escape pressed, closing dropdowns');
                     closeAllDropdowns();
                 }
             });
+        }
+
+        function setupPICDropdown() {
+            const picInput = document.getElementById('pipelinePIC');
+            const picDropdown = document.getElementById('picDropdownOptions');
+            const picSearchInput = document.getElementById('picSearchInput');
+            const picOptionsContainer = document.getElementById('picOptionsContainer');
+            const picCount = document.getElementById('picCount');
             
-            console.log('Dropdown setup complete');
+            if (!picInput || !picDropdown) return;
+            
+            // Populate PIC options
+            populatePICOptions();
+            
+            // Toggle dropdown on input click
+            picInput.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleDropdown(picDropdown, picInput);
+                
+                // Focus search input when dropdown opens
+                if (picDropdown.classList.contains('show') && picSearchInput) {
+                    setTimeout(() => {
+                        picSearchInput.focus();
+                    }, 100);
+                }
+            });
+            
+            // Handle input for manual entry
+            picInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                filterPICOptions(searchTerm);
+                picDropdown.classList.add('show');
+                picInput.classList.add('open');
+            });
+            
+            // Handle search input
+            if (picSearchInput) {
+                picSearchInput.addEventListener('input', function(e) {
+                    const searchTerm = this.value.toLowerCase();
+                    filterPICOptions(searchTerm);
+                    e.stopPropagation();
+                });
+                
+                picSearchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const visibleOptions = picOptionsContainer.querySelectorAll('.custom-dropdown-option:not([style*="display: none"])');
+                        if (visibleOptions.length > 0) {
+                            visibleOptions[0].click();
+                        }
+                    }
+                });
+            }
+            
+            // Close dropdown when an option is selected
+            picOptionsContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('custom-dropdown-option')) {
+                    picInput.value = e.target.textContent;
+                    picInput.classList.remove('open');
+                    closeAllDropdowns();
+                }
+            });
+        }
+
+        function setupCustomerDropdown() {
+            const customerInput = document.getElementById('pipelineCustomer');
+            const customerDropdown = document.getElementById('customerDropdownOptions');
+            const customerSearchInput = document.getElementById('customerSearchInput');
+            const customerOptionsContainer = document.getElementById('customerOptionsContainer');
+            const customerCount = document.getElementById('customerCount');
+            
+            if (!customerInput || !customerDropdown) return;
+            
+            // Load customers from Firestore
+            loadCustomers();
+            
+            // Toggle dropdown on input click
+            customerInput.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleDropdown(customerDropdown, customerInput);
+                
+                // Focus search input when dropdown opens
+                if (customerDropdown.classList.contains('show') && customerSearchInput) {
+                    setTimeout(() => {
+                        customerSearchInput.focus();
+                    }, 100);
+                }
+            });
+            
+            // Handle input for manual entry
+            customerInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                filterCustomerOptions(searchTerm);
+                customerDropdown.classList.add('show');
+                customerInput.classList.add('open');
+            });
+            
+            // Handle search input
+            if (customerSearchInput) {
+                customerSearchInput.addEventListener('input', function(e) {
+                    const searchTerm = this.value.toLowerCase();
+                    filterCustomerOptions(searchTerm);
+                    e.stopPropagation();
+                });
+                
+                customerSearchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const visibleOptions = customerOptionsContainer.querySelectorAll('.custom-dropdown-option:not([style*="display: none"])');
+                        if (visibleOptions.length > 0) {
+                            visibleOptions[0].click();
+                        }
+                    }
+                });
+            }
+            
+            // Close dropdown when an option is selected
+            customerOptionsContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('custom-dropdown-option')) {
+                    customerInput.value = e.target.textContent;
+                    customerInput.classList.remove('open');
+                    closeAllDropdowns();
+                }
+            });
+        }
+
+        function toggleDropdown(dropdown, input) {
+            const isOpen = dropdown.classList.contains('show');
+            closeAllDropdowns();
+            
+            if (!isOpen) {
+                dropdown.classList.add('show');
+                if (input) {
+                    input.classList.add('open');
+                }
+            }
         }
 
         function closeAllDropdowns() {
-            console.log('Closing all dropdowns...');
             document.querySelectorAll('.custom-dropdown-options').forEach(dropdown => {
                 dropdown.classList.remove('show');
-                dropdown.style.zIndex = '';
-                dropdown.style.visibility = '';
-                dropdown.style.opacity = '';
             });
-            activeDropdown = null;
+            
+            document.querySelectorAll('.custom-dropdown-input').forEach(input => {
+                input.classList.remove('open');
+            });
         }
 
         function populatePICOptions() {
-            const picDropdown = document.getElementById('picDropdownOptions');
-            if (!picDropdown) {
-                console.error('PIC dropdown not found');
-                return;
-            }
+            const picOptionsContainer = document.getElementById('picOptionsContainer');
+            const picCount = document.getElementById('picCount');
             
-            console.log('Populating PIC options...');
+            if (!picOptionsContainer || !picCount) return;
             
-            // Clear existing options except search container
-            const searchContainer = picDropdown.querySelector('.dropdown-search-container');
-            const optionsContainer = document.createElement('div');
-            optionsContainer.className = 'dropdown-options-container';
+            // Clear existing options
+            picOptionsContainer.innerHTML = '';
             
             // Add PIC options
             PIC_LIST.forEach(pic => {
                 const option = document.createElement('div');
                 option.className = 'custom-dropdown-option';
-                option.innerHTML = `
-                    <i class="fas fa-user text-gray-400 mr-2"></i>
-                    <span class="flex-1">${pic}</span>
-                `;
-                option.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    console.log('PIC selected:', pic);
-                    document.getElementById('pipelinePIC').value = pic;
-                    closeAllDropdowns();
-                });
-                optionsContainer.appendChild(option);
+                option.textContent = pic;
+                option.title = pic; // Add title for full text on hover
+                picOptionsContainer.appendChild(option);
             });
             
-            // Rebuild dropdown structure
-            picDropdown.innerHTML = '';
-            if (searchContainer) picDropdown.appendChild(searchContainer);
-            picDropdown.appendChild(optionsContainer);
+            // Update count
+            picCount.textContent = PIC_LIST.length;
             
-            console.log('PIC options populated:', PIC_LIST.length);
+            // Show empty state if no options
+            if (PIC_LIST.length === 0) {
+                showEmptyState(picOptionsContainer, 'No PIC available');
+            }
+        }
+
+        function filterPICOptions(searchTerm) {
+            const picOptionsContainer = document.getElementById('picOptionsContainer');
+            const picCount = document.getElementById('picCount');
+            
+            if (!picOptionsContainer || !picCount) return;
+            
+            const options = picOptionsContainer.querySelectorAll('.custom-dropdown-option');
+            let visibleCount = 0;
+            
+            options.forEach(option => {
+                const text = option.textContent.toLowerCase();
+                if (searchTerm === '' || text.includes(searchTerm)) {
+                    option.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+            
+            // Update count
+            picCount.textContent = visibleCount;
+            
+            // Show empty state if no matches
+            if (visibleCount === 0) {
+                showEmptyState(picOptionsContainer, 'No matching PIC found');
+            }
         }
 
         async function loadCustomers() {
             try {
-                console.log('Loading customers...');
                 const querySnapshot = await customersCollection.orderBy('name').get();
-                const customerDropdown = document.getElementById('customerDropdownOptions');
-                if (!customerDropdown) {
-                    console.error('Customer dropdown not found');
-                    return;
-                }
+                const customerOptionsContainer = document.getElementById('customerOptionsContainer');
+                const customerCount = document.getElementById('customerCount');
                 
-                // Clear existing options except search container
-                const searchContainer = customerDropdown.querySelector('.dropdown-search-container');
-                const optionsContainer = document.createElement('div');
-                optionsContainer.className = 'dropdown-options-container';
+                if (!customerOptionsContainer || !customerCount) return;
+                
+                // Clear existing options
+                customerOptionsContainer.innerHTML = '';
+                
+                let customers = [];
                 
                 // Add customer options from Firestore
                 querySnapshot.forEach((doc) => {
                     const customerData = doc.data();
-                    const option = document.createElement('div');
-                    option.className = 'custom-dropdown-option';
-                    option.innerHTML = `
-                        <i class="fas fa-building text-gray-400 mr-2"></i>
-                        <span class="flex-1">${customerData.name}</span>
-                    `;
-                    option.dataset.id = doc.id;
-                    option.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        console.log('Customer selected:', customerData.name);
-                        document.getElementById('pipelineCustomer').value = customerData.name;
-                        closeAllDropdowns();
-                    });
-                    optionsContainer.appendChild(option);
+                    customers.push(customerData.name);
                 });
                 
                 // Add default customers if Firestore is empty
-                if (querySnapshot.empty) {
-                    console.log('Firestore empty, using default customer list');
-                    CUSTOMER_LIST.forEach(customer => {
-                        const option = document.createElement('div');
-                        option.className = 'custom-dropdown-option';
-                        option.innerHTML = `
-                            <i class="fas fa-building text-gray-400 mr-2"></i>
-                            <span class="flex-1">${customer}</span>
-                        `;
-                        option.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            console.log('Customer selected:', customer);
-                            document.getElementById('pipelineCustomer').value = customer;
-                            closeAllDropdowns();
-                        });
-                        optionsContainer.appendChild(option);
-                    });
+                if (customers.length === 0) {
+                    customers = [...CUSTOMER_LIST];
                 }
                 
-                // Rebuild dropdown structure
-                customerDropdown.innerHTML = '';
-                if (searchContainer) customerDropdown.appendChild(searchContainer);
-                customerDropdown.appendChild(optionsContainer);
+                // Sort customers alphabetically
+                customers.sort((a, b) => a.localeCompare(b));
                 
-                // Re-attach event listener for add customer button
-                const addCustomerBtn = document.getElementById('addNewCustomerBtn');
-                if (addCustomerBtn) {
-                    addCustomerBtn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        console.log('Add customer button clicked');
-                        closeAllDropdowns();
-                        openAddCustomerModal();
-                    });
+                // Add options to container
+                customers.forEach(customer => {
+                    const option = document.createElement('div');
+                    option.className = 'custom-dropdown-option';
+                    option.textContent = customer;
+                    option.title = customer; // Add title for full text on hover
+                    customerOptionsContainer.appendChild(option);
+                });
+                
+                // Update count
+                customerCount.textContent = customers.length;
+                
+                // Show empty state if no options
+                if (customers.length === 0) {
+                    showEmptyState(customerOptionsContainer, 'No customers available');
                 }
-                
-                console.log('Customers loaded:', querySnapshot.size || CUSTOMER_LIST.length);
                 
             } catch (error) {
                 console.error('Error loading customers:', error);
                 // Fallback to default list
-                const customerDropdown = document.getElementById('customerDropdownOptions');
-                if (customerDropdown) {
-                    // Clear existing options except search container
-                    const searchContainer = customerDropdown.querySelector('.dropdown-search-container');
-                    const optionsContainer = document.createElement('div');
-                    optionsContainer.className = 'dropdown-options-container';
+                const customerOptionsContainer = document.getElementById('customerOptionsContainer');
+                const customerCount = document.getElementById('customerCount');
+                
+                if (customerOptionsContainer && customerCount) {
+                    customerOptionsContainer.innerHTML = '';
                     
+                    // Add default customers
                     CUSTOMER_LIST.forEach(customer => {
                         const option = document.createElement('div');
                         option.className = 'custom-dropdown-option';
-                        option.innerHTML = `
-                            <i class="fas fa-building text-gray-400 mr-2"></i>
-                            <span class="flex-1">${customer}</span>
-                        `;
-                        option.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            console.log('Customer selected:', customer);
-                            document.getElementById('pipelineCustomer').value = customer;
-                            closeAllDropdowns();
-                        });
-                        optionsContainer.appendChild(option);
+                        option.textContent = customer;
+                        option.title = customer;
+                        customerOptionsContainer.appendChild(option);
                     });
                     
-                    // Rebuild dropdown structure
-                    customerDropdown.innerHTML = '';
-                    if (searchContainer) customerDropdown.appendChild(searchContainer);
-                    customerDropdown.appendChild(optionsContainer);
+                    customerCount.textContent = CUSTOMER_LIST.length;
                 }
             }
+        }
+
+        function filterCustomerOptions(searchTerm) {
+            const customerOptionsContainer = document.getElementById('customerOptionsContainer');
+            const customerCount = document.getElementById('customerCount');
+            
+            if (!customerOptionsContainer || !customerCount) return;
+            
+            const options = customerOptionsContainer.querySelectorAll('.custom-dropdown-option');
+            let visibleCount = 0;
+            
+            options.forEach(option => {
+                const text = option.textContent.toLowerCase();
+                if (searchTerm === '' || text.includes(searchTerm)) {
+                    option.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+            
+            // Update count
+            customerCount.textContent = visibleCount;
+            
+            // Show empty state if no matches
+            if (visibleCount === 0) {
+                showEmptyState(customerOptionsContainer, 'No matching customers found');
+            }
+        }
+
+        function showEmptyState(container, message) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'dropdown-empty-state';
+            emptyState.innerHTML = `
+                <i class="fas fa-search"></i>
+                <p>${message}</p>
+            `;
+            container.appendChild(emptyState);
         }
 
         async function addNewCustomer(customerData) {
@@ -2892,11 +2886,6 @@
             
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-            
-            // Re-setup dropdowns to ensure they work in modal
-            setTimeout(() => {
-                setupDropdowns();
-            }, 100);
         }
 
         function populatePipelineModalForm(item) {
@@ -2918,9 +2907,9 @@
         }
 
         function closePipelineItemModal() {
+            closeAllDropdowns();
             document.getElementById('pipelineItemModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
-            closeAllDropdowns();
         }
 
         async function savePipelineItem() {
@@ -3384,7 +3373,7 @@
             
             const roleBadge = document.getElementById('userRoleBadge');
             if (roleBadge) {
-                roleBadge.className = `badge ${currentUserRole === 'admin' ? 'badge-secondary' : currentUserRole === 'manager' ? 'badge-primary' : 'badge-success'}`;
+                roleBadge.className = `badge badge-${currentUserRole === 'admin' ? 'secondary' : currentUserRole === 'manager' ? 'primary' : 'info'}`;
                 roleBadge.innerHTML = `<i class="fas fa-user-tag"></i><span>${currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}</span>`;
             }
             
