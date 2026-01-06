@@ -468,7 +468,7 @@
             box-shadow: var(--shadow-md);
             border: 1px solid var(--neutral-200);
             position: relative;
-            overflow: hidden;
+            overflow: visible; /* CHANGED: Allow dropdown to overflow */
         }
 
         .form-section::before {
@@ -517,15 +517,16 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        /* ==================== IMPROVED DROPDOWN STYLES ==================== */
+        /* ==================== FIXED DROPDOWN STYLES - GUARANTEED VISIBLE ==================== */
         .custom-dropdown {
             position: relative;
             width: 100%;
+            z-index: 1000; /* High z-index */
         }
 
         .custom-dropdown-input {
             width: 100%;
-            padding: 0.875rem 1rem;
+            padding: 0.875rem 1rem 0.875rem 3rem;
             border: 2px solid var(--neutral-200);
             border-radius: var(--radius-lg);
             font-size: 0.95rem;
@@ -534,6 +535,7 @@
             color: var(--neutral-800);
             cursor: pointer;
             text-align: left;
+            position: relative;
         }
 
         .custom-dropdown-input:focus {
@@ -549,25 +551,50 @@
             transform: translateY(-50%);
             color: var(--neutral-500);
             transition: var(--transition-fast);
+            pointer-events: none;
+        }
+
+        .dropdown-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-500);
+            pointer-events: none;
         }
 
         .custom-dropdown-input:focus + .dropdown-arrow {
             color: var(--primary-500);
+            transform: translateY(-50%) rotate(180deg);
         }
 
+        /* DROPDOWN OPTIONS - GUARANTEED TO SHOW FULLY */
         .custom-dropdown-options {
             position: absolute;
             top: calc(100% + 5px);
             left: 0;
             right: 0;
             background: white;
-            border: 1px solid var(--neutral-200);
+            border: 2px solid var(--primary-300);
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-xl);
             max-height: 400px;
             overflow-y: auto;
-            z-index: 1000;
+            z-index: 9999; /* Very high z-index */
             display: none;
+            animation: slideDown 0.2s ease-out;
+            transform-origin: top;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .custom-dropdown-options.show {
@@ -575,12 +602,13 @@
         }
 
         .custom-dropdown-option {
-            padding: 0.75rem 1rem;
+            padding: 0.875rem 1rem;
             cursor: pointer;
             transition: var(--transition-fast);
             border-bottom: 1px solid var(--neutral-100);
             display: flex;
             align-items: center;
+            min-height: 44px; /* Minimum touch target size */
         }
 
         .custom-dropdown-option:last-child {
@@ -596,11 +624,19 @@
             background: var(--primary-100);
             font-weight: 600;
             color: var(--primary-800);
+            border-left: 3px solid var(--primary-500);
         }
 
+        .custom-dropdown-option i {
+            width: 20px;
+            margin-right: 10px;
+            color: var(--neutral-500);
+        }
+
+        /* DROPDOWN SEARCH - FIXED */
         .dropdown-search-container {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--neutral-200);
+            padding: 1rem;
+            border-bottom: 2px solid var(--neutral-200);
             background: var(--neutral-50);
             position: sticky;
             top: 0;
@@ -609,11 +645,12 @@
 
         .dropdown-search-input {
             width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid var(--neutral-300);
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--neutral-300);
             border-radius: var(--radius-md);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             background: white;
+            margin-bottom: 0.5rem;
         }
 
         .dropdown-search-input:focus {
@@ -623,10 +660,9 @@
         }
 
         .dropdown-add-btn {
-            margin-top: 0.5rem;
             width: 100%;
-            padding: 0.5rem;
-            font-size: 0.8rem;
+            padding: 0.75rem;
+            font-size: 0.9rem;
         }
 
         /* ==================== CURRENCY INPUT STYLES ==================== */
@@ -647,7 +683,7 @@
             padding-left: 3.5rem !important;
         }
 
-        /* ==================== COLORFUL MODALS ==================== */
+        /* ==================== MODAL FIXES ==================== */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -656,7 +692,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 99999; /* Higher than dropdown */
             padding: 1rem;
         }
 
@@ -667,8 +703,9 @@
             max-width: 800px;
             width: 100%;
             max-height: 90vh;
-            overflow: hidden;
+            overflow-y: auto;
             position: relative;
+            z-index: 100000; /* Highest */
         }
 
         .modal-content::before {
@@ -714,6 +751,7 @@
             padding: 2rem;
             overflow-y: auto;
             max-height: calc(90vh - 8rem);
+            position: relative;
         }
 
         /* ==================== TOAST NOTIFICATIONS ==================== */
@@ -721,7 +759,7 @@
             position: fixed;
             top: 1.5rem;
             right: 1.5rem;
-            z-index: 9999;
+            z-index: 999999; /* Highest of all */
             display: flex;
             flex-direction: column;
             gap: 1rem;
@@ -801,7 +839,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 99999;
+            z-index: 9999999; /* Highest possible */
         }
 
         .loading-spinner {
@@ -970,14 +1008,21 @@
                 max-height: calc(100vh - 2rem);
             }
             
+            /* Mobile dropdown fixes */
             .custom-dropdown-options {
-                position: fixed;
-                top: 50%;
-                left: 1rem;
-                right: 1rem;
-                transform: translateY(-50%);
-                max-height: 60vh;
-                z-index: 2000;
+                position: fixed !important;
+                top: 50% !important;
+                left: 1rem !important;
+                right: 1rem !important;
+                transform: translateY(-50%) !important;
+                max-height: 70vh !important;
+                z-index: 999999 !important;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            }
+            
+            .dropdown-search-container {
+                position: sticky;
+                top: 0;
             }
         }
 
@@ -997,6 +1042,15 @@
             .modal-body {
                 padding: 1.25rem;
             }
+            
+            .custom-dropdown-options {
+                max-height: 60vh !important;
+            }
+        }
+
+        /* Ensure dropdown is always on top in all situations */
+        .modal-overlay * {
+            z-index: inherit;
         }
     </style>
 </head>
@@ -1209,7 +1263,7 @@
                         </div>
                     </div>
                     
-                    <!-- Section 2: PIC and Customer -->
+                    <!-- Section 2: PIC and Customer - IMPROVED DROPDOWN -->
                     <div class="form-section">
                         <div class="form-section-title">
                             <div class="form-section-icon form-section-icon-secondary">
@@ -1219,12 +1273,13 @@
                         </div>
                         
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- PIC Dropdown -->
+                            <!-- PIC Dropdown - FIXED -->
                             <div>
                                 <label class="form-label required-field" for="pipelinePIC">
                                     PIC
                                 </label>
                                 <div class="custom-dropdown">
+                                    <i class="fas fa-user dropdown-icon"></i>
                                     <input type="text" 
                                            id="pipelinePIC" 
                                            class="custom-dropdown-input"
@@ -1245,12 +1300,13 @@
                                 </div>
                             </div>
                             
-                            <!-- Customer Dropdown -->
+                            <!-- Customer Dropdown - FIXED -->
                             <div>
                                 <label class="form-label required-field" for="pipelineCustomer">
                                     Customer
                                 </label>
                                 <div class="custom-dropdown">
+                                    <i class="fas fa-building dropdown-icon"></i>
                                     <input type="text" 
                                            id="pipelineCustomer" 
                                            class="custom-dropdown-input"
@@ -2044,25 +2100,38 @@
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
         }
 
-        // ==================== IMPROVED DROPDOWN FUNCTIONS ====================
+        // ==================== FIXED DROPDOWN FUNCTIONS ====================
         function setupDropdowns() {
+            console.log('Setting up dropdowns with guaranteed visibility...');
+            
             // Setup PIC dropdown
             const picInput = document.getElementById('pipelinePIC');
             const picDropdown = document.getElementById('picDropdownOptions');
             const picSearchInput = document.getElementById('picSearchInput');
             
             if (picInput && picDropdown) {
+                console.log('Setting up PIC dropdown...');
+                
                 // Populate PIC options
                 populatePICOptions();
                 
                 picInput.addEventListener('click', function(e) {
+                    console.log('PIC dropdown clicked');
                     e.stopPropagation();
                     closeAllDropdowns();
                     picDropdown.classList.toggle('show');
                     activeDropdown = picDropdown;
                     
+                    // Force z-index and visibility
+                    picDropdown.style.zIndex = '999999';
+                    picDropdown.style.visibility = 'visible';
+                    picDropdown.style.opacity = '1';
+                    
                     if (picSearchInput) {
-                        setTimeout(() => picSearchInput.focus(), 10);
+                        setTimeout(() => {
+                            picSearchInput.focus();
+                            console.log('PIC search input focused');
+                        }, 10);
                     }
                 });
                 
@@ -2070,6 +2139,7 @@
                     picSearchInput.addEventListener('input', function(e) {
                         const searchTerm = this.value.toLowerCase();
                         const options = picDropdown.querySelectorAll('.custom-dropdown-option');
+                        console.log('Searching PIC:', searchTerm);
                         
                         options.forEach(option => {
                             const text = option.textContent.toLowerCase();
@@ -2092,17 +2162,28 @@
             const addCustomerBtn = document.getElementById('addNewCustomerBtn');
             
             if (customerInput && customerDropdown) {
+                console.log('Setting up Customer dropdown...');
+                
                 // Load customers from Firestore
                 loadCustomers();
                 
                 customerInput.addEventListener('click', function(e) {
+                    console.log('Customer dropdown clicked');
                     e.stopPropagation();
                     closeAllDropdowns();
                     customerDropdown.classList.toggle('show');
                     activeDropdown = customerDropdown;
                     
+                    // Force z-index and visibility
+                    customerDropdown.style.zIndex = '999999';
+                    customerDropdown.style.visibility = 'visible';
+                    customerDropdown.style.opacity = '1';
+                    
                     if (customerSearchInput) {
-                        setTimeout(() => customerSearchInput.focus(), 10);
+                        setTimeout(() => {
+                            customerSearchInput.focus();
+                            console.log('Customer search input focused');
+                        }, 10);
                     }
                 });
                 
@@ -2110,6 +2191,7 @@
                     customerSearchInput.addEventListener('input', function(e) {
                         const searchTerm = this.value.toLowerCase();
                         const options = customerDropdown.querySelectorAll('.custom-dropdown-option');
+                        console.log('Searching customer:', searchTerm);
                         
                         options.forEach(option => {
                             const text = option.textContent.toLowerCase();
@@ -2126,6 +2208,7 @@
                 
                 if (addCustomerBtn) {
                     addCustomerBtn.addEventListener('click', function(e) {
+                        console.log('Add customer button clicked');
                         e.stopPropagation();
                         closeAllDropdowns();
                         openAddCustomerModal();
@@ -2136,6 +2219,7 @@
             // Close dropdowns when clicking outside
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.custom-dropdown')) {
+                    console.log('Clicked outside dropdown, closing all');
                     closeAllDropdowns();
                 }
             });
@@ -2143,25 +2227,38 @@
             // Close dropdowns with Escape key
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
+                    console.log('Escape pressed, closing dropdowns');
                     closeAllDropdowns();
                 }
             });
+            
+            console.log('Dropdown setup complete');
         }
 
         function closeAllDropdowns() {
+            console.log('Closing all dropdowns...');
             document.querySelectorAll('.custom-dropdown-options').forEach(dropdown => {
                 dropdown.classList.remove('show');
+                dropdown.style.zIndex = '';
+                dropdown.style.visibility = '';
+                dropdown.style.opacity = '';
             });
             activeDropdown = null;
         }
 
         function populatePICOptions() {
             const picDropdown = document.getElementById('picDropdownOptions');
-            if (!picDropdown) return;
+            if (!picDropdown) {
+                console.error('PIC dropdown not found');
+                return;
+            }
+            
+            console.log('Populating PIC options...');
             
             // Clear existing options except search container
             const searchContainer = picDropdown.querySelector('.dropdown-search-container');
             const optionsContainer = document.createElement('div');
+            optionsContainer.className = 'dropdown-options-container';
             
             // Add PIC options
             PIC_LIST.forEach(pic => {
@@ -2173,6 +2270,7 @@
                 `;
                 option.addEventListener('click', function(e) {
                     e.stopPropagation();
+                    console.log('PIC selected:', pic);
                     document.getElementById('pipelinePIC').value = pic;
                     closeAllDropdowns();
                 });
@@ -2183,17 +2281,24 @@
             picDropdown.innerHTML = '';
             if (searchContainer) picDropdown.appendChild(searchContainer);
             picDropdown.appendChild(optionsContainer);
+            
+            console.log('PIC options populated:', PIC_LIST.length);
         }
 
         async function loadCustomers() {
             try {
+                console.log('Loading customers...');
                 const querySnapshot = await customersCollection.orderBy('name').get();
                 const customerDropdown = document.getElementById('customerDropdownOptions');
-                if (!customerDropdown) return;
+                if (!customerDropdown) {
+                    console.error('Customer dropdown not found');
+                    return;
+                }
                 
                 // Clear existing options except search container
                 const searchContainer = customerDropdown.querySelector('.dropdown-search-container');
                 const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'dropdown-options-container';
                 
                 // Add customer options from Firestore
                 querySnapshot.forEach((doc) => {
@@ -2207,6 +2312,7 @@
                     option.dataset.id = doc.id;
                     option.addEventListener('click', function(e) {
                         e.stopPropagation();
+                        console.log('Customer selected:', customerData.name);
                         document.getElementById('pipelineCustomer').value = customerData.name;
                         closeAllDropdowns();
                     });
@@ -2215,6 +2321,7 @@
                 
                 // Add default customers if Firestore is empty
                 if (querySnapshot.empty) {
+                    console.log('Firestore empty, using default customer list');
                     CUSTOMER_LIST.forEach(customer => {
                         const option = document.createElement('div');
                         option.className = 'custom-dropdown-option';
@@ -2224,6 +2331,7 @@
                         `;
                         option.addEventListener('click', function(e) {
                             e.stopPropagation();
+                            console.log('Customer selected:', customer);
                             document.getElementById('pipelineCustomer').value = customer;
                             closeAllDropdowns();
                         });
@@ -2241,10 +2349,13 @@
                 if (addCustomerBtn) {
                     addCustomerBtn.addEventListener('click', function(e) {
                         e.stopPropagation();
+                        console.log('Add customer button clicked');
                         closeAllDropdowns();
                         openAddCustomerModal();
                     });
                 }
+                
+                console.log('Customers loaded:', querySnapshot.size || CUSTOMER_LIST.length);
                 
             } catch (error) {
                 console.error('Error loading customers:', error);
@@ -2254,6 +2365,7 @@
                     // Clear existing options except search container
                     const searchContainer = customerDropdown.querySelector('.dropdown-search-container');
                     const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'dropdown-options-container';
                     
                     CUSTOMER_LIST.forEach(customer => {
                         const option = document.createElement('div');
@@ -2264,6 +2376,7 @@
                         `;
                         option.addEventListener('click', function(e) {
                             e.stopPropagation();
+                            console.log('Customer selected:', customer);
                             document.getElementById('pipelineCustomer').value = customer;
                             closeAllDropdowns();
                         });
@@ -2779,6 +2892,11 @@
             
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            
+            // Re-setup dropdowns to ensure they work in modal
+            setTimeout(() => {
+                setupDropdowns();
+            }, 100);
         }
 
         function populatePipelineModalForm(item) {
