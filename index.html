@@ -12,6 +12,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
@@ -1432,6 +1433,179 @@
             font-weight: 600;
         }
 
+        /* ==================== DOCUMENTATION STYLES ==================== */
+        .photo-preview-container {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--neutral-50), var(--neutral-100));
+            border-radius: var(--radius-xl);
+            border: 2px dashed var(--neutral-300);
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .photo-item {
+            position: relative;
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-base);
+        }
+
+        .photo-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .photo-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .photo-info {
+            padding: 0.75rem;
+            background: white;
+        }
+
+        .photo-actions {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .photo-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+            border: 1px solid var(--neutral-200);
+        }
+
+        .photo-action-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .photo-preview-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 1rem;
+        }
+
+        .photo-preview-content {
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: black;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .photo-preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: black;
+        }
+
+        .preview-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 3rem;
+            height: 3rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition-base);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .preview-close-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.1);
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-300);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+            cursor: pointer;
+            transition: var(--transition-base);
+            margin-top: 1rem;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-500);
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+            transform: translateY(-2px);
+        }
+
+        .upload-area.drag-over {
+            border-color: var(--primary-500);
+            background: linear-gradient(135deg, var(--primary-200), var(--primary-300));
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--neutral-200);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-icon {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
         /* ==================== RESPONSIVE DESIGN ==================== */
         @media (max-width: 1024px) {
             .workorder-card {
@@ -1444,6 +1618,10 @@
             
             .tab {
                 flex: 1 0 calc(50% - 0.5rem);
+            }
+
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
         }
 
@@ -1471,6 +1649,10 @@
             .form-section {
                 padding: 1.5rem;
             }
+
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
         }
 
         @media (max-width: 640px) {
@@ -1489,6 +1671,10 @@
             
             .card {
                 padding: 1.25rem;
+            }
+
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             }
         }
     </style>
@@ -1619,8 +1805,13 @@
                             <i class="fas fa-exchange-alt"></i>
                             <span>Status History</span>
                         </button>
+                        <!-- Documentation Button -->
+                        <button id="documentationBtn" class="btn btn-info">
+                            <i class="fas fa-file-upload"></i>
+                            <span>Documentation</span>
+                        </button>
                         <!-- Pipelines Button -->
-                        <button id="pipelinesBtn" class="btn btn-primary hidden">
+                        <button id="pipelinesBtn" class="btn btn-primary">
                             <i class="fas fa-project-diagram"></i>
                             <span>Pipelines</span>
                         </button>
@@ -1673,7 +1864,7 @@
             <!-- View Controls -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div class="flex flex-wrap gap-2">
-                    <button id="cardViewBtn" class="btn btn-outline">
+                    <button id="cardViewBtn" class="btn btn-outline active">
                         <i class="fas fa-th-large"></i>
                         <span>Card View</span>
                     </button>
@@ -1895,6 +2086,209 @@
                     <!-- Status history items will be loaded here -->
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Documentation Modal -->
+    <div id="documentationModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-6xl">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Documentation Upload</h2>
+                    <p class="text-gray-300 mt-1">Upload and manage work order documentation and photos</p>
+                </div>
+                <button id="closeDocumentationModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Step 1: Search and Select Work Order -->
+                <div class="form-section mb-8">
+                    <div class="form-section-title">
+                        <div class="form-section-icon form-section-icon-primary">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <span>Select Work Order</span>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="form-label required-field" for="docWorkOrderSearch">
+                                Search Work Order
+                            </label>
+                            <div class="autocomplete-container">
+                                <input type="text" 
+                                       id="docWorkOrderSearch" 
+                                       class="form-input"
+                                       placeholder="Type work order number or customer name..."
+                                       required>
+                                <div id="workOrderAutocomplete" class="autocomplete-dropdown"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">
+                                Start typing to search existing work orders
+                            </p>
+                        </div>
+                        
+                        <!-- Selected Work Order Info -->
+                        <div id="selectedWorkOrderInfo" class="hidden">
+                            <div class="card card-primary p-4">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h4 id="docWorkOrderNumber" class="font-bold text-gray-900 text-lg"></h4>
+                                        <p id="docCustomer" class="text-gray-600"></p>
+                                    </div>
+                                    <div id="docStatusBadge" class="status-badge"></div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-sm text-gray-500">Building</p>
+                                        <p id="docBuilding" class="font-medium text-gray-900"></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Work Type</p>
+                                        <p id="docWorkType" class="font-medium text-gray-900"></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Division</p>
+                                        <p id="docDivision" class="font-medium text-gray-900"></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">PIC</p>
+                                        <p id="docPIC" class="font-medium text-gray-900"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Upload Photos -->
+                <div id="uploadSection" class="hidden">
+                    <div class="form-section mb-8">
+                        <div class="form-section-title">
+                            <div class="form-section-icon form-section-icon-success">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <span>Upload Documentation Photos</span>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label class="form-label" for="photoCategory">
+                                    Photo Category
+                                </label>
+                                <select id="photoCategory" class="form-input">
+                                    <option value="Before Work">Before Work</option>
+                                    <option value="During Work">During Work</option>
+                                    <option value="After Work">After Work</option>
+                                    <option value="Issue/Problem">Issue/Problem</option>
+                                    <option value="Solution">Solution</option>
+                                    <option value="Completion">Completion</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="form-label" for="photoDescription">
+                                    Photo Description
+                                </label>
+                                <input type="text" 
+                                       id="photoDescription" 
+                                       class="form-input"
+                                       placeholder="Describe what this photo shows...">
+                            </div>
+                            
+                            <!-- Upload Area -->
+                            <div class="upload-area" id="dropArea">
+                                <input type="file" 
+                                       id="photoUpload" 
+                                       class="file-input" 
+                                       accept="image/*" 
+                                       multiple>
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                                        <i class="fas fa-cloud-upload-alt text-3xl text-blue-600"></i>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Drop files here or click to upload</h3>
+                                    <p class="text-gray-600 text-sm mb-4">Upload JPG, PNG, GIF files (Max 5MB each)</p>
+                                    <button type="button" id="browseFilesBtn" class="btn btn-primary">
+                                        <i class="fas fa-folder-open mr-2"></i>
+                                        Browse Files
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- File Preview -->
+                            <div id="filePreview" class="hidden">
+                                <div class="file-preview">
+                                    <div class="file-info">
+                                        <div class="file-icon">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p id="selectedFileName" class="font-medium text-gray-900"></p>
+                                            <p id="selectedFileSize" class="text-sm text-gray-500"></p>
+                                        </div>
+                                        <button type="button" id="removeFileBtn" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i>
+                                            Remove
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="flex justify-end gap-3">
+                                        <button type="button" id="uploadFileBtn" class="btn btn-success">
+                                            <i class="fas fa-upload mr-2"></i>
+                                            Upload Photo
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Uploaded Photos -->
+                    <div id="uploadedPhotosSection" class="hidden">
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <div class="form-section-icon form-section-icon-info">
+                                    <i class="fas fa-images"></i>
+                                </div>
+                                <span>Uploaded Photos</span>
+                            </div>
+                            
+                            <div id="uploadedPhotos" class="photo-preview-container">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h4 class="font-semibold text-gray-900">Photos for this work order</h4>
+                                    <span id="photoCount" class="badge badge-primary">0 photos</span>
+                                </div>
+                                
+                                <div id="photoGrid" class="photo-grid">
+                                    <!-- Photos will be loaded here -->
+                                </div>
+                                
+                                <div id="noPhotosMessage" class="text-center py-8">
+                                    <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-camera text-2xl text-blue-400"></i>
+                                    </div>
+                                    <p class="text-gray-600 font-medium mb-2">No photos uploaded yet</p>
+                                    <p class="text-gray-500 text-sm">Upload photos using the form above</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo Preview Modal -->
+    <div id="photoPreviewModal" class="photo-preview-modal hidden">
+        <div class="photo-preview-content">
+            <button id="closePhotoPreview" class="preview-close-btn">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="previewImage" class="photo-preview-img" src="" alt="Photo Preview">
         </div>
     </div>
 
@@ -2305,7 +2699,7 @@
 
     <script>
         // ==================== GLOBAL VARIABLES ====================
-        let db, auth, workordersCollection, activitiesCollection, usersCollection, statusHistoryCollection, dataHistoryCollection;
+        let db, auth, storage, workordersCollection, activitiesCollection, usersCollection, statusHistoryCollection, dataHistoryCollection, documentationCollection;
         let currentUser = null;
         let currentUserRole = 'user';
         let workorders = [];
@@ -2320,6 +2714,12 @@
             workType: [],
             personnel: []
         };
+        
+        // Documentation variables
+        let selectedWorkOrderId = null;
+        let selectedWorkOrderData = null;
+        let selectedFiles = [];
+        let uploadedPhotos = [];
         
         // Daftar personil yang tersedia
         const availablePersonnel = [
@@ -2355,12 +2755,14 @@
                 const app = firebase.initializeApp(firebaseConfig);
                 db = firebase.firestore(app);
                 auth = firebase.auth(app);
+                storage = firebase.storage(app);
                 
                 workordersCollection = db.collection('workorders');
                 activitiesCollection = db.collection('activities');
                 usersCollection = db.collection('users');
                 statusHistoryCollection = db.collection('statusHistory');
                 dataHistoryCollection = db.collection('dataHistory');
+                documentationCollection = db.collection('documentation');
                 
                 console.log('Firebase initialized successfully');
                 return true;
@@ -2625,25 +3027,51 @@
                 renderTimelineView();
             }
             
+            // Add event listeners for action buttons
             setTimeout(() => {
                 document.querySelectorAll('.view-detail-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        const workorderId = this.closest('.workorder-card, tr').dataset.id;
-                        openWorkOrderDetailModal(workorderId);
+                        let workorderId;
+                        if (this.closest('.workorder-card')) {
+                            workorderId = this.closest('.workorder-card').dataset.id;
+                        } else if (this.closest('tr')) {
+                            workorderId = this.closest('tr').dataset.id;
+                        } else if (this.dataset.id) {
+                            workorderId = this.dataset.id;
+                        }
+                        if (workorderId) {
+                            openWorkOrderDetailModal(workorderId);
+                        }
                     });
                 });
                 
                 document.querySelectorAll('.edit-workorder-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        const workorderId = this.closest('.workorder-card, tr').dataset.id;
-                        openWorkOrderModal(workorderId);
+                        let workorderId;
+                        if (this.closest('.workorder-card')) {
+                            workorderId = this.closest('.workorder-card').dataset.id;
+                        } else if (this.closest('tr')) {
+                            workorderId = this.closest('tr').dataset.id;
+                        } else if (this.dataset.id) {
+                            workorderId = this.dataset.id;
+                        }
+                        if (workorderId) {
+                            openWorkOrderModal(workorderId);
+                        }
                     });
                 });
                 
                 document.querySelectorAll('.delete-workorder-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        const workorderId = this.closest('.workorder-card, tr').dataset.id;
-                        deleteWorkOrder(workorderId);
+                        let workorderId;
+                        if (this.closest('.workorder-card')) {
+                            workorderId = this.closest('.workorder-card').dataset.id;
+                        } else if (this.closest('tr')) {
+                            workorderId = this.closest('tr').dataset.id;
+                        }
+                        if (workorderId) {
+                            deleteWorkOrder(workorderId);
+                        }
                     });
                 });
             }, 100);
@@ -2857,9 +3285,7 @@
             table.appendChild(thead);
             table.appendChild(tbody);
             
-            const container = document.getElementById('workorders-stage');
-            container.innerHTML = '';
-            container.appendChild(table);
+            return table;
         }
 
         function renderTimelineView() {
@@ -2990,6 +3416,538 @@
             `;
             
             return item;
+        }
+
+        // ==================== DOCUMENTATION FUNCTIONS ====================
+        function openDocumentationModal() {
+            console.log('Opening documentation modal');
+            
+            const modal = document.getElementById('documentationModal');
+            modal.classList.remove('hidden');
+            
+            resetDocumentationForm();
+            setupDocumentationSearch();
+        }
+
+        function closeDocumentationModal() {
+            document.getElementById('documentationModal').classList.add('hidden');
+            resetDocumentationForm();
+        }
+
+        function resetDocumentationForm() {
+            selectedWorkOrderId = null;
+            selectedWorkOrderData = null;
+            selectedFiles = [];
+            uploadedPhotos = [];
+            
+            document.getElementById('docWorkOrderSearch').value = '';
+            document.getElementById('selectedWorkOrderInfo').classList.add('hidden');
+            document.getElementById('uploadSection').classList.add('hidden');
+            document.getElementById('uploadedPhotosSection').classList.add('hidden');
+            document.getElementById('filePreview').classList.add('hidden');
+            document.getElementById('photoCategory').value = 'Before Work';
+            document.getElementById('photoDescription').value = '';
+        }
+
+        function setupDocumentationSearch() {
+            const searchInput = document.getElementById('docWorkOrderSearch');
+            const dropdown = document.getElementById('workOrderAutocomplete');
+            
+            if (!searchInput || !dropdown) return;
+            
+            searchInput.addEventListener('input', function() {
+                const value = this.value.trim();
+                if (value.length < 2) {
+                    hideAutocomplete('workOrder');
+                    return;
+                }
+                
+                showWorkOrderAutocomplete(value);
+            });
+            
+            searchInput.addEventListener('focus', function() {
+                const value = this.value.trim();
+                if (value.length >= 2) {
+                    showWorkOrderAutocomplete(value);
+                }
+            });
+            
+            searchInput.addEventListener('blur', function() {
+                setTimeout(() => {
+                    hideAutocomplete('workOrder');
+                }, 200);
+            });
+            
+            searchInput.addEventListener('keydown', function(e) {
+                const items = dropdown.querySelectorAll('.autocomplete-item');
+                let activeItem = dropdown.querySelector('.autocomplete-item.active');
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (!activeItem) {
+                        items[0]?.classList.add('active');
+                    } else {
+                        const next = activeItem.nextElementSibling;
+                        if (next) {
+                            activeItem.classList.remove('active');
+                            next.classList.add('active');
+                        }
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (activeItem) {
+                        const prev = activeItem.previousElementSibling;
+                        if (prev) {
+                            activeItem.classList.remove('active');
+                            prev.classList.add('active');
+                        }
+                    }
+                } else if (e.key === 'Enter' && activeItem) {
+                    e.preventDefault();
+                    const workorderId = activeItem.dataset.id;
+                    selectWorkOrderForDocumentation(workorderId);
+                } else if (e.key === 'Escape') {
+                    hideAutocomplete('workOrder');
+                }
+            });
+        }
+
+        function showWorkOrderAutocomplete(searchTerm) {
+            const dropdown = document.getElementById('workOrderAutocomplete');
+            if (!dropdown) return;
+            
+            const filtered = workorders.filter(wo => 
+                (wo.workOrderNumber && wo.workOrderNumber.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (wo.customer && wo.customer.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (wo.building && wo.building.toLowerCase().includes(searchTerm.toLowerCase()))
+            ).slice(0, 10);
+            
+            if (filtered.length === 0) {
+                dropdown.innerHTML = `
+                    <div class="autocomplete-item">
+                        <div class="text-gray-500 text-sm">No work orders found</div>
+                        <div class="autocomplete-info">Try a different search term</div>
+                    </div>
+                `;
+            } else {
+                dropdown.innerHTML = filtered.map(wo => {
+                    const regex = new RegExp(`(${searchTerm})`, 'gi');
+                    const highlightedNumber = wo.workOrderNumber.replace(regex, '<span class="highlight">$1</span>');
+                    const highlightedCustomer = wo.customer.replace(regex, '<span class="highlight">$1</span>');
+                    return `
+                        <div class="autocomplete-item" data-id="${wo.id}">
+                            <div class="text-sm font-medium">${highlightedNumber}</div>
+                            <div class="text-xs text-gray-600">${highlightedCustomer} • ${wo.building}</div>
+                            <div class="autocomplete-info">${wo.workType} • ${wo.division}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
+                item.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+                    const workorderId = this.dataset.id;
+                    if (workorderId) {
+                        selectWorkOrderForDocumentation(workorderId);
+                    }
+                });
+                
+                item.addEventListener('mouseenter', function() {
+                    dropdown.querySelectorAll('.autocomplete-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            dropdown.classList.add('show');
+        }
+
+        async function selectWorkOrderForDocumentation(workorderId) {
+            try {
+                showLoading();
+                
+                selectedWorkOrderId = workorderId;
+                selectedWorkOrderData = workorders.find(wo => wo.id === workorderId);
+                
+                if (!selectedWorkOrderData) {
+                    const doc = await workordersCollection.doc(workorderId).get();
+                    if (doc.exists) {
+                        selectedWorkOrderData = { id: doc.id, ...doc.data() };
+                    } else {
+                        showToast('Work order not found', 'error');
+                        return;
+                    }
+                }
+                
+                updateSelectedWorkOrderInfo();
+                document.getElementById('uploadSection').classList.remove('hidden');
+                setupFileUpload();
+                loadUploadedPhotos();
+                
+                hideAutocomplete('workOrder');
+                
+            } catch (error) {
+                console.error('Error selecting work order:', error);
+                showToast('Failed to load work order', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function updateSelectedWorkOrderInfo() {
+            const wo = selectedWorkOrderData;
+            const infoSection = document.getElementById('selectedWorkOrderInfo');
+            
+            document.getElementById('docWorkOrderNumber').textContent = wo.workOrderNumber;
+            document.getElementById('docCustomer').textContent = wo.customer || '-';
+            document.getElementById('docBuilding').textContent = wo.building || '-';
+            document.getElementById('docWorkType').textContent = wo.workType || '-';
+            document.getElementById('docDivision').textContent = wo.division || '-';
+            document.getElementById('docPIC').textContent = wo.pic || '-';
+            
+            const statusBadge = document.getElementById('docStatusBadge');
+            statusBadge.className = `status-badge status-${wo.status.toLowerCase()}`;
+            statusBadge.textContent = wo.status;
+            
+            infoSection.classList.remove('hidden');
+        }
+
+        function setupFileUpload() {
+            const dropArea = document.getElementById('dropArea');
+            const fileInput = document.getElementById('photoUpload');
+            const browseBtn = document.getElementById('browseFilesBtn');
+            const removeFileBtn = document.getElementById('removeFileBtn');
+            const uploadFileBtn = document.getElementById('uploadFileBtn');
+            
+            // Click to browse files
+            browseBtn.addEventListener('click', () => fileInput.click());
+            dropArea.addEventListener('click', (e) => {
+                if (e.target === dropArea || e.target.closest('.upload-area')) {
+                    fileInput.click();
+                }
+            });
+            
+            // File input change
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Drag and drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dropArea.classList.add('drag-over');
+            }
+            
+            function unhighlight() {
+                dropArea.classList.remove('drag-over');
+            }
+            
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            // Remove file button
+            removeFileBtn.addEventListener('click', () => {
+                selectedFiles = [];
+                document.getElementById('filePreview').classList.add('hidden');
+                fileInput.value = '';
+            });
+            
+            // Upload file button
+            uploadFileBtn.addEventListener('click', uploadFile);
+        }
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            if (files.length === 0) return;
+            
+            selectedFiles = Array.from(files);
+            displaySelectedFile(selectedFiles[0]);
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length === 0) return;
+            
+            selectedFiles = Array.from(files);
+            displaySelectedFile(selectedFiles[0]);
+        }
+
+        function displaySelectedFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showToast('Please select an image file', 'warning');
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('File size should be less than 5MB', 'warning');
+                return;
+            }
+            
+            const preview = document.getElementById('filePreview');
+            document.getElementById('selectedFileName').textContent = file.name;
+            document.getElementById('selectedFileSize').textContent = formatFileSize(file.size);
+            
+            preview.classList.remove('hidden');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            else return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+
+        async function uploadFile() {
+            if (selectedFiles.length === 0) {
+                showToast('Please select a file first', 'warning');
+                return;
+            }
+            
+            if (!selectedWorkOrderId) {
+                showToast('Please select a work order first', 'warning');
+                return;
+            }
+            
+            const file = selectedFiles[0];
+            const category = document.getElementById('photoCategory').value;
+            const description = document.getElementById('photoDescription').value.trim() || 'No description';
+            
+            try {
+                showLoading();
+                
+                // Generate unique filename
+                const timestamp = Date.now();
+                const randomString = Math.random().toString(36).substring(2, 15);
+                const fileExtension = file.name.split('.').pop();
+                const fileName = `${selectedWorkOrderId}_${timestamp}_${randomString}.${fileExtension}`;
+                
+                // Upload to Firebase Storage
+                const storageRef = storage.ref(`documentation/${selectedWorkOrderId}/${fileName}`);
+                const uploadTask = storageRef.put(file);
+                
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log('Upload progress:', progress);
+                    },
+                    (error) => {
+                        console.error('Upload error:', error);
+                        showToast('Upload failed: ' + error.message, 'error');
+                        hideLoading();
+                    },
+                    async () => {
+                        try {
+                            // Get download URL
+                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                            
+                            // Save to Firestore
+                            const photoData = {
+                                workorderId: selectedWorkOrderId,
+                                workOrderNumber: selectedWorkOrderData.workOrderNumber,
+                                fileName: fileName,
+                                originalName: file.name,
+                                downloadURL: downloadURL,
+                                category: category,
+                                description: description,
+                                fileSize: file.size,
+                                fileType: file.type,
+                                uploadedBy: currentUser.email,
+                                uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            };
+                            
+                            await documentationCollection.add(photoData);
+                            
+                            // Clear form
+                            selectedFiles = [];
+                            document.getElementById('filePreview').classList.add('hidden');
+                            document.getElementById('photoUpload').value = '';
+                            document.getElementById('photoDescription').value = '';
+                            
+                            // Reload photos
+                            await loadUploadedPhotos();
+                            
+                            showToast('Photo uploaded successfully', 'success');
+                            logActivity('upload_documentation', `Uploaded photo for work order ${selectedWorkOrderData.workOrderNumber}`, selectedWorkOrderId);
+                            
+                        } catch (error) {
+                            console.error('Error saving photo data:', error);
+                            showToast('Error saving photo information', 'error');
+                        } finally {
+                            hideLoading();
+                        }
+                    }
+                );
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                showToast('Upload failed', 'error');
+                hideLoading();
+            }
+        }
+
+        async function loadUploadedPhotos() {
+            if (!selectedWorkOrderId) return;
+            
+            try {
+                const querySnapshot = await documentationCollection
+                    .where('workorderId', '==', selectedWorkOrderId)
+                    .orderBy('uploadedAt', 'desc')
+                    .get();
+                
+                uploadedPhotos = [];
+                querySnapshot.forEach((doc) => {
+                    uploadedPhotos.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                displayUploadedPhotos();
+                
+            } catch (error) {
+                console.error('Error loading photos:', error);
+                showToast('Failed to load photos', 'error');
+            }
+        }
+
+        function displayUploadedPhotos() {
+            const photoGrid = document.getElementById('photoGrid');
+            const noPhotosMessage = document.getElementById('noPhotosMessage');
+            const photoCount = document.getElementById('photoCount');
+            const uploadedPhotosSection = document.getElementById('uploadedPhotosSection');
+            
+            photoCount.textContent = `${uploadedPhotos.length} photo${uploadedPhotos.length !== 1 ? 's' : ''}`;
+            
+            if (uploadedPhotos.length === 0) {
+                photoGrid.innerHTML = '';
+                noPhotosMessage.classList.remove('hidden');
+                uploadedPhotosSection.classList.add('hidden');
+                return;
+            }
+            
+            uploadedPhotosSection.classList.remove('hidden');
+            noPhotosMessage.classList.add('hidden');
+            photoGrid.innerHTML = '';
+            
+            uploadedPhotos.forEach(photo => {
+                const photoItem = createPhotoItem(photo);
+                photoGrid.appendChild(photoItem);
+            });
+        }
+
+        function createPhotoItem(photo) {
+            const item = document.createElement('div');
+            item.className = 'photo-item';
+            item.dataset.id = photo.id;
+            
+            const timeAgo = formatTimeAgo(photo.uploadedAt);
+            
+            item.innerHTML = `
+                <img src="${photo.downloadURL}" 
+                     alt="${photo.description}" 
+                     class="photo-img"
+                     loading="lazy"
+                     onclick="openPhotoPreview('${photo.downloadURL}', '${photo.description}')">
+                
+                <div class="photo-actions">
+                    <div class="photo-action-btn" onclick="openPhotoPreview('${photo.downloadURL}', '${photo.description}')">
+                        <i class="fas fa-eye text-blue-600"></i>
+                    </div>
+                    <div class="photo-action-btn" onclick="deletePhoto('${photo.id}')">
+                        <i class="fas fa-trash text-red-600"></i>
+                    </div>
+                </div>
+                
+                <div class="photo-info">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                            ${photo.category}
+                        </span>
+                        <span class="text-xs text-gray-500">${timeAgo}</span>
+                    </div>
+                    <p class="text-sm text-gray-700 truncate" title="${photo.description}">
+                        ${photo.description}
+                    </p>
+                    <p class="text-xs text-gray-500 mt-1">
+                        ${formatFileSize(photo.fileSize)} • ${photo.uploadedBy}
+                    </p>
+                </div>
+            `;
+            
+            return item;
+        }
+
+        function openPhotoPreview(imageUrl, description) {
+            const modal = document.getElementById('photoPreviewModal');
+            const previewImage = document.getElementById('previewImage');
+            
+            previewImage.src = imageUrl;
+            previewImage.alt = description;
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePhotoPreview() {
+            document.getElementById('photoPreviewModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            
+            // Clear image source
+            document.getElementById('previewImage').src = '';
+        }
+
+        async function deletePhoto(photoId) {
+            if (!confirm('Are you sure you want to delete this photo?')) return;
+            
+            try {
+                showLoading();
+                
+                // Get photo data
+                const photoDoc = await documentationCollection.doc(photoId).get();
+                if (!photoDoc.exists) {
+                    showToast('Photo not found', 'error');
+                    return;
+                }
+                
+                const photoData = photoDoc.data();
+                
+                // Delete from Storage
+                const filePath = `documentation/${photoData.workorderId}/${photoData.fileName}`;
+                const storageRef = storage.ref(filePath);
+                await storageRef.delete();
+                
+                // Delete from Firestore
+                await documentationCollection.doc(photoId).delete();
+                
+                // Remove from local array
+                uploadedPhotos = uploadedPhotos.filter(p => p.id !== photoId);
+                
+                // Update UI
+                displayUploadedPhotos();
+                
+                showToast('Photo deleted successfully', 'success');
+                logActivity('delete_documentation', `Deleted photo from work order ${photoData.workOrderNumber}`, photoData.workorderId);
+                
+            } catch (error) {
+                console.error('Error deleting photo:', error);
+                showToast('Failed to delete photo', 'error');
+            } finally {
+                hideLoading();
+            }
         }
 
         // ==================== WORK ORDER NUMBER FUNCTIONS ====================
@@ -3435,6 +4393,7 @@
             const activityBtn = document.getElementById('activityBtn');
             const statusHistoryBtn = document.getElementById('statusHistoryBtn');
             const pipelinesBtn = document.getElementById('pipelinesBtn');
+            const documentationBtn = document.getElementById('documentationBtn');
             
             const userAvatar = document.getElementById('userAvatar');
             if (userAvatar) {
@@ -3454,12 +4413,14 @@
                 roleBadge.innerHTML = `<i class="fas fa-user-tag"></i><span>${currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}</span>`;
             }
             
+            // Hide all buttons first
             if (exportBtn) exportBtn.classList.add('hidden');
             if (newWorkOrderBtn) newWorkOrderBtn.classList.add('hidden');
             if (analyticsBtn) analyticsBtn.classList.add('hidden');
             if (activityBtn) activityBtn.classList.add('hidden');
             if (statusHistoryBtn) statusHistoryBtn.classList.add('hidden');
             if (pipelinesBtn) pipelinesBtn.classList.add('hidden');
+            if (documentationBtn) documentationBtn.classList.add('hidden');
             
             switch(currentUserRole) {
                 case 'admin':
@@ -3469,6 +4430,7 @@
                     if (activityBtn) activityBtn.classList.remove('hidden');
                     if (statusHistoryBtn) statusHistoryBtn.classList.remove('hidden');
                     if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
+                    if (documentationBtn) documentationBtn.classList.remove('hidden');
                     break;
                     
                 case 'manager':
@@ -3477,10 +4439,12 @@
                     if (activityBtn) activityBtn.classList.remove('hidden');
                     if (statusHistoryBtn) statusHistoryBtn.classList.remove('hidden');
                     if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
+                    if (documentationBtn) documentationBtn.classList.remove('hidden');
                     break;
                     
                 case 'user':
                     if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
+                    if (documentationBtn) documentationBtn.classList.remove('hidden');
                     break;
                     
                 default:
@@ -3516,6 +4480,10 @@
 
         function canViewStatusHistory() {
             return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canViewDocumentation() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager' || currentUserRole === 'user';
         }
 
         // ==================== AUTH FUNCTIONS ====================
@@ -4006,7 +4974,9 @@
                 'logout': 'fa-sign-out-alt',
                 'export': 'fa-file-export',
                 'view': 'fa-eye',
-                'status_change': 'fa-exchange-alt'
+                'status_change': 'fa-exchange-alt',
+                'upload_documentation': 'fa-file-upload',
+                'delete_documentation': 'fa-file-archive'
             };
             return icons[action.toLowerCase()] || 'fa-history';
         }
@@ -4810,9 +5780,6 @@
             
             // Redirect to pipelines.html
             window.open('pipelines.html', '_blank');
-            
-            // Alternatively, if you want to open in the same window:
-            // window.location.href = 'pipelines.html';
         }
 
         async function deleteWorkOrder(workorderId) {
@@ -4912,11 +5879,13 @@
             loadWorkOrders();
             loadDataHistory();
             
+            // Setup event listeners for all buttons
             document.getElementById('newWorkOrderBtn').addEventListener('click', createNewWorkOrder);
             document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
             document.getElementById('analyticsBtn').addEventListener('click', openAnalyticsModal);
             document.getElementById('activityBtn').addEventListener('click', openActivityModal);
             document.getElementById('statusHistoryBtn').addEventListener('click', openStatusHistoryModal);
+            document.getElementById('documentationBtn').addEventListener('click', openDocumentationModal);
             document.getElementById('pipelinesBtn').addEventListener('click', openPipelines);
             document.getElementById('authButton').addEventListener('click', logout);
             
@@ -4951,6 +5920,7 @@
             document.getElementById('sortBy').addEventListener('change', applyFiltersAndRender);
             document.getElementById('sortOrder').addEventListener('change', applyFiltersAndRender);
             
+            // Work Order Modal
             document.getElementById('closeWorkOrderModal').addEventListener('click', closeWorkOrderModal);
             document.getElementById('cancelWorkOrderBtn').addEventListener('click', closeWorkOrderModal);
             document.getElementById('workorderForm').addEventListener('submit', function(e) {
@@ -4958,6 +5928,7 @@
                 saveWorkOrder();
             });
             
+            // Detail Modal
             document.getElementById('closeDetailModal').addEventListener('click', closeDetailModal);
             document.getElementById('closeDetailBtn').addEventListener('click', closeDetailModal);
             document.getElementById('editDetailBtn').addEventListener('click', function() {
@@ -4966,10 +5937,13 @@
                 setTimeout(() => openWorkOrderModal(workorderId), 300);
             });
             
+            // Analytics Modal
             document.getElementById('closeAnalyticsModal').addEventListener('click', closeAnalyticsModal);
             
+            // Activity Modal
             document.getElementById('closeActivityModal').addEventListener('click', closeActivityModal);
             
+            // Status History Modal
             document.getElementById('closeStatusHistoryModal').addEventListener('click', closeStatusHistoryModal);
             
             document.getElementById('statusHistoryFilter').addEventListener('change', function() {
@@ -4983,6 +5957,12 @@
                 const searchTerm = this.value;
                 loadStatusHistory(filter, searchTerm);
             });
+            
+            // Documentation Modal
+            document.getElementById('closeDocumentationModal').addEventListener('click', closeDocumentationModal);
+            
+            // Photo Preview Modal
+            document.getElementById('closePhotoPreview').addEventListener('click', closePhotoPreview);
             
             console.log('App initialization complete');
         }
@@ -5001,21 +5981,23 @@
                 document.getElementById('cardViewBtn').classList.add('active');
                 timelineView.classList.add('hidden');
                 cardListView.classList.remove('hidden');
+                renderWorkOrders();
             } else if (view === 'list') {
                 document.getElementById('listViewBtn').classList.add('active');
                 timelineView.classList.add('hidden');
                 cardListView.classList.remove('hidden');
+                renderWorkOrders();
             } else if (view === 'timeline') {
                 document.getElementById('timelineViewBtn').classList.add('active');
                 timelineView.classList.remove('hidden');
                 cardListView.classList.add('hidden');
                 renderTimelineView();
             }
-            
-            if (view !== 'timeline') {
-                applyFiltersAndRender();
-            }
         }
+
+        // ==================== GLOBAL FUNCTIONS FOR DOCUMENTATION ====================
+        window.openPhotoPreview = openPhotoPreview;
+        window.deletePhoto = deletePhoto;
 
         // ==================== MIGRATION FUNCTIONS ====================
         async function migrateAllUsersRoles() {
