@@ -517,9 +517,10 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        /* ==================== CUSTOM DROPDOWN STYLES ==================== */
+        /* ==================== IMPROVED DROPDOWN STYLES ==================== */
         .custom-dropdown {
             position: relative;
+            width: 100%;
         }
 
         .custom-dropdown-input {
@@ -532,6 +533,7 @@
             transition: var(--transition-base);
             color: var(--neutral-800);
             cursor: pointer;
+            text-align: left;
         }
 
         .custom-dropdown-input:focus {
@@ -540,18 +542,31 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
+        .dropdown-arrow {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral-500);
+            transition: var(--transition-fast);
+        }
+
+        .custom-dropdown-input:focus + .dropdown-arrow {
+            color: var(--primary-500);
+        }
+
         .custom-dropdown-options {
             position: absolute;
-            top: 100%;
+            top: calc(100% + 5px);
             left: 0;
             right: 0;
             background: white;
             border: 1px solid var(--neutral-200);
             border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            max-height: 300px;
+            box-shadow: var(--shadow-xl);
+            max-height: 400px;
             overflow-y: auto;
-            z-index: 50;
+            z-index: 1000;
             display: none;
         }
 
@@ -563,27 +578,55 @@
             padding: 0.75rem 1rem;
             cursor: pointer;
             transition: var(--transition-fast);
+            border-bottom: 1px solid var(--neutral-100);
+            display: flex;
+            align-items: center;
+        }
+
+        .custom-dropdown-option:last-child {
+            border-bottom: none;
         }
 
         .custom-dropdown-option:hover {
             background: var(--primary-50);
+            color: var(--primary-700);
         }
 
         .custom-dropdown-option.selected {
             background: var(--primary-100);
             font-weight: 600;
+            color: var(--primary-800);
         }
 
-        .custom-dropdown-search {
+        .dropdown-search-container {
             padding: 0.75rem 1rem;
             border-bottom: 1px solid var(--neutral-200);
+            background: var(--neutral-50);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
-        .custom-dropdown-search input {
+        .dropdown-search-input {
             width: 100%;
-            padding: 0.5rem;
+            padding: 0.5rem 0.75rem;
             border: 1px solid var(--neutral-300);
             border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .dropdown-search-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .dropdown-add-btn {
+            margin-top: 0.5rem;
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 0.8rem;
         }
 
         /* ==================== CURRENCY INPUT STYLES ==================== */
@@ -613,7 +656,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 100;
+            z-index: 1000;
             padding: 1rem;
         }
 
@@ -710,15 +753,15 @@
         }
 
         .toast.warning {
-            border-left-color: var(--warning-500);
+            border-left-color: #f59e0b;
         }
 
         .toast.error {
-            border-left-color: var(--danger-500);
+            border-left-color: #ef4444;
         }
 
         .toast.info {
-            border-left-color: var(--info-500);
+            border-left-color: #3b82f6;
         }
 
         .toast-icon {
@@ -738,15 +781,15 @@
         }
 
         .toast-icon.warning {
-            background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
+            background: linear-gradient(135deg, #f59e0b, #d97706);
         }
 
         .toast-icon.error {
-            background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
+            background: linear-gradient(135deg, #ef4444, #dc2626);
         }
 
         .toast-icon.info {
-            background: linear-gradient(135deg, var(--info-500), var(--info-600));
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
         }
 
         /* ==================== LOADING OVERLAY ==================== */
@@ -866,6 +909,38 @@
             background-clip: text;
         }
 
+        .required-field::after {
+            content: " *";
+            color: #ef4444;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-primary {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            color: white;
+        }
+
+        .badge-secondary {
+            background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
+            color: white;
+        }
+
+        .badge-success {
+            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+            color: white;
+        }
+
         /* ==================== RESPONSIVE DESIGN ==================== */
         @media (max-width: 768px) {
             .pipeline-board {
@@ -889,6 +964,21 @@
             .form-section {
                 padding: 1.5rem;
             }
+            
+            .modal-content {
+                margin: 1rem;
+                max-height: calc(100vh - 2rem);
+            }
+            
+            .custom-dropdown-options {
+                position: fixed;
+                top: 50%;
+                left: 1rem;
+                right: 1rem;
+                transform: translateY(-50%);
+                max-height: 60vh;
+                z-index: 2000;
+            }
         }
 
         @media (max-width: 640px) {
@@ -897,6 +987,14 @@
             }
             
             .card {
+                padding: 1.25rem;
+            }
+            
+            .modal-header {
+                padding: 1.25rem 1.5rem;
+            }
+            
+            .modal-body {
                 padding: 1.25rem;
             }
         }
@@ -931,7 +1029,7 @@
                                     <p id="userWelcome" class="font-semibold text-gray-900 truncate"></p>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <span id="userRoleBadge" class="badge-primary">
+                                    <span id="userRoleBadge" class="badge badge-primary">
                                         <i class="fas fa-user-tag"></i>
                                         <span>User</span>
                                     </span>
@@ -1121,6 +1219,7 @@
                         </div>
                         
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- PIC Dropdown -->
                             <div>
                                 <label class="form-label required-field" for="pipelinePIC">
                                     PIC
@@ -1130,13 +1229,15 @@
                                            id="pipelinePIC" 
                                            class="custom-dropdown-input"
                                            required
-                                           placeholder="Search or select PIC"
-                                           autocomplete="off">
+                                           placeholder="Click to select PIC"
+                                           autocomplete="off"
+                                           readonly>
+                                    <i class="fas fa-chevron-down dropdown-arrow"></i>
                                     <div class="custom-dropdown-options" id="picDropdownOptions">
-                                        <div class="custom-dropdown-search">
+                                        <div class="dropdown-search-container">
                                             <input type="text" 
                                                    placeholder="Search PIC..."
-                                                   class="form-input"
+                                                   class="dropdown-search-input"
                                                    id="picSearchInput">
                                         </div>
                                         <!-- PIC options will be populated by JavaScript -->
@@ -1144,6 +1245,7 @@
                                 </div>
                             </div>
                             
+                            <!-- Customer Dropdown -->
                             <div>
                                 <label class="form-label required-field" for="pipelineCustomer">
                                     Customer
@@ -1153,17 +1255,19 @@
                                            id="pipelineCustomer" 
                                            class="custom-dropdown-input"
                                            required
-                                           placeholder="Search or select customer"
-                                           autocomplete="off">
+                                           placeholder="Click to select customer"
+                                           autocomplete="off"
+                                           readonly>
+                                    <i class="fas fa-chevron-down dropdown-arrow"></i>
                                     <div class="custom-dropdown-options" id="customerDropdownOptions">
-                                        <div class="custom-dropdown-search">
+                                        <div class="dropdown-search-container">
                                             <input type="text" 
                                                    placeholder="Search customer..."
-                                                   class="form-input"
+                                                   class="dropdown-search-input"
                                                    id="customerSearchInput">
                                             <button type="button" 
                                                     id="addNewCustomerBtn" 
-                                                    class="btn btn-primary btn-sm mt-2 w-full">
+                                                    class="btn btn-primary btn-sm dropdown-add-btn">
                                                 <i class="fas fa-plus"></i> Add New Customer
                                             </button>
                                         </div>
@@ -1497,6 +1601,7 @@
             <p class="text-white text-lg font-medium">Loading Pipelines...</p>
         </div>
     </div>
+
 <script>
         // ==================== GLOBAL VARIABLES ====================
         let db, auth, pipelinesCollection, pipelineHistoryCollection, usersCollection, customersCollection;
@@ -1506,6 +1611,7 @@
         let filteredPipelineItems = [];
         let draggedItem = null;
         let charts = {};
+        let activeDropdown = null;
         
         // Data for dropdowns
         const PIC_LIST = [
@@ -1625,7 +1731,7 @@
             "PT. RAMAYANA HARTA PRATAMA",
             "PT. SIMEX PHARMACEUTICAL INDONESIA",
             "PT. MIRAMA WISATA",
-            "PPPSRS THE PAKUBUWONO VIEW",
+            "PPPSRS THE PAKUBUWON VIEW",
             "PT. MUTIARA PERMATA MULIA",
             "PT. CBRE CONSULTANCY SERVICES",
             "PT. KARANG MAS SEJAHTERA",
@@ -1634,7 +1740,7 @@
             "PT. TAIYO SINAR RAYA TEKNIK",
             "PT. SHR HOTEL INDONESIA",
             "PPRSH FOUR SEASONS REGENT RESIDENCES",
-            "PP THE PAKUBUWONO RESIDENCE",
+            "PP THE PAKUBUWON RESIDENCE",
             "PT. SARIARTHAMAS HOTEL INTERNATIONAL",
             "PT. PT. BENTENG TEGUH PERKASA",
             "BHUMI PRAMA ARJASA",
@@ -1938,36 +2044,26 @@
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
         }
 
-        // ==================== DROPDOWN FUNCTIONS ====================
+        // ==================== IMPROVED DROPDOWN FUNCTIONS ====================
         function setupDropdowns() {
             // Setup PIC dropdown
             const picInput = document.getElementById('pipelinePIC');
             const picDropdown = document.getElementById('picDropdownOptions');
             const picSearchInput = document.getElementById('picSearchInput');
             
-            if (picInput) {
+            if (picInput && picDropdown) {
                 // Populate PIC options
                 populatePICOptions();
                 
                 picInput.addEventListener('click', function(e) {
-                    picDropdown.classList.toggle('show');
                     e.stopPropagation();
-                });
-                
-                picInput.addEventListener('input', function() {
-                    const searchTerm = this.value.toLowerCase();
-                    const options = picDropdown.querySelectorAll('.custom-dropdown-option');
+                    closeAllDropdowns();
+                    picDropdown.classList.toggle('show');
+                    activeDropdown = picDropdown;
                     
-                    options.forEach(option => {
-                        const text = option.textContent.toLowerCase();
-                        if (text.includes(searchTerm)) {
-                            option.style.display = 'block';
-                        } else {
-                            option.style.display = 'none';
-                        }
-                    });
-                    
-                    picDropdown.classList.add('show');
+                    if (picSearchInput) {
+                        setTimeout(() => picSearchInput.focus(), 10);
+                    }
                 });
                 
                 if (picSearchInput) {
@@ -1978,7 +2074,7 @@
                         options.forEach(option => {
                             const text = option.textContent.toLowerCase();
                             if (text.includes(searchTerm)) {
-                                option.style.display = 'block';
+                                option.style.display = 'flex';
                             } else {
                                 option.style.display = 'none';
                             }
@@ -1993,30 +2089,21 @@
             const customerInput = document.getElementById('pipelineCustomer');
             const customerDropdown = document.getElementById('customerDropdownOptions');
             const customerSearchInput = document.getElementById('customerSearchInput');
+            const addCustomerBtn = document.getElementById('addNewCustomerBtn');
             
-            if (customerInput) {
+            if (customerInput && customerDropdown) {
                 // Load customers from Firestore
                 loadCustomers();
                 
                 customerInput.addEventListener('click', function(e) {
-                    customerDropdown.classList.toggle('show');
                     e.stopPropagation();
-                });
-                
-                customerInput.addEventListener('input', function() {
-                    const searchTerm = this.value.toLowerCase();
-                    const options = customerDropdown.querySelectorAll('.custom-dropdown-option');
+                    closeAllDropdowns();
+                    customerDropdown.classList.toggle('show');
+                    activeDropdown = customerDropdown;
                     
-                    options.forEach(option => {
-                        const text = option.textContent.toLowerCase();
-                        if (text.includes(searchTerm)) {
-                            option.style.display = 'block';
-                        } else {
-                            option.style.display = 'none';
-                        }
-                    });
-                    
-                    customerDropdown.classList.add('show');
+                    if (customerSearchInput) {
+                        setTimeout(() => customerSearchInput.focus(), 10);
+                    }
                 });
                 
                 if (customerSearchInput) {
@@ -2027,7 +2114,7 @@
                         options.forEach(option => {
                             const text = option.textContent.toLowerCase();
                             if (text.includes(searchTerm)) {
-                                option.style.display = 'block';
+                                option.style.display = 'flex';
                             } else {
                                 option.style.display = 'none';
                             }
@@ -2036,38 +2123,66 @@
                         e.stopPropagation();
                     });
                 }
+                
+                if (addCustomerBtn) {
+                    addCustomerBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        closeAllDropdowns();
+                        openAddCustomerModal();
+                    });
+                }
             }
             
             // Close dropdowns when clicking outside
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.custom-dropdown')) {
-                    document.querySelectorAll('.custom-dropdown-options').forEach(dropdown => {
-                        dropdown.classList.remove('show');
-                    });
+                    closeAllDropdowns();
                 }
             });
+            
+            // Close dropdowns with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeAllDropdowns();
+                }
+            });
+        }
+
+        function closeAllDropdowns() {
+            document.querySelectorAll('.custom-dropdown-options').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+            activeDropdown = null;
         }
 
         function populatePICOptions() {
             const picDropdown = document.getElementById('picDropdownOptions');
             if (!picDropdown) return;
             
-            // Clear existing options except search
-            const searchDiv = picDropdown.querySelector('.custom-dropdown-search');
-            picDropdown.innerHTML = '';
-            if (searchDiv) picDropdown.appendChild(searchDiv);
+            // Clear existing options except search container
+            const searchContainer = picDropdown.querySelector('.dropdown-search-container');
+            const optionsContainer = document.createElement('div');
             
             // Add PIC options
             PIC_LIST.forEach(pic => {
                 const option = document.createElement('div');
                 option.className = 'custom-dropdown-option';
-                option.textContent = pic;
-                option.addEventListener('click', function() {
+                option.innerHTML = `
+                    <i class="fas fa-user text-gray-400 mr-2"></i>
+                    <span class="flex-1">${pic}</span>
+                `;
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
                     document.getElementById('pipelinePIC').value = pic;
-                    picDropdown.classList.remove('show');
+                    closeAllDropdowns();
                 });
-                picDropdown.appendChild(option);
+                optionsContainer.appendChild(option);
             });
+            
+            // Rebuild dropdown structure
+            picDropdown.innerHTML = '';
+            if (searchContainer) picDropdown.appendChild(searchContainer);
+            picDropdown.appendChild(optionsContainer);
         }
 
         async function loadCustomers() {
@@ -2076,23 +2191,26 @@
                 const customerDropdown = document.getElementById('customerDropdownOptions');
                 if (!customerDropdown) return;
                 
-                // Clear existing options except search
-                const searchDiv = customerDropdown.querySelector('.custom-dropdown-search');
-                customerDropdown.innerHTML = '';
-                if (searchDiv) customerDropdown.appendChild(searchDiv);
+                // Clear existing options except search container
+                const searchContainer = customerDropdown.querySelector('.dropdown-search-container');
+                const optionsContainer = document.createElement('div');
                 
                 // Add customer options from Firestore
                 querySnapshot.forEach((doc) => {
                     const customerData = doc.data();
                     const option = document.createElement('div');
                     option.className = 'custom-dropdown-option';
-                    option.textContent = customerData.name;
+                    option.innerHTML = `
+                        <i class="fas fa-building text-gray-400 mr-2"></i>
+                        <span class="flex-1">${customerData.name}</span>
+                    `;
                     option.dataset.id = doc.id;
-                    option.addEventListener('click', function() {
+                    option.addEventListener('click', function(e) {
+                        e.stopPropagation();
                         document.getElementById('pipelineCustomer').value = customerData.name;
-                        customerDropdown.classList.remove('show');
+                        closeAllDropdowns();
                     });
-                    customerDropdown.appendChild(option);
+                    optionsContainer.appendChild(option);
                 });
                 
                 // Add default customers if Firestore is empty
@@ -2100,12 +2218,31 @@
                     CUSTOMER_LIST.forEach(customer => {
                         const option = document.createElement('div');
                         option.className = 'custom-dropdown-option';
-                        option.textContent = customer;
-                        option.addEventListener('click', function() {
+                        option.innerHTML = `
+                            <i class="fas fa-building text-gray-400 mr-2"></i>
+                            <span class="flex-1">${customer}</span>
+                        `;
+                        option.addEventListener('click', function(e) {
+                            e.stopPropagation();
                             document.getElementById('pipelineCustomer').value = customer;
-                            customerDropdown.classList.remove('show');
+                            closeAllDropdowns();
                         });
-                        customerDropdown.appendChild(option);
+                        optionsContainer.appendChild(option);
+                    });
+                }
+                
+                // Rebuild dropdown structure
+                customerDropdown.innerHTML = '';
+                if (searchContainer) customerDropdown.appendChild(searchContainer);
+                customerDropdown.appendChild(optionsContainer);
+                
+                // Re-attach event listener for add customer button
+                const addCustomerBtn = document.getElementById('addNewCustomerBtn');
+                if (addCustomerBtn) {
+                    addCustomerBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        closeAllDropdowns();
+                        openAddCustomerModal();
                     });
                 }
                 
@@ -2114,21 +2251,29 @@
                 // Fallback to default list
                 const customerDropdown = document.getElementById('customerDropdownOptions');
                 if (customerDropdown) {
-                    // Clear existing options except search
-                    const searchDiv = customerDropdown.querySelector('.custom-dropdown-search');
-                    customerDropdown.innerHTML = '';
-                    if (searchDiv) customerDropdown.appendChild(searchDiv);
+                    // Clear existing options except search container
+                    const searchContainer = customerDropdown.querySelector('.dropdown-search-container');
+                    const optionsContainer = document.createElement('div');
                     
                     CUSTOMER_LIST.forEach(customer => {
                         const option = document.createElement('div');
                         option.className = 'custom-dropdown-option';
-                        option.textContent = customer;
-                        option.addEventListener('click', function() {
+                        option.innerHTML = `
+                            <i class="fas fa-building text-gray-400 mr-2"></i>
+                            <span class="flex-1">${customer}</span>
+                        `;
+                        option.addEventListener('click', function(e) {
+                            e.stopPropagation();
                             document.getElementById('pipelineCustomer').value = customer;
-                            customerDropdown.classList.remove('show');
+                            closeAllDropdowns();
                         });
-                        customerDropdown.appendChild(option);
+                        optionsContainer.appendChild(option);
                     });
+                    
+                    // Rebuild dropdown structure
+                    customerDropdown.innerHTML = '';
+                    if (searchContainer) customerDropdown.appendChild(searchContainer);
+                    customerDropdown.appendChild(optionsContainer);
                 }
             }
         }
@@ -2657,6 +2802,7 @@
         function closePipelineItemModal() {
             document.getElementById('pipelineItemModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
+            closeAllDropdowns();
         }
 
         async function savePipelineItem() {
@@ -3120,7 +3266,7 @@
             
             const roleBadge = document.getElementById('userRoleBadge');
             if (roleBadge) {
-                roleBadge.className = `badge badge-${currentUserRole === 'admin' ? 'secondary' : currentUserRole === 'manager' ? 'primary' : 'info'}`;
+                roleBadge.className = `badge ${currentUserRole === 'admin' ? 'badge-secondary' : currentUserRole === 'manager' ? 'badge-primary' : 'badge-success'}`;
                 roleBadge.innerHTML = `<i class="fas fa-user-tag"></i><span>${currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}</span>`;
             }
             
