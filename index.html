@@ -1553,57 +1553,124 @@
             transform: scale(1.1);
         }
 
-        .upload-area {
-            border: 2px dashed var(--primary-300);
+        /* ==================== CAMERA STYLES ==================== */
+        .camera-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
             border-radius: var(--radius-xl);
-            padding: 2rem;
-            text-align: center;
-            background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
-            cursor: pointer;
-            transition: var(--transition-base);
-            margin-top: 1rem;
+            overflow: hidden;
+            background: #000;
         }
 
-        .upload-area:hover {
-            border-color: var(--primary-500);
-            background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
-            transform: translateY(-2px);
+        .camera-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .upload-area.drag-over {
-            border-color: var(--primary-500);
-            background: linear-gradient(135deg, var(--primary-200), var(--primary-300));
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-preview {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: white;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--neutral-200);
-        }
-
-        .file-info {
+        .camera-controls {
+            position: absolute;
+            bottom: 1rem;
+            left: 0;
+            right: 0;
             display: flex;
-            align-items: center;
+            justify-content: center;
             gap: 1rem;
-            margin-bottom: 1rem;
+            z-index: 10;
         }
 
-        .file-icon {
-            width: 3rem;
-            height: 3rem;
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-            border-radius: var(--radius-md);
+        .camera-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: white;
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .camera-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .camera-btn-primary {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
             color: white;
-            font-size: 1.5rem;
+            width: 64px;
+            height: 64px;
+        }
+
+        .camera-btn-danger {
+            background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
+            color: white;
+        }
+
+        .camera-btn-success {
+            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+            color: white;
+        }
+
+        .camera-preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-switch-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10;
+        }
+
+        .camera-countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        /* ==================== CAPTURED PHOTO PREVIEW ==================== */
+        .captured-photo-container {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--neutral-50), var(--neutral-100));
+            border-radius: var(--radius-xl);
+            border: 2px solid var(--primary-300);
+        }
+
+        .captured-photo {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: var(--radius-lg);
+            background: #f8fafc;
+            margin-bottom: 1rem;
+        }
+
+        .capture-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .capture-timestamp {
+            font-size: 0.875rem;
+            color: var(--neutral-600);
         }
 
         /* ==================== RESPONSIVE DESIGN ==================== */
@@ -1622,6 +1689,10 @@
 
             .photo-grid {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .camera-container {
+                height: 350px;
             }
         }
 
@@ -1653,6 +1724,14 @@
             .photo-grid {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
+
+            .camera-container {
+                height: 300px;
+            }
+
+            .camera-controls {
+                gap: 0.5rem;
+            }
         }
 
         @media (max-width: 640px) {
@@ -1675,6 +1754,10 @@
 
             .photo-grid {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+
+            .camera-container {
+                height: 250px;
             }
         }
     </style>
@@ -1807,8 +1890,8 @@
                         </button>
                         <!-- Documentation Button -->
                         <button id="documentationBtn" class="btn btn-info">
-                            <i class="fas fa-file-upload"></i>
-                            <span>Documentation</span>
+                            <i class="fas fa-camera"></i>
+                            <span>Ambil Gambar</span>
                         </button>
                         <!-- Pipelines Button -->
                         <button id="pipelinesBtn" class="btn btn-primary">
@@ -2089,13 +2172,13 @@
         </div>
     </div>
 
-    <!-- Documentation Modal -->
+    <!-- Documentation Modal (Now: Ambil Gambar Modal) -->
     <div id="documentationModal" class="modal-overlay hidden">
         <div class="modal-content w-full max-w-6xl">
             <div class="modal-header">
                 <div>
-                    <h2 class="modal-title">Documentation Upload</h2>
-                    <p class="text-gray-300 mt-1">Upload and manage work order documentation and photos</p>
+                    <h2 class="modal-title">Ambil Gambar Dokumen</h2>
+                    <p class="text-gray-300 mt-1">Gunakan kamera untuk mengambil gambar dokumentasi</p>
                 </div>
                 <button id="closeDocumentationModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
                     <i class="fas fa-times"></i>
@@ -2108,24 +2191,24 @@
                         <div class="form-section-icon form-section-icon-primary">
                             <i class="fas fa-search"></i>
                         </div>
-                        <span>Select Work Order</span>
+                        <span>Pilih Work Order</span>
                     </div>
                     
                     <div class="space-y-6">
                         <div>
                             <label class="form-label required-field" for="docWorkOrderSearch">
-                                Search Work Order
+                                Cari Work Order
                             </label>
                             <div class="autocomplete-container">
                                 <input type="text" 
                                        id="docWorkOrderSearch" 
                                        class="form-input"
-                                       placeholder="Type work order number or customer name..."
+                                       placeholder="Ketik nomor work order atau nama customer..."
                                        required>
                                 <div id="workOrderAutocomplete" class="autocomplete-dropdown"></div>
                             </div>
                             <p class="text-xs text-gray-500 mt-2">
-                                Start typing to search existing work orders
+                                Mulai mengetik untuk mencari work order yang ada
                             </p>
                         </div>
                         
@@ -2142,15 +2225,15 @@
                                 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <p class="text-sm text-gray-500">Building</p>
+                                        <p class="text-sm text-gray-500">Gedung</p>
                                         <p id="docBuilding" class="font-medium text-gray-900"></p>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-gray-500">Work Type</p>
+                                        <p class="text-sm text-gray-500">Jenis Pekerjaan</p>
                                         <p id="docWorkType" class="font-medium text-gray-900"></p>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-gray-500">Division</p>
+                                        <p class="text-sm text-gray-500">Divisi</p>
                                         <p id="docDivision" class="font-medium text-gray-900"></p>
                                     </div>
                                     <div>
@@ -2163,117 +2246,124 @@
                     </div>
                 </div>
                 
-                <!-- Step 2: Upload Photos -->
-                <div id="uploadSection" class="hidden">
+                <!-- Step 2: Camera Section -->
+                <div id="cameraSection" class="hidden">
                     <div class="form-section mb-8">
                         <div class="form-section-title">
                             <div class="form-section-icon form-section-icon-success">
-                                <i class="fas fa-cloud-upload-alt"></i>
+                                <i class="fas fa-camera"></i>
                             </div>
-                            <span>Upload Documentation Photos</span>
+                            <span>Ambil Gambar dengan Kamera</span>
                         </div>
                         
                         <div class="space-y-6">
                             <div>
                                 <label class="form-label" for="photoCategory">
-                                    Photo Category
+                                    Kategori Gambar
                                 </label>
                                 <select id="photoCategory" class="form-input">
-                                    <option value="Before Work">Before Work</option>
-                                    <option value="During Work">During Work</option>
-                                    <option value="After Work">After Work</option>
-                                    <option value="Issue/Problem">Issue/Problem</option>
-                                    <option value="Solution">Solution</option>
-                                    <option value="Completion">Completion</option>
-                                    <option value="Other">Other</option>
+                                    <option value="Before Work">Sebelum Pekerjaan</option>
+                                    <option value="During Work">Saat Pekerjaan</option>
+                                    <option value="After Work">Setelah Pekerjaan</option>
+                                    <option value="Issue/Problem">Masalah/Kendala</option>
+                                    <option value="Solution">Solusi</option>
+                                    <option value="Completion">Penyelesaian</option>
+                                    <option value="Other">Lainnya</option>
                                 </select>
                             </div>
                             
                             <div>
                                 <label class="form-label" for="photoDescription">
-                                    Photo Description
+                                    Deskripsi Gambar
                                 </label>
                                 <input type="text" 
                                        id="photoDescription" 
                                        class="form-input"
-                                       placeholder="Describe what this photo shows...">
+                                       placeholder="Deskripsikan apa yang ditunjukkan oleh gambar ini...">
                             </div>
                             
-                            <!-- Upload Area -->
-                            <div class="upload-area" id="dropArea">
-                                <input type="file" 
-                                       id="photoUpload" 
-                                       class="file-input" 
-                                       accept="image/*" 
-                                       multiple>
-                                <div class="flex flex-col items-center justify-center">
-                                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-                                        <i class="fas fa-cloud-upload-alt text-3xl text-blue-600"></i>
-                                    </div>
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Drop files here or click to upload</h3>
-                                    <p class="text-gray-600 text-sm mb-4">Upload JPG, PNG, GIF files (Max 5MB each)</p>
-                                    <button type="button" id="browseFilesBtn" class="btn btn-primary">
-                                        <i class="fas fa-folder-open mr-2"></i>
-                                        Browse Files
+                            <!-- Camera Container -->
+                            <div class="camera-container" id="cameraContainer">
+                                <video id="cameraVideo" class="camera-video" autoplay playsinline></video>
+                                <canvas id="cameraCanvas" class="hidden"></canvas>
+                                <img id="photoPreview" class="camera-preview hidden">
+                                <div id="countdownDisplay" class="camera-countdown hidden"></div>
+                                
+                                <!-- Camera Controls -->
+                                <div class="camera-controls" id="cameraControls">
+                                    <button id="switchCameraBtn" class="camera-btn" title="Switch Camera">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                    <button id="capturePhotoBtn" class="camera-btn camera-btn-primary" title="Ambil Gambar">
+                                        <i class="fas fa-camera"></i>
+                                    </button>
+                                    <button id="cancelCaptureBtn" class="camera-btn camera-btn-danger hidden" title="Batal">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <button id="retakePhotoBtn" class="camera-btn camera-btn-danger hidden" title="Ambil Ulang">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                    <button id="savePhotoBtn" class="camera-btn camera-btn-success hidden" title="Simpan Gambar">
+                                        <i class="fas fa-save"></i>
                                     </button>
                                 </div>
+                                
+                                <!-- Camera Switch Button -->
+                                <button id="cameraSwitchFrontBack" class="camera-btn camera-switch-btn" title="Ganti Kamera">
+                                    <i class="fas fa-camera-retro"></i>
+                                </button>
                             </div>
                             
-                            <!-- File Preview -->
-                            <div id="filePreview" class="hidden">
-                                <div class="file-preview">
-                                    <div class="file-info">
-                                        <div class="file-icon">
-                                            <i class="fas fa-image"></i>
-                                        </div>
-                                        <div class="flex-1">
-                                            <p id="selectedFileName" class="font-medium text-gray-900"></p>
-                                            <p id="selectedFileSize" class="text-sm text-gray-500"></p>
-                                        </div>
-                                        <button type="button" id="removeFileBtn" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i>
-                                            Remove
-                                        </button>
+                            <!-- Captured Photo Preview -->
+                            <div id="capturedPhotoSection" class="hidden">
+                                <div class="captured-photo-container">
+                                    <div class="capture-info">
+                                        <h4 class="font-semibold text-gray-900">Gambar yang Diambil</h4>
+                                        <span id="captureTimestamp" class="capture-timestamp"></span>
                                     </div>
-                                    
+                                    <img id="capturedPhoto" class="captured-photo" src="" alt="Captured Photo">
                                     <div class="flex justify-end gap-3">
-                                        <button type="button" id="uploadFileBtn" class="btn btn-success">
-                                            <i class="fas fa-upload mr-2"></i>
-                                            Upload Photo
+                                        <button type="button" id="retakeBtn" class="btn btn-danger">
+                                            <i class="fas fa-redo mr-2"></i>
+                                            Ambil Ulang
+                                        </button>
+                                        <button type="button" id="savePhotoFinalBtn" class="btn btn-success">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Simpan Gambar
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
                     
-                    <!-- Uploaded Photos -->
-                    <div id="uploadedPhotosSection" class="hidden">
-                        <div class="form-section">
-                            <div class="form-section-title">
-                                <div class="form-section-icon form-section-icon-info">
-                                    <i class="fas fa-images"></i>
-                                </div>
-                                <span>Uploaded Photos</span>
+                <!-- Uploaded Photos -->
+                <div id="uploadedPhotosSection" class="hidden">
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <div class="form-section-icon form-section-icon-info">
+                                <i class="fas fa-images"></i>
+                            </div>
+                            <span>Gambar yang Telah Disimpan</span>
+                        </div>
+                        
+                        <div id="uploadedPhotos" class="photo-preview-container">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-semibold text-gray-900">Gambar untuk work order ini</h4>
+                                <span id="photoCount" class="badge badge-primary">0 gambar</span>
                             </div>
                             
-                            <div id="uploadedPhotos" class="photo-preview-container">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h4 class="font-semibold text-gray-900">Photos for this work order</h4>
-                                    <span id="photoCount" class="badge badge-primary">0 photos</span>
+                            <div id="photoGrid" class="photo-grid">
+                                <!-- Photos will be loaded here -->
+                            </div>
+                            
+                            <div id="noPhotosMessage" class="text-center py-8">
+                                <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-camera text-2xl text-blue-400"></i>
                                 </div>
-                                
-                                <div id="photoGrid" class="photo-grid">
-                                    <!-- Photos will be loaded here -->
-                                </div>
-                                
-                                <div id="noPhotosMessage" class="text-center py-8">
-                                    <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <i class="fas fa-camera text-2xl text-blue-400"></i>
-                                    </div>
-                                    <p class="text-gray-600 font-medium mb-2">No photos uploaded yet</p>
-                                    <p class="text-gray-500 text-sm">Upload photos using the form above</p>
-                                </div>
+                                <p class="text-gray-600 font-medium mb-2">Belum ada gambar yang diambil</p>
+                                <p class="text-gray-500 text-sm">Gunakan kamera di atas untuk mengambil gambar</p>
                             </div>
                         </div>
                     </div>
@@ -2718,8 +2808,14 @@
         // Documentation variables
         let selectedWorkOrderId = null;
         let selectedWorkOrderData = null;
-        let selectedFiles = [];
         let uploadedPhotos = [];
+        
+        // Camera variables
+        let cameraStream = null;
+        let isFrontCamera = false;
+        let capturedPhotoData = null;
+        let mediaDevices = [];
+        let currentCameraIndex = 0;
         
         // Daftar personil yang tersedia
         const availablePersonnel = [
@@ -3418,9 +3514,9 @@
             return item;
         }
 
-        // ==================== DOCUMENTATION FUNCTIONS ====================
-        function openDocumentationModal() {
-            console.log('Opening documentation modal');
+        // ==================== CAMERA FUNCTIONS ====================
+        async function openDocumentationModal() {
+            console.log('Opening camera documentation modal');
             
             const modal = document.getElementById('documentationModal');
             modal.classList.remove('hidden');
@@ -3430,6 +3526,7 @@
         }
 
         function closeDocumentationModal() {
+            stopCamera();
             document.getElementById('documentationModal').classList.add('hidden');
             resetDocumentationForm();
         }
@@ -3437,18 +3534,384 @@
         function resetDocumentationForm() {
             selectedWorkOrderId = null;
             selectedWorkOrderData = null;
-            selectedFiles = [];
+            capturedPhotoData = null;
             uploadedPhotos = [];
             
             document.getElementById('docWorkOrderSearch').value = '';
             document.getElementById('selectedWorkOrderInfo').classList.add('hidden');
-            document.getElementById('uploadSection').classList.add('hidden');
+            document.getElementById('cameraSection').classList.add('hidden');
             document.getElementById('uploadedPhotosSection').classList.add('hidden');
-            document.getElementById('filePreview').classList.add('hidden');
+            document.getElementById('capturedPhotoSection').classList.add('hidden');
             document.getElementById('photoCategory').value = 'Before Work';
             document.getElementById('photoDescription').value = '';
+            
+            // Reset camera UI
+            document.getElementById('photoPreview').classList.add('hidden');
+            document.getElementById('cameraVideo').classList.remove('hidden');
+            document.getElementById('countdownDisplay').classList.add('hidden');
+            document.getElementById('capturePhotoBtn').classList.remove('hidden');
+            document.getElementById('cancelCaptureBtn').classList.add('hidden');
+            document.getElementById('retakePhotoBtn').classList.add('hidden');
+            document.getElementById('savePhotoBtn').classList.add('hidden');
         }
 
+        async function setupCamera() {
+            try {
+                if (!selectedWorkOrderId) {
+                    showToast('Pilih work order terlebih dahulu', 'warning');
+                    return;
+                }
+                
+                // Show camera section
+                document.getElementById('cameraSection').classList.remove('hidden');
+                
+                // Request camera permission and start camera
+                const constraints = {
+                    video: {
+                        facingMode: 'environment', // Default to back camera
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    },
+                    audio: false
+                };
+                
+                // Get available devices
+                mediaDevices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = mediaDevices.filter(device => device.kind === 'videoinput');
+                
+                console.log('Available cameras:', videoDevices.length);
+                
+                if (videoDevices.length === 0) {
+                    showToast('Tidak ada kamera yang tersedia', 'error');
+                    return;
+                }
+                
+                // Try to get camera stream
+                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                const videoElement = document.getElementById('cameraVideo');
+                videoElement.srcObject = cameraStream;
+                
+                // Set up camera controls
+                setupCameraControls();
+                
+                showToast('Kamera siap digunakan', 'success');
+                
+            } catch (error) {
+                console.error('Error setting up camera:', error);
+                
+                if (error.name === 'NotAllowedError') {
+                    showToast('Izin kamera ditolak. Silakan izinkan akses kamera.', 'error');
+                } else if (error.name === 'NotFoundError') {
+                    showToast('Tidak ada kamera yang ditemukan', 'error');
+                } else if (error.name === 'NotReadableError') {
+                    showToast('Kamera sedang digunakan oleh aplikasi lain', 'error');
+                } else {
+                    showToast('Gagal mengakses kamera: ' + error.message, 'error');
+                }
+            }
+        }
+
+        function setupCameraControls() {
+            const switchCameraBtn = document.getElementById('cameraSwitchFrontBack');
+            const capturePhotoBtn = document.getElementById('capturePhotoBtn');
+            const cancelCaptureBtn = document.getElementById('cancelCaptureBtn');
+            const retakePhotoBtn = document.getElementById('retakePhotoBtn');
+            const savePhotoBtn = document.getElementById('savePhotoBtn');
+            const retakeBtn = document.getElementById('retakeBtn');
+            const savePhotoFinalBtn = document.getElementById('savePhotoFinalBtn');
+            
+            // Switch camera button
+            switchCameraBtn.addEventListener('click', switchCamera);
+            
+            // Capture photo button
+            capturePhotoBtn.addEventListener('click', capturePhoto);
+            
+            // Cancel capture button
+            cancelCaptureBtn.addEventListener('click', cancelCapture);
+            
+            // Retake photo button (in-camera)
+            retakePhotoBtn.addEventListener('click', retakePhoto);
+            
+            // Save photo button (in-camera)
+            savePhotoBtn.addEventListener('click', showCapturedPhotoPreview);
+            
+            // Retake button (in preview)
+            retakeBtn.addEventListener('click', retakeFromPreview);
+            
+            // Save photo button (in preview)
+            savePhotoFinalBtn.addEventListener('click', saveCapturedPhoto);
+        }
+
+        async function switchCamera() {
+            try {
+                stopCamera();
+                
+                // Get available video devices
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                
+                if (videoDevices.length < 2) {
+                    showToast('Hanya satu kamera yang tersedia', 'warning');
+                    await startCamera(isFrontCamera ? 'user' : 'environment');
+                    return;
+                }
+                
+                // Toggle between front and back camera
+                isFrontCamera = !isFrontCamera;
+                const facingMode = isFrontCamera ? 'user' : 'environment';
+                
+                await startCamera(facingMode);
+                
+                showToast(`Beralih ke kamera ${isFrontCamera ? 'depan' : 'belakang'}`, 'info');
+                
+            } catch (error) {
+                console.error('Error switching camera:', error);
+                showToast('Gagal mengganti kamera', 'error');
+            }
+        }
+
+        async function startCamera(facingMode = 'environment') {
+            try {
+                const constraints = {
+                    video: {
+                        facingMode: facingMode,
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    },
+                    audio: false
+                };
+                
+                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                const videoElement = document.getElementById('cameraVideo');
+                videoElement.srcObject = cameraStream;
+                
+            } catch (error) {
+                console.error('Error starting camera:', error);
+                throw error;
+            }
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => {
+                    track.stop();
+                });
+                cameraStream = null;
+            }
+            
+            const videoElement = document.getElementById('cameraVideo');
+            if (videoElement) {
+                videoElement.srcObject = null;
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('cameraCanvas');
+            const photoPreview = document.getElementById('photoPreview');
+            
+            if (!video || !canvas) return;
+            
+            // Set canvas dimensions to match video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // Draw current video frame to canvas
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Get image data as data URL
+            capturedPhotoData = canvas.toDataURL('image/jpeg', 0.9);
+            
+            // Show preview
+            photoPreview.src = capturedPhotoData;
+            photoPreview.classList.remove('hidden');
+            video.classList.add('hidden');
+            
+            // Show capture controls
+            document.getElementById('capturePhotoBtn').classList.add('hidden');
+            document.getElementById('cancelCaptureBtn').classList.add('hidden');
+            document.getElementById('retakePhotoBtn').classList.remove('hidden');
+            document.getElementById('savePhotoBtn').classList.remove('hidden');
+            
+            // Stop camera temporarily
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+            }
+            
+            showToast('Gambar berhasil diambil', 'success');
+        }
+
+        function cancelCapture() {
+            // Reset to camera view
+            document.getElementById('photoPreview').classList.add('hidden');
+            document.getElementById('cameraVideo').classList.remove('hidden');
+            document.getElementById('capturePhotoBtn').classList.remove('hidden');
+            document.getElementById('cancelCaptureBtn').classList.add('hidden');
+            document.getElementById('retakePhotoBtn').classList.add('hidden');
+            document.getElementById('savePhotoBtn').classList.add('hidden');
+            
+            capturedPhotoData = null;
+        }
+
+        function retakePhoto() {
+            // Restart camera
+            startCamera(isFrontCamera ? 'user' : 'environment');
+            
+            // Reset UI
+            document.getElementById('photoPreview').classList.add('hidden');
+            document.getElementById('cameraVideo').classList.remove('hidden');
+            document.getElementById('capturePhotoBtn').classList.remove('hidden');
+            document.getElementById('cancelCaptureBtn').classList.add('hidden');
+            document.getElementById('retakePhotoBtn').classList.add('hidden');
+            document.getElementById('savePhotoBtn').classList.add('hidden');
+            
+            capturedPhotoData = null;
+            showToast('Ambil gambar ulang', 'info');
+        }
+
+        function showCapturedPhotoPreview() {
+            if (!capturedPhotoData) {
+                showToast('Tidak ada gambar yang diambil', 'warning');
+                return;
+            }
+            
+            // Show captured photo in preview section
+            document.getElementById('capturedPhoto').src = capturedPhotoData;
+            document.getElementById('captureTimestamp').textContent = 
+                new Date().toLocaleString('id-ID', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            
+            // Hide camera section, show preview section
+            document.getElementById('cameraSection').classList.add('hidden');
+            document.getElementById('capturedPhotoSection').classList.remove('hidden');
+        }
+
+        function retakeFromPreview() {
+            // Show camera section again
+            document.getElementById('cameraSection').classList.remove('hidden');
+            document.getElementById('capturedPhotoSection').classList.add('hidden');
+            
+            // Restart camera
+            retakePhoto();
+        }
+
+        async function saveCapturedPhoto() {
+            if (!capturedPhotoData || !selectedWorkOrderId) {
+                showToast('Tidak ada gambar yang akan disimpan', 'warning');
+                return;
+            }
+            
+            const category = document.getElementById('photoCategory').value;
+            const description = document.getElementById('photoDescription').value.trim() || 'Tidak ada deskripsi';
+            
+            try {
+                showLoading();
+                
+                // Convert data URL to blob
+                const blob = dataURLtoBlob(capturedPhotoData);
+                
+                // Generate unique filename
+                const timestamp = Date.now();
+                const randomString = Math.random().toString(36).substring(2, 15);
+                const fileName = `${selectedWorkOrderId}_${timestamp}_${randomString}.jpg`;
+                
+                // Upload to Firebase Storage
+                const storageRef = storage.ref(`documentation/${selectedWorkOrderId}/${fileName}`);
+                const uploadTask = storageRef.put(blob, {
+                    contentType: 'image/jpeg'
+                });
+                
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log('Upload progress:', progress);
+                    },
+                    (error) => {
+                        console.error('Upload error:', error);
+                        showToast('Upload gagal: ' + error.message, 'error');
+                        hideLoading();
+                    },
+                    async () => {
+                        try {
+                            // Get download URL
+                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                            
+                            // Save to Firestore
+                            const photoData = {
+                                workorderId: selectedWorkOrderId,
+                                workOrderNumber: selectedWorkOrderData.workOrderNumber,
+                                fileName: fileName,
+                                originalName: `captured_${timestamp}.jpg`,
+                                downloadURL: downloadURL,
+                                category: category,
+                                description: description,
+                                fileSize: blob.size,
+                                fileType: 'image/jpeg',
+                                capturedBy: currentUser.email,
+                                capturedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                cameraType: isFrontCamera ? 'front' : 'back'
+                            };
+                            
+                            await documentationCollection.add(photoData);
+                            
+                            // Clear form and reset
+                            document.getElementById('photoDescription').value = '';
+                            document.getElementById('capturedPhotoSection').classList.add('hidden');
+                            document.getElementById('cameraSection').classList.remove('hidden');
+                            
+                            // Restart camera
+                            await startCamera(isFrontCamera ? 'user' : 'environment');
+                            
+                            // Reset capture UI
+                            document.getElementById('photoPreview').classList.add('hidden');
+                            document.getElementById('cameraVideo').classList.remove('hidden');
+                            document.getElementById('capturePhotoBtn').classList.remove('hidden');
+                            document.getElementById('retakePhotoBtn').classList.add('hidden');
+                            document.getElementById('savePhotoBtn').classList.add('hidden');
+                            
+                            // Reload photos
+                            await loadUploadedPhotos();
+                            
+                            showToast('Gambar berhasil disimpan', 'success');
+                            logActivity('capture_documentation', `Mengambil gambar untuk work order ${selectedWorkOrderData.workOrderNumber}`, selectedWorkOrderId);
+                            
+                        } catch (error) {
+                            console.error('Error saving photo data:', error);
+                            showToast('Error menyimpan informasi gambar', 'error');
+                        } finally {
+                            hideLoading();
+                        }
+                    }
+                );
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                showToast('Upload gagal', 'error');
+                hideLoading();
+            }
+        }
+
+        function dataURLtoBlob(dataURL) {
+            const arr = dataURL.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            
+            return new Blob([u8arr], { type: mime });
+        }
+
+        // ==================== DOCUMENTATION FUNCTIONS ====================
         function setupDocumentationSearch() {
             const searchInput = document.getElementById('docWorkOrderSearch');
             const dropdown = document.getElementById('workOrderAutocomplete');
@@ -3525,8 +3988,8 @@
             if (filtered.length === 0) {
                 dropdown.innerHTML = `
                     <div class="autocomplete-item">
-                        <div class="text-gray-500 text-sm">No work orders found</div>
-                        <div class="autocomplete-info">Try a different search term</div>
+                        <div class="text-gray-500 text-sm">Tidak ada work order yang ditemukan</div>
+                        <div class="autocomplete-info">Coba kata kunci yang berbeda</div>
                     </div>
                 `;
             } else {
@@ -3574,21 +4037,20 @@
                     if (doc.exists) {
                         selectedWorkOrderData = { id: doc.id, ...doc.data() };
                     } else {
-                        showToast('Work order not found', 'error');
+                        showToast('Work order tidak ditemukan', 'error');
                         return;
                     }
                 }
                 
                 updateSelectedWorkOrderInfo();
-                document.getElementById('uploadSection').classList.remove('hidden');
-                setupFileUpload();
+                setupCamera();
                 loadUploadedPhotos();
                 
                 hideAutocomplete('workOrder');
                 
             } catch (error) {
                 console.error('Error selecting work order:', error);
-                showToast('Failed to load work order', 'error');
+                showToast('Gagal memuat work order', 'error');
             } finally {
                 hideLoading();
             }
@@ -3612,200 +4074,13 @@
             infoSection.classList.remove('hidden');
         }
 
-        function setupFileUpload() {
-            const dropArea = document.getElementById('dropArea');
-            const fileInput = document.getElementById('photoUpload');
-            const browseBtn = document.getElementById('browseFilesBtn');
-            const removeFileBtn = document.getElementById('removeFileBtn');
-            const uploadFileBtn = document.getElementById('uploadFileBtn');
-            
-            // Click to browse files
-            browseBtn.addEventListener('click', () => fileInput.click());
-            dropArea.addEventListener('click', (e) => {
-                if (e.target === dropArea || e.target.closest('.upload-area')) {
-                    fileInput.click();
-                }
-            });
-            
-            // File input change
-            fileInput.addEventListener('change', handleFileSelect);
-            
-            // Drag and drop
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropArea.addEventListener(eventName, highlight, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, unhighlight, false);
-            });
-            
-            function highlight() {
-                dropArea.classList.add('drag-over');
-            }
-            
-            function unhighlight() {
-                dropArea.classList.remove('drag-over');
-            }
-            
-            dropArea.addEventListener('drop', handleDrop, false);
-            
-            // Remove file button
-            removeFileBtn.addEventListener('click', () => {
-                selectedFiles = [];
-                document.getElementById('filePreview').classList.add('hidden');
-                fileInput.value = '';
-            });
-            
-            // Upload file button
-            uploadFileBtn.addEventListener('click', uploadFile);
-        }
-
-        function handleFileSelect(e) {
-            const files = e.target.files;
-            if (files.length === 0) return;
-            
-            selectedFiles = Array.from(files);
-            displaySelectedFile(selectedFiles[0]);
-        }
-
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            
-            if (files.length === 0) return;
-            
-            selectedFiles = Array.from(files);
-            displaySelectedFile(selectedFiles[0]);
-        }
-
-        function displaySelectedFile(file) {
-            if (!file.type.startsWith('image/')) {
-                showToast('Please select an image file', 'warning');
-                return;
-            }
-            
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('File size should be less than 5MB', 'warning');
-                return;
-            }
-            
-            const preview = document.getElementById('filePreview');
-            document.getElementById('selectedFileName').textContent = file.name;
-            document.getElementById('selectedFileSize').textContent = formatFileSize(file.size);
-            
-            preview.classList.remove('hidden');
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes < 1024) return bytes + ' bytes';
-            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-            else return (bytes / 1048576).toFixed(1) + ' MB';
-        }
-
-        async function uploadFile() {
-            if (selectedFiles.length === 0) {
-                showToast('Please select a file first', 'warning');
-                return;
-            }
-            
-            if (!selectedWorkOrderId) {
-                showToast('Please select a work order first', 'warning');
-                return;
-            }
-            
-            const file = selectedFiles[0];
-            const category = document.getElementById('photoCategory').value;
-            const description = document.getElementById('photoDescription').value.trim() || 'No description';
-            
-            try {
-                showLoading();
-                
-                // Generate unique filename
-                const timestamp = Date.now();
-                const randomString = Math.random().toString(36).substring(2, 15);
-                const fileExtension = file.name.split('.').pop();
-                const fileName = `${selectedWorkOrderId}_${timestamp}_${randomString}.${fileExtension}`;
-                
-                // Upload to Firebase Storage
-                const storageRef = storage.ref(`documentation/${selectedWorkOrderId}/${fileName}`);
-                const uploadTask = storageRef.put(file);
-                
-                uploadTask.on('state_changed',
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        console.log('Upload progress:', progress);
-                    },
-                    (error) => {
-                        console.error('Upload error:', error);
-                        showToast('Upload failed: ' + error.message, 'error');
-                        hideLoading();
-                    },
-                    async () => {
-                        try {
-                            // Get download URL
-                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                            
-                            // Save to Firestore
-                            const photoData = {
-                                workorderId: selectedWorkOrderId,
-                                workOrderNumber: selectedWorkOrderData.workOrderNumber,
-                                fileName: fileName,
-                                originalName: file.name,
-                                downloadURL: downloadURL,
-                                category: category,
-                                description: description,
-                                fileSize: file.size,
-                                fileType: file.type,
-                                uploadedBy: currentUser.email,
-                                uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
-                            };
-                            
-                            await documentationCollection.add(photoData);
-                            
-                            // Clear form
-                            selectedFiles = [];
-                            document.getElementById('filePreview').classList.add('hidden');
-                            document.getElementById('photoUpload').value = '';
-                            document.getElementById('photoDescription').value = '';
-                            
-                            // Reload photos
-                            await loadUploadedPhotos();
-                            
-                            showToast('Photo uploaded successfully', 'success');
-                            logActivity('upload_documentation', `Uploaded photo for work order ${selectedWorkOrderData.workOrderNumber}`, selectedWorkOrderId);
-                            
-                        } catch (error) {
-                            console.error('Error saving photo data:', error);
-                            showToast('Error saving photo information', 'error');
-                        } finally {
-                            hideLoading();
-                        }
-                    }
-                );
-                
-            } catch (error) {
-                console.error('Upload error:', error);
-                showToast('Upload failed', 'error');
-                hideLoading();
-            }
-        }
-
         async function loadUploadedPhotos() {
             if (!selectedWorkOrderId) return;
             
             try {
                 const querySnapshot = await documentationCollection
                     .where('workorderId', '==', selectedWorkOrderId)
-                    .orderBy('uploadedAt', 'desc')
+                    .orderBy('capturedAt', 'desc')
                     .get();
                 
                 uploadedPhotos = [];
@@ -3820,7 +4095,7 @@
                 
             } catch (error) {
                 console.error('Error loading photos:', error);
-                showToast('Failed to load photos', 'error');
+                showToast('Gagal memuat gambar', 'error');
             }
         }
 
@@ -3830,7 +4105,7 @@
             const photoCount = document.getElementById('photoCount');
             const uploadedPhotosSection = document.getElementById('uploadedPhotosSection');
             
-            photoCount.textContent = `${uploadedPhotos.length} photo${uploadedPhotos.length !== 1 ? 's' : ''}`;
+            photoCount.textContent = `${uploadedPhotos.length} gambar${uploadedPhotos.length !== 1 ? '' : ''}`;
             
             if (uploadedPhotos.length === 0) {
                 photoGrid.innerHTML = '';
@@ -3854,7 +4129,9 @@
             item.className = 'photo-item';
             item.dataset.id = photo.id;
             
-            const timeAgo = formatTimeAgo(photo.uploadedAt);
+            const timeAgo = formatTimeAgo(photo.capturedAt || photo.uploadedAt);
+            const cameraIcon = photo.cameraType === 'front' ? 'fa-camera' : 'fa-camera-retro';
+            const cameraTitle = photo.cameraType === 'front' ? 'Kamera Depan' : 'Kamera Belakang';
             
             item.innerHTML = `
                 <img src="${photo.downloadURL}" 
@@ -3864,10 +4141,10 @@
                      onclick="openPhotoPreview('${photo.downloadURL}', '${photo.description}')">
                 
                 <div class="photo-actions">
-                    <div class="photo-action-btn" onclick="openPhotoPreview('${photo.downloadURL}', '${photo.description}')">
+                    <div class="photo-action-btn" onclick="openPhotoPreview('${photo.downloadURL}', '${photo.description}')" title="Lihat">
                         <i class="fas fa-eye text-blue-600"></i>
                     </div>
-                    <div class="photo-action-btn" onclick="deletePhoto('${photo.id}')">
+                    <div class="photo-action-btn" onclick="deletePhoto('${photo.id}')" title="Hapus">
                         <i class="fas fa-trash text-red-600"></i>
                     </div>
                 </div>
@@ -3882,8 +4159,9 @@
                     <p class="text-sm text-gray-700 truncate" title="${photo.description}">
                         ${photo.description}
                     </p>
-                    <p class="text-xs text-gray-500 mt-1">
-                        ${formatFileSize(photo.fileSize)} • ${photo.uploadedBy}
+                    <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                        <i class="fas ${cameraIcon}" title="${cameraTitle}"></i>
+                        <span>${formatFileSize(photo.fileSize)} • ${photo.capturedBy || photo.uploadedBy}</span>
                     </p>
                 </div>
             `;
@@ -3911,7 +4189,7 @@
         }
 
         async function deletePhoto(photoId) {
-            if (!confirm('Are you sure you want to delete this photo?')) return;
+            if (!confirm('Apakah Anda yakin ingin menghapus gambar ini?')) return;
             
             try {
                 showLoading();
@@ -3919,7 +4197,7 @@
                 // Get photo data
                 const photoDoc = await documentationCollection.doc(photoId).get();
                 if (!photoDoc.exists) {
-                    showToast('Photo not found', 'error');
+                    showToast('Gambar tidak ditemukan', 'error');
                     return;
                 }
                 
@@ -3939,15 +4217,21 @@
                 // Update UI
                 displayUploadedPhotos();
                 
-                showToast('Photo deleted successfully', 'success');
-                logActivity('delete_documentation', `Deleted photo from work order ${photoData.workOrderNumber}`, photoData.workorderId);
+                showToast('Gambar berhasil dihapus', 'success');
+                logActivity('delete_documentation', `Menghapus gambar dari work order ${photoData.workOrderNumber}`, photoData.workorderId);
                 
             } catch (error) {
                 console.error('Error deleting photo:', error);
-                showToast('Failed to delete photo', 'error');
+                showToast('Gagal menghapus gambar', 'error');
             } finally {
                 hideLoading();
             }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            else return (bytes / 1048576).toFixed(1) + ' MB';
         }
 
         // ==================== WORK ORDER NUMBER FUNCTIONS ====================
@@ -4975,8 +5259,8 @@
                 'export': 'fa-file-export',
                 'view': 'fa-eye',
                 'status_change': 'fa-exchange-alt',
-                'upload_documentation': 'fa-file-upload',
-                'delete_documentation': 'fa-file-archive'
+                'capture_documentation': 'fa-camera',
+                'delete_documentation': 'fa-trash-alt'
             };
             return icons[action.toLowerCase()] || 'fa-history';
         }
