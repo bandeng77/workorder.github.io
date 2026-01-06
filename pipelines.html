@@ -698,7 +698,7 @@
             padding-left: 3.5rem !important;
         }
 
-        /* ==================== COLORFUL MODALS ==================== */
+        /* ==================== MODIFIED MODAL STYLES WITH STICKY HEADER & FOOTER ==================== */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -720,6 +720,8 @@
             max-height: 90vh;
             overflow: hidden;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .modal-content::before {
@@ -740,6 +742,20 @@
             justify-content: space-between;
             align-items: center;
             position: relative;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .modal-header.sticky-top {
+            position: sticky;
+            top: 0;
+        }
+
+        .modal-header.sticky-bottom {
+            position: sticky;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--neutral-800), var(--neutral-900));
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .modal-header::after {
@@ -764,7 +780,8 @@
         .modal-body {
             padding: 2rem;
             overflow-y: auto;
-            max-height: calc(90vh - 8rem);
+            flex: 1;
+            min-height: 0;
         }
 
         /* ==================== TOAST NOTIFICATIONS ==================== */
@@ -993,6 +1010,14 @@
                 max-height: 70vh;
                 z-index: 10000;
             }
+            
+            .modal-header {
+                padding: 1.25rem 1.5rem;
+            }
+            
+            .modal-body {
+                padding: 1.5rem;
+            }
         }
 
         @media (max-width: 640px) {
@@ -1002,6 +1027,14 @@
             
             .card {
                 padding: 1.25rem;
+            }
+            
+            .modal-header {
+                padding: 1rem 1.25rem;
+            }
+            
+            .modal-title {
+                font-size: 1.25rem;
             }
         }
     </style>
@@ -1144,7 +1177,8 @@
     <!-- Pipeline Item Modal -->
     <div id="pipelineItemModal" class="modal-overlay hidden">
         <div class="modal-content w-full max-w-4xl">
-            <div class="modal-header">
+            <!-- Sticky Header -->
+            <div class="modal-header sticky-top">
                 <div>
                     <h2 class="modal-title" id="pipelineModalTitle">New Pipeline Item</h2>
                     <p class="text-gray-300 mt-1">Create or edit pipeline item</p>
@@ -1153,7 +1187,9 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
+            
+            <!-- Scrollable Body -->
+            <div class="modal-body custom-scrollbar">
                 <form id="pipelineItemForm" class="space-y-8">
                     <input type="hidden" id="pipelineItemId">
                     <input type="hidden" id="originalPipelineStatus">
@@ -1215,82 +1251,82 @@
                         </div>
                     </div>
                     
-            <!-- Section 2: PIC and Customer -->
-            <div class="form-section" style="padding-bottom: 400px;">
-                <div class="form-section-title">
-                    <div class="form-section-icon form-section-icon-secondary">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <span>Person In Charge & Customer</span>
-                </div>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div>
-                        <label class="form-label required-field" for="pipelinePIC">
-                            PIC
-                        </label>
-                        <div class="custom-dropdown">
-                            <input type="text" 
-                                   id="pipelinePIC" 
-                                   class="custom-dropdown-input"
-                                   required
-                                   placeholder="Search or select PIC"
-                                   autocomplete="off"
-                                   readonly>
-                            <div class="custom-dropdown-options" id="picDropdownOptions">
-                                <div class="custom-dropdown-options-header">
-                                    <span>Select PIC</span>
-                                    <span class="dropdown-count" id="picCount">0</span>
-                                </div>
-                                <div class="custom-dropdown-search">
+                    <!-- Section 2: PIC and Customer -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <div class="form-section-icon form-section-icon-secondary">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <span>Person In Charge & Customer</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label class="form-label required-field" for="pipelinePIC">
+                                    PIC
+                                </label>
+                                <div class="custom-dropdown">
                                     <input type="text" 
-                                           placeholder="Type to search PIC..."
-                                           class="form-input"
-                                           id="picSearchInput">
+                                           id="pipelinePIC" 
+                                           class="custom-dropdown-input"
+                                           required
+                                           placeholder="Search or select PIC"
+                                           autocomplete="off"
+                                           readonly>
+                                    <div class="custom-dropdown-options" id="picDropdownOptions">
+                                        <div class="custom-dropdown-options-header">
+                                            <span>Select PIC</span>
+                                            <span class="dropdown-count" id="picCount">0</span>
+                                        </div>
+                                        <div class="custom-dropdown-search">
+                                            <input type="text" 
+                                                   placeholder="Type to search PIC..."
+                                                   class="form-input"
+                                                   id="picSearchInput">
+                                        </div>
+                                        <div class="custom-dropdown-options-container" id="picOptionsContainer">
+                                            <!-- PIC options will be populated by JavaScript -->
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="custom-dropdown-options-container" id="picOptionsContainer">
-                                    <!-- PIC options will be populated by JavaScript -->
+                            </div>
+                            
+                            <div>
+                                <label class="form-label required-field" for="pipelineCustomer">
+                                    Customer
+                                </label>
+                                <div class="custom-dropdown">
+                                    <input type="text" 
+                                           id="pipelineCustomer" 
+                                           class="custom-dropdown-input"
+                                           required
+                                           placeholder="Search or select customer"
+                                           autocomplete="off"
+                                           readonly>
+                                    <div class="custom-dropdown-options" id="customerDropdownOptions">
+                                        <div class="custom-dropdown-options-header">
+                                            <span>Select Customer</span>
+                                            <span class="dropdown-count" id="customerCount">0</span>
+                                        </div>
+                                        <div class="custom-dropdown-search">
+                                            <input type="text" 
+                                                   placeholder="Type to search customer..."
+                                                   class="form-input"
+                                                   id="customerSearchInput">
+                                            <button type="button" 
+                                                    id="addNewCustomerBtn" 
+                                                    class="btn btn-primary btn-sm mt-2 w-full">
+                                                <i class="fas fa-plus"></i> Add New Customer
+                                            </button>
+                                        </div>
+                                        <div class="custom-dropdown-options-container" id="customerOptionsContainer">
+                                            <!-- Customer options will be populated by JavaScript -->
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div>
-                        <label class="form-label required-field" for="pipelineCustomer">
-                            Customer
-                        </label>
-                        <div class="custom-dropdown">
-                            <input type="text" 
-                                   id="pipelineCustomer" 
-                                   class="custom-dropdown-input"
-                                   required
-                                   placeholder="Search or select customer"
-                                   autocomplete="off"
-                                   readonly>
-                            <div class="custom-dropdown-options" id="customerDropdownOptions">
-                                <div class="custom-dropdown-options-header">
-                                    <span>Select Customer</span>
-                                    <span class="dropdown-count" id="customerCount">0</span>
-                                </div>
-                                <div class="custom-dropdown-search">
-                                    <input type="text" 
-                                           placeholder="Type to search customer..."
-                                           class="form-input"
-                                           id="customerSearchInput">
-                                    <button type="button" 
-                                            id="addNewCustomerBtn" 
-                                            class="btn btn-primary btn-sm mt-2 w-full">
-                                        <i class="fas fa-plus"></i> Add New Customer
-                                    </button>
-                                </div>
-                                <div class="custom-dropdown-options-container" id="customerOptionsContainer">
-                                    <!-- Customer options will be populated by JavaScript -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
                     
                     <!-- Section 3: Project and Status -->
                     <div class="form-section">
@@ -1347,8 +1383,6 @@
                                            required
                                            placeholder="Enter quotation value"
                                            data-thousands-separator=".">
-                                    <div class="text-xs text-gray-500 mt-1">
-                                    </div>
                                 </div>
                             </div>
                             
@@ -1364,8 +1398,6 @@
                                            required
                                            placeholder="Enter PO value"
                                            data-thousands-separator=".">
-                                    <div class="text-xs text-gray-500 mt-1">
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1431,7 +1463,9 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-header">
+            
+            <!-- Sticky Footer -->
+            <div class="modal-header sticky-bottom">
                 <div></div>
                 <div class="flex gap-3">
                     <button id="cancelPipelineBtn" class="btn btn-secondary">
@@ -1450,7 +1484,7 @@
     <!-- Add New Customer Modal -->
     <div id="addCustomerModal" class="modal-overlay hidden">
         <div class="modal-content w-full max-w-md">
-            <div class="modal-header">
+            <div class="modal-header sticky-top">
                 <div>
                     <h2 class="modal-title">Add New Customer</h2>
                     <p class="text-gray-300 mt-1">Add new customer to the list</p>
@@ -1459,7 +1493,7 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body custom-scrollbar">
                 <form id="addCustomerForm" class="space-y-6">
                     <div>
                         <label class="form-label required-field" for="newCustomerName">
@@ -1493,7 +1527,7 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-header">
+            <div class="modal-header sticky-bottom">
                 <div></div>
                 <div class="flex gap-3">
                     <button id="cancelAddCustomerBtn" class="btn btn-secondary">
@@ -1512,7 +1546,7 @@
     <!-- Pipeline Analytics Modal -->
     <div id="pipelinesAnalyticsModal" class="modal-overlay hidden">
         <div class="modal-content w-full max-w-6xl">
-            <div class="modal-header">
+            <div class="modal-header sticky-top">
                 <div>
                     <h2 class="modal-title">Pipeline Analytics</h2>
                     <p class="text-gray-300 mt-1">Pipeline performance and insights</p>
@@ -1521,7 +1555,7 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body custom-scrollbar">
                 <div class="flex justify-between items-center mb-8">
                     <div class="text-sm text-gray-600">
                         <i class="fas fa-calendar-alt mr-2"></i>
@@ -1600,6 +1634,15 @@
                     </div>
                 </div>
             </div>
+            <div class="modal-header sticky-bottom">
+                <div></div>
+                <div>
+                    <button id="closePipelinesAnalyticsModalBottom" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Close
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1613,6 +1656,7 @@
             <p class="text-white text-lg font-medium">Loading Pipelines...</p>
         </div>
     </div>
+
 <script>
         // ==================== GLOBAL VARIABLES ====================
         let db, auth, pipelinesCollection, pipelineHistoryCollection, usersCollection, customersCollection;
@@ -1741,7 +1785,7 @@
             "PT. RAMAYANA HARTA PRATAMA",
             "PT. SIMEX PHARMACEUTICAL INDONESIA",
             "PT. MIRAMA WISATA",
-            "PPPSRS THE PAKUBUWONO VIEW",
+            "PPPSRS THE PAKUBUWON VIEW",
             "PT. MUTIARA PERMATA MULIA",
             "PT. CBRE CONSULTANCY SERVICES",
             "PT. KARANG MAS SEJAHTERA",
@@ -1750,7 +1794,7 @@
             "PT. TAIYO SINAR RAYA TEKNIK",
             "PT. SHR HOTEL INDONESIA",
             "PPRSH FOUR SEASONS REGENT RESIDENCES",
-            "PP THE PAKUBUWONO RESIDENCE",
+            "PP THE PAKUBUWON RESIDENCE",
             "PT. SARIARTHAMAS HOTEL INTERNATIONAL",
             "PT. PT. BENTENG TEGUH PERKASA",
             "BHUMI PRAMA ARJASA",
@@ -3494,6 +3538,7 @@
             });
             
             document.getElementById('closePipelinesAnalyticsModal').addEventListener('click', closePipelinesAnalyticsModal);
+            document.getElementById('closePipelinesAnalyticsModalBottom').addEventListener('click', closePipelinesAnalyticsModal);
             
             // Add customer modal event listeners
             document.getElementById('addNewCustomerBtn').addEventListener('click', openAddCustomerModal);
