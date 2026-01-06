@@ -103,21 +103,24 @@
 
         /* ==================== PIPELINE BOARD STYLES ==================== */
         .pipeline-board {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 1rem;
             padding: 1rem;
-            overflow-x: auto;
-            min-height: calc(100vh - 200px);
+            min-height: calc(100vh - 300px);
+            height: 600px;
+            overflow: hidden;
         }
 
         .pipeline-column {
-            flex: 0 0 320px;
             background: var(--neutral-100);
             border-radius: var(--radius-xl);
             padding: 1rem;
             display: flex;
             flex-direction: column;
             border: 1px solid var(--neutral-200);
+            overflow: hidden;
+            height: 100%;
         }
 
         .pipeline-column-header {
@@ -129,6 +132,7 @@
             align-items: center;
             color: white;
             font-weight: 600;
+            flex-shrink: 0;
         }
 
         .pipeline-column-open {
@@ -143,6 +147,7 @@
             flex: 1;
             overflow-y: auto;
             padding-right: 0.5rem;
+            min-height: 0;
         }
 
         .pipeline-item {
@@ -864,12 +869,13 @@
         /* ==================== RESPONSIVE DESIGN ==================== */
         @media (max-width: 768px) {
             .pipeline-board {
-                flex-direction: column;
+                grid-template-columns: 1fr;
+                height: auto;
+                min-height: auto;
             }
             
             .pipeline-column {
-                flex: 1;
-                min-width: 100%;
+                height: 400px;
             }
             
             .app-title {
@@ -997,7 +1003,7 @@
             </div>
             
             <!-- Pipeline Board -->
-            <div class="pipeline-board custom-scrollbar">
+            <div class="pipeline-board">
                 <!-- Open Column -->
                 <div class="pipeline-column" data-status="Open">
                     <div class="pipeline-column-header pipeline-column-open">
@@ -1007,7 +1013,7 @@
                         </div>
                         <span class="text-white bg-white/20 px-2 py-1 rounded text-sm" id="openBadge">0</span>
                     </div>
-                    <div class="pipeline-items-container" id="openItems">
+                    <div class="pipeline-items-container custom-scrollbar" id="openItems">
                         <!-- Open items will be loaded here -->
                     </div>
                 </div>
@@ -1021,7 +1027,7 @@
                         </div>
                         <span class="text-white bg-white/20 px-2 py-1 rounded text-sm" id="closeBadge">0</span>
                     </div>
-                    <div class="pipeline-items-container" id="closeItems">
+                    <div class="pipeline-items-container custom-scrollbar" id="closeItems">
                         <!-- Close items will be loaded here -->
                     </div>
                 </div>
