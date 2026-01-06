@@ -283,7 +283,6 @@
 
         .form-input {
             width: 100%;
-            padding: 0.875rem 1rem 0.875rem 3rem;
             border: 2px solid var(--neutral-200);
             border-radius: var(--radius-lg);
             font-size: 0.95rem;
@@ -1325,6 +1324,114 @@
             background-clip: text;
         }
 
+        /* ==================== PERSONNEL SELECT STYLES ==================== */
+        .personnel-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .personnel-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
+            color: var(--primary-700);
+            border: 1px solid var(--primary-200);
+        }
+
+        .personnel-search-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .personnel-results {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            background: white;
+        }
+
+        .personnel-result-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            border-bottom: 1px solid var(--neutral-100);
+        }
+
+        .personnel-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .personnel-result-item:hover {
+            background: var(--primary-50);
+        }
+
+        .personnel-result-item.selected {
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
+            border-left: 3px solid var(--primary-500);
+        }
+
+        /* ==================== AUTCOMPLETE STYLES ==================== */
+        .autocomplete-container {
+            position: relative;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            z-index: 50;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .autocomplete-dropdown.show {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            border-bottom: 1px solid var(--neutral-100);
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:hover,
+        .autocomplete-item.active {
+            background: var(--primary-50);
+        }
+
+        .autocomplete-info {
+            font-size: 0.75rem;
+            color: var(--neutral-500);
+            margin-top: 0.25rem;
+        }
+
+        .highlight {
+            background-color: rgba(59, 130, 246, 0.2);
+            padding: 0 2px;
+            border-radius: 2px;
+            font-weight: 600;
+        }
+
         /* ==================== RESPONSIVE DESIGN ==================== */
         @media (max-width: 1024px) {
             .workorder-card {
@@ -1511,6 +1618,11 @@
                         <button id="statusHistoryBtn" class="btn btn-warning hidden">
                             <i class="fas fa-exchange-alt"></i>
                             <span>Status History</span>
+                        </button>
+                        <!-- Pipelines Button -->
+                        <button id="pipelinesBtn" class="btn btn-primary hidden">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>Pipelines</span>
                         </button>
                         <button id="authButton" class="btn btn-danger">
                             <i class="fas fa-sign-out-alt"></i>
@@ -1961,26 +2073,26 @@
                                     <div>
                                         <label class="form-label">
                                             Nama Personil
-                                            <span class="text-xs text-gray-500 ml-2">(Dapat memilih lebih dari satu)</span>
+                                            <span class="text-xs text-gray-500 ml-2">(Search and add personnel)</span>
                                         </label>
                                         
                                         <div class="personnel-multi-select">
-                                            <div id="selectedPersonnelTags" class="personnel-tags mb-4"></div>
+                                            <div id="selectedPersonnelTags" class="personnel-tags"></div>
                                             
                                             <div class="personnel-search-container">
                                                 <input type="text" 
                                                        id="personnelSearch" 
                                                        class="form-input flex-1"
-                                                       placeholder="Cari personil...">
+                                                       placeholder="Search personnel by name...">
                                                 <button type="button" 
-                                                        id="addNewPersonnel" 
+                                                        id="addPersonnelBtn" 
                                                         class="btn btn-primary whitespace-nowrap">
                                                     <i class="fas fa-plus"></i>
                                                     Tambah
                                                 </button>
                                             </div>
                                             
-                                            <div class="personnel-list-container" id="personnelList"></div>
+                                            <div id="personnelResults" class="personnel-results"></div>
                                         </div>
                                         
                                         <input type="hidden" id="personnel" name="personnel">
@@ -2191,8 +2303,6 @@
         </div>
     </div>
 
-    <!-- JavaScript tetap sama seperti sebelumnya (tidak diubah karena hanya perbaikan CSS) -->
-    <!-- Semua fungsi JavaScript dari kode sebelumnya tetap dipertahankan -->
     <script>
         // ==================== GLOBAL VARIABLES ====================
         let db, auth, workordersCollection, activitiesCollection, usersCollection, statusHistoryCollection, dataHistoryCollection;
@@ -2224,6 +2334,9 @@
             "Harianto",
             "Haryo"
         ];
+        
+        // Selected personnel for current form
+        let selectedPersonnel = [];
 
         // ==================== INITIALIZE FIREBASE ====================
         function initializeFirebase() {
@@ -3014,118 +3127,138 @@
             }
         }
 
-        // ==================== PERSONNEL MULTI-SELECT FUNCTIONS ====================
+        // ==================== PERSONNEL MULTI-SELECT FUNCTIONS (SEARCH-BASED) ====================
         function setupPersonnelMultiSelect() {
             const personnelSearch = document.getElementById('personnelSearch');
             const selectedPersonnelTags = document.getElementById('selectedPersonnelTags');
-            const personnelList = document.getElementById('personnelList');
-            const addNewPersonnelBtn = document.getElementById('addNewPersonnel');
+            const personnelResults = document.getElementById('personnelResults');
+            const addPersonnelBtn = document.getElementById('addPersonnelBtn');
             const personnelHiddenInput = document.getElementById('personnel');
             
-            renderPersonnelList();
+            // Reset selected personnel
+            selectedPersonnel = [];
+            updateSelectedPersonnelTags();
+            updatePersonnelHiddenInput();
             
+            // Search functionality
             personnelSearch.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                renderPersonnelList(searchTerm);
+                const searchTerm = this.value.toLowerCase().trim();
+                renderPersonnelResults(searchTerm);
             });
             
-            addNewPersonnelBtn.addEventListener('click', function() {
-                const newPersonnel = personnelSearch.value.trim();
-                if (newPersonnel && !availablePersonnel.includes(newPersonnel)) {
-                    availablePersonnel.push(newPersonnel);
-                    saveToDataHistory('personnel', newPersonnel);
-                    renderPersonnelList();
+            // Add personnel button
+            addPersonnelBtn.addEventListener('click', function() {
+                const personnelName = personnelSearch.value.trim();
+                if (personnelName && !selectedPersonnel.includes(personnelName)) {
+                    selectedPersonnel.push(personnelName);
+                    updateSelectedPersonnelTags();
+                    updatePersonnelHiddenInput();
                     personnelSearch.value = '';
-                    showToast(`Personil "${newPersonnel}" berhasil ditambahkan`, 'success');
+                    renderPersonnelResults('');
+                    showToast(`Personil "${personnelName}" berhasil ditambahkan`, 'success');
+                    
+                    // Save to history if it's a new personnel
+                    if (!availablePersonnel.includes(personnelName)) {
+                        availablePersonnel.push(personnelName);
+                        saveToDataHistory('personnel', personnelName);
+                    }
                 }
             });
             
-            function renderPersonnelList(searchTerm = '') {
-                personnelList.innerHTML = '';
+            // Allow pressing Enter to add
+            personnelSearch.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addPersonnelBtn.click();
+                }
+            });
+            
+            function renderPersonnelResults(searchTerm = '') {
+                personnelResults.innerHTML = '';
                 
-                const filteredPersonnel = availablePersonnel.filter(person => 
+                // Filter available personnel based on search term
+                const filtered = availablePersonnel.filter(person => 
                     searchTerm === '' || person.toLowerCase().includes(searchTerm)
                 );
                 
-                if (filteredPersonnel.length === 0) {
-                    personnelList.innerHTML = `
+                if (filtered.length === 0) {
+                    personnelResults.innerHTML = `
                         <div class="text-center py-4 text-gray-500 text-sm">
                             <i class="fas fa-search mr-2"></i>
-                            Tidak ditemukan personil
+                            Tidak ditemukan personil. Ketik nama dan klik "Tambah"
                         </div>
                     `;
                     return;
                 }
                 
-                filteredPersonnel.forEach(person => {
+                filtered.forEach(person => {
                     const div = document.createElement('div');
-                    div.className = 'personnel-checkbox-item';
-                    
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.value = person;
-                    checkbox.id = `personnel-${person}`;
-                    checkbox.className = 'rounded border-gray-300 text-blue-600 focus:ring-blue-500';
-                    
-                    const label = document.createElement('label');
-                    label.htmlFor = `personnel-${person}`;
-                    label.className = 'text-sm text-gray-700 cursor-pointer flex-1';
-                    label.textContent = person;
-                    
-                    div.appendChild(checkbox);
-                    div.appendChild(label);
-                    personnelList.appendChild(div);
-                    
-                    checkbox.addEventListener('change', updateSelectedPersonnel);
+                    div.className = 'personnel-result-item';
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-700">${person}</span>
+                            <button class="text-blue-600 hover:text-blue-800 add-personnel-btn" data-person="${person}">
+                                <i class="fas fa-plus-circle"></i>
+                            </button>
+                        </div>
+                    `;
+                    personnelResults.appendChild(div);
+                });
+                
+                // Add event listeners to add buttons
+                personnelResults.querySelectorAll('.add-personnel-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const person = this.dataset.person;
+                        if (!selectedPersonnel.includes(person)) {
+                            selectedPersonnel.push(person);
+                            updateSelectedPersonnelTags();
+                            updatePersonnelHiddenInput();
+                            showToast(`Personil "${person}" berhasil ditambahkan`, 'success');
+                        }
+                    });
                 });
             }
             
-            function updateSelectedPersonnel() {
-                const selectedPersonnel = [];
+            function updateSelectedPersonnelTags() {
                 selectedPersonnelTags.innerHTML = '';
                 
-                document.querySelectorAll('#personnelList input[type="checkbox"]:checked').forEach(checkbox => {
-                    const person = checkbox.value;
-                    selectedPersonnel.push(person);
-                    
+                selectedPersonnel.forEach(person => {
                     const tag = document.createElement('div');
-                    tag.className = 'badge badge-primary';
+                    tag.className = 'personnel-tag';
                     tag.innerHTML = `
                         <span>${person}</span>
-                        <button type="button" class="ml-2 text-blue-600 hover:text-blue-800 remove-tag" data-person="${person}">
+                        <button type="button" class="ml-2 text-red-500 hover:text-red-700 remove-tag" data-person="${person}">
                             <i class="fas fa-times text-xs"></i>
                         </button>
                     `;
                     selectedPersonnelTags.appendChild(tag);
                 });
                 
-                selectedPersonnelTags.querySelectorAll('.remove-tag').forEach(removeBtn => {
-                    removeBtn.addEventListener('click', function() {
+                // Add event listeners to remove buttons
+                selectedPersonnelTags.querySelectorAll('.remove-tag').forEach(btn => {
+                    btn.addEventListener('click', function() {
                         const personToRemove = this.dataset.person;
-                        const checkbox = document.getElementById(`personnel-${personToRemove}`);
-                        if (checkbox) {
-                            checkbox.checked = false;
-                            updateSelectedPersonnel();
-                        }
+                        selectedPersonnel = selectedPersonnel.filter(p => p !== personToRemove);
+                        updateSelectedPersonnelTags();
+                        updatePersonnelHiddenInput();
                     });
                 });
-                
+            }
+            
+            function updatePersonnelHiddenInput() {
                 personnelHiddenInput.value = JSON.stringify(selectedPersonnel);
             }
             
             function loadExistingPersonnel(personnelArray) {
                 if (!personnelArray || !Array.isArray(personnelArray)) return;
                 
-                personnelArray.forEach(person => {
-                    const checkbox = document.getElementById(`personnel-${person}`);
-                    if (checkbox) {
-                        checkbox.checked = true;
-                    }
-                });
-                updateSelectedPersonnel();
+                selectedPersonnel = [...personnelArray];
+                updateSelectedPersonnelTags();
+                updatePersonnelHiddenInput();
+                renderPersonnelResults('');
             }
             
-            return { loadExistingPersonnel, updateSelectedPersonnel };
+            return { loadExistingPersonnel };
         }
 
         // ==================== AUTOCOMPLETE FUNCTIONS ====================
@@ -3301,6 +3434,7 @@
             const analyticsBtn = document.getElementById('analyticsBtn');
             const activityBtn = document.getElementById('activityBtn');
             const statusHistoryBtn = document.getElementById('statusHistoryBtn');
+            const pipelinesBtn = document.getElementById('pipelinesBtn');
             
             const userAvatar = document.getElementById('userAvatar');
             if (userAvatar) {
@@ -3325,6 +3459,7 @@
             if (analyticsBtn) analyticsBtn.classList.add('hidden');
             if (activityBtn) activityBtn.classList.add('hidden');
             if (statusHistoryBtn) statusHistoryBtn.classList.add('hidden');
+            if (pipelinesBtn) pipelinesBtn.classList.add('hidden');
             
             switch(currentUserRole) {
                 case 'admin':
@@ -3333,6 +3468,7 @@
                     if (analyticsBtn) analyticsBtn.classList.remove('hidden');
                     if (activityBtn) activityBtn.classList.remove('hidden');
                     if (statusHistoryBtn) statusHistoryBtn.classList.remove('hidden');
+                    if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
                     break;
                     
                 case 'manager':
@@ -3340,9 +3476,11 @@
                     if (analyticsBtn) analyticsBtn.classList.remove('hidden');
                     if (activityBtn) activityBtn.classList.remove('hidden');
                     if (statusHistoryBtn) statusHistoryBtn.classList.remove('hidden');
+                    if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
                     break;
                     
                 case 'user':
+                    if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
                     break;
                     
                 default:
@@ -4666,6 +4804,17 @@
             document.getElementById('statusHistoryModal').classList.add('hidden');
         }
 
+        // ==================== PIPELINES FUNCTION ====================
+        function openPipelines() {
+            console.log('Opening pipelines...');
+            
+            // Redirect to pipelines.html
+            window.open('pipelines.html', '_blank');
+            
+            // Alternatively, if you want to open in the same window:
+            // window.location.href = 'pipelines.html';
+        }
+
         async function deleteWorkOrder(workorderId) {
             if (!canDeleteWorkOrder()) {
                 showToast('You do not have permission to delete work orders', 'warning');
@@ -4768,6 +4917,7 @@
             document.getElementById('analyticsBtn').addEventListener('click', openAnalyticsModal);
             document.getElementById('activityBtn').addEventListener('click', openActivityModal);
             document.getElementById('statusHistoryBtn').addEventListener('click', openStatusHistoryModal);
+            document.getElementById('pipelinesBtn').addEventListener('click', openPipelines);
             document.getElementById('authButton').addEventListener('click', logout);
             
             document.getElementById('refreshWorkOrderNumber').addEventListener('click', updateIntegratedWorkOrderNumber);
