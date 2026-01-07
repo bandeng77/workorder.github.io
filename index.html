@@ -3957,14 +3957,20 @@
                 // Reload work orders to update display
                 await loadWorkOrders();
                 
-                // Reload uploaded photos in modal
+                // Update detail modal if it's open for this work order
+                if (document.getElementById('workorderDetailModal') && 
+                    !document.getElementById('workorderDetailModal').classList.contains('hidden') &&
+                    document.getElementById('detailWorkOrderNumber').textContent === workorderData.workOrderNumber) {
+                    
+                    // Reload photos in detail modal
+                    await loadAndDisplayWorkOrderPhotos(selectedWorkOrderId);
+                }
+                
+                // Reload uploaded photos in camera modal
                 await loadUploadedPhotos();
                 
                 showToast(`Gambar berhasil disimpan untuk ${workorderData.workOrderNumber}!`, 'success');
                 logActivity('capture_documentation', `Mengambil gambar untuk work order ${workorderData.workOrderNumber}`, selectedWorkOrderId);
-                
-                // Show notification about preview availability
-                showToast('Gambar sudah bisa dilihat di detail work order', 'info');
                 
             } catch (error) {
                 console.error('Error saving photo:', error);
@@ -4228,6 +4234,15 @@
             return item;
         }
 
+        async function loadAndDisplayWorkOrderPhotos(workorderId) {
+            try {
+                const photos = await loadWorkOrderPhotos(workorderId);
+                displayWorkOrderPhotos(photos);
+            } catch (error) {
+                console.error('Error loading and displaying photos:', error);
+            }
+        }
+
         async function loadWorkOrderPhotos(workorderId) {
             try {
                 const workorderDoc = await workordersCollection.doc(workorderId).get();
@@ -4346,6 +4361,15 @@
                 
                 // Reload work orders to update count display
                 await loadWorkOrders();
+                
+                // Update detail modal if it's open for this work order
+                if (document.getElementById('workorderDetailModal') && 
+                    !document.getElementById('workorderDetailModal').classList.contains('hidden') &&
+                    document.getElementById('detailWorkOrderNumber').textContent === workorderData.workOrderNumber) {
+                    
+                    // Reload photos in detail modal
+                    await loadAndDisplayWorkOrderPhotos(selectedWorkOrderId);
+                }
                 
                 showToast('Gambar berhasil dihapus', 'success');
                 logActivity('delete_documentation', `Menghapus gambar dari work order ${workorderData.workOrderNumber}`, selectedWorkOrderId);
@@ -6121,8 +6145,7 @@
             loadWorkOrderStatusHistory(workorderId);
             
             // Load photos for this work order
-            const photos = await loadWorkOrderPhotos(workorderId);
-            displayWorkOrderPhotos(photos);
+            await loadAndDisplayWorkOrderPhotos(workorderId);
             
             modal.classList.remove('hidden');
             
