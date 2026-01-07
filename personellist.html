@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personnel List - Work Order Management System</title>
+    
+    <!-- Load Libraries (sama dengan index.html) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    
+    <style>
+        /* Gunakan style yang sama dengan index.html */
+        :root {
+            --primary-50: #f0f9ff;
+            --primary-100: #e0f2fe;
+            --primary-200: #bae6fd;
+            --primary-300: #7dd3fc;
+            --primary-400: #38bdf8;
+            --primary-500: #0ea5e9;
+            --primary-600: #0284c7;
+            --primary-700: #0369a1;
+            --primary-800: #075985;
+            --primary-900: #0c4a6e;
+            
+            --secondary-50: #fdf2f8;
+            --secondary-100: #fce7f3;
+            --secondary-200: #fbcfe8;
+            --secondary-300: #f9a8d4;
+            --secondary-400: #f472b6;
+            --secondary-500: #ec4899;
+            --secondary-600: #db2777;
+            --secondary-700: #be185d;
+            --secondary-800: #9d174d;
+            --secondary-900: #831843;
+            
+            --accent-50: #f0fdf4;
+            --accent-100: #dcfce7;
+            --accent-200: #bbf7d0;
+            --accent-300: #86efac;
+            --accent-400: #4ade80;
+            --accent-500: #22c55e;
+            --accent-600: #16a34a;
+            --accent-700: #15803d;
+            --accent-800: #166534;
+            --accent-900: #14532d;
+            
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            --neutral-400: #94a3b8;
+            --neutral-500: #64748b;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1e293b;
+            --neutral-900: #0f172a;
+            
+            --success-500: #10b981;
+            --success-600: #059669;
+            --warning-500: #f59e0b;
+            --warning-600: #d97706;
+            --danger-500: #ef4444;
+            --danger-600: #dc2626;
+            --info-500: #3b82f6;
+            --info-600: #2563eb;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--neutral-50) 0%, #ffffff 100%);
+            min-height: 100vh;
+            color: var(--neutral-800);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .gradient-bg-primary {
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+        }
+
+        .gradient-bg-success {
+            background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-700) 100%);
+        }
+
+        .gradient-bg-warning {
+            background: linear-gradient(135deg, var(--warning-500) 0%, var(--warning-700) 100%);
+        }
+
+        .gradient-bg-danger {
+            background: linear-gradient(135deg, var(--danger-500) 0%, var(--danger-700) 100%);
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+            color: white;
+            padding: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
+        }
+
+        .app-logo {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .app-title {
+            font-weight: 800;
+            font-size: 2.25rem;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.9) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-500) 0%, var(--danger-600) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-500);
+            color: var(--primary-600);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-500);
+            color: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            transition: var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-500), var(--secondary-500), var(--accent-500));
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            white-space: nowrap;
+        }
+
+        .badge-primary {
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
+            color: var(--primary-700);
+            border: 1px solid var(--primary-200);
+        }
+
+        .badge-success {
+            background: linear-gradient(135deg, var(--accent-100), var(--accent-50));
+            color: var(--accent-700);
+            border: 1px solid var(--accent-200);
+        }
+
+        .badge-warning {
+            background: linear-gradient(135deg, #fef3c7, #fffbeb);
+            color: var(--warning-700);
+            border: 1px solid #fbbf24;
+        }
+
+        .badge-danger {
+            background: linear-gradient(135deg, #fee2e2, #fef2f2);
+            color: var(--danger-700);
+            border: 1px solid #fca5a5;
+        }
+
+        .badge-info {
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            color: var(--info-700);
+            border: 1px solid #93c5fd;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-lg);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+        }
+
+        .status-working {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+
+        .status-leave {
+            background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
+            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+        }
+
+        .status-absent {
+            background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+        }
+
+        .status-vacation {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+        }
+
+        .status-available {
+            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-xl);
+            max-width: 1400px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary-500), var(--secondary-500), var(--accent-500));
+        }
+
+        .modal-header {
+            padding: 1.75rem 2rem;
+            background: linear-gradient(135deg, var(--neutral-800), var(--neutral-900));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 2rem;
+            right: 2rem;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, rgba(255,255,255,0.9));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: calc(90vh - 8rem);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            font-size: 0.95rem;
+            background: white;
+            transition: var(--transition-base);
+            color: var(--neutral-800);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+        }
+
+        .loading-spinner {
+            width: 5rem;
+            height: 5rem;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-500);
+            animation: spin 1s linear infinite;
+            position: relative;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .toast {
+            background: white;
+            color: var(--neutral-800);
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 320px;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: var(--transition-base);
+            border-left: 4px solid var(--primary-500);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left-color: var(--accent-500);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger-500);
+        }
+
+        /* Personnel Card Styles */
+        .personnel-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            transition: var(--transition-base);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .personnel-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .personnel-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            transition: var(--transition-base);
+        }
+
+        .personnel-card.working::before {
+            background: linear-gradient(to bottom, var(--primary-400), var(--primary-600));
+        }
+
+        .personnel-card.leave::before {
+            background: linear-gradient(to bottom, #f59e0b, #d97706);
+        }
+
+        .personnel-card.absent::before {
+            background: linear-gradient(to bottom, var(--danger-400), var(--danger-600));
+        }
+
+        .personnel-card.vacation::before {
+            background: linear-gradient(to bottom, #8b5cf6, #7c3aed);
+        }
+
+        .personnel-card.available::before {
+            background: linear-gradient(to bottom, var(--accent-400), var(--accent-600));
+        }
+
+        .personnel-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-700);
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+            border: 4px solid white;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Work Activity Timeline */
+        .timeline-item {
+            position: relative;
+            padding-left: 2.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            background: var(--primary-500);
+            border: 3px solid white;
+            box-shadow: var(--shadow-sm);
+            z-index: 2;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 0.75rem;
+            top: 1.5rem;
+            width: 2px;
+            height: 100%;
+            background: var(--neutral-300);
+            z-index: 1;
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        .timeline-content {
+            background: var(--neutral-50);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            border: 1px solid var(--neutral-200);
+        }
+
+        /* Filter Tags */
+        .filter-tag {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            border: 2px solid transparent;
+        }
+
+        .filter-tag.active {
+            background: var(--primary-500);
+            color: white;
+        }
+
+        .filter-tag:hover:not(.active) {
+            border-color: var(--primary-500);
+            color: var(--primary-600);
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            text-align: center;
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-label {
+            font-size: 0.875rem;
+            color: var(--neutral-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .personnel-card {
+                width: calc(50% - 1rem);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .personnel-card {
+                width: 100%;
+            }
+            
+            .app-title {
+                font-size: 1.75rem;
+            }
+            
+            .modal-body {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .btn {
+                padding: 0.75rem 1rem;
+            }
+            
+            .card {
+                padding: 1.25rem;
+            }
+            
+            .stats-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <div class="app-header">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-6">
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="app-logo">
+                        <i class="fas fa-users"></i>
+                    </a>
+                    <div>
+                        <h1 class="app-title">Personnel List</h1>
+                        <p class="app-subtitle">Track and manage personnel status & activities</p>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-2">
+                    <button id="backToMainBtn" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back to Main</span>
+                    </button>
+                    <button id="addPersonnelBtn" class="btn btn-secondary">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Add Personnel</span>
+                    </button>
+                    <button id="syncDataBtn" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Sync Work Orders</span>
+                    </button>
+                    <button id="exportBtn" class="btn btn-success">
+                        <i class="fas fa-file-export"></i>
+                        <span>Export</span>
+                    </button>
+                    <button id="authButton" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                <div class="stats-card">
+                    <div class="stats-number text-blue-600" id="totalPersonnel">0</div>
+                    <div class="stats-label">Total Personnel</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-number text-green-600" id="workingCount">0</div>
+                    <div class="stats-label">Working</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-number text-yellow-600" id="leaveCount">0</div>
+                    <div class="stats-label">On Leave</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-number text-purple-600" id="vacationCount">0</div>
+                    <div class="stats-label">Vacation</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-number text-red-600" id="absentCount">0</div>
+                    <div class="stats-label">Absent</div>
+                </div>
+            </div>
+            
+            <!-- Search and Filters -->
+            <div class="flex flex-col md:flex-row gap-4 mb-6">
+                <div class="flex-1 relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" 
+                           id="searchPersonnel" 
+                           placeholder="Search personnel by name..."
+                           class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all">
+                </div>
+                
+                <div class="flex flex-wrap gap-2">
+                    <button class="filter-tag active" data-filter="all">All</button>
+                    <button class="filter-tag" data-filter="working">
+                        <i class="fas fa-briefcase mr-2"></i>Working
+                    </button>
+                    <button class="filter-tag" data-filter="leave">
+                        <i class="fas fa-umbrella-beach mr-2"></i>Leave
+                    </button>
+                    <button class="filter-tag" data-filter="vacation">
+                        <i class="fas fa-plane mr-2"></i>Vacation
+                    </button>
+                    <button class="filter-tag" data-filter="absent">
+                        <i class="fas fa-user-times mr-2"></i>Absent
+                    </button>
+                    <button class="filter-tag" data-filter="available">
+                        <i class="fas fa-user-check mr-2"></i>Available
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Personnel Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Personnel cards will be loaded here -->
+            <div id="personnelGrid"></div>
+        </div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden">
+            <div class="text-center py-16">
+                <div class="w-32 h-32 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-users text-5xl text-blue-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-700 mb-4">No personnel found</h3>
+                <p class="text-gray-600 mb-8">Try adjusting your search or add new personnel</p>
+                <button id="addFirstPersonnelBtn" class="btn btn-primary">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    Add First Personnel
+                </button>
+            </div>
+        </div>
+        
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-16">
+            <div class="inline-block">
+                <div class="loading-spinner mb-4"></div>
+                <p class="text-gray-600">Loading personnel data...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Personnel Activity Modal -->
+    <div id="personnelActivityModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-5xl">
+            <div class="modal-header">
+                <div class="flex items-center gap-4">
+                    <div id="modalPersonnelAvatar" class="personnel-avatar"></div>
+                    <div>
+                        <h2 class="modal-title" id="modalPersonnelName"></h2>
+                        <p class="text-gray-300 mt-1">
+                            <span id="modalPersonnelStatus" class="status-badge"></span>
+                            <span class="ml-4" id="modalPersonnelPosition"></span>
+                        </p>
+                    </div>
+                </div>
+                <button id="closeActivityModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                    <div class="col-span-1">
+                        <div class="card mb-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4">Personnel Information</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">Employee ID</label>
+                                    <p id="modalEmployeeId" class="text-gray-900 font-medium"></p>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">Division</label>
+                                    <p id="modalDivision" class="text-gray-900 font-medium"></p>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">Company</label>
+                                    <p id="modalCompany" class="text-gray-900 font-medium"></p>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">Contact</label>
+                                    <p id="modalContact" class="text-gray-900 font-medium"></p>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">Last Updated</label>
+                                    <p id="modalLastUpdated" class="text-gray-900 font-medium"></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Stats</h3>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Active Work Orders</span>
+                                    <span class="font-bold text-blue-600" id="statsActiveWorkOrders">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Completed This Month</span>
+                                    <span class="font-bold text-green-600" id="statsCompletedMonth">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Avg Completion Time</span>
+                                    <span class="font-bold text-yellow-600" id="statsAvgCompletion">0 days</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Work Load</span>
+                                    <span class="font-bold text-purple-600" id="statsWorkload">Normal</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-span-2">
+                        <div class="card mb-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-bold text-gray-900">Recent Work Activities</h3>
+                                <select id="activityFilter" class="form-input w-48">
+                                    <option value="all">All Activities</option>
+                                    <option value="this_week">This Week</option>
+                                    <option value="this_month">This Month</option>
+                                    <option value="last_month">Last Month</option>
+                                </select>
+                            </div>
+                            
+                            <div id="activityTimeline" class="space-y-4">
+                                <!-- Timeline items will be loaded here -->
+                                <div class="text-center py-8 text-gray-500">
+                                    <i class="fas fa-history text-4xl mb-4"></i>
+                                    <p>No recent activities found</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 class="text-lg font-bold text-gray-900 mb-6">Current Assignments</h3>
+                            <div id="currentAssignments">
+                                <!-- Current assignments will be loaded here -->
+                                <div class="text-center py-8 text-gray-500">
+                                    <i class="fas fa-tasks text-4xl mb-4"></i>
+                                    <p>No current assignments</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Personnel Modal -->
+    <div id="personnelFormModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-3xl">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title" id="personnelFormTitle">Add New Personnel</h2>
+                    <p class="text-gray-300 mt-1">Fill in personnel information</p>
+                </div>
+                <button id="closePersonnelFormModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="personnelForm" class="space-y-6">
+                    <input type="hidden" id="personnelId">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="form-label" for="personnelName">
+                                <i class="fas fa-user mr-2"></i>
+                                Full Name
+                            </label>
+                            <input type="text" 
+                                   id="personnelName" 
+                                   class="form-input"
+                                   placeholder="Enter full name"
+                                   required>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label" for="employeeId">
+                                <i class="fas fa-id-card mr-2"></i>
+                                Employee ID
+                            </label>
+                            <input type="text" 
+                                   id="employeeId" 
+                                   class="form-input"
+                                   placeholder="EMP-001">
+                        </div>
+                        
+                        <div>
+                            <label class="form-label" for="position">
+                                <i class="fas fa-briefcase mr-2"></i>
+                                Position
+                            </label>
+                            <select id="position" class="form-input">
+                                <option value="">Select Position</option>
+                                <option value="Technician">Technician</option>
+                                <option value="Supervisor">Supervisor</option>
+                                <option value="Engineer">Engineer</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label" for="division">
+                                <i class="fas fa-sitemap mr-2"></i>
+                                Division
+                            </label>
+                            <select id="personnelDivision" class="form-input">
+                                <option value="">Select Division</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Testcom">Testcom</option>
+                                <option value="Project">Project</option>
+                                <option value="IT">IT</option>
+                                <option value="HR">HR</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label" for="company">
+                                <i class="fas fa-building mr-2"></i>
+                                Company
+                            </label>
+                            <select id="personnelCompany" class="form-input">
+                                <option value="">Select Company</option>
+                                <option value="Genetek Intratama">Genetek Intratama</option>
+                                <option value="Effrensindo Kencana">Effrensindo Kencana</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label" for="status">
+                                <i class="fas fa-user-check mr-2"></i>
+                                Status
+                            </label>
+                            <select id="personnelStatus" class="form-input" required>
+                                <option value="available">Available</option>
+                                <option value="working">Working</option>
+                                <option value="leave">On Leave</option>
+                                <option value="vacation">On Vacation</option>
+                                <option value="absent">Absent</option>
+                            </select>
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="form-label" for="contact">
+                                <i class="fas fa-phone mr-2"></i>
+                                Contact Information
+                            </label>
+                            <input type="text" 
+                                   id="contact" 
+                                   class="form-input"
+                                   placeholder="Phone number or email">
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="form-label" for="notes">
+                                <i class="fas fa-sticky-note mr-2"></i>
+                                Notes
+                            </label>
+                            <textarea id="personnelNotes" 
+                                      class="form-input" 
+                                      rows="3"
+                                      placeholder="Additional notes or remarks..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+                        <button type="button" id="cancelPersonnelForm" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Personnel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="text-center">
+            <div class="loading-spinner mb-4"></div>
+            <p class="text-white text-lg font-medium">Loading...</p>
+        </div>
+    </div>
+
+    <script>
+        // ==================== GLOBAL VARIABLES ====================
+        let db, auth, personnelCollection, workordersCollection, personnelStatusCollection;
+        let currentUser = null;
+        let currentUserRole = 'user';
+        let allPersonnel = [];
+        let filteredPersonnel = [];
+        let allWorkOrders = [];
+        let currentFilter = 'all';
+        let selectedPersonnel = null;
+        
+        // Default personnel data
+        const defaultPersonnel = [
+            {
+                name: "Husni",
+                employeeId: "EMP-001",
+                position: "Supervisor",
+                division: "Maintenance",
+                company: "Genetek Intratama",
+                status: "working",
+                contact: "+62 812-3456-7890",
+                notes: "Senior technician with 10+ years experience"
+            },
+            {
+                name: "Heksi",
+                employeeId: "EMP-002",
+                position: "Technician",
+                division: "Testcom",
+                company: "Genetek Intratama",
+                status: "available",
+                contact: "+62 813-4567-8901",
+                notes: "Specialized in network testing"
+            },
+            {
+                name: "Indra Kurniawan",
+                employeeId: "EMP-003",
+                position: "Engineer",
+                division: "Project",
+                company: "Effrensindo Kencana",
+                status: "working",
+                contact: "+62 814-5678-9012",
+                notes: "Project lead for infrastructure"
+            },
+            {
+                name: "Putra",
+                employeeId: "EMP-004",
+                position: "Technician",
+                division: "Maintenance",
+                company: "Genetek Intratama",
+                status: "leave",
+                contact: "+62 815-6789-0123",
+                notes: "On medical leave until next month"
+            },
+            {
+                name: "Wahyu Sujoko",
+                employeeId: "EMP-005",
+                position: "Manager",
+                division: "Project",
+                company: "Effrensindo Kencana",
+                status: "vacation",
+                contact: "+62 816-7890-1234",
+                notes: "Annual vacation leave"
+            },
+            {
+                name: "Fiki",
+                employeeId: "EMP-006",
+                position: "Technician",
+                division: "Testcom",
+                company: "Genetek Intratama",
+                status: "working",
+                contact: "+62 817-8901-2345",
+                notes: "New technician, training in progress"
+            },
+            {
+                name: "Edwin",
+                employeeId: "EMP-007",
+                position: "Technician",
+                division: "Maintenance",
+                company: "Genetek Intratama",
+                status: "available",
+                contact: "+62 818-9012-3456",
+                notes: "Available for assignments"
+            },
+            {
+                name: "Yudiono",
+                employeeId: "EMP-008",
+                position: "Supervisor",
+                division: "Testcom",
+                company: "Genetek Intratama",
+                status: "working",
+                contact: "+62 819-0123-4567",
+                notes: "Testcom team lead"
+            },
+            {
+                name: "Harianto",
+                employeeId: "EMP-009",
+                position: "Technician",
+                division: "Maintenance",
+                company: "Genetek Intratama",
+                status: "absent",
+                contact: "+62 820-1234-5678",
+                notes: "Unexpected absence, contact HR"
+            },
+            {
+                name: "Haryo",
+                employeeId: "EMP-010",
+                position: "Technician",
+                division: "Project",
+                company: "Effrensindo Kencana",
+                status: "available",
+                contact: "+62 821-2345-6789",
+                notes: "Recently completed safety training"
+            }
+        ];
+
+        // ==================== INITIALIZE FIREBASE ====================
+        function initializeFirebase() {
+            try {
+                console.log('Initializing Firebase for Personnel List...');
+                
+                const firebaseConfig = {
+                    apiKey: "AIzaSyAwXNGrJsBqQ2RslAkdWWPSOubUw13QcRI",
+                    authDomain: "workorder-mon.firebaseapp.com",
+                    projectId: "workorder-mon",
+                    storageBucket: "workorder-mon.firebasestorage.app",
+                    messagingSenderId: "226391173482",
+                    appId: "1:226391173482:web:9ea9c68c1e31c84f50dd13"
+                };
+
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                
+                db = firebase.firestore();
+                auth = firebase.auth();
+                
+                personnelCollection = db.collection('personnel');
+                workordersCollection = db.collection('workorders');
+                personnelStatusCollection = db.collection('personnelStatus');
+                
+                console.log('Firebase initialized successfully');
+                return true;
+                
+            } catch (error) {
+                console.error('Error initializing Firebase:', error);
+                showToast('Firebase initialization failed', 'error');
+                return false;
+            }
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function formatDate(date) {
+            if (!date) return '-';
+            try {
+                if (date.toDate) {
+                    date = date.toDate();
+                }
+                return date.toLocaleDateString('id-ID', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            } catch (e) {
+                return '-';
+            }
+        }
+
+        function formatDateTime(date) {
+            if (!date) return '-';
+            try {
+                if (date.toDate) {
+                    date = date.toDate();
+                }
+                return date.toLocaleDateString('id-ID', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return '-';
+            }
+        }
+
+        function formatTimeAgo(date) {
+            if (!date) return 'Just now';
+            try {
+                if (date.toDate) {
+                    date = date.toDate();
+                }
+                const now = new Date();
+                const diffMs = now - date;
+                const diffSec = Math.floor(diffMs / 1000);
+                const diffMin = Math.floor(diffSec / 60);
+                const diffHour = Math.floor(diffMin / 60);
+                const diffDay = Math.floor(diffHour / 24);
+                
+                if (diffSec < 60) return 'Just now';
+                if (diffMin < 60) return `${diffMin}m ago`;
+                if (diffHour < 24) return `${diffHour}h ago`;
+                if (diffDay < 7) return `${diffDay}d ago`;
+                return formatDate(date);
+            } catch (e) {
+                return 'Some time ago';
+            }
+        }
+
+        function getInitials(name) {
+            if (!name) return '??';
+            return name.split(' ')
+                .map(word => word[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+        }
+
+        function showToast(message, type = 'info', duration = 3000) {
+            const toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            
+            toast.innerHTML = `
+                <div class="toast-icon ${type}" 
+                     style="background: linear-gradient(135deg, ${type === 'success' ? 'var(--accent-500)' : type === 'error' ? 'var(--danger-500)' : 'var(--primary-500)'}, 
+                     ${type === 'success' ? 'var(--accent-600)' : type === 'error' ? 'var(--danger-600)' : 'var(--primary-600)'})">
+                    <i class="fas ${icons[type] || 'fa-info-circle'}"></i>
+                </div>
+                <div>
+                    <p class="font-medium">${message}</p>
+                    <p class="text-sm text-gray-600 mt-1">${new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})}</p>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        function showLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.classList.add('hidden');
+        }
+
+        // ==================== PERSONNEL FUNCTIONS ====================
+        async function initializeDefaultPersonnel() {
+            try {
+                console.log('Initializing default personnel data...');
+                
+                // Check if personnel collection exists
+                const querySnapshot = await personnelCollection.limit(1).get();
+                
+                if (querySnapshot.empty) {
+                    console.log('Creating default personnel data...');
+                    showToast('Creating default personnel data...', 'info');
+                    
+                    const batch = db.batch();
+                    
+                    defaultPersonnel.forEach((person, index) => {
+                        const docRef = personnelCollection.doc();
+                        const personnelData = {
+                            ...person,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            createdBy: currentUser?.email || 'system',
+                            isActive: true
+                        };
+                        batch.set(docRef, personnelData);
+                    });
+                    
+                    await batch.commit();
+                    console.log('Default personnel data created successfully');
+                    showToast('Default personnel data created', 'success');
+                }
+                
+            } catch (error) {
+                console.error('Error initializing default personnel:', error);
+                showToast('Error creating default personnel data', 'error');
+            }
+        }
+
+        async function loadPersonnel() {
+            console.log('Loading personnel data...');
+            showLoading();
+            
+            try {
+                const querySnapshot = await personnelCollection
+                    .where('isActive', '==', true)
+                    .orderBy('name')
+                    .get();
+                
+                allPersonnel = [];
+                
+                if (querySnapshot.empty) {
+                    console.log('No personnel data found, initializing default...');
+                    await initializeDefaultPersonnel();
+                    
+                    // Try loading again
+                    const newQuery = await personnelCollection
+                        .where('isActive', '==', true)
+                        .orderBy('name')
+                        .get();
+                    
+                    newQuery.forEach((doc) => {
+                        const data = doc.data();
+                        allPersonnel.push({
+                            id: doc.id,
+                            ...data
+                        });
+                    });
+                } else {
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        allPersonnel.push({
+                            id: doc.id,
+                            ...data
+                        });
+                    });
+                }
+                
+                // Also load work orders to sync data
+                await loadWorkOrders();
+                
+                // Update stats and render
+                updatePersonnelStats();
+                applyFilters();
+                
+                console.log('Personnel loaded:', allPersonnel.length);
+                showToast('Personnel data loaded successfully', 'success');
+                
+            } catch (error) {
+                console.error('Error loading personnel:', error);
+                showToast('Failed to load personnel data', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function loadWorkOrders() {
+            try {
+                const querySnapshot = await workordersCollection.get();
+                allWorkOrders = [];
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    allWorkOrders.push({
+                        id: doc.id,
+                        ...data
+                    });
+                });
+                
+                console.log('Work orders loaded for sync:', allWorkOrders.length);
+                return allWorkOrders;
+                
+            } catch (error) {
+                console.error('Error loading work orders:', error);
+                return [];
+            }
+        }
+
+        function updatePersonnelStats() {
+            const total = allPersonnel.length;
+            const working = allPersonnel.filter(p => p.status === 'working').length;
+            const leave = allPersonnel.filter(p => p.status === 'leave').length;
+            const vacation = allPersonnel.filter(p => p.status === 'vacation').length;
+            const absent = allPersonnel.filter(p => p.status === 'absent').length;
+            const available = allPersonnel.filter(p => p.status === 'available').length;
+            
+            document.getElementById('totalPersonnel').textContent = total;
+            document.getElementById('workingCount').textContent = working;
+            document.getElementById('leaveCount').textContent = leave;
+            document.getElementById('vacationCount').textContent = vacation;
+            document.getElementById('absentCount').textContent = absent;
+        }
+
+        function applyFilters() {
+            let filtered = [...allPersonnel];
+            
+            // Apply status filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(p => p.status === currentFilter);
+            }
+            
+            // Apply search filter
+            const searchTerm = document.getElementById('searchPersonnel').value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(p => 
+                    p.name.toLowerCase().includes(searchTerm) ||
+                    (p.position && p.position.toLowerCase().includes(searchTerm)) ||
+                    (p.employeeId && p.employeeId.toLowerCase().includes(searchTerm)) ||
+                    (p.division && p.division.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            filteredPersonnel = filtered;
+            renderPersonnelGrid();
+            
+            // Show/hide empty state
+            const emptyState = document.getElementById('emptyState');
+            const loadingState = document.getElementById('loadingState');
+            const personnelGrid = document.getElementById('personnelGrid');
+            
+            if (loadingState) loadingState.classList.add('hidden');
+            
+            if (filteredPersonnel.length === 0) {
+                if (emptyState) emptyState.classList.remove('hidden');
+                if (personnelGrid) personnelGrid.innerHTML = '';
+            } else {
+                if (emptyState) emptyState.classList.add('hidden');
+            }
+        }
+
+        function renderPersonnelGrid() {
+            const container = document.getElementById('personnelGrid');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            filteredPersonnel.forEach(person => {
+                const card = createPersonnelCard(person);
+                container.appendChild(card);
+            });
+        }
+
+        function createPersonnelCard(person) {
+            const card = document.createElement('div');
+            card.className = `personnel-card ${person.status}`;
+            card.dataset.id = person.id;
+            
+            const initials = getInitials(person.name);
+            const statusText = getStatusText(person.status);
+            const statusClass = getStatusClass(person.status);
+            
+            // Count work orders for this personnel
+            const workOrders = getPersonnelWorkOrders(person.name);
+            const activeWorkOrders = workOrders.filter(wo => wo.status === 'Running').length;
+            
+            card.innerHTML = `
+                <div class="text-center">
+                    <div class="personnel-avatar" style="background: ${getAvatarColor(person.name)}">
+                        ${initials}
+                    </div>
+                    
+                    <h3 class="text-lg font-bold text-gray-900 mb-1">${person.name}</h3>
+                    <p class="text-sm text-gray-600 mb-2">${person.position || 'Technician'}</p>
+                    
+                    <div class="mb-4">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2 text-sm mb-4">
+                        <div class="text-center">
+                            <div class="font-semibold text-blue-600">${activeWorkOrders}</div>
+                            <div class="text-xs text-gray-500">Active WO</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="font-semibold text-green-600">${workOrders.length}</div>
+                            <div class="text-xs text-gray-500">Total WO</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <div class="flex items-center justify-center gap-2">
+                            <i class="fas fa-sitemap text-xs"></i>
+                            <span>${person.division || '-'}</span>
+                        </div>
+                        <div class="flex items-center justify-center gap-2">
+                            <i class="fas fa-building text-xs"></i>
+                            <span>${person.company || '-'}</span>
+                        </div>
+                        <div class="flex items-center justify-center gap-2">
+                            <i class="fas fa-id-card text-xs"></i>
+                            <span>${person.employeeId || '-'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <button class="w-full btn btn-primary btn-sm" onclick="viewPersonnelActivity('${person.id}')">
+                            <i class="fas fa-chart-line mr-2"></i>
+                            View Activity
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function getAvatarColor(name) {
+            // Generate consistent color based on name
+            const colors = [
+                'linear-gradient(135deg, #3b82f6, #1d4ed8)', // Blue
+                'linear-gradient(135deg, #8b5cf6, #7c3aed)', // Purple
+                'linear-gradient(135deg, #10b981, #059669)', // Green
+                'linear-gradient(135deg, #f59e0b, #d97706)', // Yellow
+                'linear-gradient(135deg, #ef4444, #dc2626)', // Red
+                'linear-gradient(135deg, #ec4899, #db2777)', // Pink
+                'linear-gradient(135deg, #14b8a6, #0d9488)', // Teal
+                'linear-gradient(135deg, #f97316, #ea580c)'  // Orange
+            ];
+            
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            
+            const index = Math.abs(hash) % colors.length;
+            return colors[index];
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'working': return 'Working';
+                case 'leave': return 'On Leave';
+                case 'vacation': return 'Vacation';
+                case 'absent': return 'Absent';
+                case 'available': return 'Available';
+                default: return 'Unknown';
+            }
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'working': return 'status-working';
+                case 'leave': return 'status-leave';
+                case 'vacation': return 'status-vacation';
+                case 'absent': return 'status-absent';
+                case 'available': return 'status-available';
+                default: return '';
+            }
+        }
+
+        function getPersonnelWorkOrders(personnelName) {
+            if (!personnelName || !allWorkOrders) return [];
+            
+            return allWorkOrders.filter(wo => {
+                if (!wo.personnel) return false;
+                
+                if (Array.isArray(wo.personnel)) {
+                    return wo.personnel.includes(personnelName);
+                } else if (typeof wo.personnel === 'string') {
+                    try {
+                        const personnelArray = JSON.parse(wo.personnel);
+                        return Array.isArray(personnelArray) && personnelArray.includes(personnelName);
+                    } catch (e) {
+                        return wo.personnel === personnelName;
+                    }
+                }
+                return false;
+            });
+        }
+
+        // ==================== PERSONNEL ACTIVITY FUNCTIONS ====================
+        async function viewPersonnelActivity(personnelId) {
+            console.log('Viewing activity for personnel:', personnelId);
+            
+            const person = allPersonnel.find(p => p.id === personnelId);
+            if (!person) {
+                showToast('Personnel not found', 'error');
+                return;
+            }
+            
+            selectedPersonnel = person;
+            await openPersonnelActivityModal(person);
+        }
+
+        async function openPersonnelActivityModal(person) {
+            console.log('Opening activity modal for:', person.name);
+            
+            const modal = document.getElementById('personnelActivityModal');
+            const avatar = document.getElementById('modalPersonnelAvatar');
+            const statusBadge = document.getElementById('modalPersonnelStatus');
+            
+            // Set basic info
+            document.getElementById('modalPersonnelName').textContent = person.name;
+            document.getElementById('modalPersonnelPosition').textContent = person.position || 'Technician';
+            document.getElementById('modalEmployeeId').textContent = person.employeeId || '-';
+            document.getElementById('modalDivision').textContent = person.division || '-';
+            document.getElementById('modalCompany').textContent = person.company || '-';
+            document.getElementById('modalContact').textContent = person.contact || '-';
+            document.getElementById('modalLastUpdated').textContent = person.updatedAt ? formatDateTime(person.updatedAt) : '-';
+            
+            // Set avatar
+            avatar.textContent = getInitials(person.name);
+            avatar.style.background = getAvatarColor(person.name);
+            
+            // Set status badge
+            statusBadge.className = `status-badge ${getStatusClass(person.status)}`;
+            statusBadge.textContent = getStatusText(person.status);
+            
+            // Load work orders for this personnel
+            const personnelWorkOrders = getPersonnelWorkOrders(person.name);
+            
+            // Update stats
+            updatePersonnelStatsModal(person, personnelWorkOrders);
+            
+            // Load activities
+            loadPersonnelActivities(person, personnelWorkOrders);
+            
+            // Load current assignments
+            loadCurrentAssignments(person, personnelWorkOrders);
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePersonnelActivityModal() {
+            document.getElementById('personnelActivityModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function updatePersonnelStatsModal(person, workOrders) {
+            const activeWorkOrders = workOrders.filter(wo => wo.status === 'Running').length;
+            const completedThisMonth = getCompletedThisMonth(workOrders);
+            const avgCompletionTime = getAverageCompletionTime(workOrders);
+            const workload = getWorkloadStatus(workOrders);
+            
+            document.getElementById('statsActiveWorkOrders').textContent = activeWorkOrders;
+            document.getElementById('statsCompletedMonth').textContent = completedThisMonth;
+            document.getElementById('statsAvgCompletion').textContent = avgCompletionTime;
+            document.getElementById('statsWorkload').textContent = workload;
+        }
+
+        function getCompletedThisMonth(workOrders) {
+            const now = new Date();
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            
+            return workOrders.filter(wo => {
+                if (wo.status !== 'Done' || !wo.endDate) return false;
+                
+                try {
+                    const endDate = wo.endDate.toDate ? wo.endDate.toDate() : new Date(wo.endDate);
+                    return endDate >= startOfMonth;
+                } catch (e) {
+                    return false;
+                }
+            }).length;
+        }
+
+        function getAverageCompletionTime(workOrders) {
+            const completedOrders = workOrders.filter(wo => wo.status === 'Done' && wo.startDate && wo.endDate);
+            
+            if (completedOrders.length === 0) return '0 days';
+            
+            let totalDays = 0;
+            completedOrders.forEach(wo => {
+                try {
+                    const start = wo.startDate.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
+                    const end = wo.endDate.toDate ? wo.endDate.toDate() : new Date(wo.endDate);
+                    const diffTime = Math.abs(end - start);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    totalDays += diffDays;
+                } catch (e) {
+                    // Skip this order if date parsing fails
+                }
+            });
+            
+            const avgDays = Math.round(totalDays / completedOrders.length);
+            return `${avgDays} days`;
+        }
+
+        function getWorkloadStatus(workOrders) {
+            const activeCount = workOrders.filter(wo => wo.status === 'Running').length;
+            
+            if (activeCount === 0) return 'Light';
+            if (activeCount <= 3) return 'Normal';
+            if (activeCount <= 5) return 'Heavy';
+            return 'Overloaded';
+        }
+
+        function loadPersonnelActivities(person, workOrders) {
+            const timeline = document.getElementById('activityTimeline');
+            timeline.innerHTML = '';
+            
+            // Sort work orders by date (newest first)
+            const sortedWorkOrders = [...workOrders].sort((a, b) => {
+                try {
+                    const dateA = a.updatedAt ? (a.updatedAt.toDate ? a.updatedAt.toDate() : new Date(a.updatedAt)) : new Date(0);
+                    const dateB = b.updatedAt ? (b.updatedAt.toDate ? b.updatedAt.toDate() : new Date(b.updatedAt)) : new Date(0);
+                    return dateB - dateA;
+                } catch (e) {
+                    return 0;
+                }
+            }).slice(0, 10); // Show only last 10 activities
+            
+            if (sortedWorkOrders.length === 0) {
+                timeline.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-history text-4xl mb-4"></i>
+                        <p>No work activities found</p>
+                        <p class="text-sm mt-2">This personnel has no assigned work orders yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            sortedWorkOrders.forEach(workOrder => {
+                const timelineItem = createActivityTimelineItem(workOrder);
+                timeline.appendChild(timelineItem);
+            });
+        }
+
+        function createActivityTimelineItem(workOrder) {
+            const item = document.createElement('div');
+            item.className = 'timeline-item';
+            
+            const statusColor = {
+                'Running': 'bg-blue-100 text-blue-800',
+                'Done': 'bg-green-100 text-green-800',
+                'Close': 'bg-gray-100 text-gray-800'
+            }[workOrder.status] || 'bg-gray-100 text-gray-800';
+            
+            const lastUpdate = workOrder.updatedAt ? formatTimeAgo(workOrder.updatedAt) : 'Recently';
+            const startDate = workOrder.startDate ? formatDate(workOrder.startDate) : '-';
+            
+            item.innerHTML = `
+                <div class="timeline-content">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="font-bold text-gray-900">${workOrder.workOrderNumber || 'N/A'}</h4>
+                            <p class="text-sm text-gray-600">${workOrder.customer || 'No customer'}</p>
+                        </div>
+                        <span class="text-xs text-gray-500">${lastUpdate}</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-xs px-2 py-1 rounded ${statusColor}">
+                            ${workOrder.status || 'Unknown'}
+                        </span>
+                        <span class="text-xs text-gray-500">
+                            <i class="fas fa-calendar mr-1"></i>${startDate}
+                        </span>
+                        ${workOrder.priority ? `
+                        <span class="text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-800">
+                            ${workOrder.priority}
+                        </span>` : ''}
+                    </div>
+                    
+                    <p class="text-sm text-gray-700">
+                        ${workOrder.workType || 'No work type specified'}
+                        ${workOrder.building ? `• ${workOrder.building}` : ''}
+                    </p>
+                    
+                    ${workOrder.notes ? `
+                    <div class="mt-2 text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                        <i class="fas fa-sticky-note mr-1"></i>
+                        ${workOrder.notes.substring(0, 100)}${workOrder.notes.length > 100 ? '...' : ''}
+                    </div>` : ''}
+                </div>
+            `;
+            
+            return item;
+        }
+
+        function loadCurrentAssignments(person, workOrders) {
+            const container = document.getElementById('currentAssignments');
+            const activeWorkOrders = workOrders.filter(wo => wo.status === 'Running');
+            
+            if (activeWorkOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-tasks text-4xl mb-4"></i>
+                        <p>No current assignments</p>
+                        <p class="text-sm mt-2">This personnel is not currently assigned to any active work orders</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            activeWorkOrders.forEach(workOrder => {
+                const assignment = createAssignmentCard(workOrder);
+                container.appendChild(assignment);
+            });
+        }
+
+        function createAssignmentCard(workOrder) {
+            const card = document.createElement('div');
+            card.className = 'card mb-4';
+            
+            const startDate = workOrder.startDate ? formatDate(workOrder.startDate) : '-';
+            const estimatedTime = workOrder.estimatedTime ? `${workOrder.estimatedTime} days` : '-';
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h4 class="font-bold text-gray-900">${workOrder.workOrderNumber || 'N/A'}</h4>
+                        <p class="text-sm text-gray-600">${workOrder.customer || 'No customer'}</p>
+                    </div>
+                    <span class="status-badge status-running">Active</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 text-sm mb-3">
+                    <div>
+                        <p class="text-gray-500">Building</p>
+                        <p class="font-medium">${workOrder.building || '-'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Work Type</p>
+                        <p class="font-medium">${workOrder.workType || '-'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Start Date</p>
+                        <p class="font-medium">${startDate}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Est. Time</p>
+                        <p class="font-medium">${estimatedTime}</p>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center pt-3 border-t border-gray-200">
+                    <div class="text-xs text-gray-500">
+                        <i class="fas fa-user-tie mr-1"></i>
+                        PIC: ${workOrder.pic || '-'}
+                    </div>
+                    <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" 
+                            onclick="window.open('index.html', '_blank')">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        View in WO System
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // ==================== PERSONNEL FORM FUNCTIONS ====================
+        function openPersonnelForm(personnelId = null) {
+            const modal = document.getElementById('personnelFormModal');
+            const title = document.getElementById('personnelFormTitle');
+            
+            // Reset form
+            document.getElementById('personnelForm').reset();
+            document.getElementById('personnelId').value = '';
+            
+            if (personnelId) {
+                // Edit mode
+                title.textContent = 'Edit Personnel';
+                const person = allPersonnel.find(p => p.id === personnelId);
+                if (person) {
+                    populatePersonnelForm(person);
+                }
+            } else {
+                // Add mode
+                title.textContent = 'Add New Personnel';
+            }
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePersonnelForm() {
+            document.getElementById('personnelFormModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function populatePersonnelForm(person) {
+            document.getElementById('personnelId').value = person.id;
+            document.getElementById('personnelName').value = person.name || '';
+            document.getElementById('employeeId').value = person.employeeId || '';
+            document.getElementById('position').value = person.position || '';
+            document.getElementById('personnelDivision').value = person.division || '';
+            document.getElementById('personnelCompany').value = person.company || '';
+            document.getElementById('personnelStatus').value = person.status || 'available';
+            document.getElementById('contact').value = person.contact || '';
+            document.getElementById('personnelNotes').value = person.notes || '';
+        }
+
+        async function savePersonnel() {
+            const form = document.getElementById('personnelForm');
+            if (!form.checkValidity()) {
+                showToast('Please fill in all required fields', 'warning');
+                return;
+            }
+            
+            const personnelId = document.getElementById('personnelId').value;
+            const isEdit = !!personnelId;
+            
+            const personnelData = {
+                name: document.getElementById('personnelName').value.trim(),
+                employeeId: document.getElementById('employeeId').value.trim() || null,
+                position: document.getElementById('position').value || null,
+                division: document.getElementById('personnelDivision').value || null,
+                company: document.getElementById('personnelCompany').value || null,
+                status: document.getElementById('personnelStatus').value,
+                contact: document.getElementById('contact').value.trim() || null,
+                notes: document.getElementById('personnelNotes').value.trim() || null,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedBy: currentUser?.email || 'system',
+                isActive: true
+            };
+            
+            try {
+                showLoading();
+                
+                if (isEdit) {
+                    await personnelCollection.doc(personnelId).update(personnelData);
+                    showToast('Personnel updated successfully', 'success');
+                } else {
+                    personnelData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    personnelData.createdBy = currentUser?.email || 'system';
+                    await personnelCollection.add(personnelData);
+                    showToast('Personnel added successfully', 'success');
+                }
+                
+                await loadPersonnel();
+                closePersonnelForm();
+                
+            } catch (error) {
+                console.error('Error saving personnel:', error);
+                showToast('Failed to save personnel', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ==================== SYNC FUNCTIONS ====================
+        async function syncWithWorkOrders() {
+            try {
+                showLoading();
+                
+                // Load all work orders
+                await loadWorkOrders();
+                
+                // Extract unique personnel names from work orders
+                const personnelFromWorkOrders = new Set();
+                
+                allWorkOrders.forEach(wo => {
+                    if (wo.personnel) {
+                        if (Array.isArray(wo.personnel)) {
+                            wo.personnel.forEach(person => personnelFromWorkOrders.add(person));
+                        } else if (typeof wo.personnel === 'string') {
+                            try {
+                                const personnelArray = JSON.parse(wo.personnel);
+                                if (Array.isArray(personnelArray)) {
+                                    personnelArray.forEach(person => personnelFromWorkOrders.add(person));
+                                } else {
+                                    personnelFromWorkOrders.add(wo.personnel);
+                                }
+                            } catch (e) {
+                                personnelFromWorkOrders.add(wo.personnel);
+                            }
+                        }
+                    }
+                });
+                
+                // Check for missing personnel in our database
+                const missingPersonnel = [];
+                personnelFromWorkOrders.forEach(personName => {
+                    const exists = allPersonnel.some(p => p.name === personName);
+                    if (!exists) {
+                        missingPersonnel.push({
+                            name: personName,
+                            employeeId: `AUTO-${Date.now().toString().slice(-6)}`,
+                            position: 'Technician',
+                            division: 'Maintenance',
+                            company: 'Genetek Intratama',
+                            status: 'available',
+                            contact: 'N/A',
+                            notes: 'Automatically added from work orders sync',
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            createdBy: currentUser?.email || 'system',
+                            isActive: true
+                        });
+                    }
+                });
+                
+                // Add missing personnel
+                if (missingPersonnel.length > 0) {
+                    const batch = db.batch();
+                    
+                    missingPersonnel.forEach(person => {
+                        const docRef = personnelCollection.doc();
+                        batch.set(docRef, person);
+                    });
+                    
+                    await batch.commit();
+                    showToast(`Added ${missingPersonnel.length} missing personnel from work orders`, 'success');
+                } else {
+                    showToast('All personnel are already synchronized', 'info');
+                }
+                
+                // Reload personnel
+                await loadPersonnel();
+                
+            } catch (error) {
+                console.error('Error syncing with work orders:', error);
+                showToast('Failed to sync with work orders', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ==================== EXPORT FUNCTIONS ====================
+        function exportPersonnelData() {
+            try {
+                if (filteredPersonnel.length === 0) {
+                    showToast('No data to export', 'warning');
+                    return;
+                }
+                
+                // Create CSV content
+                let csvContent = "data:text/csv;charset=utf-8,";
+                
+                // Headers
+                const headers = ["Name", "Employee ID", "Position", "Division", "Company", "Status", "Contact", "Last Updated"];
+                csvContent += headers.join(",") + "\r\n";
+                
+                // Data rows
+                filteredPersonnel.forEach(person => {
+                    const row = [
+                        `"${person.name}"`,
+                        `"${person.employeeId || ''}"`,
+                        `"${person.position || ''}"`,
+                        `"${person.division || ''}"`,
+                        `"${person.company || ''}"`,
+                        `"${getStatusText(person.status)}"`,
+                        `"${person.contact || ''}"`,
+                        `"${person.updatedAt ? formatDateTime(person.updatedAt) : ''}"`
+                    ];
+                    csvContent += row.join(",") + "\r\n";
+                });
+                
+                // Create download link
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `Personnel_List_${new Date().toISOString().split('T')[0]}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showToast('Personnel data exported successfully', 'success');
+                
+            } catch (error) {
+                console.error('Error exporting personnel data:', error);
+                showToast('Failed to export data', 'error');
+            }
+        }
+
+        // ==================== AUTH FUNCTIONS ====================
+        function setupAuthStateObserver() {
+            if (!auth) return;
+            
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    currentUser = user;
+                    console.log('User logged in:', user.email);
+                    
+                    // Load personnel data
+                    await loadPersonnel();
+                    
+                    // Hide loading state
+                    document.getElementById('loadingState').classList.add('hidden');
+                    
+                } else {
+                    console.log('User not logged in, redirecting to main page...');
+                    window.location.href = 'index.html';
+                }
+            }, (error) => {
+                console.error('Auth observer error:', error);
+                showToast('Authentication error', 'error');
+            });
+        }
+
+        function logout() {
+            if (auth && currentUser) {
+                auth.signOut().then(() => {
+                    console.log('Logout successful');
+                    window.location.href = 'index.html';
+                }).catch(error => {
+                    console.error('Logout error:', error);
+                    showToast('Error signing out', 'error');
+                });
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        function initEventListeners() {
+            // Navigation buttons
+            document.getElementById('backToMainBtn').addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+            
+            document.getElementById('addPersonnelBtn').addEventListener('click', () => {
+                openPersonnelForm();
+            });
+            
+            document.getElementById('addFirstPersonnelBtn').addEventListener('click', () => {
+                openPersonnelForm();
+            });
+            
+            document.getElementById('syncDataBtn').addEventListener('click', syncWithWorkOrders);
+            document.getElementById('exportBtn').addEventListener('click', exportPersonnelData);
+            document.getElementById('authButton').addEventListener('click', logout);
+            
+            // Search functionality
+            document.getElementById('searchPersonnel').addEventListener('input', applyFilters);
+            
+            // Filter buttons
+            document.querySelectorAll('.filter-tag').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active button
+                    document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    currentFilter = this.dataset.filter;
+                    applyFilters();
+                });
+            });
+            
+            // Activity modal
+            document.getElementById('closeActivityModal').addEventListener('click', closePersonnelActivityModal);
+            
+            // Activity filter
+            document.getElementById('activityFilter').addEventListener('change', function() {
+                if (selectedPersonnel) {
+                    const workOrders = getPersonnelWorkOrders(selectedPersonnel.name);
+                    loadPersonnelActivities(selectedPersonnel, workOrders);
+                }
+            });
+            
+            // Personnel form modal
+            document.getElementById('closePersonnelFormModal').addEventListener('click', closePersonnelForm);
+            document.getElementById('cancelPersonnelForm').addEventListener('click', closePersonnelForm);
+            document.getElementById('personnelForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                savePersonnel();
+            });
+            
+            // Global click handlers for personnel cards (added dynamically)
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.personnel-card')) {
+                    const card = e.target.closest('.personnel-card');
+                    const personnelId = card.dataset.id;
+                    if (personnelId) {
+                        viewPersonnelActivity(personnelId);
+                    }
+                }
+            });
+        }
+
+        // ==================== GLOBAL FUNCTIONS ====================
+        window.viewPersonnelActivity = viewPersonnelActivity;
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Personnel List initializing...');
+            
+            const firebaseInitialized = initializeFirebase();
+            
+            if (!firebaseInitialized) {
+                showToast('Firebase initialization failed', 'error');
+                return;
+            }
+            
+            setupAuthStateObserver();
+            initEventListeners();
+            
+            console.log('Personnel List initialization complete');
+        });
+
+    </script>
+</body>
+</html>
