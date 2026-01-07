@@ -660,6 +660,11 @@
             padding-left: 3.5rem !important;
         }
 
+        /* ==================== SECTION 2 PADDING ==================== */
+        .pic-customer-section {
+            padding-bottom: 320px !important;
+        }
+
         /* ==================== MODIFIED MODAL STYLES WITH STICKY HEADER & FOOTER ==================== */
         .modal-overlay {
             position: fixed;
@@ -1228,7 +1233,7 @@
                     </div>
                     
                     <!-- Section 2: PIC and Customer -->
-                    <div class="form-section">
+                    <div class="form-section pic-customer-section">
                         <div class="form-section-title">
                             <div class="form-section-icon form-section-icon-secondary">
                                 <i class="fas fa-users"></i>
@@ -1867,15 +1872,15 @@
         }
 
         // ==================== AUTO-COMPLETE SEARCH FUNCTIONS ====================
-        function setupAutoCompleteSearch() {
+        async function setupAutoCompleteSearch() {
             const picInput = document.getElementById('pipelinePIC');
             const customerInput = document.getElementById('pipelineCustomer');
             const addPICBtn = document.getElementById('addPICBtn');
             const addCustomerBtn = document.getElementById('addCustomerBtn');
             
             // Load initial data
-            loadPICList();
-            loadCustomerList();
+            await loadPICList();
+            await loadCustomerList();
             
             // Setup PIC autocomplete
             if (picInput) {
@@ -1994,20 +1999,21 @@
                 const querySnapshot = await picsCollection.orderBy('name').get();
                 PIC_LIST = [];
                 
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    PIC_LIST.push({
-                        id: doc.id,
-                        name: data.name,
-                        email: data.email || '',
-                        phone: data.phone || '',
-                        createdAt: data.createdAt
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        PIC_LIST.push({
+                            id: doc.id,
+                            name: data.name,
+                            email: data.email || '',
+                            phone: data.phone || '',
+                            createdAt: data.createdAt
+                        });
                     });
-                });
-                
-                // If no PICs in Firestore, use default list
-                if (PIC_LIST.length === 0) {
+                    console.log('PIC list loaded from Firestore:', PIC_LIST.length);
+                } else {
                     console.log('No PICs in Firestore, using default list');
+                    // Add default PICs to Firestore
                     const defaultPICs = [
                         "Wahyu Sujoko",
                         "Proboadi hariyo wicaksono", 
@@ -2023,7 +2029,17 @@
                         "Hery Syah Putra"
                     ];
                     
-                    defaultPICs.forEach(name => {
+                    for (const name of defaultPICs) {
+                        const picData = {
+                            name: name,
+                            email: '',
+                            phone: '',
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            createdBy: 'system'
+                        };
+                        
+                        await picsCollection.add(picData);
+                        
                         PIC_LIST.push({
                             id: name.toLowerCase().replace(/\s+/g, '_'),
                             name: name,
@@ -2031,14 +2047,16 @@
                             phone: '',
                             createdAt: new Date()
                         });
-                    });
+                    }
+                    console.log('Default PICs added to Firestore');
                 }
                 
-                console.log('PIC list loaded:', PIC_LIST.length);
+                return PIC_LIST;
                 
             } catch (error) {
                 console.error('Error loading PIC list:', error);
                 showToast('Failed to load PIC list', 'error');
+                return [];
             }
         }
 
@@ -2049,20 +2067,21 @@
                 const querySnapshot = await customersCollection.orderBy('name').get();
                 CUSTOMER_LIST = [];
                 
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    CUSTOMER_LIST.push({
-                        id: doc.id,
-                        name: data.name,
-                        address: data.address || '',
-                        contact: data.contact || '',
-                        createdAt: data.createdAt
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        CUSTOMER_LIST.push({
+                            id: doc.id,
+                            name: data.name,
+                            address: data.address || '',
+                            contact: data.contact || '',
+                            createdAt: data.createdAt
+                        });
                     });
-                });
-                
-                // If no customers in Firestore, use default list
-                if (CUSTOMER_LIST.length === 0) {
+                    console.log('Customer list loaded from Firestore:', CUSTOMER_LIST.length);
+                } else {
                     console.log('No customers in Firestore, using default list');
+                    // Add default customers to Firestore
                     const defaultCustomers = [
                         "PT. GUDANG GARAM Tbk",
                         "PERSEROAN TERBATAS BADAN BANK CENTRAL ASIA TBK",
@@ -2097,7 +2116,17 @@
                         "PT. PT. INDONESIA MOROWALI INDUSTRIAL PARK"
                     ];
                     
-                    defaultCustomers.forEach(name => {
+                    for (const name of defaultCustomers) {
+                        const customerData = {
+                            name: name,
+                            address: '',
+                            contact: '',
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            createdBy: 'system'
+                        };
+                        
+                        await customersCollection.add(customerData);
+                        
                         CUSTOMER_LIST.push({
                             id: name.toLowerCase().replace(/\s+/g, '_'),
                             name: name,
@@ -2105,14 +2134,16 @@
                             contact: '',
                             createdAt: new Date()
                         });
-                    });
+                    }
+                    console.log('Default customers added to Firestore');
                 }
                 
-                console.log('Customer list loaded:', CUSTOMER_LIST.length);
+                return CUSTOMER_LIST;
                 
             } catch (error) {
                 console.error('Error loading customer list:', error);
                 showToast('Failed to load customer list', 'error');
+                return [];
             }
         }
 
@@ -2276,26 +2307,6 @@
                 console.error('Error getting next quotation number:', error);
                 return 1;
             }
-        }
-
-        function updateQuotationNumber() {
-            const company = document.getElementById('pipelineCompany').value;
-            const sow = document.getElementById('pipelineSOW').value;
-            
-            if (!company || !sow) {
-                return;
-            }
-            
-            const now = new Date();
-            const month = now.getMonth() + 1;
-            const year = now.getFullYear();
-            
-            const companyCode = getCompanyCode(company);
-            const sowCode = getSOWCode(sow);
-            const romanMonth = getRomanMonth(month);
-            
-            // Format will be updated when modal opens
-            console.log(`Quotation format: ${companyCode}/${sowCode}/${romanMonth}/${year}`);
         }
 
         async function generateQuotationNumber(nextNumber, company, sow, date) {
@@ -3531,12 +3542,12 @@
         }
 
         // ==================== EVENT LISTENERS ====================
-        function initPipelinesApp() {
+        async function initPipelinesApp() {
             console.log('Initializing Pipelines app...');
             
-            loadPipelineItems();
+            await loadPipelineItems();
+            await setupAutoCompleteSearch();
             setupDragAndDrop();
-            setupAutoCompleteSearch();
             setupCurrencyInputs();
             
             // Add event listeners for quotation number generation
