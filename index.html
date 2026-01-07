@@ -830,7 +830,7 @@
             background: white;
             border-radius: var(--radius-2xl);
             box-shadow: var(--shadow-2xl);
-            max-width: 1200px;
+            max-width: 1400px;
             width: 100%;
             max-height: 90vh;
             overflow: hidden;
@@ -2224,7 +2224,7 @@
 
     <!-- Documentation Modal (Now: Ambil Gambar Modal) -->
     <div id="documentationModal" class="modal-overlay hidden">
-        <div class="modal-content w-full max-w-6xl">
+        <div class="modal-content w-full max-w-7xl">
             <div class="modal-header">
                 <div>
                     <h2 class="modal-title">Ambil Gambar Dokumen</h2>
@@ -3268,6 +3268,9 @@
                 }
             }
             
+            // Check if workorder has photos
+            const hasPhotos = workorder.photos && workorder.photos.length > 0;
+            
             const statusColors = {
                 'Running': 'text-blue-600 bg-blue-50 border-blue-200',
                 'Done': 'text-green-600 bg-green-50 border-green-200',
@@ -3287,6 +3290,11 @@
                         ${workorder.priority ? `
                         <span class="priority-badge ${priorityClass}">
                             ${workorder.priority}
+                        </span>` : ''}
+                        ${hasPhotos ? `
+                        <span class="badge badge-info mt-1">
+                            <i class="fas fa-camera mr-1"></i>
+                            ${workorder.photos.length} photos
                         </span>` : ''}
                     </div>
                 </div>
@@ -3807,8 +3815,8 @@
             const context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            // Get image data as data URL
-            capturedPhotoData = canvas.toDataURL('image/jpeg', 0.9);
+            // Get image data as data URL (base64)
+            capturedPhotoData = canvas.toDataURL('image/jpeg', 0.8); // 0.8 quality untuk ukuran lebih kecil
             
             // Show preview
             photoPreview.src = capturedPhotoData;
@@ -3900,102 +3908,70 @@
             try {
                 showLoading();
                 
-                // Convert data URL to blob
-                const blob = dataURLtoBlob(capturedPhotoData);
+                // Create photo object with base64 data
+                const photoData = {
+                    id: Date.now().toString(),
+                    imageData: capturedPhotoData, // Simpan sebagai base64
+                    category: category,
+                    description: description,
+                    capturedBy: currentUser.email,
+                    capturedAt: new Date().toISOString(),
+                    cameraType: isFrontCamera ? 'front' : 'back'
+                };
                 
-                // Generate unique filename
-                const timestamp = Date.now();
-                const randomString = Math.random().toString(36).substring(2, 15);
-                const fileName = `${selectedWorkOrderId}_${timestamp}_${randomString}.jpg`;
+                // Get current work order
+                const workorderDoc = await workordersCollection.doc(selectedWorkOrderId).get();
+                if (!workorderDoc.exists) {
+                    showToast('Work order tidak ditemukan', 'error');
+                    return;
+                }
                 
-                // Upload to Firebase Storage
-                const storageRef = storage.ref(`documentation/${selectedWorkOrderId}/${fileName}`);
-                const uploadTask = storageRef.put(blob, {
-                    contentType: 'image/jpeg'
+                const workorderData = workorderDoc.data();
+                const currentPhotos = workorderData.photos || [];
+                
+                // Add new photo
+                currentPhotos.push(photoData);
+                
+                // Update work order with new photos array
+                await workordersCollection.doc(selectedWorkOrderId).update({
+                    photos: currentPhotos,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser.email
                 });
                 
-                uploadTask.on('state_changed',
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        console.log('Upload progress:', progress);
-                    },
-                    (error) => {
-                        console.error('Upload error:', error);
-                        showToast('Upload gagal: ' + error.message, 'error');
-                        hideLoading();
-                    },
-                    async () => {
-                        try {
-                            // Get download URL
-                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                            
-                            // Save to Firestore
-                            const photoData = {
-                                workorderId: selectedWorkOrderId,
-                                workOrderNumber: selectedWorkOrderData.workOrderNumber,
-                                fileName: fileName,
-                                originalName: `captured_${timestamp}.jpg`,
-                                downloadURL: downloadURL,
-                                category: category,
-                                description: description,
-                                fileSize: blob.size,
-                                fileType: 'image/jpeg',
-                                capturedBy: currentUser.email,
-                                capturedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                                cameraType: isFrontCamera ? 'front' : 'back'
-                            };
-                            
-                            await documentationCollection.add(photoData);
-                            
-                            // Clear form and reset
-                            document.getElementById('photoDescription').value = '';
-                            document.getElementById('capturedPhotoSection').classList.add('hidden');
-                            document.getElementById('cameraSection').classList.remove('hidden');
-                            
-                            // Restart camera
-                            await startCamera(isFrontCamera ? 'user' : 'environment');
-                            
-                            // Reset capture UI
-                            document.getElementById('photoPreview').classList.add('hidden');
-                            document.getElementById('cameraVideo').classList.remove('hidden');
-                            document.getElementById('capturePhotoBtn').classList.remove('hidden');
-                            document.getElementById('retakePhotoBtn').classList.add('hidden');
-                            document.getElementById('savePhotoBtn').classList.add('hidden');
-                            
-                            // Reload photos
-                            await loadUploadedPhotos();
-                            
-                            showToast('Gambar berhasil disimpan', 'success');
-                            logActivity('capture_documentation', `Mengambil gambar untuk work order ${selectedWorkOrderData.workOrderNumber}`, selectedWorkOrderId);
-                            
-                        } catch (error) {
-                            console.error('Error saving photo data:', error);
-                            showToast('Error menyimpan informasi gambar', 'error');
-                        } finally {
-                            hideLoading();
-                        }
-                    }
-                );
+                // Clear form and reset
+                document.getElementById('photoDescription').value = '';
+                document.getElementById('capturedPhotoSection').classList.add('hidden');
+                document.getElementById('cameraSection').classList.remove('hidden');
+                
+                // Restart camera
+                await startCamera(isFrontCamera ? 'user' : 'environment');
+                
+                // Reset capture UI
+                document.getElementById('photoPreview').classList.add('hidden');
+                document.getElementById('cameraVideo').classList.remove('hidden');
+                document.getElementById('capturePhotoBtn').classList.remove('hidden');
+                document.getElementById('retakePhotoBtn').classList.add('hidden');
+                document.getElementById('savePhotoBtn').classList.add('hidden');
+                
+                // Reload work orders to update display
+                await loadWorkOrders();
+                
+                // Reload uploaded photos in modal
+                await loadUploadedPhotos();
+                
+                showToast(`Gambar berhasil disimpan untuk ${workorderData.workOrderNumber}!`, 'success');
+                logActivity('capture_documentation', `Mengambil gambar untuk work order ${workorderData.workOrderNumber}`, selectedWorkOrderId);
+                
+                // Show notification about preview availability
+                showToast('Gambar sudah bisa dilihat di detail work order', 'info');
                 
             } catch (error) {
-                console.error('Upload error:', error);
-                showToast('Upload gagal', 'error');
+                console.error('Error saving photo:', error);
+                showToast('Gagal menyimpan gambar: ' + error.message, 'error');
+            } finally {
                 hideLoading();
             }
-        }
-
-        function dataURLtoBlob(dataURL) {
-            const arr = dataURL.split(',');
-            const mime = arr[0].match(/:(.*?);/)[1];
-            const bstr = atob(arr[1]);
-            let n = bstr.length;
-            const u8arr = new Uint8Array(n);
-            
-            while (n--) {
-                u8arr[n] = bstr.charCodeAt(n);
-            }
-            
-            return new Blob([u8arr], { type: mime });
         }
 
         // ==================== DOCUMENTATION FUNCTIONS ====================
@@ -4165,18 +4141,14 @@
             if (!selectedWorkOrderId) return;
             
             try {
-                const querySnapshot = await documentationCollection
-                    .where('workorderId', '==', selectedWorkOrderId)
-                    .orderBy('capturedAt', 'desc')
-                    .get();
+                const workorderDoc = await workordersCollection.doc(selectedWorkOrderId).get();
+                if (!workorderDoc.exists) {
+                    showToast('Work order tidak ditemukan', 'error');
+                    return;
+                }
                 
-                uploadedPhotos = [];
-                querySnapshot.forEach((doc) => {
-                    uploadedPhotos.push({
-                        id: doc.id,
-                        ...doc.data()
-                    });
-                });
+                const workorderData = workorderDoc.data();
+                uploadedPhotos = workorderData.photos || [];
                 
                 displayUploadedPhotos();
                 
@@ -4216,19 +4188,19 @@
             item.className = 'photo-item';
             item.dataset.id = photo.id;
             
-            const timeAgo = formatTimeAgo(photo.capturedAt || photo.uploadedAt);
+            const timeAgo = formatTimeAgo(new Date(photo.capturedAt));
             const cameraIcon = photo.cameraType === 'front' ? 'fa-camera' : 'fa-camera-retro';
             const cameraTitle = photo.cameraType === 'front' ? 'Kamera Depan' : 'Kamera Belakang';
             
             item.innerHTML = `
-                <img src="${photo.downloadURL}" 
+                <img src="${photo.imageData}" 
                      alt="${photo.description}" 
                      class="photo-img"
                      loading="lazy"
-                     onclick="openPhotoPreview('${photo.downloadURL}', '${photo.description}')">
+                     onclick="openPhotoPreview('${photo.imageData}', '${photo.description}')">
                 
                 <div class="photo-actions">
-                    <div class="photo-action-btn" onclick="openPhotoPreview('${photo.downloadURL}', '${photo.description}')" title="Lihat">
+                    <div class="photo-action-btn" onclick="openPhotoPreview('${photo.imageData}', '${photo.description}')" title="Lihat">
                         <i class="fas fa-eye text-blue-600"></i>
                     </div>
                     <div class="photo-action-btn" onclick="deletePhoto('${photo.id}')" title="Hapus">
@@ -4248,7 +4220,7 @@
                     </p>
                     <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
                         <i class="fas ${cameraIcon}" title="${cameraTitle}"></i>
-                        <span>${formatFileSize(photo.fileSize)} • ${photo.capturedBy || photo.uploadedBy}</span>
+                        <span>${photo.capturedBy || 'Unknown'}</span>
                     </p>
                 </div>
             `;
@@ -4258,21 +4230,13 @@
 
         async function loadWorkOrderPhotos(workorderId) {
             try {
-                const querySnapshot = await documentationCollection
-                    .where('workorderId', '==', workorderId)
-                    .orderBy('capturedAt', 'desc')
-                    .limit(6) // Limit to 6 photos for thumbnail view
-                    .get();
+                const workorderDoc = await workordersCollection.doc(workorderId).get();
+                if (!workorderDoc.exists) {
+                    return [];
+                }
                 
-                const photos = [];
-                querySnapshot.forEach((doc) => {
-                    photos.push({
-                        id: doc.id,
-                        ...doc.data()
-                    });
-                });
-                
-                return photos;
+                const workorderData = workorderDoc.data();
+                return workorderData.photos || [];
             } catch (error) {
                 console.error('Error loading work order photos:', error);
                 return [];
@@ -4297,15 +4261,15 @@
             noPhotosMessage.classList.add('hidden');
             thumbnails.innerHTML = '';
             
-            // Display thumbnails
-            photos.forEach((photo, index) => {
+            // Display thumbnails (limit to 6 for thumbnail view)
+            photos.slice(0, 6).forEach((photo, index) => {
                 const thumbnail = document.createElement('div');
                 thumbnail.className = 'photo-thumbnail-item';
                 thumbnail.innerHTML = `
-                    <img src="${photo.downloadURL}" 
+                    <img src="${photo.imageData}" 
                          alt="${photo.description}" 
                          class="photo-thumbnail"
-                         onclick="openPhotoPreview('${photo.downloadURL}', '${photo.description}')">
+                         onclick="openPhotoPreview('${photo.imageData}', '${photo.description}')">
                     <div class="thumbnail-overlay">
                         ${photo.category}
                     </div>
@@ -4327,11 +4291,11 @@
             };
         }
 
-        function openPhotoPreview(imageUrl, description) {
+        function openPhotoPreview(imageData, description) {
             const modal = document.getElementById('photoPreviewModal');
             const previewImage = document.getElementById('previewImage');
             
-            previewImage.src = imageUrl;
+            previewImage.src = imageData;
             previewImage.alt = description;
             
             modal.classList.remove('hidden');
@@ -4347,36 +4311,44 @@
         }
 
         async function deletePhoto(photoId) {
+            if (!selectedWorkOrderId || !photoId) return;
+            
             if (!confirm('Apakah Anda yakin ingin menghapus gambar ini?')) return;
             
             try {
                 showLoading();
                 
-                // Get photo data
-                const photoDoc = await documentationCollection.doc(photoId).get();
-                if (!photoDoc.exists) {
-                    showToast('Gambar tidak ditemukan', 'error');
+                // Get current work order
+                const workorderDoc = await workordersCollection.doc(selectedWorkOrderId).get();
+                if (!workorderDoc.exists) {
+                    showToast('Work order tidak ditemukan', 'error');
                     return;
                 }
                 
-                const photoData = photoDoc.data();
+                const workorderData = workorderDoc.data();
+                const currentPhotos = workorderData.photos || [];
                 
-                // Delete from Storage
-                const filePath = `documentation/${photoData.workorderId}/${photoData.fileName}`;
-                const storageRef = storage.ref(filePath);
-                await storageRef.delete();
+                // Filter out the photo to delete
+                const updatedPhotos = currentPhotos.filter(photo => photo.id !== photoId);
                 
-                // Delete from Firestore
-                await documentationCollection.doc(photoId).delete();
+                // Update work order
+                await workordersCollection.doc(selectedWorkOrderId).update({
+                    photos: updatedPhotos,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser.email
+                });
                 
-                // Remove from local array
-                uploadedPhotos = uploadedPhotos.filter(p => p.id !== photoId);
+                // Update local array
+                uploadedPhotos = updatedPhotos;
                 
                 // Update UI
                 displayUploadedPhotos();
                 
+                // Reload work orders to update count display
+                await loadWorkOrders();
+                
                 showToast('Gambar berhasil dihapus', 'success');
-                logActivity('delete_documentation', `Menghapus gambar dari work order ${photoData.workOrderNumber}`, photoData.workorderId);
+                logActivity('delete_documentation', `Menghapus gambar dari work order ${workorderData.workOrderNumber}`, selectedWorkOrderId);
                 
             } catch (error) {
                 console.error('Error deleting photo:', error);
@@ -4384,12 +4356,6 @@
             } finally {
                 hideLoading();
             }
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes < 1024) return bytes + ' bytes';
-            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-            else return (bytes / 1048576).toFixed(1) + ' MB';
         }
 
         // ==================== WORK ORDER NUMBER FUNCTIONS ====================
@@ -6057,6 +6023,7 @@
                 } else {
                     workorderData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                     workorderData.createdBy = currentUser.email;
+                    workorderData.photos = []; // Initialize empty photos array
                     const result = await workordersCollection.add(workorderData);
                     
                     await logStatusChange(result.id, workorderData.workOrderNumber, 'New', workorderData.status);
