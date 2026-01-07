@@ -1174,7 +1174,8 @@
                                        id="pipelineNo" 
                                        class="form-input"
                                        required
-                                       placeholder="Enter item number">
+                                       placeholder="Nomor urut akan di-generate otomatis"
+                                       readonly>
                             </div>
                             
                             <div>
@@ -1183,16 +1184,18 @@
                                 </label>
                                 <input type="text" 
                                        id="pipelineQuotation" 
-                                       class="form-input"
+                                       class="form-input bg-gray-50"
                                        required
-                                       placeholder="Enter quotation number">
+                                       readonly
+                                       placeholder="Akan digenerate otomatis">
+                                <p class="text-xs text-gray-500 mt-1">Format: 001/GI/FAS/I/2026 (auto-generated)</p>
                             </div>
                             
                             <div>
                                 <label class="form-label required-field" for="pipelineCompany">
                                     Company
                                 </label>
-                                <select id="pipelineCompany" class="form-input" required>
+                                <select id="pipelineCompany" class="form-input" required onchange="updateQuotationNumber()">
                                     <option value="">Select Company</option>
                                     <option value="Genetek">Genetek</option>
                                     <option value="Effrensindo">Effrensindo</option>
@@ -1203,7 +1206,7 @@
                                 <label class="form-label required-field" for="pipelineSOW">
                                     SOW
                                 </label>
-                                <select id="pipelineSOW" class="form-input" required>
+                                <select id="pipelineSOW" class="form-input" required onchange="updateQuotationNumber()">
                                     <option value="">Select SOW</option>
                                     <option value="FAS">FAS</option>
                                     <option value="Vesda">Vesda</option>
@@ -1214,10 +1217,9 @@
                     </div>
                     
                     <!-- Section 2: PIC and Customer -->
-                    <div class="form-section" style="
-                        padding-bottom: 320px;">
-                             <div class="form-section-title">
-                             <div class="form-section-icon form-section-icon-secondary">
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <div class="form-section-icon form-section-icon-secondary">
                                 <i class="fas fa-users"></i>
                             </div>
                             <span>Person In Charge & Customer</span>
@@ -2216,6 +2218,90 @@
             }
         }
 
+        // ==================== NUMBERING SYSTEM FUNCTIONS ====================
+        function getCompanyCode(company) {
+            switch(company) {
+                case 'Genetek': return 'GI';
+                case 'Effrensindo': return 'EFK';
+                default: return 'XX';
+            }
+        }
+
+        function getSOWCode(sow) {
+            switch(sow) {
+                case 'FAS': return 'FAS';
+                case 'Vesda': return 'VESDA';
+                case 'FSS': return 'FSS';
+                default: return 'GEN';
+            }
+        }
+
+        function getRomanMonth(month) {
+            const romanNumerals = {
+                1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI',
+                7: 'VII', 8: 'VIII', 9: 'IX', 10: 'X', 11: 'XI', 12: 'XII'
+            };
+            return romanNumerals[month] || 'I';
+        }
+
+        async function getNextQuotationNumber() {
+            try {
+                // Get the last pipeline item to determine next number
+                const querySnapshot = await pipelinesCollection
+                    .orderBy('no', 'desc')
+                    .limit(1)
+                    .get();
+                
+                let nextNumber = 1;
+                
+                if (!querySnapshot.empty) {
+                    const lastItem = querySnapshot.docs[0].data();
+                    nextNumber = (lastItem.no || 0) + 1;
+                }
+                
+                return nextNumber;
+                
+            } catch (error) {
+                console.error('Error getting next quotation number:', error);
+                return 1;
+            }
+        }
+
+        function updateQuotationNumber() {
+            const company = document.getElementById('pipelineCompany').value;
+            const sow = document.getElementById('pipelineSOW').value;
+            
+            if (!company || !sow) {
+                return;
+            }
+            
+            const now = new Date();
+            const month = now.getMonth() + 1;
+            const year = now.getFullYear();
+            
+            const companyCode = getCompanyCode(company);
+            const sowCode = getSOWCode(sow);
+            const romanMonth = getRomanMonth(month);
+            
+            // Format will be updated when modal opens
+            console.log(`Quotation format: ${companyCode}/${sowCode}/${romanMonth}/${year}`);
+        }
+
+        async function generateQuotationNumber(nextNumber, company, sow) {
+            const now = new Date();
+            const month = now.getMonth() + 1;
+            const year = now.getFullYear();
+            
+            const companyCode = getCompanyCode(company);
+            const sowCode = getSOWCode(sow);
+            const romanMonth = getRomanMonth(month);
+            
+            // Format number with leading zeros
+            const formattedNumber = nextNumber.toString().padStart(3, '0');
+            
+            return `${formattedNumber}/${companyCode}/${sowCode}/${romanMonth}/${year}`;
+        }
+
         // ==================== PIPELINE FUNCTIONS ====================
         async function loadPipelineItems() {
             console.log('Loading pipeline items...');
@@ -2575,7 +2661,7 @@
         }
 
         // ==================== MODAL FUNCTIONS ====================
-        function createNewPipelineItem() {
+        async function createNewPipelineItem() {
             console.log('Creating new pipeline item');
             
             if (!canCreatePipelineItem()) {
@@ -2586,7 +2672,7 @@
             openPipelineItemModal();
         }
 
-        function openPipelineItemModal(itemId = null) {
+        async function openPipelineItemModal(itemId = null) {
             console.log('Opening pipeline item modal:', itemId ? 'edit' : 'create');
             
             const modal = document.getElementById('pipelineItemModal');
@@ -2630,6 +2716,23 @@
                 modalTitle.textContent = 'New Pipeline Item';
                 document.getElementById('pipelineStatus').value = 'Open';
                 document.getElementById('pipelineProgress').value = 0;
+                
+                // Generate new number for new item
+                try {
+                    const nextNumber = await getNextQuotationNumber();
+                    document.getElementById('pipelineNo').value = nextNumber;
+                    
+                    // Generate quotation number preview
+                    const company = document.getElementById('pipelineCompany').value;
+                    const sow = document.getElementById('pipelineSOW').value;
+                    
+                    if (company && sow) {
+                        const quotationNumber = await generateQuotationNumber(nextNumber, company, sow);
+                        document.getElementById('pipelineQuotation').value = quotationNumber;
+                    }
+                } catch (error) {
+                    console.error('Error generating quotation number:', error);
+                }
             }
             
             // Setup progress slider
@@ -2651,7 +2754,7 @@
             document.body.style.overflow = 'hidden';
         }
 
-        function populatePipelineModalForm(item) {
+        async function populatePipelineModalForm(item) {
             document.getElementById('pipelineItemId').value = item.id;
             document.getElementById('pipelineNo').value = item.no || '';
             document.getElementById('pipelineQuotation').value = item.quotation || '';
@@ -2686,11 +2789,23 @@
             const originalStatus = document.getElementById('originalPipelineStatus').value;
             const isEdit = !!itemId;
             
+            const company = document.getElementById('pipelineCompany').value;
+            const sow = document.getElementById('pipelineSOW').value;
+            let no = parseInt(document.getElementById('pipelineNo').value) || 0;
+            
+            // Generate quotation number if creating new item
+            let quotationNumber = document.getElementById('pipelineQuotation').value.trim();
+            
+            if (!isEdit && company && sow && no > 0) {
+                // For new items, generate the quotation number
+                quotationNumber = await generateQuotationNumber(no, company, sow);
+            }
+            
             const pipelineData = {
-                no: parseInt(document.getElementById('pipelineNo').value) || 0,
-                quotation: document.getElementById('pipelineQuotation').value.trim(),
-                company: document.getElementById('pipelineCompany').value,
-                sow: document.getElementById('pipelineSOW').value,
+                no: no,
+                quotation: quotationNumber,
+                company: company,
+                sow: sow,
                 pic: document.getElementById('pipelinePIC').value.trim(),
                 customer: document.getElementById('pipelineCustomer').value.trim(),
                 project: document.getElementById('pipelineProject').value.trim(),
@@ -3346,6 +3461,15 @@
             setupAutoCompleteSearch();
             setupCurrencyInputs();
             
+            // Add event listeners for quotation number generation
+            document.getElementById('pipelineCompany').addEventListener('change', async function() {
+                await updateQuotationPreview();
+            });
+            
+            document.getElementById('pipelineSOW').addEventListener('change', async function() {
+                await updateQuotationPreview();
+            });
+            
             // Add event listeners
             document.getElementById('newPipelineItemBtn').addEventListener('click', createNewPipelineItem);
             document.getElementById('backToDashboardBtn').addEventListener('click', backToDashboard);
@@ -3383,6 +3507,20 @@
             });
             
             console.log('Pipelines app initialization complete');
+        }
+
+        async function updateQuotationPreview() {
+            const company = document.getElementById('pipelineCompany').value;
+            const sow = document.getElementById('pipelineSOW').value;
+            const noInput = document.getElementById('pipelineNo');
+            
+            if (company && sow && noInput && noInput.value) {
+                const no = parseInt(noInput.value);
+                if (!isNaN(no) && no > 0) {
+                    const quotationNumber = await generateQuotationNumber(no, company, sow);
+                    document.getElementById('pipelineQuotation').value = quotationNumber;
+                }
+            }
         }
 
         // ==================== INITIALIZATION ====================
