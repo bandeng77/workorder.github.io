@@ -1842,6 +1842,10 @@
                         <button id="pipelinesBtn" class="btn btn-primary">
                             <i class="fas fa-project-diagram"></i>
                             <span>Pipelines</span>
+                            <!-- Personnel List Button -->
+                        <button id="personnelListBtn" class="btn btn-primary">
+                            <i class="fas fa-users"></i>
+                            <span>Personnel List</span>
                         </button>
                         <button id="authButton" class="btn btn-danger">
                             <i class="fas fa-sign-out-alt"></i>
@@ -6098,7 +6102,23 @@
             
             console.log('App initialization complete');
         }
-
+            // Personnel List button
+            document.getElementById('personnelListBtn').addEventListener('click', openPersonnelList);
+            
+            // Function untuk membuka Personnel List
+            function openPersonnelList() {
+                console.log('Opening personnel list...');
+                // Redirect ke personnellist.html
+                window.open('personnellist.html', '_blank');
+            }
+        // ==================== PERSONNEL LIST FUNCTION ====================
+        function openPersonnelList() {
+            console.log('Opening personnel list...');
+            
+            // Redirect to personnel list page
+            window.open('personnellist.html', '_blank');
+        }
+        
         function switchView(view) {
             currentView = view;
             
