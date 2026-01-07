@@ -1689,7 +1689,261 @@
         let draggedItem = null;
         let charts = {};
         
-        // Data for autocomplete
+        // Data for autocomplete (static data)
+        const PIC_LIST_STATIC = [
+            "Wahyu Sujoko",
+            "Proboadi hariyo wicaksono", 
+            "Fiki hernawan",
+            "Indra kurniawan",
+            "Aries A Bastian",
+            "Mochammad Gorwantoro Putra", 
+            "Yudiyono", 
+            "Muhamad husni", 
+            "edwin qomarudin", 
+            "Edy Amin",
+            "Heksi Prasetyo", 
+            "Hery Syah Putra"
+        ];
+        
+        const CUSTOMER_LIST_STATIC = [
+            "PT. GUDANG GARAM Tbk",
+            "PERSEROAN TERBATAS BADAN BANK CENTRAL ASIA TBK",
+            "PT. FRISIAN FLAG INDONESIA",
+            "PT. GRIYA SIRA INDAH",
+            "PT. PUTRA SINAR PERMAJA",
+            "PT. PLAZA INDONESIA REALTY Tbk",
+            "CV. KROSS SARANA TEKNIK",
+            "PT. GEMILANG CIPTA ABADI",
+            "PT. MARYO MAKMUR TEHNIK",
+            "PT. SOUTH PACIFIC VISCOSE",
+            "PT. HOTEL CANDI BARU",
+            "PT. SMILE BRIGHT WHITE (LAND OF SMILES CLINIC)",
+            "PT. PURI MATAHARI",
+            "PT. MENARA ASTRA",
+            "PT. PLAZA INDONESIA MANDIRI",
+            "PT. WYNNCOR BALI",
+            "PT. JONES LANG LASALLE",
+            "PT. SATAHI CIPTA MANDIRI",
+            "YAYASAN BUDDHA TZU CHI MEDIKA INDONESIA",
+            "PT. INDONESIA MOC SERVICE",
+            "PT. RAMA KUTA HOTEL",
+            "PT. HANDAL UTAMA BUANA",
+            "PT. SURYA MARGA LUHUR",
+            "PT. GRAHA SIDANG PRATAMA",
+            "PT. LASALLEFOOD INDONESIA",
+            "SARULLA OPERATIONS LTD",
+            "SHM FIRE SAFETY Pte.Ltd",
+            "PT. WAHANA NUSANTARA",
+            "PT. YOGYA CENTRAL TERPADU",
+            "PT. DONGGI SENORO LNG",
+            "PT. PT. INDONESIA MOROWALI INDUSTRIAL PARK",
+            "CAKRA NUSA UTAMA",
+            "PT. BIMANTARA CITRA",
+            "PT. ALAM BALI INTERNATIONAL",
+            "PT. ASIA PROPERTINDO BUILDING",
+            "P3SRS-KC KERATON APARTMENT PLAZA INDONESIA",
+            "PT. TRIGUNA MANDALA",
+            "PT. PATRA JASA",
+            "PT. TOTAL FIRE INDONESIA",
+            "PERHIMPUNAN PEMILIK DAN PENGHUNI SATUAN RUMAH SUSUN APARTEMEN CIPUTRA WORLD 2 JAKARTA",
+            "PT. SPECTRO PRATAMA INDONESIA",
+            "PT. PAKUWON PERMAI",
+            "PT. BINA GRAHA MAKMUR",
+            "PT. JAFA KARYA TEKNIK",
+            "PT. MINH GIA CONSORSIUM",
+            "PERHIMPUNAN PENGHUNI APARTEMEN BATAVIA",
+            "PT. SURYA ANDALAN BUMI PERSADA",
+            "PT. SINAR CEMERLANG GEMILANG",
+            "PT. SINAR GALAXY",
+            "PT. MELFICON PERSADA ABADI",
+            "PT. APICAL KAO CHEMICAL",
+            "PT. GRAHA BENGKULU MAKMUR",
+            "PT. VOPAK TERMINAL MERAK",
+            "PT. PLAZA LIFESTYLE PRIMA",
+            "PT. BLUEMOON INTERNASIONAL",
+            "PT. HONEYWELL INDONESIA",
+            "PT. BUNGASARI FLOUR MILLS INDONESIA",
+            "PT. ROYAL PACIFIC NUSANTARA",
+            "PT. IDEA SEJAHTERA INDONESIA",
+            "PT. BERCA MANDIRI PERKASA",
+            "PT. LAX TEKNOLOGI INDONESIA",
+            "MU RESEARCH AND CONSULTING INDONESIA",
+            "PT. PROMATRIX FACILITIES MANAGEMENT",
+            "PT. JISK PERSADA SOLUSI",
+            "PT. SEMEN INDONESIA LOGISTIK",
+            "PT. MANE INDONESIA",
+            "PT. JGC INDONESIA",
+            "PT. JOHNSON CONTROLS INDONESIA",
+            "PT. WIFGASINDO DINAMIKA INSTRUMENT ENGINEERING",
+            "PT. BAHANASEMESTA CITRANUSANTARA",
+            "PT. INDOKO PERKASA PRIMA",
+            "PT. ARKADIA SINERGI INDONESIA",
+            "PT. NURBAIZ RIZKY SEJAHTERA",
+            "PT. PILAR GARBA INTI",
+            "PT. CITRA PUTRA REALTY",
+            "JADESTONE ENERGY (LEMANG) PTE LTD",
+            "PT. LANGGENG KREASI JAYA PRIMA",
+            "RUMAH SAKIT JANTUNG HARAPAN KITA JAKARTA DITJEN PELAYANAN KESEHATAN KEMENTRIAN KESEHATAN",
+            "PT. GELYN SIDNI",
+            "YUSKITAMA LESTARI",
+            "PPPSRS APARTEMEN THE ELEMENTS",
+            "PPPSRS PERKANTORAN EKSEKUTIF SATRIO TOWER",
+            "PT. BORNEO PROPERTINDO MANDIRI",
+            "PT. KARTA WADANA ABADI",
+            "PT. KUSUMA INTI ABADI",
+            "PT. HANJAYA MANDALA SAMPOERNA TBK",
+            "PT. SENA AVINDO",
+            "PT. INDOSAFE TIRTA MAKMUR",
+            "PT. INDONESIA ANEKATAMA MANDIRI",
+            "PT. JAYA BONS ABADI",
+            "PT. GRAHA ALAM LESTARI",
+            "PT. MEGA HOTEL LESTARI",
+            "PT. PARA BALI PROPERTINDO",
+            "PT. MATTEL INDONESIA",
+            "PT. GRAHA WAHANA NUSANTARA",
+            "PT. BINARA GUNA MEDIKTAMA",
+            "PT. SODEXO SINERGI INDONESIA",
+            "PT. MULIA KARYA GEMILANG",
+            "PT. RAMAYANA HARTA PRATAMA",
+            "PT. SIMEX PHARMACEUTICAL INDONESIA",
+            "PT. MIRAMA WISATA",
+            "PPPSRS THE PAKUBUWON VIEW",
+            "PT. MUTIARA PERMATA MULIA",
+            "PT. CBRE CONSULTANCY SERVICES",
+            "PT. KARANG MAS SEJAHTERA",
+            "PT. RUMAH SAKIT PONDOK INDAH",
+            "PT. YUSKITAMA LESTARI",
+            "PT. TAIYO SINAR RAYA TEKNIK",
+            "PT. SHR HOTEL INDONESIA",
+            "PPRSH FOUR SEASONS REGENT RESIDENCES",
+            "PP THE PAKUBUWON RESIDENCE",
+            "PT. SARIARTHAMAS HOTEL INTERNATIONAL",
+            "PT. PT. BENTENG TEGUH PERKASA",
+            "BHUMI PRAMA ARJASA",
+            "PT. AFG VENTURA TEKNOLOGI",
+            "PT. TARANA REKSA CIPTAKARYA",
+            "MARS SYMBIOSCIENCE INDONESIA",
+            "PT. KREASI CIPTA KARSA",
+            "PT. WIRA EKA BHAKTI",
+            "PERKUMPULAN PENGHUNI RUMAH SUSUN REGATTA-VB",
+            "CV. ZULFIRA KREASINDO",
+            "PT. REICON WIRAINDO PRATAMA",
+            "PT. PURI ZUQNI",
+            "PT. SILOAM INTERNATIONAL HOSPITALS Tbk",
+            "PT. KARUNIA ARTHA PRATAMA",
+            "PT. KAWASAN MANDIRI BERSAMA",
+            "PT. JAYA BINARA MEDIKTAMA",
+            "PT. CENTRE POINT MEDAN",
+            "PT. SRIBOGA FLOUR MILL",
+            "HYUNDAI ENGINEERING & CONSTRUCTION CO,LTD",
+            "PT. EPCON GRAHA GUNA",
+            "PT. YAS KONSULTAN INDONESIA",
+            "PT. KARYA PROPERTINDO INVESTAMA",
+            "PT. BUMI SERPONG DAMAI",
+            "PT. PAKUWON PERMAI",
+            "PT. API METRA GRAHA",
+            "EUROASIATIC JAYA",
+            "PT. MUSTIKA MEMADATA",
+            "PT. ISS INDONESIA",
+            "PERHIMPUNAN PENGHUNI PERKANTORAN PLAZA ASIA",
+            "PT. EMPAT PILAR ADIDAYA",
+            "PT. SUMBER MESIN RAYA",
+            "PT. SARANA UTAMA ADIMANDIRI",
+            "PT. BARNABY KONSTRUKSI SEJAHTERA",
+            "CV. ANEKA MANDIRI",
+            "PERKUMPULAN HUSADA",
+            "PT. FINUSOLPRIMA FARMA INTERNASIONAL",
+            "CV. LENTERA TILAS TEHNIK",
+            "PT. VILLAS HOTEL",
+            "PT. ARISTA PRATAMA JAYA",
+            "PT. WIKA REALTY MINOR DEVELOPMENT",
+            "PT. INTEGRA METRICON MANDIRI",
+            "PT. SENTRATEK ADIPRESTASI",
+            "PT. PT. BANK CENTRAL ASIA TBK",
+            "PT. HARAPAN GLOBAL NIAGA",
+            "PT. PAKUWON JATI TBK",
+            "PERHIMPUNAN PEMILIK DAN PENGHUNI SATUAN RUMAH SUSUN SEMENTARA CIPUTRA INTERNATIONAL - 1",
+            "BPK. ROHMADI",
+            "PT. DUA CAHAYA SAKTI",
+            "PT. CIPTAKARYA MANDIRI JAYA",
+            "PT. MANGGALA GELORA PERKASA",
+            "PT. SAMAMANTAP SEJAHTERA",
+            "PT. TELKOM LANDMARK TOWER",
+            "PT. ANUMANA GRAHA CANTIKA",
+            "PT. PRIMA PRATAMA CITRA",
+            "RS EVASARI",
+            "PT. DUTA ANGGADA REALTY TBK",
+            "PT. TIGA DUA DELAPAN",
+            "PT. DWITAMA ALAM SEJAHTERA",
+            "PT. WAHANA ADIREKSA PRATAMA",
+            "PERSEROAN TERBATAS - BADAN SURYA BAYU SAKTI",
+            "PT. PANTRAYA",
+            "PT. KIEVIT INDONESIA",
+            "PT. ALLTECH SOLUSINDO",
+            "PT. KALBE FARMA TBK",
+            "PT. SURYA GRAHA PERTIWI",
+            "PT. ANDAL MAKMUR AGUNG",
+            "KAP PAUL HADIWINATA, HIDAJAT, ARSONO, RETNO, PALILINGAN & REKAN",
+            "PT. ALFA PRIMA TEHNINDO",
+            "PT. BUMITANGERANG MESINDOTAMA",
+            "PT. SETYA SOLUSI SEJAHTERA",
+            "PT. ADITYRA ROKKO KENCANA",
+            "PT. MANDIRI ANDAL SEJAHTERA",
+            "PT. GRHA HATTEN DUASATU",
+            "PT. SEMESTA INDAH PERMATA",
+            "PT. GEMA GRAHA SARANA",
+            "PERSEK. OENTOENG SURIA & PARTNERS",
+            "PT. METROPOLITAN KENTJANA TBK",
+            "PT. DUTA ANGGADA REALTY - CHASE PLAZA",
+            "PT. CIPUTRA RESIDENCE",
+            "PT. GENTAMULIA INFRA",
+            "PT. KAMADJAJA LOGISTICS",
+            "PT. PESONA PURI PROPERTI",
+            "PT. HEXALINDO MITRA PERKASA",
+            "PT. SUMMARECON HOTELINDO",
+            "PT. KUSUMA INTI ABADI",
+            "PT. JELL ENGINEERING KARYA",
+            "PT. SURYAMAS DUTA MAKMUR TBK",
+            "PT. CENTRAL TEHNIK SOLUSINDO",
+            "PT. SINAR MAS AGRO RESOURCES AND TECHNOLOGY TBK",
+            "PT. UNITA BRANINDO",
+            "PT. PENGELOLA LANDMARK PLUIT",
+            "PT. GRAHA LAYAR PRIMA TBK",
+            "DASATRIA UTAMA",
+            "PT. KIDE INTERNATIONAL INDONESIA",
+            "PT. PRIMASATYA REKSACIPTA TEHNIKA",
+            "PT. CONSTRUCTA BUILDERS",
+            "PT. PUTERA SAMPOERNA",
+            "PT. TOTALFIRE INDONESIA",
+            "PT. OPHTHALINDO JAYA",
+            "PT. BUANA MITRA GLOBALINDO",
+            "PT. TEKNIKA INTI PERKASA",
+            "PT. MEGA MULIA MULTIABADI",
+            "PT. SANGGRAHA DHIKA",
+            "PT. AZBIL BERCA INDONESIA",
+            "PT. ESPANIKA DWI SENTOSA",
+            "PPPSRS HUNIAN APARTEMEN SOUTH HILLS",
+            "PERSEROAN TERBATAS BADAN GRAHA SENGGIGI (ARUNA SENGGIGI RESORT & CONVENTION)",
+            "PT. SUCCESS VENTURE HOTEL INVESTMENTS",
+            "PT. SUCCESS VENTURE SERVICED SUITES INVESTMENTS",
+            "PT. SURYA INTER WISESA",
+            "PT. MHG BALANGAN",
+            "PT. TOA COATING INDONESIA",
+            "PT. GEMA INTERMULIA SEJAHTERA",
+            "PT. PARIDAN INTI SOLUSI PERSADA",
+            "PT. SANTOS JAYA ABADI",
+            "PT. SUPRA BOGA LESTARI TBk",
+            "PT. YESTAR KARYA UTAMA",
+            "PT. JON MERELL JAYA",
+            "PT. INDOAGRI DAITOCACAO",
+            "PT. OCS GLOBAL SERVICES",
+            "PT. ADEMCO SECURITY INDONESIA",
+            "PERHIMPUNAN PENGHUNI RUMAH SUSUN (SEMENTARA) APARTEMEN PURI ORCHARD",
+            "PT. KIAN MULIA MANUNGGAL",
+            "BPK. LIE EDDY"
+        ];
+        
+        // Combined data for autocomplete
         let PIC_LIST = [];
         let CUSTOMER_LIST = [];
         
@@ -1878,9 +2132,9 @@
             const addPICBtn = document.getElementById('addPICBtn');
             const addCustomerBtn = document.getElementById('addCustomerBtn');
             
-            // Load initial data
-            await loadPICList();
-            await loadCustomerList();
+            // Load combined data
+            await loadCombinedPICList();
+            await loadCombinedCustomerList();
             
             // Setup PIC autocomplete
             if (picInput) {
@@ -1992,158 +2246,109 @@
             });
         }
 
-        async function loadPICList() {
+        async function loadCombinedPICList() {
             try {
-                console.log('Loading PIC list from Firestore...');
+                console.log('Loading combined PIC list...');
                 
-                const querySnapshot = await picsCollection.orderBy('name').get();
-                PIC_LIST = [];
+                // Start with static data
+                PIC_LIST = PIC_LIST_STATIC.map(name => ({
+                    name: name,
+                    source: 'static',
+                    email: '',
+                    phone: '',
+                    createdAt: new Date()
+                }));
                 
-                if (!querySnapshot.empty) {
-                    querySnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        PIC_LIST.push({
-                            id: doc.id,
-                            name: data.name,
-                            email: data.email || '',
-                            phone: data.phone || '',
-                            createdAt: data.createdAt
-                        });
-                    });
-                    console.log('PIC list loaded from Firestore:', PIC_LIST.length);
-                } else {
-                    console.log('No PICs in Firestore, using default list');
-                    // Add default PICs to Firestore
-                    const defaultPICs = [
-                        "Wahyu Sujoko",
-                        "Proboadi hariyo wicaksono", 
-                        "Fiki hernawan",
-                        "Indra kurniawan",
-                        "Aries A Bastian",
-                        "Mochammad Gorwantoro Putra", 
-                        "Yudiyono", 
-                        "Muhamad husni", 
-                        "edwin qomarudin", 
-                        "Edy Amin",
-                        "Heksi Prasetyo", 
-                        "Hery Syah Putra"
-                    ];
+                // Load from Firestore
+                try {
+                    const querySnapshot = await picsCollection.orderBy('name').get();
                     
-                    for (const name of defaultPICs) {
-                        const picData = {
-                            name: name,
-                            email: '',
-                            phone: '',
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            createdBy: 'system'
-                        };
-                        
-                        await picsCollection.add(picData);
-                        
-                        PIC_LIST.push({
-                            id: name.toLowerCase().replace(/\s+/g, '_'),
-                            name: name,
-                            email: '',
-                            phone: '',
-                            createdAt: new Date()
+                    if (!querySnapshot.empty) {
+                        querySnapshot.forEach((doc) => {
+                            const data = doc.data();
+                            const picName = data.name;
+                            
+                            // Check if already exists in static list
+                            const exists = PIC_LIST.some(pic => 
+                                pic.name.toLowerCase() === picName.toLowerCase()
+                            );
+                            
+                            if (!exists) {
+                                PIC_LIST.push({
+                                    name: picName,
+                                    source: 'firestore',
+                                    email: data.email || '',
+                                    phone: data.phone || '',
+                                    createdAt: data.createdAt
+                                });
+                            }
                         });
                     }
-                    console.log('Default PICs added to Firestore');
+                } catch (error) {
+                    console.log('No PICs in Firestore or error loading:', error);
                 }
                 
-                return PIC_LIST;
+                // Sort alphabetically
+                PIC_LIST.sort((a, b) => a.name.localeCompare(b.name));
+                
+                console.log('Combined PIC list loaded:', PIC_LIST.length);
                 
             } catch (error) {
-                console.error('Error loading PIC list:', error);
+                console.error('Error loading combined PIC list:', error);
                 showToast('Failed to load PIC list', 'error');
-                return [];
             }
         }
 
-        async function loadCustomerList() {
+        async function loadCombinedCustomerList() {
             try {
-                console.log('Loading customer list from Firestore...');
+                console.log('Loading combined customer list...');
                 
-                const querySnapshot = await customersCollection.orderBy('name').get();
-                CUSTOMER_LIST = [];
+                // Start with static data
+                CUSTOMER_LIST = CUSTOMER_LIST_STATIC.map(name => ({
+                    name: name,
+                    source: 'static',
+                    address: '',
+                    contact: '',
+                    createdAt: new Date()
+                }));
                 
-                if (!querySnapshot.empty) {
-                    querySnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        CUSTOMER_LIST.push({
-                            id: doc.id,
-                            name: data.name,
-                            address: data.address || '',
-                            contact: data.contact || '',
-                            createdAt: data.createdAt
-                        });
-                    });
-                    console.log('Customer list loaded from Firestore:', CUSTOMER_LIST.length);
-                } else {
-                    console.log('No customers in Firestore, using default list');
-                    // Add default customers to Firestore
-                    const defaultCustomers = [
-                        "PT. GUDANG GARAM Tbk",
-                        "PERSEROAN TERBATAS BADAN BANK CENTRAL ASIA TBK",
-                        "PT. FRISIAN FLAG INDONESIA",
-                        "PT. GRIYA SIRA INDAH",
-                        "PT. PUTRA SINAR PERMAJA",
-                        "PT. PLAZA INDONESIA REALTY Tbk",
-                        "CV. KROSS SARANA TEKNIK",
-                        "PT. GEMILANG CIPTA ABADI",
-                        "PT. MARYO MAKMUR TEHNIK",
-                        "PT. SOUTH PACIFIC VISCOSE",
-                        "PT. HOTEL CANDI BARU",
-                        "PT. SMILE BRIGHT WHITE (LAND OF SMILES CLINIC)",
-                        "PT. PURI MATAHARI",
-                        "PT. MENARA ASTRA",
-                        "PT. PLAZA INDONESIA MANDIRI",
-                        "PT. WYNNCOR BALI",
-                        "PT. JONES LANG LASALLE",
-                        "PT. SATAHI CIPTA MANDIRI",
-                        "YAYASAN BUDDHA TZU CHI MEDIKA INDONESIA",
-                        "PT. INDONESIA MOC SERVICE",
-                        "PT. RAMA KUTA HOTEL",
-                        "PT. HANDAL UTAMA BUANA",
-                        "PT. SURYA MARGA LUHUR",
-                        "PT. GRAHA SIDANG PRATAMA",
-                        "PT. LASALLEFOOD INDONESIA",
-                        "SARULLA OPERATIONS LTD",
-                        "SHM FIRE SAFETY Pte.Ltd",
-                        "PT. WAHANA NUSANTARA",
-                        "PT. YOGYA CENTRAL TERPADU",
-                        "PT. DONGGI SENORO LNG",
-                        "PT. PT. INDONESIA MOROWALI INDUSTRIAL PARK"
-                    ];
+                // Load from Firestore
+                try {
+                    const querySnapshot = await customersCollection.orderBy('name').get();
                     
-                    for (const name of defaultCustomers) {
-                        const customerData = {
-                            name: name,
-                            address: '',
-                            contact: '',
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            createdBy: 'system'
-                        };
-                        
-                        await customersCollection.add(customerData);
-                        
-                        CUSTOMER_LIST.push({
-                            id: name.toLowerCase().replace(/\s+/g, '_'),
-                            name: name,
-                            address: '',
-                            contact: '',
-                            createdAt: new Date()
+                    if (!querySnapshot.empty) {
+                        querySnapshot.forEach((doc) => {
+                            const data = doc.data();
+                            const customerName = data.name;
+                            
+                            // Check if already exists in static list
+                            const exists = CUSTOMER_LIST.some(customer => 
+                                customer.name.toLowerCase() === customerName.toLowerCase()
+                            );
+                            
+                            if (!exists) {
+                                CUSTOMER_LIST.push({
+                                    name: customerName,
+                                    source: 'firestore',
+                                    address: data.address || '',
+                                    contact: data.contact || '',
+                                    createdAt: data.createdAt
+                                });
+                            }
                         });
                     }
-                    console.log('Default customers added to Firestore');
+                } catch (error) {
+                    console.log('No customers in Firestore or error loading:', error);
                 }
                 
-                return CUSTOMER_LIST;
+                // Sort alphabetically
+                CUSTOMER_LIST.sort((a, b) => a.name.localeCompare(b.name));
+                
+                console.log('Combined customer list loaded:', CUSTOMER_LIST.length);
                 
             } catch (error) {
-                console.error('Error loading customer list:', error);
+                console.error('Error loading combined customer list:', error);
                 showToast('Failed to load customer list', 'error');
-                return [];
             }
         }
 
@@ -2189,8 +2394,13 @@
                 items.forEach(item => {
                     const suggestion = document.createElement('div');
                     suggestion.className = 'autocomplete-suggestion';
-                    suggestion.dataset.id = item.id;
                     suggestion.dataset.name = item.name;
+                    suggestion.dataset.source = item.source;
+                    
+                    let sourceBadge = '';
+                    if (item.source === 'firestore') {
+                        sourceBadge = '<span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded ml-auto">New</span>';
+                    }
                     
                     suggestion.innerHTML = `
                         <div class="autocomplete-suggestion-icon">
@@ -2200,7 +2410,9 @@
                             <div class="font-medium truncate">${item.name}</div>
                             ${item.email ? `<div class="text-xs text-gray-500 truncate">${item.email}</div>` : ''}
                             ${item.phone ? `<div class="text-xs text-gray-500">${item.phone}</div>` : ''}
+                            ${item.address ? `<div class="text-xs text-gray-500 truncate">${item.address}</div>` : ''}
                         </div>
+                        ${sourceBadge}
                     `;
                     
                     suggestion.addEventListener('click', function() {
@@ -2988,27 +3200,40 @@
             try {
                 showLoading();
                 
-                // Check if PIC already exists
+                // Check if PIC already exists in static list
+                const existsInStatic = PIC_LIST_STATIC.some(pic => 
+                    pic.toLowerCase() === picData.name.toLowerCase()
+                );
+                
+                if (existsInStatic) {
+                    showToast('PIC already exists in default list', 'warning');
+                    return;
+                }
+                
+                // Check if PIC already exists in Firestore
                 const existingPIC = await picsCollection
                     .where('name', '==', picData.name)
                     .get();
                 
                 if (!existingPIC.empty) {
-                    showToast('PIC already exists', 'warning');
+                    showToast('PIC already exists in database', 'warning');
                     return;
                 }
                 
                 // Add new PIC to Firestore
                 await picsCollection.add(picData);
                 
-                // Add to local list
+                // Add to combined list
                 PIC_LIST.push({
-                    id: picData.name.toLowerCase().replace(/\s+/g, '_'),
                     name: picData.name,
+                    source: 'firestore',
                     email: picData.email,
                     phone: picData.phone,
                     createdAt: picData.createdAt
                 });
+                
+                // Sort alphabetically
+                PIC_LIST.sort((a, b) => a.name.localeCompare(b.name));
                 
                 showToast('PIC added successfully', 'success');
                 
@@ -3055,27 +3280,40 @@
             try {
                 showLoading();
                 
-                // Check if customer already exists
+                // Check if customer already exists in static list
+                const existsInStatic = CUSTOMER_LIST_STATIC.some(customer => 
+                    customer.toLowerCase() === customerData.name.toLowerCase()
+                );
+                
+                if (existsInStatic) {
+                    showToast('Customer already exists in default list', 'warning');
+                    return;
+                }
+                
+                // Check if customer already exists in Firestore
                 const existingCustomer = await customersCollection
                     .where('name', '==', customerData.name)
                     .get();
                 
                 if (!existingCustomer.empty) {
-                    showToast('Customer already exists', 'warning');
+                    showToast('Customer already exists in database', 'warning');
                     return;
                 }
                 
                 // Add new customer to Firestore
                 await customersCollection.add(customerData);
                 
-                // Add to local list
+                // Add to combined list
                 CUSTOMER_LIST.push({
-                    id: customerData.name.toLowerCase().replace(/\s+/g, '_'),
                     name: customerData.name,
+                    source: 'firestore',
                     address: customerData.address,
                     contact: customerData.contact,
                     createdAt: customerData.createdAt
                 });
+                
+                // Sort alphabetically
+                CUSTOMER_LIST.sort((a, b) => a.name.localeCompare(b.name));
                 
                 showToast('Customer added successfully', 'success');
                 
