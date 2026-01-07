@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personnel List - Work Order Management System</title>
     
-    <!-- Load Libraries (sama dengan index.html) -->
+    <!-- Load Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     
     <style>
-        /* Gunakan style yang sama dengan index.html */
         :root {
             --primary-50: #f0f9ff;
             --primary-100: #e0f2fe;
@@ -96,18 +96,6 @@
 
         .gradient-bg-primary {
             background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
-        }
-
-        .gradient-bg-success {
-            background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-700) 100%);
-        }
-
-        .gradient-bg-warning {
-            background: linear-gradient(135deg, var(--warning-500) 0%, var(--warning-700) 100%);
-        }
-
-        .gradient-bg-danger {
-            background: linear-gradient(135deg, var(--danger-500) 0%, var(--danger-700) 100%);
         }
 
         .app-header {
@@ -199,15 +187,16 @@
             box-shadow: var(--shadow-md);
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
         .btn-outline {
             background: transparent;
             border: 2px solid var(--primary-500);
             color: var(--primary-600);
-        }
-
-        .btn-outline:hover {
-            background: var(--primary-500);
-            color: white;
         }
 
         .card {
@@ -284,8 +273,8 @@
             display: inline-flex;
             align-items: center;
             gap: 0.375rem;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-lg);
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--radius-md);
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
@@ -295,27 +284,18 @@
 
         .status-working {
             background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
         }
 
         .status-leave {
             background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
-            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
         }
 
         .status-absent {
             background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
-            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
-        }
-
-        .status-vacation {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
         }
 
         .status-available {
             background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
-            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
         }
 
         .modal-overlay {
@@ -471,68 +451,75 @@
             border-left-color: var(--danger-500);
         }
 
-        /* Personnel Card Styles */
-        .personnel-card {
+        /* Personnel List View */
+        .personnel-list-container {
             background: white;
             border-radius: var(--radius-xl);
-            padding: 1.5rem;
             box-shadow: var(--shadow-md);
             border: 1px solid var(--neutral-200);
-            transition: var(--transition-base);
-            cursor: pointer;
-            position: relative;
             overflow: hidden;
         }
 
-        .personnel-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
+        .personnel-list-header {
+            display: grid;
+            grid-template-columns: 1fr 100px 120px 150px 120px 100px 80px;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            background: var(--neutral-50);
+            border-bottom: 2px solid var(--neutral-200);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--neutral-700);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .personnel-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 6px;
-            height: 100%;
+        .personnel-list-item {
+            display: grid;
+            grid-template-columns: 1fr 100px 120px 150px 120px 100px 80px;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--neutral-100);
             transition: var(--transition-base);
+            cursor: pointer;
+            align-items: center;
         }
 
-        .personnel-card.working::before {
-            background: linear-gradient(to bottom, var(--primary-400), var(--primary-600));
+        .personnel-list-item:hover {
+            background: var(--neutral-50);
         }
 
-        .personnel-card.leave::before {
-            background: linear-gradient(to bottom, #f59e0b, #d97706);
-        }
-
-        .personnel-card.absent::before {
-            background: linear-gradient(to bottom, var(--danger-400), var(--danger-600));
-        }
-
-        .personnel-card.vacation::before {
-            background: linear-gradient(to bottom, #8b5cf6, #7c3aed);
-        }
-
-        .personnel-card.available::before {
-            background: linear-gradient(to bottom, var(--accent-400), var(--accent-600));
+        .personnel-list-item:last-child {
+            border-bottom: none;
         }
 
         .personnel-avatar {
-            width: 80px;
-            height: 80px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--primary-700);
-            font-size: 2rem;
+            color: white;
+            font-size: 1rem;
             font-weight: bold;
-            margin: 0 auto 1rem;
-            border: 4px solid white;
-            box-shadow: var(--shadow-md);
+            margin-right: 0.75rem;
+        }
+
+        .personnel-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .personnel-name {
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .personnel-id {
+            font-size: 0.875rem;
+            color: var(--neutral-600);
+            margin-top: 0.25rem;
         }
 
         /* Work Activity Timeline */
@@ -582,7 +569,7 @@
             border: 1px solid var(--neutral-200);
         }
 
-        /* Daily Activity Log Styles */
+        /* Daily Activity Log */
         .activity-log-card {
             background: white;
             border-radius: var(--radius-lg);
@@ -614,13 +601,6 @@
             line-height: 1.5;
         }
 
-        .activity-log-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.75rem;
-            justify-content: flex-end;
-        }
-
         .activity-log-input {
             width: 100%;
             padding: 0.75rem;
@@ -629,12 +609,6 @@
             font-size: 0.95rem;
             resize: vertical;
             min-height: 100px;
-        }
-
-        .activity-log-input:focus {
-            outline: none;
-            border-color: var(--primary-500);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         /* Filter Tags */
@@ -679,6 +653,41 @@
             color: var(--neutral-600);
             text-transform: uppercase;
             letter-spacing: 0.05em;
+        }
+
+        /* Analytics Charts */
+        .chart-container {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+        }
+
+        /* Tabs */
+        .tab-container {
+            display: flex;
+            border-bottom: 2px solid var(--neutral-200);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            color: var(--neutral-600);
+            cursor: pointer;
+            transition: var(--transition-base);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab:hover {
+            color: var(--primary-600);
+        }
+
+        .tab.active {
+            color: var(--primary-600);
+            border-bottom-color: var(--primary-600);
         }
 
         /* Sort Dropdown */
@@ -731,37 +740,38 @@
             background: var(--primary-50);
         }
 
-        .sort-option:last-child {
-            border-bottom: none;
-        }
-
         .sort-option.active {
             background: var(--primary-100);
             color: var(--primary-700);
         }
 
         /* Responsive Design */
-        @media (max-width: 1536px) {
-            .personnel-card {
-                width: calc(25% - 1rem);
-            }
-        }
-
-        @media (max-width: 1280px) {
-            .personnel-card {
-                width: calc(33.333% - 1rem);
-            }
-        }
-
         @media (max-width: 1024px) {
-            .personnel-card {
-                width: calc(50% - 1rem);
+            .personnel-list-header,
+            .personnel-list-item {
+                grid-template-columns: 1fr 80px 100px 120px 100px 80px 60px;
+                font-size: 0.75rem;
+                gap: 0.75rem;
+                padding: 0.75rem 1rem;
             }
         }
 
         @media (max-width: 768px) {
-            .personnel-card {
+            .personnel-list-header {
+                display: none;
+            }
+            
+            .personnel-list-item {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+                padding: 1rem;
+            }
+            
+            .personnel-info {
                 width: 100%;
+                margin-bottom: 0.5rem;
             }
             
             .app-title {
@@ -798,7 +808,7 @@
                         <i class="fas fa-users"></i>
                     </a>
                     <div>
-                        <h1 class="app-title">Personnel List</h1>
+                        <h1 class="app-title">Personnel Management</h1>
                         <p class="app-subtitle">Track and manage personnel status & activities</p>
                     </div>
                 </div>
@@ -843,12 +853,12 @@
                     <div class="stats-label">On Leave</div>
                 </div>
                 <div class="stats-card">
-                    <div class="stats-number text-purple-600" id="vacationCount">0</div>
-                    <div class="stats-label">Vacation</div>
-                </div>
-                <div class="stats-card">
                     <div class="stats-number text-red-600" id="absentCount">0</div>
                     <div class="stats-label">Absent</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-number text-purple-600" id="availableCount">0</div>
+                    <div class="stats-label">Available</div>
                 </div>
             </div>
             
@@ -886,9 +896,6 @@
                             <div class="sort-option" data-sort="division">
                                 <i class="fas fa-sitemap mr-2"></i>Division
                             </div>
-                            <div class="sort-option" data-sort="updated">
-                                <i class="fas fa-clock mr-2"></i>Recently Updated
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -900,9 +907,6 @@
                     </button>
                     <button class="filter-tag" data-filter="leave">
                         <i class="fas fa-umbrella-beach mr-2"></i>Leave
-                    </button>
-                    <button class="filter-tag" data-filter="vacation">
-                        <i class="fas fa-plane mr-2"></i>Vacation
                     </button>
                     <button class="filter-tag" data-filter="absent">
                         <i class="fas fa-user-times mr-2"></i>Absent
@@ -917,24 +921,106 @@
     
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 py-8">
-        <!-- Personnel Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- Personnel cards will be loaded here -->
-            <div id="personnelGrid"></div>
+        <!-- Tabs -->
+        <div class="tab-container">
+            <button id="personnelTab" class="tab active">
+                <i class="fas fa-users mr-2"></i>Personnel List
+            </button>
+            <button id="analyticsTab" class="tab">
+                <i class="fas fa-chart-bar mr-2"></i>Analytics
+            </button>
         </div>
         
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden">
-            <div class="text-center py-16">
-                <div class="w-32 h-32 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="fas fa-users text-5xl text-blue-400"></i>
+        <!-- Personnel List Content -->
+        <div id="personnelContent">
+            <!-- Personnel List -->
+            <div class="personnel-list-container mb-8">
+                <div class="personnel-list-header">
+                    <div>Personnel</div>
+                    <div>Position</div>
+                    <div>Division</div>
+                    <div>Company</div>
+                    <div>Status</div>
+                    <div>Active WO</div>
+                    <div>Action</div>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-700 mb-4">No personnel found</h3>
-                <p class="text-gray-600 mb-8">Try adjusting your search or add new personnel</p>
-                <button id="addFirstPersonnelBtn" class="btn btn-primary">
-                    <i class="fas fa-user-plus mr-2"></i>
-                    Add First Personnel
-                </button>
+                
+                <div id="personnelList">
+                    <!-- Personnel items will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden">
+                <div class="text-center py-16">
+                    <div class="w-32 h-32 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-users text-5xl text-blue-400"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-700 mb-4">No personnel found</h3>
+                    <p class="text-gray-600 mb-8">Try adjusting your search or add new personnel</p>
+                    <button id="addFirstPersonnelBtn" class="btn btn-primary">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Add First Personnel
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Analytics Content -->
+        <div id="analyticsContent" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Status Distribution Chart -->
+                <div class="chart-container">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Personnel Status Distribution</h3>
+                    <canvas id="statusChart" height="300"></canvas>
+                </div>
+                
+                <!-- Workload Distribution Chart -->
+                <div class="chart-container">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Workload Distribution</h3>
+                    <canvas id="workloadChart" height="300"></canvas>
+                </div>
+                
+                <!-- Division Statistics -->
+                <div class="chart-container">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Personnel by Division</h3>
+                    <canvas id="divisionChart" height="300"></canvas>
+                </div>
+                
+                <!-- Company Statistics -->
+                <div class="chart-container">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Personnel by Company</h3>
+                    <canvas id="companyChart" height="300"></canvas>
+                </div>
+                
+                <!-- Performance Metrics -->
+                <div class="chart-container col-span-1 lg:col-span-2">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Performance Metrics</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <div class="text-3xl font-bold text-blue-600" id="avgCompletionTime">0</div>
+                            <div class="text-sm text-gray-600">Avg Completion (days)</div>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <div class="text-3xl font-bold text-green-600" id="totalCompleted">0</div>
+                            <div class="text-sm text-gray-600">Completed This Month</div>
+                        </div>
+                        <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                            <div class="text-3xl font-bold text-yellow-600" id="avgWorkload">0</div>
+                            <div class="text-sm text-gray-600">Avg Workload per Person</div>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 rounded-lg">
+                            <div class="text-3xl font-bold text-purple-600" id="utilizationRate">0%</div>
+                            <div class="text-sm text-gray-600">Utilization Rate</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Productivity Trends -->
+                <div class="chart-container col-span-1 lg:col-span-2">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Productivity Trends (Last 30 Days)</h3>
+                    <canvas id="productivityChart" height="250"></canvas>
+                </div>
             </div>
         </div>
         
@@ -998,7 +1084,7 @@
                         </div>
                         
                         <div class="card">
-                            <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Stats</h3>
+                            <h3 class="text-lg font-bold text-gray-900 mb-4">Performance Metrics</h3>
                             <div class="space-y-4">
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-600">Active Work Orders</span>
@@ -1202,7 +1288,6 @@
                                 <option value="available">Available</option>
                                 <option value="working">Working</option>
                                 <option value="leave">On Leave</option>
-                                <option value="vacation">On Vacation</option>
                                 <option value="absent">Absent</option>
                             </select>
                         </div>
@@ -1260,7 +1345,6 @@
         // ==================== GLOBAL VARIABLES ====================
         let db, auth, personnelCollection, workordersCollection, dailyLogsCollection;
         let currentUser = null;
-        let currentUserRole = 'user';
         let allPersonnel = [];
         let filteredPersonnel = [];
         let allWorkOrders = [];
@@ -1269,6 +1353,13 @@
         let selectedPersonnel = null;
         let dailyLogs = [];
         
+        // Chart instances
+        let statusChart = null;
+        let workloadChart = null;
+        let divisionChart = null;
+        let companyChart = null;
+        let productivityChart = null;
+
         // Default personnel data
         const defaultPersonnel = [
             {
@@ -1317,9 +1408,9 @@
                 position: "Manager",
                 division: "Project",
                 company: "Effrensindo Kencana",
-                status: "vacation",
+                status: "working",
                 contact: "+62 816-7890-1234",
-                notes: "Annual vacation leave"
+                notes: "Project management"
             },
             {
                 name: "Fiki",
@@ -1475,6 +1566,27 @@
                 .substring(0, 2);
         }
 
+        function getAvatarColor(name) {
+            const colors = [
+                'linear-gradient(135deg, #3b82f6, #1d4ed8)', // Blue
+                'linear-gradient(135deg, #8b5cf6, #7c3aed)', // Purple
+                'linear-gradient(135deg, #10b981, #059669)', // Green
+                'linear-gradient(135deg, #f59e0b, #d97706)', // Yellow
+                'linear-gradient(135deg, #ef4444, #dc2626)', // Red
+                'linear-gradient(135deg, #ec4899, #db2777)', // Pink
+                'linear-gradient(135deg, #14b8a6, #0d9488)', // Teal
+                'linear-gradient(135deg, #f97316, #ea580c)'  // Orange
+            ];
+            
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            
+            const index = Math.abs(hash) % colors.length;
+            return colors[index];
+        }
+
         function showToast(message, type = 'info', duration = 3000) {
             const toastContainer = document.getElementById('toast-container');
             if (!toastContainer) return;
@@ -1530,7 +1642,7 @@
                 case 'name-desc':
                     return sorted.sort((a, b) => b.name.localeCompare(a.name));
                 case 'status':
-                    const statusOrder = ['working', 'available', 'leave', 'vacation', 'absent'];
+                    const statusOrder = ['working', 'available', 'leave', 'absent'];
                     return sorted.sort((a, b) => {
                         const aIndex = statusOrder.indexOf(a.status) ?? 999;
                         const bIndex = statusOrder.indexOf(b.status) ?? 999;
@@ -1544,12 +1656,6 @@
                     });
                 case 'division':
                     return sorted.sort((a, b) => (a.division || '').localeCompare(b.division || ''));
-                case 'updated':
-                    return sorted.sort((a, b) => {
-                        const aDate = a.updatedAt ? (a.updatedAt.toDate ? a.updatedAt.toDate() : new Date(a.updatedAt)) : new Date(0);
-                        const bDate = b.updatedAt ? (b.updatedAt.toDate ? b.updatedAt.toDate() : new Date(b.updatedAt)) : new Date(0);
-                        return bDate - aDate;
-                    });
                 default:
                     return sorted;
             }
@@ -1561,8 +1667,7 @@
                 'name-desc': 'Sort: Name Z-A',
                 'status': 'Sort: Status',
                 'workload': 'Sort: Work Load',
-                'division': 'Sort: Division',
-                'updated': 'Sort: Recently Updated'
+                'division': 'Sort: Division'
             };
             
             document.getElementById('sortButtonText').textContent = sortTexts[currentSort] || 'Sort';
@@ -1573,7 +1678,6 @@
             try {
                 console.log('Initializing default personnel data...');
                 
-                // Check if personnel collection exists
                 const querySnapshot = await personnelCollection.limit(1).get();
                 
                 if (querySnapshot.empty) {
@@ -1621,7 +1725,6 @@
                     console.log('No personnel data found, initializing default...');
                     await initializeDefaultPersonnel();
                     
-                    // Try loading again
                     const newQuery = await personnelCollection
                         .where('isActive', '==', true)
                         .orderBy('name')
@@ -1644,10 +1747,8 @@
                     });
                 }
                 
-                // Also load work orders to sync data
                 await loadWorkOrders();
                 
-                // Update stats and render
                 updatePersonnelStats();
                 applyFilters();
                 
@@ -1688,26 +1789,23 @@
             const total = allPersonnel.length;
             const working = allPersonnel.filter(p => p.status === 'working').length;
             const leave = allPersonnel.filter(p => p.status === 'leave').length;
-            const vacation = allPersonnel.filter(p => p.status === 'vacation').length;
             const absent = allPersonnel.filter(p => p.status === 'absent').length;
             const available = allPersonnel.filter(p => p.status === 'available').length;
             
             document.getElementById('totalPersonnel').textContent = total;
             document.getElementById('workingCount').textContent = working;
             document.getElementById('leaveCount').textContent = leave;
-            document.getElementById('vacationCount').textContent = vacation;
             document.getElementById('absentCount').textContent = absent;
+            document.getElementById('availableCount').textContent = available;
         }
 
         function applyFilters() {
             let filtered = [...allPersonnel];
             
-            // Apply status filter
             if (currentFilter !== 'all') {
                 filtered = filtered.filter(p => p.status === currentFilter);
             }
             
-            // Apply search filter
             const searchTerm = document.getElementById('searchPersonnel').value.toLowerCase();
             if (searchTerm) {
                 filtered = filtered.filter(p => 
@@ -1718,130 +1816,80 @@
                 );
             }
             
-            // Apply sorting
             filtered = sortPersonnel(filtered);
             
             filteredPersonnel = filtered;
-            renderPersonnelGrid();
+            renderPersonnelList();
             
-            // Show/hide empty state
             const emptyState = document.getElementById('emptyState');
             const loadingState = document.getElementById('loadingState');
-            const personnelGrid = document.getElementById('personnelGrid');
             
             if (loadingState) loadingState.classList.add('hidden');
             
             if (filteredPersonnel.length === 0) {
                 if (emptyState) emptyState.classList.remove('hidden');
-                if (personnelGrid) personnelGrid.innerHTML = '';
             } else {
                 if (emptyState) emptyState.classList.add('hidden');
             }
         }
 
-        function renderPersonnelGrid() {
-            const container = document.getElementById('personnelGrid');
+        function renderPersonnelList() {
+            const container = document.getElementById('personnelList');
             if (!container) return;
             
             container.innerHTML = '';
             
             filteredPersonnel.forEach(person => {
-                const card = createPersonnelCard(person);
-                container.appendChild(card);
+                const listItem = createPersonnelListItem(person);
+                container.appendChild(listItem);
             });
         }
 
-        function createPersonnelCard(person) {
-            const card = document.createElement('div');
-            card.className = `personnel-card ${person.status}`;
-            card.dataset.id = person.id;
+        function createPersonnelListItem(person) {
+            const item = document.createElement('div');
+            item.className = 'personnel-list-item';
+            item.dataset.id = person.id;
             
             const initials = getInitials(person.name);
-            const statusText = getStatusText(person.status);
-            const statusClass = getStatusClass(person.status);
-            
-            // Count work orders for this personnel
+            const avatarColor = getAvatarColor(person.name);
             const workOrders = getPersonnelWorkOrders(person.name);
             const activeWorkOrders = workOrders.filter(wo => wo.status === 'Running').length;
+            const statusClass = getStatusClass(person.status);
+            const statusText = getStatusText(person.status);
             
-            card.innerHTML = `
-                <div class="text-center">
-                    <div class="personnel-avatar" style="background: ${getAvatarColor(person.name)}">
+            item.innerHTML = `
+                <div class="personnel-info">
+                    <div class="personnel-avatar" style="background: ${avatarColor}">
                         ${initials}
                     </div>
-                    
-                    <h3 class="text-lg font-bold text-gray-900 mb-1">${person.name}</h3>
-                    <p class="text-sm text-gray-600 mb-2">${person.position || 'Technician'}</p>
-                    
-                    <div class="mb-4">
-                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    <div>
+                        <div class="personnel-name">${person.name}</div>
+                        <div class="personnel-id">${person.employeeId || 'N/A'}</div>
                     </div>
-                    
-                    <div class="grid grid-cols-2 gap-2 text-sm mb-4">
-                        <div class="text-center">
-                            <div class="font-semibold text-blue-600">${activeWorkOrders}</div>
-                            <div class="text-xs text-gray-500">Active WO</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="font-semibold text-green-600">${workOrders.length}</div>
-                            <div class="text-xs text-gray-500">Total WO</div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-sm text-gray-600 space-y-1">
-                        <div class="flex items-center justify-center gap-2">
-                            <i class="fas fa-sitemap text-xs"></i>
-                            <span>${person.division || '-'}</span>
-                        </div>
-                        <div class="flex items-center justify-center gap-2">
-                            <i class="fas fa-building text-xs"></i>
-                            <span>${person.company || '-'}</span>
-                        </div>
-                        <div class="flex items-center justify-center gap-2">
-                            <i class="fas fa-id-card text-xs"></i>
-                            <span>${person.employeeId || '-'}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4 pt-4 border-t border-gray-200">
-                        <button class="w-full btn btn-primary btn-sm" onclick="viewPersonnelActivity('${person.id}')">
-                            <i class="fas fa-chart-line mr-2"></i>
-                            View Activity
-                        </button>
-                    </div>
+                </div>
+                <div>${person.position || 'Technician'}</div>
+                <div>${person.division || '-'}</div>
+                <div>${person.company || '-'}</div>
+                <div>
+                    <span class="status-badge ${statusClass}">${statusText}</span>
+                </div>
+                <div class="text-center font-bold ${activeWorkOrders > 0 ? 'text-blue-600' : 'text-gray-500'}">
+                    ${activeWorkOrders}
+                </div>
+                <div>
+                    <button class="btn btn-primary btn-sm w-full" onclick="viewPersonnelActivity('${person.id}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
             `;
             
-            return card;
-        }
-
-        function getAvatarColor(name) {
-            // Generate consistent color based on name
-            const colors = [
-                'linear-gradient(135deg, #3b82f6, #1d4ed8)', // Blue
-                'linear-gradient(135deg, #8b5cf6, #7c3aed)', // Purple
-                'linear-gradient(135deg, #10b981, #059669)', // Green
-                'linear-gradient(135deg, #f59e0b, #d97706)', // Yellow
-                'linear-gradient(135deg, #ef4444, #dc2626)', // Red
-                'linear-gradient(135deg, #ec4899, #db2777)', // Pink
-                'linear-gradient(135deg, #14b8a6, #0d9488)', // Teal
-                'linear-gradient(135deg, #f97316, #ea580c)'  // Orange
-            ];
-            
-            let hash = 0;
-            for (let i = 0; i < name.length; i++) {
-                hash = name.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            
-            const index = Math.abs(hash) % colors.length;
-            return colors[index];
+            return item;
         }
 
         function getStatusText(status) {
             switch(status) {
                 case 'working': return 'Working';
                 case 'leave': return 'On Leave';
-                case 'vacation': return 'Vacation';
                 case 'absent': return 'Absent';
                 case 'available': return 'Available';
                 default: return 'Unknown';
@@ -1852,7 +1900,6 @@
             switch(status) {
                 case 'working': return 'status-working';
                 case 'leave': return 'status-leave';
-                case 'vacation': return 'status-vacation';
                 case 'absent': return 'status-absent';
                 case 'available': return 'status-available';
                 default: return '';
@@ -1879,6 +1926,339 @@
             });
         }
 
+        // ==================== ANALYTICS FUNCTIONS ====================
+        function renderAnalytics() {
+            if (!allPersonnel.length) return;
+            
+            updateAnalyticsMetrics();
+            renderStatusChart();
+            renderWorkloadChart();
+            renderDivisionChart();
+            renderCompanyChart();
+            renderProductivityChart();
+        }
+
+        function updateAnalyticsMetrics() {
+            // Calculate average completion time
+            let totalCompletionDays = 0;
+            let completedCount = 0;
+            
+            allWorkOrders.forEach(wo => {
+                if (wo.status === 'Done' && wo.startDate && wo.endDate) {
+                    try {
+                        const start = wo.startDate.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
+                        const end = wo.endDate.toDate ? wo.endDate.toDate() : new Date(wo.endDate);
+                        const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                        totalCompletionDays += diffDays;
+                        completedCount++;
+                    } catch (e) {}
+                }
+            });
+            
+            const avgCompletion = completedCount > 0 ? Math.round(totalCompletionDays / completedCount) : 0;
+            document.getElementById('avgCompletionTime').textContent = avgCompletion;
+            
+            // Calculate completed this month
+            const now = new Date();
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const completedThisMonth = allWorkOrders.filter(wo => {
+                if (wo.status !== 'Done' || !wo.endDate) return false;
+                try {
+                    const endDate = wo.endDate.toDate ? wo.endDate.toDate() : new Date(wo.endDate);
+                    return endDate >= startOfMonth;
+                } catch (e) {
+                    return false;
+                }
+            }).length;
+            document.getElementById('totalCompleted').textContent = completedThisMonth;
+            
+            // Calculate average workload
+            let totalActiveWorkOrders = 0;
+            allPersonnel.forEach(person => {
+                const workOrders = getPersonnelWorkOrders(person.name);
+                totalActiveWorkOrders += workOrders.filter(wo => wo.status === 'Running').length;
+            });
+            
+            const avgWorkload = allPersonnel.length > 0 ? (totalActiveWorkOrders / allPersonnel.length).toFixed(1) : 0;
+            document.getElementById('avgWorkload').textContent = avgWorkload;
+            
+            // Calculate utilization rate
+            const workingPersonnel = allPersonnel.filter(p => p.status === 'working').length;
+            const utilizationRate = allPersonnel.length > 0 ? Math.round((workingPersonnel / allPersonnel.length) * 100) : 0;
+            document.getElementById('utilizationRate').textContent = `${utilizationRate}%`;
+        }
+
+        function renderStatusChart() {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            
+            if (statusChart) {
+                statusChart.destroy();
+            }
+            
+            const statusData = {
+                working: allPersonnel.filter(p => p.status === 'working').length,
+                available: allPersonnel.filter(p => p.status === 'available').length,
+                leave: allPersonnel.filter(p => p.status === 'leave').length,
+                absent: allPersonnel.filter(p => p.status === 'absent').length
+            };
+            
+            statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Working', 'Available', 'On Leave', 'Absent'],
+                    datasets: [{
+                        data: Object.values(statusData),
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(239, 68, 68, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(34, 197, 94)',
+                            'rgb(245, 158, 11)',
+                            'rgb(239, 68, 68)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderWorkloadChart() {
+            const ctx = document.getElementById('workloadChart').getContext('2d');
+            
+            if (workloadChart) {
+                workloadChart.destroy();
+            }
+            
+            const workloadCategories = {
+                'No Work': 0,
+                'Light (1-2)': 0,
+                'Medium (3-4)': 0,
+                'Heavy (5+)': 0
+            };
+            
+            allPersonnel.forEach(person => {
+                const activeWorkOrders = getPersonnelWorkOrders(person.name).filter(wo => wo.status === 'Running').length;
+                if (activeWorkOrders === 0) {
+                    workloadCategories['No Work']++;
+                } else if (activeWorkOrders <= 2) {
+                    workloadCategories['Light (1-2)']++;
+                } else if (activeWorkOrders <= 4) {
+                    workloadCategories['Medium (3-4)']++;
+                } else {
+                    workloadCategories['Heavy (5+)']++;
+                }
+            });
+            
+            workloadChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(workloadCategories),
+                    datasets: [{
+                        label: 'Number of Personnel',
+                        data: Object.values(workloadCategories),
+                        backgroundColor: [
+                            'rgba(156, 163, 175, 0.8)',
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(239, 68, 68, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(156, 163, 175)',
+                            'rgb(34, 197, 94)',
+                            'rgb(245, 158, 11)',
+                            'rgb(239, 68, 68)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderDivisionChart() {
+            const ctx = document.getElementById('divisionChart').getContext('2d');
+            
+            if (divisionChart) {
+                divisionChart.destroy();
+            }
+            
+            const divisions = {};
+            allPersonnel.forEach(person => {
+                const division = person.division || 'Unknown';
+                divisions[division] = (divisions[division] || 0) + 1;
+            });
+            
+            divisionChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(divisions),
+                    datasets: [{
+                        data: Object.values(divisions),
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(236, 72, 153, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderCompanyChart() {
+            const ctx = document.getElementById('companyChart').getContext('2d');
+            
+            if (companyChart) {
+                companyChart.destroy();
+            }
+            
+            const companies = {};
+            allPersonnel.forEach(person => {
+                const company = person.company || 'Unknown';
+                companies[company] = (companies[company] || 0) + 1;
+            });
+            
+            companyChart = new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: Object.keys(companies),
+                    datasets: [{
+                        data: Object.values(companies),
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(34, 197, 94, 0.7)',
+                            'rgba(156, 163, 175, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderProductivityChart() {
+            const ctx = document.getElementById('productivityChart').getContext('2d');
+            
+            if (productivityChart) {
+                productivityChart.destroy();
+            }
+            
+            // Generate last 30 days data
+            const labels = [];
+            const completedData = [];
+            const activeData = [];
+            
+            const today = new Date();
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                labels.push(formatDate(date));
+                
+                // Calculate completed and active work orders for this date
+                let completed = 0;
+                let active = 0;
+                
+                allWorkOrders.forEach(wo => {
+                    if (wo.endDate) {
+                        try {
+                            const endDate = wo.endDate.toDate ? wo.endDate.toDate() : new Date(wo.endDate);
+                            if (endDate.toDateString() === date.toDateString() && wo.status === 'Done') {
+                                completed++;
+                            }
+                        } catch (e) {}
+                    }
+                    
+                    if (wo.status === 'Running' && wo.startDate) {
+                        try {
+                            const startDate = wo.startDate.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
+                            if (startDate <= date) {
+                                active++;
+                            }
+                        } catch (e) {}
+                    }
+                });
+                
+                completedData.push(completed);
+                activeData.push(active);
+            }
+            
+            productivityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Completed Work Orders',
+                            data: completedData,
+                            borderColor: 'rgb(34, 197, 94)',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Active Work Orders',
+                            data: activeData,
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
         // ==================== DAILY ACTIVITY LOG FUNCTIONS ====================
         async function loadDailyLogs(personnelId) {
             try {
@@ -1901,7 +2281,6 @@
                     });
                 });
                 
-                console.log('Daily logs loaded:', dailyLogs.length);
                 return dailyLogs;
                 
             } catch (error) {
@@ -1934,11 +2313,9 @@
                 
                 showToast('Daily activity log saved successfully', 'success');
                 
-                // Reload logs
                 await loadDailyLogs(selectedPersonnel.id);
                 renderDailyLogs();
                 
-                // Hide form
                 document.getElementById('addDailyLogForm').classList.add('hidden');
                 document.getElementById('dailyLogInput').value = '';
                 
@@ -1961,7 +2338,6 @@
                 
                 showToast('Activity log deleted successfully', 'success');
                 
-                // Reload logs
                 await loadDailyLogs(selectedPersonnel?.id);
                 renderDailyLogs();
                 
@@ -1990,7 +2366,6 @@
                 return;
             }
             
-            // Group logs by date
             const logsByDate = {};
             dailyLogs.forEach(log => {
                 const date = log.date || (log.createdAt ? formatDate(log.createdAt) : 'Unknown Date');
@@ -2000,7 +2375,6 @@
                 logsByDate[date].push(log);
             });
             
-            // Render grouped logs
             Object.entries(logsByDate).forEach(([date, logs]) => {
                 const dateHeader = document.createElement('div');
                 dateHeader.className = 'text-sm font-semibold text-gray-700 mb-3 mt-6 first:mt-0';
@@ -2019,7 +2393,7 @@
             card.className = 'activity-log-card';
             
             const time = log.createdAt ? formatTimeAgo(log.createdAt) : 'Recently';
-            const canDelete = currentUser?.email === log.createdBy || currentUserRole === 'admin';
+            const canDelete = currentUser?.email === log.createdBy;
             
             card.innerHTML = `
                 <div class="activity-log-header">
@@ -2049,8 +2423,6 @@
 
         // ==================== PERSONNEL ACTIVITY FUNCTIONS ====================
         async function viewPersonnelActivity(personnelId) {
-            console.log('Viewing activity for personnel:', personnelId);
-            
             const person = allPersonnel.find(p => p.id === personnelId);
             if (!person) {
                 showToast('Personnel not found', 'error');
@@ -2062,13 +2434,9 @@
         }
 
         async function openPersonnelActivityModal(person) {
-            console.log('Opening activity modal for:', person.name);
-            
             const modal = document.getElementById('personnelActivityModal');
             const avatar = document.getElementById('modalPersonnelAvatar');
-            const statusBadge = document.getElementById('modalPersonnelStatus');
             
-            // Set basic info
             document.getElementById('modalPersonnelName').textContent = person.name;
             document.getElementById('modalPersonnelPosition').textContent = person.position || 'Technician';
             document.getElementById('modalEmployeeId').textContent = person.employeeId || '-';
@@ -2077,33 +2445,22 @@
             document.getElementById('modalContact').textContent = person.contact || '-';
             document.getElementById('modalLastUpdated').textContent = person.updatedAt ? formatDateTime(person.updatedAt) : '-';
             
-            // Set avatar
             avatar.textContent = getInitials(person.name);
             avatar.style.background = getAvatarColor(person.name);
             
-            // Set status badge
+            const statusBadge = document.getElementById('modalPersonnelStatus');
             statusBadge.className = `status-badge ${getStatusClass(person.status)}`;
             statusBadge.textContent = getStatusText(person.status);
             
-            // Load work orders for this personnel
             const personnelWorkOrders = getPersonnelWorkOrders(person.name);
             
-            // Load daily logs
             await loadDailyLogs(person.id);
             
-            // Update stats
             updatePersonnelStatsModal(person, personnelWorkOrders);
-            
-            // Load activities
             loadPersonnelActivities(person, personnelWorkOrders);
-            
-            // Load current assignments
             loadCurrentAssignments(person, personnelWorkOrders);
-            
-            // Render daily logs
             renderDailyLogs();
             
-            // Show work activity tab by default
             document.getElementById('workActivityContent').classList.remove('hidden');
             document.getElementById('dailyLogContent').classList.add('hidden');
             document.getElementById('workActivityTab').classList.add('border-blue-500', 'bg-blue-50');
@@ -2161,9 +2518,7 @@
                     const diffTime = Math.abs(end - start);
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                     totalDays += diffDays;
-                } catch (e) {
-                    // Skip this order if date parsing fails
-                }
+                } catch (e) {}
             });
             
             const avgDays = Math.round(totalDays / completedOrders.length);
@@ -2183,7 +2538,6 @@
             const timeline = document.getElementById('activityTimeline');
             timeline.innerHTML = '';
             
-            // Sort work orders by date (newest first)
             const sortedWorkOrders = [...workOrders].sort((a, b) => {
                 try {
                     const dateA = a.updatedAt ? (a.updatedAt.toDate ? a.updatedAt.toDate() : new Date(a.updatedAt)) : new Date(0);
@@ -2192,7 +2546,7 @@
                 } catch (e) {
                     return 0;
                 }
-            }).slice(0, 10); // Show only last 10 activities
+            }).slice(0, 10);
             
             if (sortedWorkOrders.length === 0) {
                 timeline.innerHTML = `
@@ -2251,12 +2605,6 @@
                         ${workOrder.workType || 'No work type specified'}
                         ${workOrder.building ? `• ${workOrder.building}` : ''}
                     </p>
-                    
-                    ${workOrder.notes ? `
-                    <div class="mt-2 text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                        <i class="fas fa-sticky-note mr-1"></i>
-                        ${workOrder.notes.substring(0, 100)}${workOrder.notes.length > 100 ? '...' : ''}
-                    </div>` : ''}
                 </div>
             `;
             
@@ -2299,7 +2647,7 @@
                         <h4 class="font-bold text-gray-900">${workOrder.workOrderNumber || 'N/A'}</h4>
                         <p class="text-sm text-gray-600">${workOrder.customer || 'No customer'}</p>
                     </div>
-                    <span class="status-badge status-running">Active</span>
+                    <span class="status-badge status-working">Active</span>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3 text-sm mb-3">
@@ -2320,18 +2668,6 @@
                         <p class="font-medium">${estimatedTime}</p>
                     </div>
                 </div>
-                
-                <div class="flex justify-between items-center pt-3 border-t border-gray-200">
-                    <div class="text-xs text-gray-500">
-                        <i class="fas fa-user-tie mr-1"></i>
-                        PIC: ${workOrder.pic || '-'}
-                    </div>
-                    <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" 
-                            onclick="window.open('index.html', '_blank')">
-                        <i class="fas fa-external-link-alt mr-1"></i>
-                        View in WO System
-                    </button>
-                </div>
             `;
             
             return card;
@@ -2342,19 +2678,16 @@
             const modal = document.getElementById('personnelFormModal');
             const title = document.getElementById('personnelFormTitle');
             
-            // Reset form
             document.getElementById('personnelForm').reset();
             document.getElementById('personnelId').value = '';
             
             if (personnelId) {
-                // Edit mode
                 title.textContent = 'Edit Personnel';
                 const person = allPersonnel.find(p => p.id === personnelId);
                 if (person) {
                     populatePersonnelForm(person);
                 }
             } else {
-                // Add mode
                 title.textContent = 'Add New Personnel';
             }
             
@@ -2432,10 +2765,8 @@
             try {
                 showLoading();
                 
-                // Load all work orders
                 await loadWorkOrders();
                 
-                // Extract unique personnel names from work orders
                 const personnelFromWorkOrders = new Set();
                 
                 allWorkOrders.forEach(wo => {
@@ -2457,7 +2788,6 @@
                     }
                 });
                 
-                // Check for missing personnel in our database
                 const missingPersonnel = [];
                 personnelFromWorkOrders.forEach(personName => {
                     const exists = allPersonnel.some(p => p.name === personName);
@@ -2479,7 +2809,6 @@
                     }
                 });
                 
-                // Add missing personnel
                 if (missingPersonnel.length > 0) {
                     const batch = db.batch();
                     
@@ -2494,7 +2823,6 @@
                     showToast('All personnel are already synchronized', 'info');
                 }
                 
-                // Reload personnel
                 await loadPersonnel();
                 
             } catch (error) {
@@ -2513,14 +2841,11 @@
                     return;
                 }
                 
-                // Create CSV content
                 let csvContent = "data:text/csv;charset=utf-8,";
                 
-                // Headers
                 const headers = ["Name", "Employee ID", "Position", "Division", "Company", "Status", "Contact", "Last Updated"];
                 csvContent += headers.join(",") + "\r\n";
                 
-                // Data rows
                 filteredPersonnel.forEach(person => {
                     const row = [
                         `"${person.name}"`,
@@ -2535,7 +2860,6 @@
                     csvContent += row.join(",") + "\r\n";
                 });
                 
-                // Create download link
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
@@ -2561,10 +2885,8 @@
                     currentUser = user;
                     console.log('User logged in:', user.email);
                     
-                    // Load personnel data
                     await loadPersonnel();
                     
-                    // Hide loading state
                     document.getElementById('loadingState').classList.add('hidden');
                     
                 } else {
@@ -2610,13 +2932,28 @@
             document.getElementById('exportBtn').addEventListener('click', exportPersonnelData);
             document.getElementById('authButton').addEventListener('click', logout);
             
+            // Tabs
+            document.getElementById('personnelTab').addEventListener('click', function() {
+                document.getElementById('personnelContent').classList.remove('hidden');
+                document.getElementById('analyticsContent').classList.add('hidden');
+                this.classList.add('active');
+                document.getElementById('analyticsTab').classList.remove('active');
+            });
+            
+            document.getElementById('analyticsTab').addEventListener('click', function() {
+                document.getElementById('personnelContent').classList.add('hidden');
+                document.getElementById('analyticsContent').classList.remove('hidden');
+                this.classList.add('active');
+                document.getElementById('personnelTab').classList.remove('active');
+                renderAnalytics();
+            });
+            
             // Search functionality
             document.getElementById('searchPersonnel').addEventListener('input', applyFilters);
             
             // Filter buttons
             document.querySelectorAll('.filter-tag').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // Update active button
                     document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     
@@ -2637,18 +2974,14 @@
                 option.addEventListener('click', function() {
                     const sortValue = this.dataset.sort;
                     
-                    // Update active sort option
                     document.querySelectorAll('.sort-option').forEach(opt => opt.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // Update current sort and button text
                     currentSort = sortValue;
                     updateSortButtonText();
                     
-                    // Close dropdown
                     document.getElementById('sortDropdown').classList.remove('show');
                     
-                    // Apply filters (which includes sorting)
                     applyFilters();
                 });
             });
@@ -2709,17 +3042,6 @@
                 e.preventDefault();
                 savePersonnel();
             });
-            
-            // Global click handlers for personnel cards (added dynamically)
-            document.addEventListener('click', function(e) {
-                if (e.target.closest('.personnel-card')) {
-                    const card = e.target.closest('.personnel-card');
-                    const personnelId = card.dataset.id;
-                    if (personnelId) {
-                        viewPersonnelActivity(personnelId);
-                    }
-                }
-            });
         }
 
         // ==================== GLOBAL FUNCTIONS ====================
@@ -2728,7 +3050,7 @@
 
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Personnel List initializing...');
+            console.log('Personnel Management initializing...');
             
             const firebaseInitialized = initializeFirebase();
             
@@ -2741,7 +3063,7 @@
             initEventListeners();
             updateSortButtonText();
             
-            console.log('Personnel List initialization complete');
+            console.log('Personnel Management initialization complete');
         });
 
     </script>
