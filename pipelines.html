@@ -101,12 +101,13 @@
             overflow-x: hidden;
         }
 
-        /* ==================== IMPROVED DROPDOWN STYLES ==================== */
-        .custom-dropdown {
+        /* ==================== AUTO-COMPLETE SEARCH STYLES ==================== */
+        .autocomplete-container {
             position: relative;
+            width: 100%;
         }
 
-        .custom-dropdown-input {
+        .autocomplete-input {
             width: 100%;
             padding: 0.875rem 1rem;
             border: 2px solid var(--neutral-200);
@@ -115,17 +116,40 @@
             background: white;
             transition: var(--transition-base);
             color: var(--neutral-800);
-            cursor: pointer;
-            position: relative;
+            padding-right: 3.5rem;
         }
 
-        .custom-dropdown-input:focus {
+        .autocomplete-input:focus {
             outline: none;
             border-color: var(--primary-500);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        .custom-dropdown-options {
+        .autocomplete-add-btn {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 0.875rem;
+        }
+
+        .autocomplete-add-btn:hover {
+            background: var(--primary-600);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .autocomplete-suggestions {
             position: absolute;
             top: 100%;
             left: 0;
@@ -134,134 +158,72 @@
             border: 1px solid var(--neutral-200);
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-xl);
-            max-height: 350px;
+            max-height: 300px;
             overflow-y: auto;
-            z-index: 9999;
+            z-index: 100;
             display: none;
             margin-top: 0.25rem;
-            animation: dropdownFadeIn 0.2s ease-out;
+            animation: fadeIn 0.2s ease-out;
         }
 
-        @keyframes dropdownFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .custom-dropdown-options.show {
+        .autocomplete-suggestions.show {
             display: block;
         }
 
-        .custom-dropdown-options-header {
-            padding: 0.75rem 1rem;
-            background: var(--neutral-50);
-            border-bottom: 1px solid var(--neutral-200);
-            font-weight: 600;
-            color: var(--neutral-700);
-            font-size: 0.875rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .dropdown-count {
-            background: var(--primary-100);
-            color: var(--primary-700);
-            padding: 0.125rem 0.5rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .custom-dropdown-search {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--neutral-200);
-            background: var(--neutral-50);
-        }
-
-        .custom-dropdown-search input {
-            width: 100%;
-            padding: 0.625rem 0.75rem;
-            border: 1px solid var(--neutral-300);
-            border-radius: var(--radius-md);
-            font-size: 0.9rem;
-            transition: var(--transition-fast);
-        }
-
-        .custom-dropdown-search input:focus {
-            outline: none;
-            border-color: var(--primary-500);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-        }
-
-        .custom-dropdown-options-container {
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .custom-dropdown-option {
+        .autocomplete-suggestion {
             padding: 0.75rem 1rem;
             cursor: pointer;
             transition: var(--transition-fast);
             border-bottom: 1px solid var(--neutral-100);
             font-size: 0.9rem;
-            display: block;
-            white-space: normal;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        .custom-dropdown-option:last-child {
+        .autocomplete-suggestion:last-child {
             border-bottom: none;
         }
 
-        .custom-dropdown-option:hover {
+        .autocomplete-suggestion:hover {
             background: var(--primary-50);
             color: var(--primary-700);
         }
 
-        .custom-dropdown-option.selected {
+        .autocomplete-suggestion.selected {
             background: var(--primary-100);
             color: var(--primary-800);
             font-weight: 600;
             border-left: 3px solid var(--primary-500);
         }
 
-        .dropdown-empty-state {
-            padding: 2rem 1rem;
+        .autocomplete-suggestion-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: var(--radius-sm);
+            background: var(--primary-100);
+            color: var(--primary-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .autocomplete-no-results {
+            padding: 1.5rem 1rem;
             text-align: center;
             color: var(--neutral-500);
             font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .dropdown-empty-state i {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+        .autocomplete-no-results-icon {
+            font-size: 1.5rem;
             opacity: 0.5;
-        }
-
-        .custom-dropdown-input::after {
-            content: '\f078';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--neutral-500);
-            font-size: 0.8rem;
-            pointer-events: none;
-            transition: var(--transition-fast);
-        }
-
-        .custom-dropdown-input.open::after {
-            transform: translateY(-50%) rotate(180deg);
-            color: var(--primary-500);
         }
 
         /* ==================== PIPELINE BOARD STYLES ==================== */
@@ -1001,7 +963,7 @@
                 padding: 1.5rem;
             }
             
-            .custom-dropdown-options {
+            .autocomplete-suggestions {
                 position: fixed;
                 top: 50%;
                 left: 1rem;
@@ -1265,65 +1227,44 @@
                                 <label class="form-label required-field" for="pipelinePIC">
                                     PIC
                                 </label>
-                                <div class="custom-dropdown">
+                                <div class="autocomplete-container">
                                     <input type="text" 
                                            id="pipelinePIC" 
-                                           class="custom-dropdown-input"
+                                           class="autocomplete-input form-input"
                                            required
-                                           placeholder="Search or select PIC"
-                                           autocomplete="off"
-                                           readonly>
-                                    <div class="custom-dropdown-options" id="picDropdownOptions">
-                                        <div class="custom-dropdown-options-header">
-                                            <span>Select PIC</span>
-                                            <span class="dropdown-count" id="picCount">0</span>
-                                        </div>
-                                        <div class="custom-dropdown-search">
-                                            <input type="text" 
-                                                   placeholder="Type to search PIC..."
-                                                   class="form-input"
-                                                   id="picSearchInput">
-                                        </div>
-                                        <div class="custom-dropdown-options-container" id="picOptionsContainer">
-                                            <!-- PIC options will be populated by JavaScript -->
-                                        </div>
-                                    </div>
+                                           placeholder="Type to search or add PIC"
+                                           autocomplete="off">
+                                    <button type="button" 
+                                            class="autocomplete-add-btn"
+                                            id="addPICBtn"
+                                            title="Add new PIC">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <div class="autocomplete-suggestions" id="picSuggestions"></div>
                                 </div>
+                                <p class="text-xs text-gray-500 mt-1">Start typing to see suggestions, or click + to add new</p>
                             </div>
                             
                             <div>
                                 <label class="form-label required-field" for="pipelineCustomer">
                                     Customer
                                 </label>
-                                <div class="custom-dropdown">
+                                <div class="autocomplete-container">
                                     <input type="text" 
                                            id="pipelineCustomer" 
-                                           class="custom-dropdown-input"
+                                           class="autocomplete-input form-input"
                                            required
-                                           placeholder="Search or select customer"
-                                           autocomplete="off"
-                                           readonly>
-                                    <div class="custom-dropdown-options" id="customerDropdownOptions">
-                                        <div class="custom-dropdown-options-header">
-                                            <span>Select Customer</span>
-                                            <span class="dropdown-count" id="customerCount">0</span>
-                                        </div>
-                                        <div class="custom-dropdown-search">
-                                            <input type="text" 
-                                                   placeholder="Type to search customer..."
-                                                   class="form-input"
-                                                   id="customerSearchInput">
-                                            <button type="button" 
-                                                    id="addNewCustomerBtn" 
-                                                    class="btn btn-primary btn-sm mt-2 w-full">
-                                                <i class="fas fa-plus"></i> Add New Customer
-                                            </button>
-                                        </div>
-                                        <div class="custom-dropdown-options-container" id="customerOptionsContainer">
-                                            <!-- Customer options will be populated by JavaScript -->
-                                        </div>
-                                    </div>
+                                           placeholder="Type to search or add customer"
+                                           autocomplete="off">
+                                    <button type="button" 
+                                            class="autocomplete-add-btn"
+                                            id="addCustomerBtn"
+                                            title="Add new customer">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <div class="autocomplete-suggestions" id="customerSuggestions"></div>
                                 </div>
+                                <p class="text-xs text-gray-500 mt-1">Start typing to see suggestions, or click + to add new</p>
                             </div>
                         </div>
                     </div>
@@ -1475,6 +1416,68 @@
                     <button type="submit" form="pipelineItemForm" class="btn btn-primary">
                         <i class="fas fa-save"></i>
                         Save Pipeline Item
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New PIC Modal -->
+    <div id="addPICModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-md">
+            <div class="modal-header sticky-top">
+                <div>
+                    <h2 class="modal-title">Add New PIC</h2>
+                    <p class="text-gray-300 mt-1">Add new Person In Charge</p>
+                </div>
+                <button id="closeAddPICModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body custom-scrollbar">
+                <form id="addPICForm" class="space-y-6">
+                    <div>
+                        <label class="form-label required-field" for="newPICName">
+                            PIC Name
+                        </label>
+                        <input type="text" 
+                               id="newPICName" 
+                               class="form-input"
+                               required
+                               placeholder="Enter PIC name">
+                    </div>
+                    
+                    <div>
+                        <label class="form-label" for="newPICEmail">
+                            Email
+                        </label>
+                        <input type="email" 
+                               id="newPICEmail" 
+                               class="form-input"
+                               placeholder="Enter email address">
+                    </div>
+                    
+                    <div>
+                        <label class="form-label" for="newPICPhone">
+                            Phone Number
+                        </label>
+                        <input type="text" 
+                               id="newPICPhone" 
+                               class="form-input"
+                               placeholder="Enter phone number">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-header sticky-bottom">
+                <div></div>
+                <div class="flex gap-3">
+                    <button id="cancelAddPICBtn" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" form="addPICForm" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Add PIC
                     </button>
                 </div>
             </div>
@@ -1659,7 +1662,7 @@
 
 <script>
         // ==================== GLOBAL VARIABLES ====================
-        let db, auth, pipelinesCollection, pipelineHistoryCollection, usersCollection, customersCollection;
+        let db, auth, pipelinesCollection, pipelineHistoryCollection, usersCollection, customersCollection, picsCollection;
         let currentUser = null;
         let currentUserRole = 'user';
         let pipelineItems = [];
@@ -1667,259 +1670,9 @@
         let draggedItem = null;
         let charts = {};
         
-        // Data for dropdowns
-        const PIC_LIST = [
-            "Wahyu Sujoko",
-            "Proboadi hariyo wicaksono", 
-            "Fiki hernawan",
-            "Indra kurniawan",
-            "Aries A Bastian",
-            "Mochammad Gorwantoro Putra", 
-            "Yudiyono", 
-            "Muhamad husni", 
-            "edwin qomarudin", 
-            "Edy Amin",
-            "Heksi Prasetyo", 
-            "Hery Syah Putra"
-        ];
-        
-        const CUSTOMER_LIST = [
-            "PT. GUDANG GARAM Tbk",
-            "PERSEROAN TERBATAS BADAN BANK CENTRAL ASIA TBK",
-            "PT. FRISIAN FLAG INDONESIA",
-            "PT. GRIYA SIRA INDAH",
-            "PT. PUTRA SINAR PERMAJA",
-            "PT. PLAZA INDONESIA REALTY Tbk",
-            "CV. KROSS SARANA TEKNIK",
-            "PT. GEMILANG CIPTA ABADI",
-            "PT. MARYO MAKMUR TEHNIK",
-            "PT. SOUTH PACIFIC VISCOSE",
-            "PT. HOTEL CANDI BARU",
-            "PT. SMILE BRIGHT WHITE (LAND OF SMILES CLINIC)",
-            "PT. PURI MATAHARI",
-            "PT. MENARA ASTRA",
-            "PT. PLAZA INDONESIA MANDIRI",
-            "PT. WYNNCOR BALI",
-            "PT. JONES LANG LASALLE",
-            "PT. SATAHI CIPTA MANDIRI",
-            "YAYASAN BUDDHA TZU CHI MEDIKA INDONESIA",
-            "PT. INDONESIA MOC SERVICE",
-            "PT. RAMA KUTA HOTEL",
-            "PT. HANDAL UTAMA BUANA",
-            "PT. SURYA MARGA LUHUR",
-            "PT. GRAHA SIDANG PRATAMA",
-            "PT. LASALLEFOOD INDONESIA",
-            "SARULLA OPERATIONS LTD",
-            "SHM FIRE SAFETY Pte.Ltd",
-            "PT. WAHANA NUSANTARA",
-            "PT. YOGYA CENTRAL TERPADU",
-            "PT. DONGGI SENORO LNG",
-            "PT. PT. INDONESIA MOROWALI INDUSTRIAL PARK",
-            "CAKRA NUSA UTAMA",
-            "PT. BIMANTARA CITRA",
-            "PT. ALAM BALI INTERNATIONAL",
-            "PT. ASIA PROPERTINDO BUILDING",
-            "P3SRS-KC KERATON APARTMENT PLAZA INDONESIA",
-            "PT. TRIGUNA MANDALA",
-            "PT. PATRA JASA",
-            "PT. TOTAL FIRE INDONESIA",
-            "PERHIMPUNAN PEMILIK DAN PENGHUNI SATUAN RUMAH SUSUN APARTEMEN CIPUTRA WORLD 2 JAKARTA",
-            "PT. SPECTRO PRATAMA INDONESIA",
-            "PT. PAKUWON PERMAI",
-            "PT. BINA GRAHA MAKMUR",
-            "PT. JAFA KARYA TEKNIK",
-            "PT. MINH GIA CONSORSIUM",
-            "PERHIMPUNAN PENGHUNI APARTEMEN BATAVIA",
-            "PT. SURYA ANDALAN BUMI PERSADA",
-            "PT. SINAR CEMERLANG GEMILANG",
-            "PT. SINAR GALAXY",
-            "PT. MELFICON PERSADA ABADI",
-            "PT. APICAL KAO CHEMICAL",
-            "PT. GRAHA BENGKULU MAKMUR",
-            "PT. VOPAK TERMINAL MERAK",
-            "PT. PLAZA LIFESTYLE PRIMA",
-            "PT. BLUEMOON INTERNASIONAL",
-            "PT. HONEYWELL INDONESIA",
-            "PT. BUNGASARI FLOUR MILLS INDONESIA",
-            "PT. ROYAL PACIFIC NUSANTARA",
-            "PT. IDEA SEJAHTERA INDONESIA",
-            "PT. BERCA MANDIRI PERKASA",
-            "PT. LAX TEKNOLOGI INDONESIA",
-            "MU RESEARCH AND CONSULTING INDONESIA",
-            "PT. PROMATRIX FACILITIES MANAGEMENT",
-            "PT. JISK PERSADA SOLUSI",
-            "PT. SEMEN INDONESIA LOGISTIK",
-            "PT. MANE INDONESIA",
-            "PT. JGC INDONESIA",
-            "PT. JOHNSON CONTROLS INDONESIA",
-            "PT. WIFGASINDO DINAMIKA INSTRUMENT ENGINEERING",
-            "PT. BAHANASEMESTA CITRANUSANTARA",
-            "PT. INDOKO PERKASA PRIMA",
-            "PT. ARKADIA SINERGI INDONESIA",
-            "PT. NURBAIZ RIZKY SEJAHTERA",
-            "PT. PILAR GARBA INTI",
-            "PT. CITRA PUTRA REALTY",
-            "JADESTONE ENERGY (LEMANG) PTE LTD",
-            "PT. LANGGENG KREASI JAYA PRIMA",
-            "RUMAH SAKIT JANTUNG HARAPAN KITA JAKARTA DITJEN PELAYANAN KESEHATAN KEMENTRIAN KESEHATAN",
-            "PT. GELYN SIDNI",
-            "YUSKITAMA LESTARI",
-            "PPPSRS APARTEMEN THE ELEMENTS",
-            "PPPSRS PERKANTORAN EKSEKUTIF SATRIO TOWER",
-            "PT. BORNEO PROPERTINDO MANDIRI",
-            "PT. KARTA WADANA ABADI",
-            "PT. KUSUMA INTI ABADI",
-            "PT. HANJAYA MANDALA SAMPOERNA TBK",
-            "PT. SENA AVINDO",
-            "PT. INDOSAFE TIRTA MAKMUR",
-            "PT. INDONESIA ANEKATAMA MANDIRI",
-            "PT. JAYA BONS ABADI",
-            "PT. GRAHA ALAM LESTARI",
-            "PT. MEGA HOTEL LESTARI",
-            "PT. PARA BALI PROPERTINDO",
-            "PT. MATTEL INDONESIA",
-            "PT. GRAHA WAHANA NUSANTARA",
-            "PT. BINARA GUNA MEDIKTAMA",
-            "PT. SODEXO SINERGI INDONESIA",
-            "PT. MULIA KARYA GEMILANG",
-            "PT. RAMAYANA HARTA PRATAMA",
-            "PT. SIMEX PHARMACEUTICAL INDONESIA",
-            "PT. MIRAMA WISATA",
-            "PPPSRS THE PAKUBUWON VIEW",
-            "PT. MUTIARA PERMATA MULIA",
-            "PT. CBRE CONSULTANCY SERVICES",
-            "PT. KARANG MAS SEJAHTERA",
-            "PT. RUMAH SAKIT PONDOK INDAH",
-            "PT. YUSKITAMA LESTARI",
-            "PT. TAIYO SINAR RAYA TEKNIK",
-            "PT. SHR HOTEL INDONESIA",
-            "PPRSH FOUR SEASONS REGENT RESIDENCES",
-            "PP THE PAKUBUWON RESIDENCE",
-            "PT. SARIARTHAMAS HOTEL INTERNATIONAL",
-            "PT. PT. BENTENG TEGUH PERKASA",
-            "BHUMI PRAMA ARJASA",
-            "PT. AFG VENTURA TEKNOLOGI",
-            "PT. TARANA REKSA CIPTAKARYA",
-            "MARS SYMBIOSCIENCE INDONESIA",
-            "PT. KREASI CIPTA KARSA",
-            "PT. WIRA EKA BHAKTI",
-            "PERKUMPULAN PENGHUNI RUMAH SUSUN REGATTA-VB",
-            "CV. ZULFIRA KREASINDO",
-            "PT. REICON WIRAINDO PRATAMA",
-            "PT. PURI ZUQNI",
-            "PT. SILOAM INTERNATIONAL HOSPITALS Tbk",
-            "PT. KARUNIA ARTHA PRATAMA",
-            "PT. KAWASAN MANDIRI BERSAMA",
-            "PT. JAYA BINARA MEDIKTAMA",
-            "PT. CENTRE POINT MEDAN",
-            "PT. SRIBOGA FLOUR MILL",
-            "HYUNDAI ENGINEERING & CONSTRUCTION CO,LTD",
-            "PT. EPCON GRAHA GUNA",
-            "PT. YAS KONSULTAN INDONESIA",
-            "PT. KARYA PROPERTINDO INVESTAMA",
-            "PT. BUMI SERPONG DAMAI",
-            "PT. PAKUWON PERMAI",
-            "PT. API METRA GRAHA",
-            "EUROASIATIC JAYA",
-            "PT. MUSTIKA MEMADATA",
-            "PT. ISS INDONESIA",
-            "PERHIMPUNAN PENGHUNI PERKANTORAN PLAZA ASIA",
-            "PT. EMPAT PILAR ADIDAYA",
-            "PT. SUMBER MESIN RAYA",
-            "PT. SARANA UTAMA ADIMANDIRI",
-            "PT. BARNABY KONSTRUKSI SEJAHTERA",
-            "CV. ANEKA MANDIRI",
-            "PERKUMPULAN HUSADA",
-            "PT. FINUSOLPRIMA FARMA INTERNASIONAL",
-            "CV. LENTERA TILAS TEHNIK",
-            "PT. VILLAS HOTEL",
-            "PT. ARISTA PRATAMA JAYA",
-            "PT. WIKA REALTY MINOR DEVELOPMENT",
-            "PT. INTEGRA METRICON MANDIRI",
-            "PT. SENTRATEK ADIPRESTASI",
-            "PT. PT. BANK CENTRAL ASIA TBK",
-            "PT. HARAPAN GLOBAL NIAGA",
-            "PT. PAKUWON JATI TBK",
-            "PERHIMPUNAN PEMILIK DAN PENGHUNI SATUAN RUMAH SUSUN SEMENTARA CIPUTRA INTERNATIONAL - 1",
-            "BPK. ROHMADI",
-            "PT. DUA CAHAYA SAKTI",
-            "PT. CIPTAKARYA MANDIRI JAYA",
-            "PT. MANGGALA GELORA PERKASA",
-            "PT. SAMAMANTAP SEJAHTERA",
-            "PT. TELKOM LANDMARK TOWER",
-            "PT. ANUMANA GRAHA CANTIKA",
-            "PT. PRIMA PRATAMA CITRA",
-            "RS EVASARI",
-            "PT. DUTA ANGGADA REALTY TBK",
-            "PT. TIGA DUA DELAPAN",
-            "PT. DWITAMA ALAM SEJAHTERA",
-            "PT. WAHANA ADIREKSA PRATAMA",
-            "PERSEROAN TERBATAS - BADAN SURYA BAYU SAKTI",
-            "PT. PANTRAYA",
-            "PT. KIEVIT INDONESIA",
-            "PT. ALLTECH SOLUSINDO",
-            "PT. KALBE FARMA TBK",
-            "PT. SURYA GRAHA PERTIWI",
-            "PT. ANDAL MAKMUR AGUNG",
-            "KAP PAUL HADIWINATA, HIDAJAT, ARSONO, RETNO, PALILINGAN & REKAN",
-            "PT. ALFA PRIMA TEHNINDO",
-            "PT. BUMITANGERANG MESINDOTAMA",
-            "PT. SETYA SOLUSI SEJAHTERA",
-            "PT. ADITYRA ROKKO KENCANA",
-            "PT. MANDIRI ANDAL SEJAHTERA",
-            "PT. GRHA HATTEN DUASATU",
-            "PT. SEMESTA INDAH PERMATA",
-            "PT. GEMA GRAHA SARANA",
-            "PERSEK. OENTOENG SURIA & PARTNERS",
-            "PT. METROPOLITAN KENTJANA TBK",
-            "PT. DUTA ANGGADA REALTY - CHASE PLAZA",
-            "PT. CIPUTRA RESIDENCE",
-            "PT. GENTAMULIA INFRA",
-            "PT. KAMADJAJA LOGISTICS",
-            "PT. PESONA PURI PROPERTI",
-            "PT. HEXALINDO MITRA PERKASA",
-            "PT. SUMMARECON HOTELINDO",
-            "PT. KUSUMA INTI ABADI",
-            "PT. JELL ENGINEERING KARYA",
-            "PT. SURYAMAS DUTA MAKMUR TBK",
-            "PT. CENTRAL TEHNIK SOLUSINDO",
-            "PT. SINAR MAS AGRO RESOURCES AND TECHNOLOGY TBK",
-            "PT. UNITA BRANINDO",
-            "PT. PENGELOLA LANDMARK PLUIT",
-            "PT. GRAHA LAYAR PRIMA TBK",
-            "DASATRIA UTAMA",
-            "PT. KIDE INTERNATIONAL INDONESIA",
-            "PT. PRIMASATYA REKSACIPTA TEHNIKA",
-            "PT. CONSTRUCTA BUILDERS",
-            "PT. PUTERA SAMPOERNA",
-            "PT. TOTALFIRE INDONESIA",
-            "PT. OPHTHALINDO JAYA",
-            "PT. BUANA MITRA GLOBALINDO",
-            "PT. TEKNIKA INTI PERKASA",
-            "PT. MEGA MULIA MULTIABADI",
-            "PT. SANGGRAHA DHIKA",
-            "PT. AZBIL BERCA INDONESIA",
-            "PT. ESPANIKA DWI SENTOSA",
-            "PPPSRS HUNIAN APARTEMEN SOUTH HILLS",
-            "PERSEROAN TERBATAS BADAN GRAHA SENGGIGI (ARUNA SENGGIGI RESORT & CONVENTION)",
-            "PT. SUCCESS VENTURE HOTEL INVESTMENTS",
-            "PT. SUCCESS VENTURE SERVICED SUITES INVESTMENTS",
-            "PT. SURYA INTER WISESA",
-            "PT. MHG BALANGAN",
-            "PT. TOA COATING INDONESIA",
-            "PT. GEMA INTERMULIA SEJAHTERA",
-            "PT. PARIDAN INTI SOLUSI PERSADA",
-            "PT. SANTOS JAYA ABADI",
-            "PT. SUPRA BOGA LESTARI TBk",
-            "PT. YESTAR KARYA UTAMA",
-            "PT. JON MERELL JAYA",
-            "PT. INDOAGRI DAITOCACAO",
-            "PT. OCS GLOBAL SERVICES",
-            "PT. ADEMCO SECURITY INDONESIA",
-            "PERHIMPUNAN PENGHUNI RUMAH SUSUN (SEMENTARA) APARTEMEN PURI ORCHARD",
-            "PT. KIAN MULIA MANUNGGAL",
-            "BPK. LIE EDDY"
-        ];
+        // Data for autocomplete
+        let PIC_LIST = [];
+        let CUSTOMER_LIST = [];
         
         // Pipeline statuses configuration
         const pipelineStatuses = [
@@ -1949,6 +1702,7 @@
                 pipelineHistoryCollection = db.collection('pipelineHistory');
                 usersCollection = db.collection('users');
                 customersCollection = db.collection('customers');
+                picsCollection = db.collection('pics');
                 
                 console.log('Firebase initialized successfully for Pipelines');
                 return true;
@@ -2098,372 +1852,337 @@
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
         }
 
-        // ==================== IMPROVED DROPDOWN FUNCTIONS ====================
-        function setupDropdowns() {
-            // Setup PIC dropdown
-            setupPICDropdown();
+        // ==================== AUTO-COMPLETE SEARCH FUNCTIONS ====================
+        function setupAutoCompleteSearch() {
+            const picInput = document.getElementById('pipelinePIC');
+            const customerInput = document.getElementById('pipelineCustomer');
+            const addPICBtn = document.getElementById('addPICBtn');
+            const addCustomerBtn = document.getElementById('addCustomerBtn');
             
-            // Setup Customer dropdown
-            setupCustomerDropdown();
+            // Load initial data
+            loadPICList();
+            loadCustomerList();
             
-            // Close dropdowns when clicking outside
+            // Setup PIC autocomplete
+            if (picInput) {
+                let picSearchTimeout;
+                
+                picInput.addEventListener('input', function() {
+                    clearTimeout(picSearchTimeout);
+                    const searchTerm = this.value.trim();
+                    
+                    picSearchTimeout = setTimeout(() => {
+                        if (searchTerm.length >= 2) {
+                            searchPICSuggestions(searchTerm);
+                        } else {
+                            hideSuggestions('picSuggestions');
+                        }
+                    }, 300);
+                });
+                
+                picInput.addEventListener('focus', function() {
+                    const searchTerm = this.value.trim();
+                    if (searchTerm.length >= 2) {
+                        searchPICSuggestions(searchTerm);
+                    }
+                });
+                
+                picInput.addEventListener('blur', function() {
+                    // Hide suggestions after a short delay
+                    setTimeout(() => {
+                        hideSuggestions('picSuggestions');
+                    }, 200);
+                });
+                
+                // Enter key to select first suggestion
+                picInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const suggestions = document.querySelectorAll('#picSuggestions .autocomplete-suggestion');
+                        if (suggestions.length > 0) {
+                            suggestions[0].click();
+                        }
+                    }
+                });
+            }
+            
+            // Setup Customer autocomplete
+            if (customerInput) {
+                let customerSearchTimeout;
+                
+                customerInput.addEventListener('input', function() {
+                    clearTimeout(customerSearchTimeout);
+                    const searchTerm = this.value.trim();
+                    
+                    customerSearchTimeout = setTimeout(() => {
+                        if (searchTerm.length >= 2) {
+                            searchCustomerSuggestions(searchTerm);
+                        } else {
+                            hideSuggestions('customerSuggestions');
+                        }
+                    }, 300);
+                });
+                
+                customerInput.addEventListener('focus', function() {
+                    const searchTerm = this.value.trim();
+                    if (searchTerm.length >= 2) {
+                        searchCustomerSuggestions(searchTerm);
+                    }
+                });
+                
+                customerInput.addEventListener('blur', function() {
+                    // Hide suggestions after a short delay
+                    setTimeout(() => {
+                        hideSuggestions('customerSuggestions');
+                    }, 200);
+                });
+                
+                // Enter key to select first suggestion
+                customerInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const suggestions = document.querySelectorAll('#customerSuggestions .autocomplete-suggestion');
+                        if (suggestions.length > 0) {
+                            suggestions[0].click();
+                        }
+                    }
+                });
+            }
+            
+            // Setup add buttons
+            if (addPICBtn) {
+                addPICBtn.addEventListener('click', openAddPICModal);
+            }
+            
+            if (addCustomerBtn) {
+                addCustomerBtn.addEventListener('click', openAddCustomerModal);
+            }
+            
+            // Close suggestions when clicking outside
             document.addEventListener('click', function(e) {
-                if (!e.target.closest('.custom-dropdown')) {
-                    closeAllDropdowns();
+                if (!e.target.closest('.autocomplete-container')) {
+                    hideAllSuggestions();
                 }
             });
             
-            // Close dropdowns on escape key
+            // Close suggestions on escape key
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
-                    closeAllDropdowns();
+                    hideAllSuggestions();
                 }
             });
         }
 
-        function setupPICDropdown() {
-            const picInput = document.getElementById('pipelinePIC');
-            const picDropdown = document.getElementById('picDropdownOptions');
-            const picSearchInput = document.getElementById('picSearchInput');
-            const picOptionsContainer = document.getElementById('picOptionsContainer');
-            const picCount = document.getElementById('picCount');
-            
-            if (!picInput || !picDropdown) return;
-            
-            // Populate PIC options
-            populatePICOptions();
-            
-            // Toggle dropdown on input click
-            picInput.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleDropdown(picDropdown, picInput);
-                
-                // Focus search input when dropdown opens
-                if (picDropdown.classList.contains('show') && picSearchInput) {
-                    setTimeout(() => {
-                        picSearchInput.focus();
-                    }, 100);
-                }
-            });
-            
-            // Handle input for manual entry
-            picInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                filterPICOptions(searchTerm);
-                picDropdown.classList.add('show');
-                picInput.classList.add('open');
-            });
-            
-            // Handle search input
-            if (picSearchInput) {
-                picSearchInput.addEventListener('input', function(e) {
-                    const searchTerm = this.value.toLowerCase();
-                    filterPICOptions(searchTerm);
-                    e.stopPropagation();
-                });
-                
-                picSearchInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const visibleOptions = picOptionsContainer.querySelectorAll('.custom-dropdown-option:not([style*="display: none"])');
-                        if (visibleOptions.length > 0) {
-                            visibleOptions[0].click();
-                        }
-                    }
-                });
-            }
-            
-            // Close dropdown when an option is selected
-            picOptionsContainer.addEventListener('click', function(e) {
-                if (e.target.classList.contains('custom-dropdown-option')) {
-                    picInput.value = e.target.textContent;
-                    picInput.classList.remove('open');
-                    closeAllDropdowns();
-                }
-            });
-        }
-
-        function setupCustomerDropdown() {
-            const customerInput = document.getElementById('pipelineCustomer');
-            const customerDropdown = document.getElementById('customerDropdownOptions');
-            const customerSearchInput = document.getElementById('customerSearchInput');
-            const customerOptionsContainer = document.getElementById('customerOptionsContainer');
-            const customerCount = document.getElementById('customerCount');
-            
-            if (!customerInput || !customerDropdown) return;
-            
-            // Load customers from Firestore
-            loadCustomers();
-            
-            // Toggle dropdown on input click
-            customerInput.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleDropdown(customerDropdown, customerInput);
-                
-                // Focus search input when dropdown opens
-                if (customerDropdown.classList.contains('show') && customerSearchInput) {
-                    setTimeout(() => {
-                        customerSearchInput.focus();
-                    }, 100);
-                }
-            });
-            
-            // Handle input for manual entry
-            customerInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                filterCustomerOptions(searchTerm);
-                customerDropdown.classList.add('show');
-                customerInput.classList.add('open');
-            });
-            
-            // Handle search input
-            if (customerSearchInput) {
-                customerSearchInput.addEventListener('input', function(e) {
-                    const searchTerm = this.value.toLowerCase();
-                    filterCustomerOptions(searchTerm);
-                    e.stopPropagation();
-                });
-                
-                customerSearchInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const visibleOptions = customerOptionsContainer.querySelectorAll('.custom-dropdown-option:not([style*="display: none"])');
-                        if (visibleOptions.length > 0) {
-                            visibleOptions[0].click();
-                        }
-                    }
-                });
-            }
-            
-            // Close dropdown when an option is selected
-            customerOptionsContainer.addEventListener('click', function(e) {
-                if (e.target.classList.contains('custom-dropdown-option')) {
-                    customerInput.value = e.target.textContent;
-                    customerInput.classList.remove('open');
-                    closeAllDropdowns();
-                }
-            });
-        }
-
-        function toggleDropdown(dropdown, input) {
-            const isOpen = dropdown.classList.contains('show');
-            closeAllDropdowns();
-            
-            if (!isOpen) {
-                dropdown.classList.add('show');
-                if (input) {
-                    input.classList.add('open');
-                }
-            }
-        }
-
-        function closeAllDropdowns() {
-            document.querySelectorAll('.custom-dropdown-options').forEach(dropdown => {
-                dropdown.classList.remove('show');
-            });
-            
-            document.querySelectorAll('.custom-dropdown-input').forEach(input => {
-                input.classList.remove('open');
-            });
-        }
-
-        function populatePICOptions() {
-            const picOptionsContainer = document.getElementById('picOptionsContainer');
-            const picCount = document.getElementById('picCount');
-            
-            if (!picOptionsContainer || !picCount) return;
-            
-            // Clear existing options
-            picOptionsContainer.innerHTML = '';
-            
-            // Add PIC options
-            PIC_LIST.forEach(pic => {
-                const option = document.createElement('div');
-                option.className = 'custom-dropdown-option';
-                option.textContent = pic;
-                option.title = pic; // Add title for full text on hover
-                picOptionsContainer.appendChild(option);
-            });
-            
-            // Update count
-            picCount.textContent = PIC_LIST.length;
-            
-            // Show empty state if no options
-            if (PIC_LIST.length === 0) {
-                showEmptyState(picOptionsContainer, 'No PIC available');
-            }
-        }
-
-        function filterPICOptions(searchTerm) {
-            const picOptionsContainer = document.getElementById('picOptionsContainer');
-            const picCount = document.getElementById('picCount');
-            
-            if (!picOptionsContainer || !picCount) return;
-            
-            const options = picOptionsContainer.querySelectorAll('.custom-dropdown-option');
-            let visibleCount = 0;
-            
-            options.forEach(option => {
-                const text = option.textContent.toLowerCase();
-                if (searchTerm === '' || text.includes(searchTerm)) {
-                    option.style.display = 'block';
-                    visibleCount++;
-                } else {
-                    option.style.display = 'none';
-                }
-            });
-            
-            // Update count
-            picCount.textContent = visibleCount;
-            
-            // Show empty state if no matches
-            if (visibleCount === 0) {
-                showEmptyState(picOptionsContainer, 'No matching PIC found');
-            }
-        }
-
-        async function loadCustomers() {
+        async function loadPICList() {
             try {
-                const querySnapshot = await customersCollection.orderBy('name').get();
-                const customerOptionsContainer = document.getElementById('customerOptionsContainer');
-                const customerCount = document.getElementById('customerCount');
+                console.log('Loading PIC list from Firestore...');
                 
-                if (!customerOptionsContainer || !customerCount) return;
+                const querySnapshot = await picsCollection.orderBy('name').get();
+                PIC_LIST = [];
                 
-                // Clear existing options
-                customerOptionsContainer.innerHTML = '';
-                
-                let customers = [];
-                
-                // Add customer options from Firestore
                 querySnapshot.forEach((doc) => {
-                    const customerData = doc.data();
-                    customers.push(customerData.name);
+                    const data = doc.data();
+                    PIC_LIST.push({
+                        id: doc.id,
+                        name: data.name,
+                        email: data.email || '',
+                        phone: data.phone || '',
+                        createdAt: data.createdAt
+                    });
                 });
                 
-                // Add default customers if Firestore is empty
-                if (customers.length === 0) {
-                    customers = [...CUSTOMER_LIST];
+                // If no PICs in Firestore, use default list
+                if (PIC_LIST.length === 0) {
+                    console.log('No PICs in Firestore, using default list');
+                    const defaultPICs = [
+                        "Wahyu Sujoko",
+                        "Proboadi hariyo wicaksono", 
+                        "Fiki hernawan",
+                        "Indra kurniawan",
+                        "Aries A Bastian",
+                        "Mochammad Gorwantoro Putra", 
+                        "Yudiyono", 
+                        "Muhamad husni", 
+                        "edwin qomarudin", 
+                        "Edy Amin",
+                        "Heksi Prasetyo", 
+                        "Hery Syah Putra"
+                    ];
+                    
+                    defaultPICs.forEach(name => {
+                        PIC_LIST.push({
+                            id: name.toLowerCase().replace(/\s+/g, '_'),
+                            name: name,
+                            email: '',
+                            phone: '',
+                            createdAt: new Date()
+                        });
+                    });
                 }
                 
-                // Sort customers alphabetically
-                customers.sort((a, b) => a.localeCompare(b));
-                
-                // Add options to container
-                customers.forEach(customer => {
-                    const option = document.createElement('div');
-                    option.className = 'custom-dropdown-option';
-                    option.textContent = customer;
-                    option.title = customer; // Add title for full text on hover
-                    customerOptionsContainer.appendChild(option);
-                });
-                
-                // Update count
-                customerCount.textContent = customers.length;
-                
-                // Show empty state if no options
-                if (customers.length === 0) {
-                    showEmptyState(customerOptionsContainer, 'No customers available');
-                }
+                console.log('PIC list loaded:', PIC_LIST.length);
                 
             } catch (error) {
-                console.error('Error loading customers:', error);
-                // Fallback to default list
-                const customerOptionsContainer = document.getElementById('customerOptionsContainer');
-                const customerCount = document.getElementById('customerCount');
+                console.error('Error loading PIC list:', error);
+                showToast('Failed to load PIC list', 'error');
+            }
+        }
+
+        async function loadCustomerList() {
+            try {
+                console.log('Loading customer list from Firestore...');
                 
-                if (customerOptionsContainer && customerCount) {
-                    customerOptionsContainer.innerHTML = '';
+                const querySnapshot = await customersCollection.orderBy('name').get();
+                CUSTOMER_LIST = [];
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    CUSTOMER_LIST.push({
+                        id: doc.id,
+                        name: data.name,
+                        address: data.address || '',
+                        contact: data.contact || '',
+                        createdAt: data.createdAt
+                    });
+                });
+                
+                // If no customers in Firestore, use default list
+                if (CUSTOMER_LIST.length === 0) {
+                    console.log('No customers in Firestore, using default list');
+                    const defaultCustomers = [
+                        "PT. GUDANG GARAM Tbk",
+                        "PERSEROAN TERBATAS BADAN BANK CENTRAL ASIA TBK",
+                        "PT. FRISIAN FLAG INDONESIA",
+                        "PT. GRIYA SIRA INDAH",
+                        "PT. PUTRA SINAR PERMAJA",
+                        "PT. PLAZA INDONESIA REALTY Tbk",
+                        "CV. KROSS SARANA TEKNIK",
+                        "PT. GEMILANG CIPTA ABADI",
+                        "PT. MARYO MAKMUR TEHNIK",
+                        "PT. SOUTH PACIFIC VISCOSE",
+                        "PT. HOTEL CANDI BARU",
+                        "PT. SMILE BRIGHT WHITE (LAND OF SMILES CLINIC)",
+                        "PT. PURI MATAHARI",
+                        "PT. MENARA ASTRA",
+                        "PT. PLAZA INDONESIA MANDIRI",
+                        "PT. WYNNCOR BALI",
+                        "PT. JONES LANG LASALLE",
+                        "PT. SATAHI CIPTA MANDIRI",
+                        "YAYASAN BUDDHA TZU CHI MEDIKA INDONESIA",
+                        "PT. INDONESIA MOC SERVICE",
+                        "PT. RAMA KUTA HOTEL",
+                        "PT. HANDAL UTAMA BUANA",
+                        "PT. SURYA MARGA LUHUR",
+                        "PT. GRAHA SIDANG PRATAMA",
+                        "PT. LASALLEFOOD INDONESIA",
+                        "SARULLA OPERATIONS LTD",
+                        "SHM FIRE SAFETY Pte.Ltd",
+                        "PT. WAHANA NUSANTARA",
+                        "PT. YOGYA CENTRAL TERPADU",
+                        "PT. DONGGI SENORO LNG",
+                        "PT. PT. INDONESIA MOROWALI INDUSTRIAL PARK"
+                    ];
                     
-                    // Add default customers
-                    CUSTOMER_LIST.forEach(customer => {
-                        const option = document.createElement('div');
-                        option.className = 'custom-dropdown-option';
-                        option.textContent = customer;
-                        option.title = customer;
-                        customerOptionsContainer.appendChild(option);
+                    defaultCustomers.forEach(name => {
+                        CUSTOMER_LIST.push({
+                            id: name.toLowerCase().replace(/\s+/g, '_'),
+                            name: name,
+                            address: '',
+                            contact: '',
+                            createdAt: new Date()
+                        });
+                    });
+                }
+                
+                console.log('Customer list loaded:', CUSTOMER_LIST.length);
+                
+            } catch (error) {
+                console.error('Error loading customer list:', error);
+                showToast('Failed to load customer list', 'error');
+            }
+        }
+
+        function searchPICSuggestions(searchTerm) {
+            const suggestionsContainer = document.getElementById('picSuggestions');
+            if (!suggestionsContainer) return;
+            
+            const searchTermLower = searchTerm.toLowerCase();
+            const filteredPICs = PIC_LIST.filter(pic => 
+                pic.name.toLowerCase().includes(searchTermLower)
+            );
+            
+            showSuggestions(suggestionsContainer, filteredPICs, 'pic', searchTerm);
+        }
+
+        function searchCustomerSuggestions(searchTerm) {
+            const suggestionsContainer = document.getElementById('customerSuggestions');
+            if (!suggestionsContainer) return;
+            
+            const searchTermLower = searchTerm.toLowerCase();
+            const filteredCustomers = CUSTOMER_LIST.filter(customer => 
+                customer.name.toLowerCase().includes(searchTermLower)
+            );
+            
+            showSuggestions(suggestionsContainer, filteredCustomers, 'customer', searchTerm);
+        }
+
+        function showSuggestions(container, items, type, searchTerm) {
+            container.innerHTML = '';
+            
+            if (items.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'autocomplete-no-results';
+                noResults.innerHTML = `
+                    <div class="autocomplete-no-results-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <p>No ${type} found for "${searchTerm}"</p>
+                    <p class="text-xs">Click + button to add new</p>
+                `;
+                container.appendChild(noResults);
+            } else {
+                items.forEach(item => {
+                    const suggestion = document.createElement('div');
+                    suggestion.className = 'autocomplete-suggestion';
+                    suggestion.dataset.id = item.id;
+                    suggestion.dataset.name = item.name;
+                    
+                    suggestion.innerHTML = `
+                        <div class="autocomplete-suggestion-icon">
+                            <i class="fas fa-${type === 'pic' ? 'user' : 'building'}"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-medium truncate">${item.name}</div>
+                            ${item.email ? `<div class="text-xs text-gray-500 truncate">${item.email}</div>` : ''}
+                            ${item.phone ? `<div class="text-xs text-gray-500">${item.phone}</div>` : ''}
+                        </div>
+                    `;
+                    
+                    suggestion.addEventListener('click', function() {
+                        const inputField = type === 'pic' ? document.getElementById('pipelinePIC') : document.getElementById('pipelineCustomer');
+                        if (inputField) {
+                            inputField.value = this.dataset.name;
+                        }
+                        hideAllSuggestions();
                     });
                     
-                    customerCount.textContent = CUSTOMER_LIST.length;
-                }
-            }
-        }
-
-        function filterCustomerOptions(searchTerm) {
-            const customerOptionsContainer = document.getElementById('customerOptionsContainer');
-            const customerCount = document.getElementById('customerCount');
-            
-            if (!customerOptionsContainer || !customerCount) return;
-            
-            const options = customerOptionsContainer.querySelectorAll('.custom-dropdown-option');
-            let visibleCount = 0;
-            
-            options.forEach(option => {
-                const text = option.textContent.toLowerCase();
-                if (searchTerm === '' || text.includes(searchTerm)) {
-                    option.style.display = 'block';
-                    visibleCount++;
-                } else {
-                    option.style.display = 'none';
-                }
-            });
-            
-            // Update count
-            customerCount.textContent = visibleCount;
-            
-            // Show empty state if no matches
-            if (visibleCount === 0) {
-                showEmptyState(customerOptionsContainer, 'No matching customers found');
-            }
-        }
-
-        function showEmptyState(container, message) {
-            const emptyState = document.createElement('div');
-            emptyState.className = 'dropdown-empty-state';
-            emptyState.innerHTML = `
-                <i class="fas fa-search"></i>
-                <p>${message}</p>
-            `;
-            container.appendChild(emptyState);
-        }
-
-        async function addNewCustomer(customerData) {
-            try {
-                showLoading();
-                
-                // Check if customer already exists
-                const existingCustomer = await customersCollection
-                    .where('name', '==', customerData.name)
-                    .get();
-                
-                if (!existingCustomer.empty) {
-                    showToast('Customer already exists', 'warning');
-                    return;
-                }
-                
-                // Add new customer to Firestore
-                await customersCollection.add({
-                    name: customerData.name,
-                    address: customerData.address || '',
-                    contact: customerData.contact || '',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    createdBy: currentUser.email
+                    container.appendChild(suggestion);
                 });
-                
-                showToast('Customer added successfully', 'success');
-                
-                // Reload customer dropdown
-                await loadCustomers();
-                
-                // Set the new customer as selected
-                document.getElementById('pipelineCustomer').value = customerData.name;
-                
-            } catch (error) {
-                console.error('Error adding new customer:', error);
-                showToast('Failed to add customer', 'error');
-            } finally {
-                hideLoading();
             }
+            
+            container.classList.add('show');
+        }
+
+        function hideSuggestions(containerId) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.classList.remove('show');
+            }
+        }
+
+        function hideAllSuggestions() {
+            hideSuggestions('picSuggestions');
+            hideSuggestions('customerSuggestions');
         }
 
         // ==================== CURRENCY INPUT HANDLING ====================
@@ -2877,6 +2596,7 @@
             document.getElementById('pipelineItemId').value = '';
             document.getElementById('originalPipelineStatus').value = '';
             document.getElementById('progressValue').textContent = '0%';
+            hideAllSuggestions();
             
             // Reset all fields
             document.getElementById('pipelineNo').value = '';
@@ -2949,7 +2669,7 @@
         }
 
         function closePipelineItemModal() {
-            closeAllDropdowns();
+            hideAllSuggestions();
             document.getElementById('pipelineItemModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
@@ -3045,6 +2765,73 @@
             }
         }
 
+        // ==================== ADD PIC MODAL FUNCTIONS ====================
+        function openAddPICModal() {
+            document.getElementById('addPICForm').reset();
+            document.getElementById('addPICModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAddPICModal() {
+            document.getElementById('addPICModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        async function saveNewPIC() {
+            const form = document.getElementById('addPICForm');
+            if (!form.checkValidity()) {
+                showToast('Please fill in PIC name', 'warning');
+                return;
+            }
+            
+            const picData = {
+                name: document.getElementById('newPICName').value.trim(),
+                email: document.getElementById('newPICEmail').value.trim() || '',
+                phone: document.getElementById('newPICPhone').value.trim() || '',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                createdBy: currentUser.email
+            };
+            
+            try {
+                showLoading();
+                
+                // Check if PIC already exists
+                const existingPIC = await picsCollection
+                    .where('name', '==', picData.name)
+                    .get();
+                
+                if (!existingPIC.empty) {
+                    showToast('PIC already exists', 'warning');
+                    return;
+                }
+                
+                // Add new PIC to Firestore
+                await picsCollection.add(picData);
+                
+                // Add to local list
+                PIC_LIST.push({
+                    id: picData.name.toLowerCase().replace(/\s+/g, '_'),
+                    name: picData.name,
+                    email: picData.email,
+                    phone: picData.phone,
+                    createdAt: picData.createdAt
+                });
+                
+                showToast('PIC added successfully', 'success');
+                
+                // Set the new PIC as selected
+                document.getElementById('pipelinePIC').value = picData.name;
+                
+                closeAddPICModal();
+                
+            } catch (error) {
+                console.error('Error adding new PIC:', error);
+                showToast('Failed to add PIC', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
         // ==================== ADD CUSTOMER MODAL FUNCTIONS ====================
         function openAddCustomerModal() {
             document.getElementById('addCustomerForm').reset();
@@ -3067,11 +2854,49 @@
             const customerData = {
                 name: document.getElementById('newCustomerName').value.trim(),
                 address: document.getElementById('newCustomerAddress').value.trim() || '',
-                contact: document.getElementById('newCustomerContact').value.trim() || ''
+                contact: document.getElementById('newCustomerContact').value.trim() || '',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                createdBy: currentUser.email
             };
             
-            await addNewCustomer(customerData);
-            closeAddCustomerModal();
+            try {
+                showLoading();
+                
+                // Check if customer already exists
+                const existingCustomer = await customersCollection
+                    .where('name', '==', customerData.name)
+                    .get();
+                
+                if (!existingCustomer.empty) {
+                    showToast('Customer already exists', 'warning');
+                    return;
+                }
+                
+                // Add new customer to Firestore
+                await customersCollection.add(customerData);
+                
+                // Add to local list
+                CUSTOMER_LIST.push({
+                    id: customerData.name.toLowerCase().replace(/\s+/g, '_'),
+                    name: customerData.name,
+                    address: customerData.address,
+                    contact: customerData.contact,
+                    createdAt: customerData.createdAt
+                });
+                
+                showToast('Customer added successfully', 'success');
+                
+                // Set the new customer as selected
+                document.getElementById('pipelineCustomer').value = customerData.name;
+                
+                closeAddCustomerModal();
+                
+            } catch (error) {
+                console.error('Error adding new customer:', error);
+                showToast('Failed to add customer', 'error');
+            } finally {
+                hideLoading();
+            }
         }
 
         // ==================== PIPELINE ANALYTICS ====================
@@ -3517,7 +3342,7 @@
             
             loadPipelineItems();
             setupDragAndDrop();
-            setupDropdowns();
+            setupAutoCompleteSearch();
             setupCurrencyInputs();
             
             // Add event listeners
@@ -3540,8 +3365,15 @@
             document.getElementById('closePipelinesAnalyticsModal').addEventListener('click', closePipelinesAnalyticsModal);
             document.getElementById('closePipelinesAnalyticsModalBottom').addEventListener('click', closePipelinesAnalyticsModal);
             
+            // Add PIC modal event listeners
+            document.getElementById('closeAddPICModal').addEventListener('click', closeAddPICModal);
+            document.getElementById('cancelAddPICBtn').addEventListener('click', closeAddPICModal);
+            document.getElementById('addPICForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveNewPIC();
+            });
+            
             // Add customer modal event listeners
-            document.getElementById('addNewCustomerBtn').addEventListener('click', openAddCustomerModal);
             document.getElementById('closeAddCustomerModal').addEventListener('click', closeAddCustomerModal);
             document.getElementById('cancelAddCustomerBtn').addEventListener('click', closeAddCustomerModal);
             document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
