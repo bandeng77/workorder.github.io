@@ -755,6 +755,64 @@
             text-align: center;
         }
 
+        /* ==================== COLORFUL CHARTS ==================== */
+        .chart-container {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-500), var(--secondary-500), var(--accent-500));
+        }
+
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--neutral-800);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chart-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .chart-icon-primary {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        }
+
+        .chart-icon-secondary {
+            background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
+        }
+
+        .chart-icon-success {
+            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+        }
+
+        .chart-icon-warning {
+            background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
+        }
+
         /* ==================== COLORFUL MODALS ==================== */
         .modal-overlay {
             position: fixed;
@@ -771,7 +829,7 @@
         .modal-content {
             background: white;
             border-radius: var(--radius-2xl);
-            box-shadow: var(--shadow-xl);
+            box-shadow: var(--shadow-2xl);
             max-width: 1400px;
             width: 100%;
             max-height: 90vh;
@@ -887,285 +945,192 @@
             background: linear-gradient(135deg, var(--info-500), var(--info-600));
         }
 
-        /* ==================== CAMERA STYLES ==================== */
-        .camera-container {
+        /* ==================== COLORFUL TIMELINE ==================== */
+        .timeline {
             position: relative;
-            width: 100%;
-            height: 400px;
-            border-radius: var(--radius-xl);
-            overflow: hidden;
-            background: #000;
+            padding-left: 2.5rem;
+            margin: 2rem 0;
         }
 
-        .camera-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .camera-controls {
+        .timeline::before {
+            content: '';
             position: absolute;
-            bottom: 1rem;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            z-index: 10;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary-500), var(--secondary-500), var(--accent-500));
+            border-radius: 3px;
         }
 
-        .camera-btn {
-            width: 56px;
-            height: 56px;
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 0.5rem;
+            width: 1.5rem;
+            height: 1.5rem;
             border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            border: 4px solid white;
+            box-shadow: 0 0 0 4px var(--primary-200);
+            z-index: 2;
+        }
+
+        .timeline-item.running::before {
+            background: linear-gradient(135deg, var(--status-running), var(--primary-400));
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        .timeline-item.done::before {
+            background: linear-gradient(135deg, var(--status-done), var(--accent-400));
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+        }
+
+        .timeline-item.close::before {
+            background: linear-gradient(135deg, var(--status-close), var(--neutral-400));
+            box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.2);
+        }
+
+        .timeline-content {
             background: white;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
             transition: var(--transition-base);
+        }
+
+        .timeline-content:hover {
+            transform: translateX(4px);
             box-shadow: var(--shadow-lg);
         }
 
-        .camera-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .camera-btn-primary {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-            color: white;
-            width: 64px;
-            height: 64px;
-        }
-
-        .camera-btn-danger {
-            background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
-            color: white;
-        }
-
-        .camera-btn-success {
-            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
-            color: white;
-        }
-
-        .camera-preview {
-            position: absolute;
-            top: 0;
-            left: 0;
+        /* ==================== COLORFUL TABLE ==================== */
+        .data-table {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .camera-switch-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            z-index: 10;
-        }
-
-        /* ==================== PHOTO PREVIEW STYLES ==================== */
-        .photo-preview-container {
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, var(--neutral-50), var(--neutral-100));
-            border-radius: var(--radius-xl);
-            border: 2px dashed var(--neutral-300);
-        }
-
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .photo-item {
-            position: relative;
+            border-collapse: separate;
+            border-spacing: 0;
             background: white;
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-xl);
             overflow: hidden;
             box-shadow: var(--shadow-md);
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        }
+
+        .data-table th {
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: white;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--primary-700);
+        }
+
+        .data-table tbody tr {
             transition: var(--transition-base);
+            border-bottom: 1px solid var(--neutral-200);
         }
 
-        .photo-item:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
+        .data-table tbody tr:last-child {
+            border-bottom: none;
         }
 
-        .photo-img {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-            cursor: pointer;
+        .data-table tbody tr:hover {
+            background: linear-gradient(135deg, var(--primary-50), var(--secondary-50));
         }
 
-        .photo-info {
-            padding: 0.75rem;
-            background: white;
+        .data-table td {
+            padding: 1.25rem 1.5rem;
+            color: var(--neutral-700);
+            font-size: 0.95rem;
         }
 
-        .photo-actions {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .photo-action-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition-base);
-            border: 1px solid var(--neutral-200);
-        }
-
-        .photo-action-btn:hover {
-            background: white;
-            transform: scale(1.1);
-        }
-
-        .photo-preview-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            padding: 1rem;
-        }
-
-        .photo-preview-content {
-            width: 90%;
-            max-width: 1200px;
-            height: 90vh;
-            background: black;
+        /* ==================== USER INFO CARD ==================== */
+        .user-card {
+            background: linear-gradient(135deg, var(--primary-50), var(--secondary-50));
             border-radius: var(--radius-xl);
-            overflow: hidden;
-            position: relative;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--primary-200);
+            transition: var(--transition-base);
         }
 
-        .photo-preview-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background: black;
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-300);
         }
 
-        .preview-close-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            width: 3rem;
-            height: 3rem;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
+        .user-avatar {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 1.5rem;
-            cursor: pointer;
-            transition: var(--transition-base);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .preview-close-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
-            transform: scale(1.1);
-        }
-
-        /* ==================== CAPTURED PHOTO PREVIEW ==================== */
-        .captured-photo-container {
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, var(--neutral-50), var(--neutral-100));
-            border-radius: var(--radius-xl);
-            border: 2px solid var(--primary-300);
-        }
-
-        .captured-photo {
-            width: 100%;
-            max-height: 300px;
-            object-fit: contain;
-            border-radius: var(--radius-lg);
-            background: #f8fafc;
-            margin-bottom: 1rem;
-        }
-
-        .capture-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .capture-timestamp {
-            font-size: 0.875rem;
-            color: var(--neutral-600);
-        }
-
-        /* ==================== AUTCOMPLETE STYLES ==================== */
-        .autocomplete-container {
-            position: relative;
-        }
-
-        .autocomplete-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid var(--neutral-200);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            z-index: 50;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-        }
-
-        .autocomplete-dropdown.show {
-            display: block;
-        }
-
-        .autocomplete-item {
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            transition: var(--transition-fast);
-            border-bottom: 1px solid var(--neutral-100);
-        }
-
-        .autocomplete-item:last-child {
-            border-bottom: none;
-        }
-
-        .autocomplete-item:hover,
-        .autocomplete-item.active {
-            background: var(--primary-50);
-        }
-
-        .autocomplete-info {
-            font-size: 0.75rem;
-            color: var(--neutral-500);
-            margin-top: 0.25rem;
-        }
-
-        .highlight {
-            background-color: rgba(59, 130, 246, 0.2);
-            padding: 0 2px;
-            border-radius: 2px;
             font-weight: 600;
+            box-shadow: var(--shadow-md);
+        }
+
+        .user-avatar.admin {
+            background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
+        }
+
+        .user-avatar.manager {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        }
+
+        .user-avatar.user {
+            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+        }
+
+        /* ==================== SEARCH BOX ==================== */
+        .search-box {
+            position: relative;
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            transition: var(--transition-base);
+        }
+
+        .search-box:focus-within {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-500);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3.5rem;
+            border: none;
+            border-radius: var(--radius-xl);
+            font-size: 0.95rem;
+            background: transparent;
+            outline: none;
+            color: var(--neutral-800);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-500);
+            font-size: 1.25rem;
         }
 
         /* ==================== TOAST NOTIFICATIONS ==================== */
@@ -1413,6 +1378,299 @@
         .personnel-result-item.selected {
             background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
             border-left: 3px solid var(--primary-500);
+        }
+
+        /* ==================== AUTCOMPLETE STYLES ==================== */
+        .autocomplete-container {
+            position: relative;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            z-index: 50;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .autocomplete-dropdown.show {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            border-bottom: 1px solid var(--neutral-100);
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:hover,
+        .autocomplete-item.active {
+            background: var(--primary-50);
+        }
+
+        .autocomplete-info {
+            font-size: 0.75rem;
+            color: var(--neutral-500);
+            margin-top: 0.25rem;
+        }
+
+        .highlight {
+            background-color: rgba(59, 130, 246, 0.2);
+            padding: 0 2px;
+            border-radius: 2px;
+            font-weight: 600;
+        }
+
+        /* ==================== DOCUMENTATION STYLES ==================== */
+        .photo-preview-container {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--neutral-50), var(--neutral-100));
+            border-radius: var(--radius-xl);
+            border: 2px dashed var(--neutral-300);
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .photo-item {
+            position: relative;
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-base);
+        }
+
+        .photo-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .photo-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .photo-info {
+            padding: 0.75rem;
+            background: white;
+        }
+
+        .photo-actions {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .photo-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+            border: 1px solid var(--neutral-200);
+        }
+
+        .photo-action-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .photo-preview-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 1rem;
+        }
+
+        .photo-preview-content {
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: black;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .photo-preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: black;
+        }
+
+        .preview-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 3rem;
+            height: 3rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition-base);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .preview-close-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.1);
+        }
+
+        /* ==================== CAMERA STYLES ==================== */
+        .camera-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            background: #000;
+        }
+
+        .camera-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-controls {
+            position: absolute;
+            bottom: 1rem;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            z-index: 10;
+        }
+
+        .camera-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .camera-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .camera-btn-primary {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            color: white;
+            width: 64px;
+            height: 64px;
+        }
+
+        .camera-btn-danger {
+            background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
+            color: white;
+        }
+
+        .camera-btn-success {
+            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+            color: white;
+        }
+
+        .camera-preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-switch-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10;
+        }
+
+        .camera-countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        /* ==================== CAPTURED PHOTO PREVIEW ==================== */
+        .captured-photo-container {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--neutral-50), var(--neutral-100));
+            border-radius: var(--radius-xl);
+            border: 2px solid var(--primary-300);
+        }
+
+        .captured-photo {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: var(--radius-lg);
+            background: #f8fafc;
+            margin-bottom: 1rem;
+        }
+
+        .capture-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .capture-timestamp {
+            font-size: 0.875rem;
+            color: var(--neutral-600);
         }
 
         /* ==================== RESPONSIVE DESIGN ==================== */
@@ -2079,6 +2337,7 @@
                                 <video id="cameraVideo" class="camera-video" autoplay playsinline></video>
                                 <canvas id="cameraCanvas" class="hidden"></canvas>
                                 <img id="photoPreview" class="camera-preview hidden">
+                                <div id="countdownDisplay" class="camera-countdown hidden"></div>
                                 
                                 <!-- Camera Controls -->
                                 <div class="camera-controls" id="cameraControls">
@@ -2087,6 +2346,9 @@
                                     </button>
                                     <button id="capturePhotoBtn" class="camera-btn camera-btn-primary" title="Ambil Gambar">
                                         <i class="fas fa-camera"></i>
+                                    </button>
+                                    <button id="cancelCaptureBtn" class="camera-btn camera-btn-danger hidden" title="Batal">
+                                        <i class="fas fa-times"></i>
                                     </button>
                                     <button id="retakePhotoBtn" class="camera-btn camera-btn-danger hidden" title="Ambil Ulang">
                                         <i class="fas fa-redo"></i>
@@ -2100,6 +2362,27 @@
                                 <button id="cameraSwitchFrontBack" class="camera-btn camera-switch-btn" title="Ganti Kamera">
                                     <i class="fas fa-camera-retro"></i>
                                 </button>
+                            </div>
+                            
+                            <!-- Captured Photo Preview -->
+                            <div id="capturedPhotoSection" class="hidden">
+                                <div class="captured-photo-container">
+                                    <div class="capture-info">
+                                        <h4 class="font-semibold text-gray-900">Gambar yang Diambil</h4>
+                                        <span id="captureTimestamp" class="capture-timestamp"></span>
+                                    </div>
+                                    <img id="capturedPhoto" class="captured-photo" src="" alt="Captured Photo">
+                                    <div class="flex justify-end gap-3">
+                                        <button type="button" id="retakeBtn" class="btn btn-danger">
+                                            <i class="fas fa-redo mr-2"></i>
+                                            Ambil Ulang
+                                        </button>
+                                        <button type="button" id="savePhotoFinalBtn" class="btn btn-success">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Simpan Gambar
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2150,294 +2433,298 @@
     </div>
 
     <!-- Work Order Modal -->
-    <div id="workorderModal" class="modal-overlay hidden">
-        <div class="modal-content w-full max-w-7xl">
-            <div class="modal-header">
-                <div class="flex items-center gap-4">
-                    <button id="closeWorkOrderModal" class="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
-                        <i class="fas fa-arrow-left text-xl"></i>
-                    </button>
-                    <div>
-                        <h2 class="modal-title" id="modalTitle">Create New Work Order</h2>
-                        <p class="text-gray-300 mt-1">Fill in all required information below</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button id="cancelWorkOrderBtn" class="btn btn-secondary">
-                        <i class="fas fa-times"></i>
-                        Cancel
-                    </button>
-                    <button type="submit" form="workorderForm" class="btn btn-primary">
-                        <i class="fas fa-save"></i>
-                        Save Work Order
-                    </button>
-                </div>
-            </div>
-            
-            <div class="modal-body">
-                <form id="workorderForm" class="space-y-8">
-                    <input type="hidden" id="workorderId">
-                    <input type="hidden" id="originalStatus">
-                    
-                    <!-- Section 1: Basic Information -->
-                    <div class="form-section">
-                        <div class="form-section-title">
-                            <div class="form-section-icon form-section-icon-primary">
-                                <i class="fas fa-info-circle"></i>
+    <div id="workorderModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden overflow-y-auto">
+        <div class="min-h-screen p-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="flex items-center gap-4">
+                            <button id="closeWorkOrderModal" class="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
+                                <i class="fas fa-arrow-left text-xl"></i>
+                            </button>
+                            <div>
+                                <h2 class="modal-title" id="modalTitle">Create New Work Order</h2>
+                                <p class="text-gray-300 mt-1">Fill in all required information below</p>
                             </div>
-                            <span>Basic Information</span>
                         </div>
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div>
-                                <label class="form-label required-field" for="workOrderNumber">
-                                    No Work Order
-                                </label>
-                                <div class="relative">
-                                    <input type="text" 
-                                           id="workOrderNumber" 
-                                           class="form-input"
-                                           required
-                                           placeholder="Auto-generated"
-                                           readonly>
-                                    <button type="button" 
-                                            id="refreshWorkOrderNumber" 
-                                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-600 hover:text-blue-800 bg-transparent border-0 transition-colors">
-                                        <i class="fas fa-sync-alt"></i>
-                                    </button>
-                                </div>
-                                <p class="text-xs text-gray-500 mt-2">
-                                    Format: 001/GI-GEN/FAS/I/2025
-                                </p>
-                            </div>
-                            
-                            <div>
-                                <label class="form-label" for="soNumber">
-                                    Nomor SO
-                                </label>
-                                <input type="text" 
-                                       id="soNumber" 
-                                       class="form-input"
-                                       placeholder="SO-2024-001">
-                            </div>
-                            
-                            <div>
-                                <label class="form-label required-field" for="customer">
-                                    Customer
-                                </label>
-                                <div class="autocomplete-container">
-                                    <input type="text" 
-                                           id="customer" 
-                                           class="form-input"
-                                           required
-                                           placeholder="Type to search or add new">
-                                    <div id="customerAutocomplete" class="autocomplete-dropdown"></div>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label class="form-label required-field" for="building">
-                                    Gedung
-                                </label>
-                                <div class="autocomplete-container">
-                                    <input type="text" 
-                                           id="building" 
-                                           class="form-input"
-                                           required
-                                           placeholder="Type to search or add new">
-                                    <div id="buildingAutocomplete" class="autocomplete-dropdown"></div>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label class="form-label required-field" for="workType">
-                                    Jenis Pekerjaan
-                                </label>
-                                <div class="autocomplete-container">
-                                    <input type="text" 
-                                           id="workType" 
-                                           class="form-input"
-                                           required
-                                           placeholder="Type to search or add new">
-                                    <div id="workTypeAutocomplete" class="autocomplete-dropdown"></div>
-                                </div>
-                            </div>
+                        <div class="flex items-center gap-3">
+                            <button id="cancelWorkOrderBtn" class="btn btn-secondary">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+                            <button type="submit" form="workorderForm" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Save Work Order
+                            </button>
                         </div>
                     </div>
                     
-                    <!-- Section 2: Organization & Personnel -->
-                    <div class="form-section">
-                        <div class="form-section-title">
-                            <div class="form-section-icon form-section-icon-secondary">
-                                <i class="fas fa-sitemap"></i>
-                            </div>
-                            <span>Organization & Personnel</span>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                            <div>
-                                <label class="form-label required-field" for="division">
-                                    Divisi
-                                </label>
-                                <select id="division" class="form-input" required>
-                                    <option value="">Select Division</option>
-                                    <option value="Maintenance">Maintenance</option>
-                                    <option value="Testcom">Testcom</option>
-                                    <option value="Project">Project</option>
-                                </select>
-                            </div>
+                    <div class="modal-body">
+                        <form id="workorderForm" class="space-y-8">
+                            <input type="hidden" id="workorderId">
+                            <input type="hidden" id="originalStatus">
                             
-                            <div>
-                                <label class="form-label required-field" for="company">
-                                    Perusahaan
-                                </label>
-                                <select id="company" class="form-input" required>
-                                    <option value="">Select Company</option>
-                                    <option value="Genetek Intratama">Genetek Intratama</option>
-                                    <option value="Effrensindo Kencana">Effrensindo Kencana</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            <div>
-                                <label class="form-label" for="pic">
-                                    Nama PIC
-                                </label>
-                                <select id="pic" class="form-input">
-                                    <option value="">Select PIC</option>
-                                    <option value="Husni">Husni</option>
-                                    <option value="Heksi">Heksi</option>
-                                    <option value="Indra Kurniawan">Indra Kurniawan</option>
-                                    <option value="Putra">Putra</option>
-                                    <option value="Wahyu Sujoko">Wahyu Sujoko</option>
-                                    <option value="Fiki">Fiki</option>
-                                    <option value="Edwin">Edwin</option>
-                                    <option value="Yudiono">Yudiono</option>
-                                    <option value="Harianto">Harianto</option>
-                                    <option value="Haryo">Haryo</option>
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="form-label">
-                                    Nama Personil
-                                    <span class="text-xs text-gray-500 ml-2">(Search and add personnel)</span>
-                                </label>
+                            <!-- Section 1: Basic Information -->
+                            <div class="form-section">
+                                <div class="form-section-title">
+                                    <div class="form-section-icon form-section-icon-primary">
+                                        <i class="fas fa-info-circle"></i>
+                                    </div>
+                                    <span>Basic Information</span>
+                                </div>
                                 
-                                <div class="personnel-multi-select">
-                                    <div id="selectedPersonnelTags" class="personnel-tags"></div>
-                                    
-                                    <div class="personnel-search-container">
-                                        <input type="text" 
-                                               id="personnelSearch" 
-                                               class="form-input flex-1"
-                                               placeholder="Search personnel by name...">
-                                        <button type="button" 
-                                                id="addPersonnelBtn" 
-                                                class="btn btn-primary whitespace-nowrap">
-                                            <i class="fas fa-plus"></i>
-                                            Tambah
-                                        </button>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="form-label required-field" for="workOrderNumber">
+                                            No Work Order
+                                        </label>
+                                        <div class="relative">
+                                            <input type="text" 
+                                                   id="workOrderNumber" 
+                                                   class="form-input"
+                                                   required
+                                                   placeholder="Auto-generated"
+                                                   readonly>
+                                            <button type="button" 
+                                                    id="refreshWorkOrderNumber" 
+                                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-600 hover:text-blue-800 bg-transparent border-0 transition-colors">
+                                                <i class="fas fa-sync-alt"></i>
+                                            </button>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-2">
+                                            Format: 001/GI-GEN/FAS/I/2025
+                                        </p>
                                     </div>
                                     
-                                    <div id="personnelResults" class="personnel-results"></div>
+                                    <div>
+                                        <label class="form-label" for="soNumber">
+                                            Nomor SO
+                                        </label>
+                                        <input type="text" 
+                                               id="soNumber" 
+                                               class="form-input"
+                                               placeholder="SO-2024-001">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="form-label required-field" for="customer">
+                                            Customer
+                                        </label>
+                                        <div class="autocomplete-container">
+                                            <input type="text" 
+                                                   id="customer" 
+                                                   class="form-input"
+                                                   required
+                                                   placeholder="Type to search or add new">
+                                            <div id="customerAutocomplete" class="autocomplete-dropdown"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="form-label required-field" for="building">
+                                            Gedung
+                                        </label>
+                                        <div class="autocomplete-container">
+                                            <input type="text" 
+                                                   id="building" 
+                                                   class="form-input"
+                                                   required
+                                                   placeholder="Type to search or add new">
+                                            <div id="buildingAutocomplete" class="autocomplete-dropdown"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="form-label required-field" for="workType">
+                                            Jenis Pekerjaan
+                                        </label>
+                                        <div class="autocomplete-container">
+                                            <input type="text" 
+                                                   id="workType" 
+                                                   class="form-input"
+                                                   required
+                                                   placeholder="Type to search or add new">
+                                            <div id="workTypeAutocomplete" class="autocomplete-dropdown"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Section 2: Organization & Personnel -->
+                            <div class="form-section">
+                                <div class="form-section-title">
+                                    <div class="form-section-icon form-section-icon-secondary">
+                                        <i class="fas fa-sitemap"></i>
+                                    </div>
+                                    <span>Organization & Personnel</span>
                                 </div>
                                 
-                                <input type="hidden" id="personnel" name="personnel">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Section 3: Timeline & Status -->
-                    <div class="form-section">
-                        <div class="form-section-title">
-                            <div class="form-section-icon form-section-icon-success">
-                                <i class="fas fa-calendar-alt"></i>
-                            </div>
-                            <span>Timeline & Status</span>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                            <div>
-                                <label class="form-label required-field" for="startDate">
-                                    Tanggal Mulai
-                                </label>
-                                <input type="date" 
-                                       id="startDate" 
-                                       class="form-input"
-                                       required>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label class="form-label required-field" for="division">
+                                            Divisi
+                                        </label>
+                                        <select id="division" class="form-input" required>
+                                            <option value="">Select Division</option>
+                                            <option value="Maintenance">Maintenance</option>
+                                            <option value="Testcom">Testcom</option>
+                                            <option value="Project">Project</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="form-label required-field" for="company">
+                                            Perusahaan
+                                        </label>
+                                        <select id="company" class="form-input" required>
+                                            <option value="">Select Company</option>
+                                            <option value="Genetek Intratama">Genetek Intratama</option>
+                                            <option value="Effrensindo Kencana">Effrensindo Kencana</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    <div>
+                                        <label class="form-label" for="pic">
+                                            Nama PIC
+                                        </label>
+                                        <select id="pic" class="form-input">
+                                            <option value="">Select PIC</option>
+                                            <option value="Husni">Husni</option>
+                                            <option value="Heksi">Heksi</option>
+                                            <option value="Indra Kurniawan">Indra Kurniawan</option>
+                                            <option value="Putra">Putra</option>
+                                            <option value="Wahyu Sujoko">Wahyu Sujoko</option>
+                                            <option value="Fiki">Fiki</option>
+                                            <option value="Edwin">Edwin</option>
+                                            <option value="Yudiono">Yudiono</option>
+                                            <option value="Harianto">Harianto</option>
+                                            <option value="Haryo">Haryo</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="form-label">
+                                            Nama Personil
+                                            <span class="text-xs text-gray-500 ml-2">(Search and add personnel)</span>
+                                        </label>
+                                        
+                                        <div class="personnel-multi-select">
+                                            <div id="selectedPersonnelTags" class="personnel-tags"></div>
+                                            
+                                            <div class="personnel-search-container">
+                                                <input type="text" 
+                                                       id="personnelSearch" 
+                                                       class="form-input flex-1"
+                                                       placeholder="Search personnel by name...">
+                                                <button type="button" 
+                                                        id="addPersonnelBtn" 
+                                                        class="btn btn-primary whitespace-nowrap">
+                                                    <i class="fas fa-plus"></i>
+                                                    Tambah
+                                                </button>
+                                            </div>
+                                            
+                                            <div id="personnelResults" class="personnel-results"></div>
+                                        </div>
+                                        
+                                        <input type="hidden" id="personnel" name="personnel">
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div>
-                                <label class="form-label" for="endDate">
-                                    Tanggal Selesai
-                                </label>
-                                <input type="date" 
-                                       id="endDate" 
-                                       class="form-input">
+                            <!-- Section 3: Timeline & Status -->
+                            <div class="form-section">
+                                <div class="form-section-title">
+                                    <div class="form-section-icon form-section-icon-success">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <span>Timeline & Status</span>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                                    <div>
+                                        <label class="form-label required-field" for="startDate">
+                                            Tanggal Mulai
+                                        </label>
+                                        <input type="date" 
+                                               id="startDate" 
+                                               class="form-input"
+                                               required>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="form-label" for="endDate">
+                                            Tanggal Selesai
+                                        </label>
+                                        <input type="date" 
+                                               id="endDate" 
+                                               class="form-input">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="form-label" for="estimatedTime">
+                                            Estimasi Waktu (Hari)
+                                        </label>
+                                        <input type="number" 
+                                               id="estimatedTime" 
+                                               class="form-input"
+                                               min="0"
+                                               step="0.5"
+                                               placeholder="e.g., 3.5 (untuk 3 hari setengah)">
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="form-label required-field" for="status">
+                                            Status
+                                        </label>
+                                        <select id="status" class="form-input" required>
+                                            <option value="Running">Running</option>
+                                            <option value="Done">Done</option>
+                                            <option value="Close">Close</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="form-label" for="priority">
+                                            Priority
+                                        </label>
+                                        <select id="priority" class="form-input">
+                                            <option value="Normal">Normal</option>
+                                            <option value="High">High</option>
+                                            <option value="Urgent">Urgent</option>
+                                            <option value="Low">Low</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div>
-                                <label class="form-label" for="estimatedTime">
-                                    Estimasi Waktu (Hari)
-                                </label>
-                                <input type="number" 
-                                       id="estimatedTime" 
-                                       class="form-input"
-                                       min="0"
-                                       step="0.5"
-                                       placeholder="e.g., 3.5 (untuk 3 hari setengah)">
+                            <!-- Section 4: Notes -->
+                            <div class="form-section">
+                                <div class="form-section-title">
+                                    <div class="form-section-icon form-section-icon-info">
+                                        <i class="fas fa-sticky-note"></i>
+                                    </div>
+                                    <span>Notes</span>
+                                </div>
+                                
+                                <div>
+                                    <label class="form-label" for="notes">
+                                        Additional Notes
+                                        <span class="text-xs text-gray-500 ml-2">(Optional)</span>
+                                    </label>
+                                    <textarea id="notes" 
+                                              class="form-input" 
+                                              rows="6"
+                                              placeholder="Add any additional notes or instructions..."></textarea>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div>
-                                <label class="form-label required-field" for="status">
-                                    Status
-                                </label>
-                                <select id="status" class="form-input" required>
-                                    <option value="Running">Running</option>
-                                    <option value="Done">Done</option>
-                                    <option value="Close">Close</option>
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="form-label" for="priority">
-                                    Priority
-                                </label>
-                                <select id="priority" class="form-input">
-                                    <option value="Normal">Normal</option>
-                                    <option value="High">High</option>
-                                    <option value="Urgent">Urgent</option>
-                                    <option value="Low">Low</option>
-                                </select>
-                            </div>
-                        </div>
+                        </form>
                     </div>
-                    
-                    <!-- Section 4: Notes -->
-                    <div class="form-section">
-                        <div class="form-section-title">
-                            <div class="form-section-icon form-section-icon-info">
-                                <i class="fas fa-sticky-note"></i>
-                            </div>
-                            <span>Notes</span>
-                        </div>
-                        
-                        <div>
-                            <label class="form-label" for="notes">
-                                Additional Notes
-                                <span class="text-xs text-gray-500 ml-2">(Optional)</span>
-                            </label>
-                            <textarea id="notes" 
-                                      class="form-input" 
-                                      rows="6"
-                                      placeholder="Add any additional notes or instructions..."></textarea>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -2566,7 +2853,7 @@
     </div>
 
     <!-- Toast Container -->
-    <div id="toast-container" class="toast-container"></div>
+    <div id="toast-container"></div>
 
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay hidden">
@@ -2578,7 +2865,7 @@
 
     <script>
         // ==================== GLOBAL VARIABLES ====================
-        let db, auth, storage, workordersCollection, activitiesCollection, usersCollection, statusHistoryCollection, dataHistoryCollection;
+        let db, auth, storage, workordersCollection, activitiesCollection, usersCollection, statusHistoryCollection, dataHistoryCollection, documentationCollection;
         let currentUser = null;
         let currentUserRole = 'user';
         let workorders = [];
@@ -2647,6 +2934,7 @@
                 usersCollection = db.collection('users');
                 statusHistoryCollection = db.collection('statusHistory');
                 dataHistoryCollection = db.collection('dataHistory');
+                documentationCollection = db.collection('documentation');
                 
                 console.log('Firebase initialized successfully');
                 return true;
@@ -2904,6 +3192,11 @@
                     const card = createWorkOrderCard(workorder);
                     container.appendChild(card);
                 });
+            } else if (currentView === 'list') {
+                const table = createWorkOrderTable();
+                container.appendChild(table);
+            } else if (currentView === 'timeline') {
+                renderTimelineView();
             }
             
             // Add event listeners for action buttons
@@ -2913,6 +3206,10 @@
                         let workorderId;
                         if (this.closest('.workorder-card')) {
                             workorderId = this.closest('.workorder-card').dataset.id;
+                        } else if (this.closest('tr')) {
+                            workorderId = this.closest('tr').dataset.id;
+                        } else if (this.dataset.id) {
+                            workorderId = this.dataset.id;
                         }
                         if (workorderId) {
                             openWorkOrderDetailModal(workorderId);
@@ -2925,6 +3222,10 @@
                         let workorderId;
                         if (this.closest('.workorder-card')) {
                             workorderId = this.closest('.workorder-card').dataset.id;
+                        } else if (this.closest('tr')) {
+                            workorderId = this.closest('tr').dataset.id;
+                        } else if (this.dataset.id) {
+                            workorderId = this.dataset.id;
                         }
                         if (workorderId) {
                             openWorkOrderModal(workorderId);
@@ -2937,6 +3238,8 @@
                         let workorderId;
                         if (this.closest('.workorder-card')) {
                             workorderId = this.closest('.workorder-card').dataset.id;
+                        } else if (this.closest('tr')) {
+                            workorderId = this.closest('tr').dataset.id;
                         }
                         if (workorderId) {
                             deleteWorkOrder(workorderId);
@@ -3106,6 +3409,206 @@
             }
         }
 
+        function createWorkOrderTable() {
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th>WO Number</th>
+                    <th>Customer</th>
+                    <th>Building</th>
+                    <th>Work Type</th>
+                    <th>Division</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            `;
+            
+            const tbody = document.createElement('tbody');
+            filteredWorkorders.forEach(workorder => {
+                const row = document.createElement('tr');
+                row.className = 'animate-slide-in-right';
+                row.dataset.id = workorder.id;
+                
+                const priorityClass = getPriorityClass(workorder.priority);
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="font-semibold text-gray-900">${workorder.workOrderNumber}</div>
+                        ${workorder.priority ? `
+                        <div class="mt-1">
+                            <span class="priority-badge ${priorityClass}">
+                                ${workorder.priority}
+                            </span>
+                        </div>` : ''}
+                    </td>
+                    <td>${workorder.customer || '-'}</td>
+                    <td>${workorder.building || '-'}</td>
+                    <td>${workorder.workType || '-'}</td>
+                    <td>${workorder.division || '-'}</td>
+                    <td>
+                        <span class="status-badge status-${workorder.status.toLowerCase()}">
+                            ${workorder.status}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="flex gap-2">
+                            <button class="view-detail-btn w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center transition-colors">
+                                <i class="fas fa-eye text-sm"></i>
+                            </button>
+                            ${canEditWorkOrder() ? `
+                            <button class="edit-workorder-btn w-8 h-8 rounded-full bg-green-100 text-green-600 hover:bg-green-200 flex items-center justify-center transition-colors">
+                                <i class="fas fa-edit text-sm"></i>
+                            </button>` : ''}
+                            ${canDeleteWorkOrder() ? `
+                            <button class="delete-workorder-btn w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center transition-colors">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>` : ''}
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+            
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            
+            return table;
+        }
+
+        function renderTimelineView() {
+            const timelineView = document.getElementById('timelineView');
+            const cardListView = document.getElementById('cardListView');
+            
+            timelineView.classList.remove('hidden');
+            cardListView.classList.add('hidden');
+            
+            const timelineContent = document.getElementById('timelineContent');
+            timelineContent.innerHTML = '';
+            
+            if (filteredWorkorders.length === 0) {
+                timelineContent.innerHTML = `
+                    <div class="text-center py-16 text-gray-400">
+                        <div class="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-stream text-4xl text-blue-400"></i>
+                        </div>
+                        <p class="text-xl font-medium mb-2 text-gray-600">No work orders for timeline</p>
+                        <p class="text-gray-500">Create some work orders to see the timeline</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const groupedByDate = {};
+            filteredWorkorders.forEach(wo => {
+                const dateKey = formatDate(wo.createdAt);
+                if (!groupedByDate[dateKey]) {
+                    groupedByDate[dateKey] = [];
+                }
+                groupedByDate[dateKey].push(wo);
+            });
+            
+            const sortedDates = Object.keys(groupedByDate).sort((a, b) => {
+                return new Date(b) - new Date(a);
+            });
+            
+            sortedDates.forEach(date => {
+                const dateHeader = document.createElement('div');
+                dateHeader.className = 'timeline-date font-bold text-blue-600 mb-4 text-lg';
+                dateHeader.textContent = date;
+                timelineContent.appendChild(dateHeader);
+                
+                groupedByDate[date].forEach(wo => {
+                    const timelineItem = createTimelineItem(wo);
+                    timelineContent.appendChild(timelineItem);
+                });
+            });
+        }
+
+        function createTimelineItem(workorder) {
+            const item = document.createElement('div');
+            item.className = `timeline-item ${workorder.status.toLowerCase()}`;
+            
+            const priorityClass = getPriorityClass(workorder.priority);
+            let personnelArray = [];
+            if (workorder.personnel) {
+                if (Array.isArray(workorder.personnel)) {
+                    personnelArray = workorder.personnel;
+                } else if (typeof workorder.personnel === 'string') {
+                    try {
+                        personnelArray = JSON.parse(workorder.personnel);
+                    } catch (e) {
+                        personnelArray = [workorder.personnel];
+                    }
+                }
+            }
+            
+            item.innerHTML = `
+                <div class="timeline-content">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg">${workorder.workOrderNumber}</h4>
+                            <p class="text-gray-600">${workorder.customer} • ${workorder.building}</p>
+                        </div>
+                        <div class="flex flex-col items-end gap-2">
+                            <span class="status-badge status-${workorder.status.toLowerCase()}">
+                                ${workorder.status}
+                            </span>
+                            ${workorder.priority ? `
+                            <span class="priority-badge ${priorityClass}">
+                                ${workorder.priority}
+                            </span>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">Work Type</p>
+                            <p class="font-medium text-gray-900">${workorder.workType}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">Division</p>
+                            <p class="font-medium text-gray-900">${workorder.division}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">PIC</p>
+                            <p class="font-medium text-gray-900">${workorder.pic || '-'}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">Start Date</p>
+                            <p class="font-medium text-gray-900">${formatDate(workorder.startDate)}</p>
+                        </div>
+                        ${workorder.estimatedTime ? `
+                        <div>
+                            <p class="text-sm text-gray-500 mb-1">Estimated Duration</p>
+                            <p class="font-medium text-gray-900">${workorder.estimatedTime} days</p>
+                        </div>` : ''}
+                    </div>
+                    
+                    <div class="flex gap-2 mb-4">
+                        ${personnelArray.slice(0, 3).map(person => 
+                            `<span class="badge badge-primary">${person}</span>`
+                        ).join('')}
+                        ${personnelArray.length > 3 ? 
+                            `<span class="badge badge-secondary">+${personnelArray.length - 3} more</span>` : ''
+                        }
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <button class="view-detail-btn btn btn-primary btn-sm" data-id="${workorder.id}">
+                            <i class="fas fa-eye mr-1"></i>
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return item;
+        }
+
         // ==================== CAMERA FUNCTIONS ====================
         async function openDocumentationModal() {
             console.log('Opening camera documentation modal');
@@ -3133,13 +3636,16 @@
             document.getElementById('selectedWorkOrderInfo').classList.add('hidden');
             document.getElementById('cameraSection').classList.add('hidden');
             document.getElementById('uploadedPhotosSection').classList.add('hidden');
+            document.getElementById('capturedPhotoSection').classList.add('hidden');
             document.getElementById('photoCategory').value = 'Before Work';
             document.getElementById('photoDescription').value = '';
             
             // Reset camera UI
             document.getElementById('photoPreview').classList.add('hidden');
             document.getElementById('cameraVideo').classList.remove('hidden');
+            document.getElementById('countdownDisplay').classList.add('hidden');
             document.getElementById('capturePhotoBtn').classList.remove('hidden');
+            document.getElementById('cancelCaptureBtn').classList.add('hidden');
             document.getElementById('retakePhotoBtn').classList.add('hidden');
             document.getElementById('savePhotoBtn').classList.add('hidden');
         }
@@ -3203,8 +3709,11 @@
         function setupCameraControls() {
             const switchCameraBtn = document.getElementById('cameraSwitchFrontBack');
             const capturePhotoBtn = document.getElementById('capturePhotoBtn');
+            const cancelCaptureBtn = document.getElementById('cancelCaptureBtn');
             const retakePhotoBtn = document.getElementById('retakePhotoBtn');
             const savePhotoBtn = document.getElementById('savePhotoBtn');
+            const retakeBtn = document.getElementById('retakeBtn');
+            const savePhotoFinalBtn = document.getElementById('savePhotoFinalBtn');
             
             // Switch camera button
             switchCameraBtn.addEventListener('click', switchCamera);
@@ -3212,11 +3721,20 @@
             // Capture photo button
             capturePhotoBtn.addEventListener('click', capturePhoto);
             
-            // Retake photo button
+            // Cancel capture button
+            cancelCaptureBtn.addEventListener('click', cancelCapture);
+            
+            // Retake photo button (in-camera)
             retakePhotoBtn.addEventListener('click', retakePhoto);
             
-            // Save photo button
-            savePhotoBtn.addEventListener('click', savePhoto);
+            // Save photo button (in-camera)
+            savePhotoBtn.addEventListener('click', showCapturedPhotoPreview);
+            
+            // Retake button (in preview)
+            retakeBtn.addEventListener('click', retakeFromPreview);
+            
+            // Save photo button (in preview)
+            savePhotoFinalBtn.addEventListener('click', saveCapturedPhoto);
         }
 
         async function switchCamera() {
@@ -3307,6 +3825,7 @@
             
             // Show capture controls
             document.getElementById('capturePhotoBtn').classList.add('hidden');
+            document.getElementById('cancelCaptureBtn').classList.add('hidden');
             document.getElementById('retakePhotoBtn').classList.remove('hidden');
             document.getElementById('savePhotoBtn').classList.remove('hidden');
             
@@ -3318,6 +3837,18 @@
             showToast('Gambar berhasil diambil', 'success');
         }
 
+        function cancelCapture() {
+            // Reset to camera view
+            document.getElementById('photoPreview').classList.add('hidden');
+            document.getElementById('cameraVideo').classList.remove('hidden');
+            document.getElementById('capturePhotoBtn').classList.remove('hidden');
+            document.getElementById('cancelCaptureBtn').classList.add('hidden');
+            document.getElementById('retakePhotoBtn').classList.add('hidden');
+            document.getElementById('savePhotoBtn').classList.add('hidden');
+            
+            capturedPhotoData = null;
+        }
+
         function retakePhoto() {
             // Restart camera
             startCamera(isFrontCamera ? 'user' : 'environment');
@@ -3326,6 +3857,7 @@
             document.getElementById('photoPreview').classList.add('hidden');
             document.getElementById('cameraVideo').classList.remove('hidden');
             document.getElementById('capturePhotoBtn').classList.remove('hidden');
+            document.getElementById('cancelCaptureBtn').classList.add('hidden');
             document.getElementById('retakePhotoBtn').classList.add('hidden');
             document.getElementById('savePhotoBtn').classList.add('hidden');
             
@@ -3333,7 +3865,38 @@
             showToast('Ambil gambar ulang', 'info');
         }
 
-        async function savePhoto() {
+        function showCapturedPhotoPreview() {
+            if (!capturedPhotoData) {
+                showToast('Tidak ada gambar yang diambil', 'warning');
+                return;
+            }
+            
+            // Show captured photo in preview section
+            document.getElementById('capturedPhoto').src = capturedPhotoData;
+            document.getElementById('captureTimestamp').textContent = 
+                new Date().toLocaleString('id-ID', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            
+            // Hide camera section, show preview section
+            document.getElementById('cameraSection').classList.add('hidden');
+            document.getElementById('capturedPhotoSection').classList.remove('hidden');
+        }
+
+        function retakeFromPreview() {
+            // Show camera section again
+            document.getElementById('cameraSection').classList.remove('hidden');
+            document.getElementById('capturedPhotoSection').classList.add('hidden');
+            
+            // Restart camera
+            retakePhoto();
+        }
+
+        async function saveCapturedPhoto() {
             if (!capturedPhotoData || !selectedWorkOrderId) {
                 showToast('Tidak ada gambar yang akan disimpan', 'warning');
                 return;
@@ -3378,19 +3941,36 @@
                 
                 // Clear form and reset
                 document.getElementById('photoDescription').value = '';
-                retakePhoto(); // Reset camera view
+                document.getElementById('capturedPhotoSection').classList.add('hidden');
+                document.getElementById('cameraSection').classList.remove('hidden');
+                
+                // Restart camera
+                await startCamera(isFrontCamera ? 'user' : 'environment');
+                
+                // Reset capture UI
+                document.getElementById('photoPreview').classList.add('hidden');
+                document.getElementById('cameraVideo').classList.remove('hidden');
+                document.getElementById('capturePhotoBtn').classList.remove('hidden');
+                document.getElementById('retakePhotoBtn').classList.add('hidden');
+                document.getElementById('savePhotoBtn').classList.add('hidden');
                 
                 // Reload work orders to update display
                 await loadWorkOrders();
                 
-                // Reload uploaded photos in modal
+                // Update detail modal if it's open for this work order
+                if (document.getElementById('workorderDetailModal') && 
+                    !document.getElementById('workorderDetailModal').classList.contains('hidden') &&
+                    document.getElementById('detailWorkOrderNumber').textContent === workorderData.workOrderNumber) {
+                    
+                    // Reload photos in detail modal
+                    await loadAndDisplayWorkOrderPhotos(selectedWorkOrderId);
+                }
+                
+                // Reload uploaded photos in camera modal
                 await loadUploadedPhotos();
                 
                 showToast(`Gambar berhasil disimpan untuk ${workorderData.workOrderNumber}!`, 'success');
                 logActivity('capture_documentation', `Mengambil gambar untuk work order ${workorderData.workOrderNumber}`, selectedWorkOrderId);
-                
-                // Show notification about preview availability
-                showToast('Gambar sudah bisa dilihat di detail work order', 'info');
                 
             } catch (error) {
                 console.error('Error saving photo:', error);
@@ -3428,6 +4008,39 @@
                 setTimeout(() => {
                     hideAutocomplete('workOrder');
                 }, 200);
+            });
+            
+            searchInput.addEventListener('keydown', function(e) {
+                const items = dropdown.querySelectorAll('.autocomplete-item');
+                let activeItem = dropdown.querySelector('.autocomplete-item.active');
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (!activeItem) {
+                        items[0]?.classList.add('active');
+                    } else {
+                        const next = activeItem.nextElementSibling;
+                        if (next) {
+                            activeItem.classList.remove('active');
+                            next.classList.add('active');
+                        }
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (activeItem) {
+                        const prev = activeItem.previousElementSibling;
+                        if (prev) {
+                            activeItem.classList.remove('active');
+                            prev.classList.add('active');
+                        }
+                    }
+                } else if (e.key === 'Enter' && activeItem) {
+                    e.preventDefault();
+                    const workorderId = activeItem.dataset.id;
+                    selectWorkOrderForDocumentation(workorderId);
+                } else if (e.key === 'Escape') {
+                    hideAutocomplete('workOrder');
+                }
             });
         }
 
@@ -3470,6 +4083,11 @@
                     if (workorderId) {
                         selectWorkOrderForDocumentation(workorderId);
                     }
+                });
+                
+                item.addEventListener('mouseenter', function() {
+                    dropdown.querySelectorAll('.autocomplete-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
                 });
             });
             
@@ -3616,6 +4234,15 @@
             return item;
         }
 
+        async function loadAndDisplayWorkOrderPhotos(workorderId) {
+            try {
+                const photos = await loadWorkOrderPhotos(workorderId);
+                displayWorkOrderPhotos(photos);
+            } catch (error) {
+                console.error('Error loading and displaying photos:', error);
+            }
+        }
+
         async function loadWorkOrderPhotos(workorderId) {
             try {
                 const workorderDoc = await workordersCollection.doc(workorderId).get();
@@ -3734,6 +4361,15 @@
                 
                 // Reload work orders to update count display
                 await loadWorkOrders();
+                
+                // Update detail modal if it's open for this work order
+                if (document.getElementById('workorderDetailModal') && 
+                    !document.getElementById('workorderDetailModal').classList.contains('hidden') &&
+                    document.getElementById('detailWorkOrderNumber').textContent === workorderData.workOrderNumber) {
+                    
+                    // Reload photos in detail modal
+                    await loadAndDisplayWorkOrderPhotos(selectedWorkOrderId);
+                }
                 
                 showToast('Gambar berhasil dihapus', 'success');
                 logActivity('delete_documentation', `Menghapus gambar dari work order ${workorderData.workOrderNumber}`, selectedWorkOrderId);
@@ -4044,6 +4680,40 @@
                     hideAutocomplete(type);
                 }, 200);
             });
+            
+            input.addEventListener('keydown', function(e) {
+                const items = dropdown.querySelectorAll('.autocomplete-item');
+                let activeItem = dropdown.querySelector('.autocomplete-item.active');
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (!activeItem) {
+                        items[0]?.classList.add('active');
+                    } else {
+                        const next = activeItem.nextElementSibling;
+                        if (next) {
+                            activeItem.classList.remove('active');
+                            next.classList.add('active');
+                        }
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (activeItem) {
+                        const prev = activeItem.previousElementSibling;
+                        if (prev) {
+                            activeItem.classList.remove('active');
+                            prev.classList.add('active');
+                        }
+                    }
+                } else if (e.key === 'Enter' && activeItem) {
+                    e.preventDefault();
+                    const value = activeItem.dataset.value;
+                    input.value = value;
+                    hideAutocomplete(type);
+                } else if (e.key === 'Escape') {
+                    hideAutocomplete(type);
+                }
+            });
         }
 
         function showAutocomplete(type, searchTerm) {
@@ -4083,6 +4753,11 @@
                         input.value = this.dataset.value;
                         hideAutocomplete(type);
                     }
+                });
+                
+                item.addEventListener('mouseenter', function() {
+                    dropdown.querySelectorAll('.autocomplete-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
                 });
             });
             
@@ -5044,7 +5719,7 @@
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                     completionTimes.push(diffDays);
                 }
-            }
+            });
             
             const timeGroups = {
                 '0-1 days': 0,
@@ -5470,8 +6145,7 @@
             loadWorkOrderStatusHistory(workorderId);
             
             // Load photos for this work order
-            const photos = await loadWorkOrderPhotos(workorderId);
-            displayWorkOrderPhotos(photos);
+            await loadAndDisplayWorkOrderPhotos(workorderId);
             
             modal.classList.remove('hidden');
             
@@ -5742,13 +6416,137 @@
             
             if (view === 'card') {
                 document.getElementById('cardViewBtn').classList.add('active');
+                timelineView.classList.add('hidden');
+                cardListView.classList.remove('hidden');
                 renderWorkOrders();
+            } else if (view === 'list') {
+                document.getElementById('listViewBtn').classList.add('active');
+                timelineView.classList.add('hidden');
+                cardListView.classList.remove('hidden');
+                renderWorkOrders();
+            } else if (view === 'timeline') {
+                document.getElementById('timelineViewBtn').classList.add('active');
+                timelineView.classList.remove('hidden');
+                cardListView.classList.add('hidden');
+                renderTimelineView();
             }
         }
 
         // ==================== GLOBAL FUNCTIONS FOR DOCUMENTATION ====================
         window.openPhotoPreview = openPhotoPreview;
         window.deletePhoto = deletePhoto;
+
+        // ==================== MIGRATION FUNCTIONS ====================
+        async function migrateAllUsersRoles() {
+            console.log('Starting migration of all user roles...');
+            showLoading();
+            
+            try {
+                const usersSnapshot = await usersCollection.get();
+                let migratedCount = 0;
+                
+                usersSnapshot.forEach(async (doc) => {
+                    const userData = doc.data();
+                    const email = userData.email;
+                    let correctRole = 'user';
+                    
+                    if (email === 'admin@genetek.co.id') {
+                        correctRole = 'admin';
+                    } else if (email === 'm_husni@genetek.co.id') {
+                        correctRole = 'manager';
+                    } else if (email === 'galih@genetek.co.id') {
+                        correctRole = 'user';
+                    }
+                    
+                    if (userData.role !== correctRole) {
+                        console.log(`Migrating ${email}: ${userData.role} → ${correctRole}`);
+                        await usersCollection.doc(doc.id).update({
+                            role: correctRole
+                        });
+                        migratedCount++;
+                    }
+                });
+                
+                setTimeout(() => {
+                    hideLoading();
+                    showToast(`Migration complete! ${migratedCount} users migrated. Please refresh the page.`, 'success');
+                    console.log(`Migration complete! ${migratedCount} users migrated.`);
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Migration error:', error);
+                hideLoading();
+                showToast('Migration failed. Check console.', 'error');
+            }
+        }
+
+        async function fixAllWorkOrderNumbers() {
+            console.log('Starting to fix all work order numbers...');
+            showLoading();
+            
+            try {
+                const querySnapshot = await workordersCollection.orderBy('createdAt', 'asc').get();
+                let counter = 1;
+                let processed = 0;
+                
+                const workOrdersByYear = {};
+                
+                querySnapshot.forEach((doc) => {
+                    const wo = doc.data();
+                    const createdAt = wo.createdAt?.toDate() || new Date();
+                    const year = createdAt.getFullYear();
+                    
+                    if (!workOrdersByYear[year]) {
+                        workOrdersByYear[year] = [];
+                    }
+                    
+                    workOrdersByYear[year].push({
+                        id: doc.id,
+                        ...wo,
+                        createdDate: createdAt
+                    });
+                });
+                
+                for (const year in workOrdersByYear) {
+                    workOrdersByYear[year].sort((a, b) => a.createdDate - b.createdDate);
+                    
+                    let yearCounter = 1;
+                    
+                    for (const wo of workOrdersByYear[year]) {
+                        const company = wo.company || 'Genetek Intratama';
+                        const companyPrefix = company === 'Effrensindo Kencana' ? 'GI-EFK' : 'GI-GEN';
+                        
+                        const month = wo.createdDate.getMonth() + 1;
+                        const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+                        const romanMonth = romanMonths[month - 1];
+                        
+                        const newNumber = `${yearCounter.toString().padStart(3, '0')}/${companyPrefix}/FAS/${romanMonth}/${year}`;
+                        
+                        if (wo.workOrderNumber !== newNumber) {
+                            console.log(`Updating ${wo.id}: ${wo.workOrderNumber} → ${newNumber}`);
+                            await workordersCollection.doc(wo.id).update({
+                                workOrderNumber: newNumber
+                            });
+                            processed++;
+                        }
+                        
+                        yearCounter++;
+                        counter++;
+                    }
+                }
+                
+                setTimeout(() => {
+                    hideLoading();
+                    showToast(`Fixed ${processed} work order numbers! Please refresh the page.`, 'success');
+                    console.log(`Fixed ${processed} work order numbers.`);
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Error fixing work order numbers:', error);
+                hideLoading();
+                showToast('Failed to fix work order numbers. Check console.', 'error');
+            }
+        }
 
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
@@ -5767,6 +6565,9 @@
             }
             
             setupAuthStateObserver();
+            
+            window.migrateAllUsersRoles = migrateAllUsersRoles;
+            window.fixAllWorkOrderNumbers = fixAllWorkOrderNumbers;
             
             console.log('System initialization complete');
             console.log('Note: To fix all work order numbers to integrated system, run fixAllWorkOrderNumbers() from console');
