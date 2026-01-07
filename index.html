@@ -1738,90 +1738,179 @@
         </div>
     </div>
 
-        <!-- Main Application Page (Hidden Initially) -->
-        <div id="appPage" class="hidden">
-            <!-- App Header -->
-            <div class="app-header">
-                <div class="app-container">
-                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-                        <div class="flex-1">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="app-logo">
-                                    <i class="fas fa-clipboard-list"></i>
-                                </div>
-                                <div>
-                                    <h1 class="app-title">Work Order Pro</h1>
-                                    <p class="app-subtitle">Manage, Track & Analyze Work Orders</p>
-                                </div>
+    <!-- Main Application Page (Hidden Initially) -->
+    <div id="appPage" class="hidden">
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="app-logo">
+                                <i class="fas fa-clipboard-list"></i>
                             </div>
-                            
-                            <!-- User Info Card -->
-                            <div class="user-card">
-                                <div class="flex items-center gap-3">
-                                    <div class="user-avatar user" id="userAvatar">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm text-purple-600 font-medium mb-1">Welcome back</p>
-                                        <p id="userWelcome" class="font-semibold text-gray-900 truncate"></p>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span id="userRoleBadge" class="badge-primary">
-                                            <i class="fas fa-user-tag"></i>
-                                            <span>User</span>
-                                        </span>
-                                    </div>
-                                </div>
+                            <div>
+                                <h1 class="app-title">Work Order Pro</h1>
+                                <p class="app-subtitle">Manage, Track & Analyze Work Orders</p>
                             </div>
                         </div>
                         
-                        <!-- Action Buttons -->
-                        <div class="flex flex-wrap gap-2" id="actionButtons">
-                            <!-- ... existing buttons ... -->
+                        <!-- User Info Card -->
+                        <div class="user-card inline-block">
+                            <div class="flex items-center gap-4">
+                                <div class="user-avatar user" id="userAvatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm text-purple-600 font-medium mb-1">Welcome back</p>
+                                    <p id="userWelcome" class="font-semibold text-gray-900 truncate"></p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span id="userRoleBadge" class="badge-primary">
+                                        <i class="fas fa-user-tag"></i>
+                                        <span>User</span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- Search Box -->
-                    <div class="mb-6">
-                        <div class="search-box">
-                            <i class="search-icon fas fa-search"></i>
-                            <input type="text" 
-                                   id="searchWorkOrders" 
-                                   placeholder="Search work orders by number, customer, PIC..."
-                                   class="search-input">
-                        </div>
+                    <!-- Action Buttons -->
+                    <div class="flex flex-wrap gap-2" id="actionButtons">
+                        <button id="newWorkOrderBtn" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>New Work Order</span>
+                        </button>
+                        <button id="exportExcelBtn" class="btn btn-success hidden">
+                            <i class="fas fa-file-excel"></i>
+                            <span>Export Excel</span>
+                        </button>
+                        <button id="analyticsBtn" class="btn btn-info hidden">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Analytics</span>
+                        </button>
+                        <button id="activityBtn" class="btn btn-secondary hidden">
+                            <i class="fas fa-history"></i>
+                            <span>Activity</span>
+                        </button>
+                        <button id="statusHistoryBtn" class="btn btn-warning hidden">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Status History</span>
+                        </button>
+                        <!-- Documentation Button -->
+                        <button id="documentationBtn" class="btn btn-info">
+                            <i class="fas fa-camera"></i>
+                            <span>Ambil Gambar</span>
+                        </button>
+                        <!-- Pipelines Button -->
+                        <button id="pipelinesBtn" class="btn btn-primary">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>Pipelines</span>
+                        </button>
+                        <button id="authButton" class="btn btn-danger">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </button>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Main Content -->
-            <div class="app-container py-6">
-                <!-- Tabs Navigation -->
-                <div class="tabs mb-6">
-                    <!-- ... existing tabs ... -->
-                </div>
                 
-                <!-- View Controls -->
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                    <!-- ... existing view controls ... -->
-                </div>
-                
-                <!-- Work Orders Container -->
-                <div id="cardListView" class="card animate-fade-in">
-                    <!-- ... existing content ... -->
-                </div>
-                
-                <!-- Timeline View -->
-                <div id="timelineView" class="hidden">
-                    <div class="card">
-                        <h3 class="text-xl font-bold text-gray-900 mb-6">Work Order Timeline</h3>
-                        <div class="timeline" id="timelineContent">
-                            <!-- Timeline items will be loaded here -->
-                        </div>
+                <!-- Search Box -->
+                <div class="mb-8">
+                    <div class="search-box">
+                        <i class="search-icon fas fa-search"></i>
+                        <input type="text" 
+                               id="searchWorkOrders" 
+                               placeholder="Search work orders by number, customer, PIC..."
+                               class="search-input">
                     </div>
                 </div>
             </div>
         </div>
+        
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Tabs Navigation -->
+            <div class="tabs mb-8">
+                <button class="tab active" data-tab="all">
+                    <i class="fas fa-layer-group"></i>
+                    <span>All Work Orders</span>
+                    <span class="tab-count">0</span>
+                </button>
+                <button class="tab" data-tab="running">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Running</span>
+                    <span class="tab-count">0</span>
+                </button>
+                <button class="tab" data-tab="done">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Done</span>
+                    <span class="tab-count">0</span>
+                </button>
+                <button class="tab" data-tab="close">
+                    <i class="fas fa-times-circle"></i>
+                    <span>Closed</span>
+                    <span class="tab-count">0</span>
+                </button>
+            </div>
+            
+            <!-- View Controls -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                <div class="flex flex-wrap gap-2">
+                    <button id="cardViewBtn" class="btn btn-outline active">
+                        <i class="fas fa-th-large"></i>
+                        <span>Card View</span>
+                    </button>
+                    <button id="listViewBtn" class="btn btn-outline">
+                        <i class="fas fa-list"></i>
+                        <span>List View</span>
+                    </button>
+                    <button id="timelineViewBtn" class="btn btn-outline">
+                        <i class="fas fa-stream"></i>
+                        <span>Timeline</span>
+                    </button>
+                </div>
+                
+                <div class="flex flex-wrap gap-2">
+                    <select id="sortBy" class="form-input w-48">
+                        <option value="createdAt">Sort by Date</option>
+                        <option value="workOrderNumber">Sort by WO Number</option>
+                        <option value="status">Sort by Status</option>
+                        <option value="customer">Sort by Customer</option>
+                        <option value="priority">Sort by Priority</option>
+                    </select>
+                    <select id="sortOrder" class="form-input w-40">
+                        <option value="desc">Newest First</option>
+                        <option value="asc">Oldest First</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Work Orders Container -->
+            <div id="cardListView" class="card animate-fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-900">Work Orders</h3>
+                    <div class="flex items-center gap-2 text-sm text-gray-600">
+                        <i class="fas fa-info-circle text-blue-500"></i>
+                        <span id="workOrderCount">Loading work orders...</span>
+                    </div>
+                </div>
+                
+                <div id="workorders-stage" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 custom-scrollbar" style="max-height: 600px; overflow-y: auto;">
+                    <!-- Work orders will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Timeline View -->
+            <div id="timelineView" class="hidden">
+                <div class="card">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6">Work Order Timeline</h3>
+                    <div class="timeline" id="timelineContent">
+                        <!-- Timeline items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ==================== MODALS ==================== -->
 
