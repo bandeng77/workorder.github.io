@@ -1192,10 +1192,21 @@
                             </div>
                             
                             <div>
+                                <label class="form-label required-field" for="pipelineDate">
+                                    Tanggal
+                                </label>
+                                <input type="date" 
+                                       id="pipelineDate" 
+                                       class="form-input"
+                                       required
+                                       onchange="updateQuotationPreview()">
+                            </div>
+                            
+                            <div>
                                 <label class="form-label required-field" for="pipelineCompany">
                                     Company
                                 </label>
-                                <select id="pipelineCompany" class="form-input" required onchange="updateQuotationNumber()">
+                                <select id="pipelineCompany" class="form-input" required onchange="updateQuotationPreview()">
                                     <option value="">Select Company</option>
                                     <option value="Genetek">Genetek</option>
                                     <option value="Effrensindo">Effrensindo</option>
@@ -1206,7 +1217,7 @@
                                 <label class="form-label required-field" for="pipelineSOW">
                                     SOW
                                 </label>
-                                <select id="pipelineSOW" class="form-input" required onchange="updateQuotationNumber()">
+                                <select id="pipelineSOW" class="form-input" required onchange="updateQuotationPreview()">
                                     <option value="">Select SOW</option>
                                     <option value="FAS">FAS</option>
                                     <option value="Vesda">Vesda</option>
@@ -2287,10 +2298,19 @@
             console.log(`Quotation format: ${companyCode}/${sowCode}/${romanMonth}/${year}`);
         }
 
-        async function generateQuotationNumber(nextNumber, company, sow) {
-            const now = new Date();
-            const month = now.getMonth() + 1;
-            const year = now.getFullYear();
+        async function generateQuotationNumber(nextNumber, company, sow, date) {
+            let month, year;
+            
+            // If date is provided, use it; otherwise use current date
+            if (date) {
+                const dateObj = new Date(date);
+                month = dateObj.getMonth() + 1;
+                year = dateObj.getFullYear();
+            } else {
+                const now = new Date();
+                month = now.getMonth() + 1;
+                year = now.getFullYear();
+            }
             
             const companyCode = getCompanyCode(company);
             const sowCode = getSOWCode(sow);
@@ -2319,6 +2339,7 @@
                         // Ensure all fields exist
                         no: data.no || 0,
                         quotation: data.quotation || '',
+                        date: data.date || null,
                         company: data.company || '',
                         sow: data.sow || '',
                         pic: data.pic || '',
@@ -2423,6 +2444,7 @@
             const badgeClass = getPipelineBadgeClass(item.status);
             const timeAgo = formatTimeAgo(item.updatedAt);
             const progress = item.progress || 0;
+            const formattedDate = item.date ? formatDate(item.date) : '-';
             
             div.innerHTML = `
                 <div class="flex justify-between items-start mb-2">
@@ -2442,6 +2464,14 @@
                 </div>
                 
                 <div class="space-y-2 mb-3">
+                    ${item.date ? `
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center">
+                            <i class="fas fa-calendar text-purple-600 text-xs"></i>
+                        </div>
+                        <span class="text-xs text-gray-600">${formattedDate}</span>
+                    </div>` : ''}
+                    
                     ${item.customer ? `
                     <div class="flex items-center gap-2">
                         <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
@@ -2688,6 +2718,7 @@
             // Reset all fields
             document.getElementById('pipelineNo').value = '';
             document.getElementById('pipelineQuotation').value = '';
+            document.getElementById('pipelineDate').value = '';
             document.getElementById('pipelineCompany').value = '';
             document.getElementById('pipelineSOW').value = '';
             document.getElementById('pipelinePIC').value = '';
@@ -2717,6 +2748,10 @@
                 document.getElementById('pipelineStatus').value = 'Open';
                 document.getElementById('pipelineProgress').value = 0;
                 
+                // Set default date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('pipelineDate').value = today;
+                
                 // Generate new number for new item
                 try {
                     const nextNumber = await getNextQuotationNumber();
@@ -2725,9 +2760,10 @@
                     // Generate quotation number preview
                     const company = document.getElementById('pipelineCompany').value;
                     const sow = document.getElementById('pipelineSOW').value;
+                    const date = document.getElementById('pipelineDate').value;
                     
-                    if (company && sow) {
-                        const quotationNumber = await generateQuotationNumber(nextNumber, company, sow);
+                    if (company && sow && date) {
+                        const quotationNumber = await generateQuotationNumber(nextNumber, company, sow, date);
                         document.getElementById('pipelineQuotation').value = quotationNumber;
                     }
                 } catch (error) {
@@ -2758,6 +2794,21 @@
             document.getElementById('pipelineItemId').value = item.id;
             document.getElementById('pipelineNo').value = item.no || '';
             document.getElementById('pipelineQuotation').value = item.quotation || '';
+            
+            // Format date for input field
+            let dateValue = '';
+            if (item.date) {
+                if (item.date.toDate) {
+                    const dateObj = item.date.toDate();
+                    dateValue = dateObj.toISOString().split('T')[0];
+                } else if (item.date instanceof Date) {
+                    dateValue = item.date.toISOString().split('T')[0];
+                } else if (typeof item.date === 'string') {
+                    dateValue = item.date.split('T')[0];
+                }
+            }
+            document.getElementById('pipelineDate').value = dateValue;
+            
             document.getElementById('pipelineCompany').value = item.company || '';
             document.getElementById('pipelineSOW').value = item.sow || '';
             document.getElementById('pipelinePIC').value = item.pic || '';
@@ -2791,19 +2842,34 @@
             
             const company = document.getElementById('pipelineCompany').value;
             const sow = document.getElementById('pipelineSOW').value;
+            const date = document.getElementById('pipelineDate').value;
             let no = parseInt(document.getElementById('pipelineNo').value) || 0;
             
             // Generate quotation number if creating new item
             let quotationNumber = document.getElementById('pipelineQuotation').value.trim();
             
-            if (!isEdit && company && sow && no > 0) {
+            if (!isEdit && company && sow && date && no > 0) {
                 // For new items, generate the quotation number
-                quotationNumber = await generateQuotationNumber(no, company, sow);
+                quotationNumber = await generateQuotationNumber(no, company, sow, date);
+            } else if (isEdit && company && sow && date && no > 0) {
+                // For editing items, regenerate quotation number if date, company, or SOW changed
+                const item = pipelineItems.find(i => i.id === itemId);
+                if (item) {
+                    // Check if date, company, or SOW changed
+                    const oldDate = item.date ? (item.date.toDate ? item.date.toDate().toISOString().split('T')[0] : item.date.split('T')[0]) : '';
+                    const oldCompany = item.company || '';
+                    const oldSOW = item.sow || '';
+                    
+                    if (date !== oldDate || company !== oldCompany || sow !== oldSOW) {
+                        quotationNumber = await generateQuotationNumber(no, company, sow, date);
+                    }
+                }
             }
             
             const pipelineData = {
                 no: no,
                 quotation: quotationNumber,
+                date: new Date(date),
                 company: company,
                 sow: sow,
                 pic: document.getElementById('pipelinePIC').value.trim(),
@@ -3192,11 +3258,23 @@
                 charts.pipelineRevenueChart.destroy();
             }
             
-            // Group by month
+            // Group by month based on date field
             const monthlyData = {};
             pipelineItems.forEach(item => {
-                if (item.createdAt) {
-                    const date = item.createdAt.toDate();
+                let date;
+                if (item.date) {
+                    if (item.date.toDate) {
+                        date = item.date.toDate();
+                    } else if (item.date instanceof Date) {
+                        date = item.date;
+                    } else {
+                        date = new Date(item.date);
+                    }
+                } else if (item.createdAt) {
+                    date = item.createdAt.toDate();
+                }
+                
+                if (date) {
                     const monthKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
                     
                     if (!monthlyData[monthKey]) {
@@ -3462,6 +3540,10 @@
             setupCurrencyInputs();
             
             // Add event listeners for quotation number generation
+            document.getElementById('pipelineDate').addEventListener('change', async function() {
+                await updateQuotationPreview();
+            });
+            
             document.getElementById('pipelineCompany').addEventListener('change', async function() {
                 await updateQuotationPreview();
             });
@@ -3512,12 +3594,13 @@
         async function updateQuotationPreview() {
             const company = document.getElementById('pipelineCompany').value;
             const sow = document.getElementById('pipelineSOW').value;
+            const date = document.getElementById('pipelineDate').value;
             const noInput = document.getElementById('pipelineNo');
             
-            if (company && sow && noInput && noInput.value) {
+            if (company && sow && date && noInput && noInput.value) {
                 const no = parseInt(noInput.value);
                 if (!isNaN(no) && no > 0) {
-                    const quotationNumber = await generateQuotationNumber(no, company, sow);
+                    const quotationNumber = await generateQuotationNumber(no, company, sow, date);
                     document.getElementById('pipelineQuotation').value = quotationNumber;
                 }
             }
