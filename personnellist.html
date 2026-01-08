@@ -199,11 +199,6 @@
             color: var(--primary-600);
         }
 
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.75rem;
-        }
-
         .card {
             background: white;
             border-radius: var(--radius-xl);
@@ -303,14 +298,6 @@
             background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
         }
 
-        .status-on-progress {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-        }
-
-        .status-manual {
-            background: linear-gradient(135deg, #64748b, #475569);
-        }
-
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -396,13 +383,6 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--neutral-700);
-        }
-
         .loading-overlay {
             position: fixed;
             inset: 0;
@@ -482,7 +462,7 @@
 
         .personnel-list-header {
             display: grid;
-            grid-template-columns: 1fr 100px 120px 150px 120px 150px 100px;
+            grid-template-columns: 1fr 100px 120px 150px 120px 100px 80px;
             gap: 1rem;
             padding: 1rem 1.5rem;
             background: var(--neutral-50);
@@ -496,7 +476,7 @@
 
         .personnel-list-item {
             display: grid;
-            grid-template-columns: 1fr 100px 120px 150px 120px 150px 100px;
+            grid-template-columns: 1fr 100px 120px 150px 120px 100px 80px;
             gap: 1rem;
             padding: 1rem 1.5rem;
             border-bottom: 1px solid var(--neutral-100);
@@ -765,146 +745,11 @@
             color: var(--primary-700);
         }
 
-        /* Status Dropdown in Personnel List */
-        .status-dropdown {
-            position: relative;
-            width: 100%;
-        }
-
-        .status-dropdown-button {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.5rem;
-            border: 1px solid var(--neutral-300);
-            border-radius: var(--radius-md);
-            background: white;
-            cursor: pointer;
-            transition: var(--transition-base);
-        }
-
-        .status-dropdown-button:hover {
-            border-color: var(--primary-500);
-        }
-
-        .status-dropdown-content {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            margin-top: 0.25rem;
-            background: white;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-xl);
-            z-index: 20;
-            display: none;
-        }
-
-        .status-dropdown-content.show {
-            display: block;
-        }
-
-        .status-option {
-            padding: 0.5rem;
-            cursor: pointer;
-            transition: var(--transition-base);
-            border-bottom: 1px solid var(--neutral-100);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .status-option:hover {
-            background: var(--primary-50);
-        }
-
-        .status-option:last-child {
-            border-bottom: none;
-        }
-
-        /* Action Buttons in List */
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-        }
-
-        .action-btn {
-            padding: 0.375rem 0.75rem;
-            border-radius: var(--radius-md);
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition-base);
-            border: none;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .action-btn.edit {
-            background: var(--primary-100);
-            color: var(--primary-700);
-        }
-
-        .action-btn.edit:hover {
-            background: var(--primary-200);
-        }
-
-        .action-btn.delete {
-            background: var(--danger-100);
-            color: var(--danger-700);
-        }
-
-        .action-btn.delete:hover {
-            background: var(--danger-200);
-        }
-
-        .action-btn.view {
-            background: var(--accent-100);
-            color: var(--accent-700);
-        }
-
-        .action-btn.view:hover {
-            background: var(--accent-200);
-        }
-
-        /* Assignment Status Badges */
-        .assignment-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            padding: 0.375rem 0.75rem;
-            border-radius: var(--radius-md);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: white;
-        }
-
-        .assignment-running {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-        }
-
-        .assignment-on-progress {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-        }
-
-        .assignment-done {
-            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
-        }
-
-        .assignment-close {
-            background: linear-gradient(135deg, var(--neutral-500), var(--neutral-600));
-        }
-
         /* Responsive Design */
         @media (max-width: 1024px) {
             .personnel-list-header,
             .personnel-list-item {
-                grid-template-columns: 1fr 80px 100px 120px 100px 120px 90px;
+                grid-template-columns: 1fr 80px 100px 120px 100px 80px 60px;
                 font-size: 0.75rem;
                 gap: 0.75rem;
                 padding: 0.75rem 1rem;
@@ -935,11 +780,6 @@
             
             .modal-body {
                 padding: 1.5rem;
-            }
-            
-            .action-buttons {
-                width: 100%;
-                justify-content: flex-start;
             }
         }
 
@@ -990,10 +830,6 @@
                     <button id="exportBtn" class="btn btn-success">
                         <i class="fas fa-file-export"></i>
                         <span>Export</span>
-                    </button>
-                    <button id="updateAllStatusBtn" class="btn btn-primary">
-                        <i class="fas fa-refresh"></i>
-                        <span>Update All Status</span>
                     </button>
                     <button id="authButton" class="btn btn-danger">
                         <i class="fas fa-sign-out-alt"></i>
@@ -1213,19 +1049,9 @@
                         </p>
                     </div>
                 </div>
-                <div class="flex gap-2">
-                    <button id="editPersonnelBtn" class="btn btn-secondary btn-sm">
-                        <i class="fas fa-edit"></i>
-                        Edit
-                    </button>
-                    <button id="deletePersonnelBtn" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash"></i>
-                        Delete
-                    </button>
-                    <button id="closeActivityModal" class="text-gray-400 hover:text-white transition-colors text-2xl ml-2">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
+                <button id="closeActivityModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             
             <div class="modal-body">
@@ -1253,10 +1079,6 @@
                                 <div>
                                     <label class="text-sm font-medium text-gray-500">Last Updated</label>
                                     <p id="modalLastUpdated" class="text-gray-900 font-medium"></p>
-                                </div>
-                                <div>
-                                    <label class="text-sm font-medium text-gray-500">Status Mode</label>
-                                    <p id="modalStatusMode" class="text-gray-900 font-medium"></p>
                                 </div>
                             </div>
                         </div>
@@ -1508,39 +1330,6 @@
         </div>
     </div>
 
-    <!-- Confirm Delete Modal -->
-    <div id="confirmDeleteModal" class="modal-overlay hidden">
-        <div class="modal-content w-full max-w-md">
-            <div class="modal-header">
-                <h2 class="modal-title">Confirm Delete</h2>
-                <button id="closeConfirmDeleteModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="modal-body">
-                <div class="text-center py-4">
-                    <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-exclamation-triangle text-3xl text-red-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Delete Personnel</h3>
-                    <p class="text-gray-600 mb-6" id="deletePersonnelName"></p>
-                    <p class="text-sm text-red-600 mb-8">Warning: This action cannot be undone. All associated data will be removed.</p>
-                    
-                    <div class="flex justify-center gap-3">
-                        <button id="cancelDelete" class="btn btn-secondary">
-                            Cancel
-                        </button>
-                        <button id="confirmDelete" class="btn btn-danger">
-                            <i class="fas fa-trash mr-2"></i>
-                            Delete
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Toast Container -->
     <div id="toast-container" class="toast-container"></div>
 
@@ -1580,7 +1369,6 @@
                 division: "Maintenance",
                 company: "Genetek Intratama",
                 status: "working",
-                statusMode: "manual", // manual or auto
                 contact: "+62 812-3456-7890",
                 notes: "Senior technician with 10+ years experience"
             },
@@ -1591,7 +1379,6 @@
                 division: "Testcom",
                 company: "Genetek Intratama",
                 status: "available",
-                statusMode: "auto",
                 contact: "+62 813-4567-8901",
                 notes: "Specialized in network testing"
             },
@@ -1602,7 +1389,6 @@
                 division: "Project",
                 company: "Effrensindo Kencana",
                 status: "working",
-                statusMode: "auto",
                 contact: "+62 814-5678-9012",
                 notes: "Project lead for infrastructure"
             },
@@ -1613,7 +1399,6 @@
                 division: "Maintenance",
                 company: "Genetek Intratama",
                 status: "leave",
-                statusMode: "manual",
                 contact: "+62 815-6789-0123",
                 notes: "On medical leave until next month"
             },
@@ -1624,7 +1409,6 @@
                 division: "Project",
                 company: "Effrensindo Kencana",
                 status: "working",
-                statusMode: "auto",
                 contact: "+62 816-7890-1234",
                 notes: "Project management"
             },
@@ -1635,7 +1419,6 @@
                 division: "Testcom",
                 company: "Genetek Intratama",
                 status: "working",
-                statusMode: "auto",
                 contact: "+62 817-8901-2345",
                 notes: "New technician, training in progress"
             },
@@ -1646,7 +1429,6 @@
                 division: "Maintenance",
                 company: "Genetek Intratama",
                 status: "available",
-                statusMode: "auto",
                 contact: "+62 818-9012-3456",
                 notes: "Available for assignments"
             },
@@ -1657,7 +1439,6 @@
                 division: "Testcom",
                 company: "Genetek Intratama",
                 status: "working",
-                statusMode: "auto",
                 contact: "+62 819-0123-4567",
                 notes: "Testcom team lead"
             },
@@ -1668,7 +1449,6 @@
                 division: "Maintenance",
                 company: "Genetek Intratama",
                 status: "absent",
-                statusMode: "manual",
                 contact: "+62 820-1234-5678",
                 notes: "Unexpected absence, contact HR"
             },
@@ -1679,7 +1459,6 @@
                 division: "Project",
                 company: "Effrensindo Kencana",
                 status: "available",
-                statusMode: "auto",
                 contact: "+62 821-2345-6789",
                 notes: "Recently completed safety training"
             }
@@ -1824,7 +1603,8 @@
             
             toast.innerHTML = `
                 <div class="toast-icon ${type}" 
-                     style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.25rem;">
+                     style="background: linear-gradient(135deg, ${type === 'success' ? 'var(--accent-500)' : type === 'error' ? 'var(--danger-500)' : 'var(--primary-500)'}, 
+                     ${type === 'success' ? 'var(--accent-600)' : type === 'error' ? 'var(--danger-600)' : 'var(--primary-600)'})">
                     <i class="fas ${icons[type] || 'fa-info-circle'}"></i>
                 </div>
                 <div>
@@ -1852,116 +1632,6 @@
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
         }
 
-        // ==================== STATUS MANAGEMENT FUNCTIONS ====================
-        function calculateAutomaticStatus(person) {
-            if (person.statusMode !== 'auto') {
-                return person.status;
-            }
-            
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const personnelWorkOrders = getPersonnelWorkOrders(person.name);
-            const activeWorkOrders = personnelWorkOrders.filter(wo => {
-                if (wo.status !== 'Running' && wo.status !== 'On Progress') {
-                    return false;
-                }
-                
-                try {
-                    const startDate = wo.startDate?.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
-                    startDate.setHours(0, 0, 0, 0);
-                    
-                    let endDate = startDate;
-                    if (wo.estimatedTime && !isNaN(wo.estimatedTime)) {
-                        endDate = new Date(startDate);
-                        endDate.setDate(endDate.getDate() + parseInt(wo.estimatedTime));
-                        endDate.setHours(23, 59, 59, 999);
-                    } else if (wo.endDate) {
-                        endDate = wo.endDate?.toDate ? wo.endDate.toDate() : new Date(wo.endDate);
-                        endDate.setHours(23, 59, 59, 999);
-                    }
-                    
-                    return today >= startDate && today <= endDate;
-                } catch (e) {
-                    return false;
-                }
-            });
-            
-            return activeWorkOrders.length > 0 ? 'working' : 'available';
-        }
-
-        async function updateAllPersonnelStatus() {
-            try {
-                showLoading();
-                showToast('Updating all personnel status...', 'info');
-                
-                for (const person of allPersonnel) {
-                    if (person.statusMode === 'auto') {
-                        const newStatus = calculateAutomaticStatus(person);
-                        
-                        if (newStatus !== person.status) {
-                            await personnelCollection.doc(person.id).update({
-                                status: newStatus,
-                                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                                updatedBy: currentUser?.email || 'system'
-                            });
-                        }
-                    }
-                }
-                
-                await loadPersonnel();
-                showToast('All personnel status updated successfully', 'success');
-                
-            } catch (error) {
-                console.error('Error updating personnel status:', error);
-                showToast('Failed to update personnel status', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function updatePersonnelStatus(personnelId, newStatus, statusMode = 'manual') {
-            try {
-                await personnelCollection.doc(personnelId).update({
-                    status: newStatus,
-                    statusMode: statusMode,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedBy: currentUser?.email || 'system'
-                });
-                
-                showToast('Personnel status updated successfully', 'success');
-                await loadPersonnel();
-                
-            } catch (error) {
-                console.error('Error updating personnel status:', error);
-                showToast('Failed to update personnel status', 'error');
-            }
-        }
-
-        function getStatusText(status) {
-            switch(status) {
-                case 'working': return 'Working';
-                case 'leave': return 'On Leave';
-                case 'absent': return 'Absent';
-                case 'available': return 'Available';
-                default: return 'Unknown';
-            }
-        }
-
-        function getStatusClass(status) {
-            switch(status) {
-                case 'working': return 'status-working';
-                case 'leave': return 'status-leave';
-                case 'absent': return 'status-absent';
-                case 'available': return 'status-available';
-                default: return '';
-            }
-        }
-
-        function getStatusModeText(statusMode) {
-            return statusMode === 'auto' ? 'Automatic' : 'Manual';
-        }
-
         // ==================== SORTING FUNCTIONS ====================
         function sortPersonnel(personnelArray) {
             const sorted = [...personnelArray];
@@ -1980,8 +1650,8 @@
                     });
                 case 'workload':
                     return sorted.sort((a, b) => {
-                        const aWorkload = getPersonnelWorkOrders(a.name).filter(wo => wo.status === 'Running' || wo.status === 'On Progress').length;
-                        const bWorkload = getPersonnelWorkOrders(b.name).filter(wo => wo.status === 'Running' || wo.status === 'On Progress').length;
+                        const aWorkload = getPersonnelWorkOrders(a.name).filter(wo => wo.status === 'Running').length;
+                        const bWorkload = getPersonnelWorkOrders(b.name).filter(wo => wo.status === 'Running').length;
                         return bWorkload - aWorkload;
                     });
                 case 'division':
@@ -2075,16 +1745,6 @@
                             ...data
                         });
                     });
-                }
-                
-                // Update automatic statuses
-                for (const person of allPersonnel) {
-                    if (person.statusMode === 'auto') {
-                        const newStatus = calculateAutomaticStatus(person);
-                        if (newStatus !== person.status) {
-                            person.status = newStatus;
-                        }
-                    }
                 }
                 
                 await loadWorkOrders();
@@ -2193,10 +1853,9 @@
             const initials = getInitials(person.name);
             const avatarColor = getAvatarColor(person.name);
             const workOrders = getPersonnelWorkOrders(person.name);
-            const activeWorkOrders = workOrders.filter(wo => wo.status === 'Running' || wo.status === 'On Progress').length;
+            const activeWorkOrders = workOrders.filter(wo => wo.status === 'Running').length;
             const statusClass = getStatusClass(person.status);
             const statusText = getStatusText(person.status);
-            const statusMode = person.statusMode || 'auto';
             
             item.innerHTML = `
                 <div class="personnel-info">
@@ -2211,56 +1870,40 @@
                 <div>${person.position || 'Technician'}</div>
                 <div>${person.division || '-'}</div>
                 <div>${person.company || '-'}</div>
-                <div class="status-dropdown">
-                    <button class="status-dropdown-button" onclick="event.stopPropagation(); toggleStatusDropdown('${person.id}')">
-                        <span class="status-badge ${statusClass}">${statusText}</span>
-                        <i class="fas fa-chevron-down ml-1 text-xs"></i>
-                    </button>
-                    <div id="status-dropdown-${person.id}" class="status-dropdown-content">
-                        <div class="status-option ${person.status === 'working' ? 'bg-blue-50' : ''}" onclick="updateStatus('${person.id}', 'working', '${statusMode}')">
-                            <span class="status-badge status-working">Working</span>
-                            ${statusMode === 'auto' ? '<span class="text-xs text-gray-500 ml-2">(Auto)</span>' : ''}
-                        </div>
-                        <div class="status-option ${person.status === 'available' ? 'bg-green-50' : ''}" onclick="updateStatus('${person.id}', 'available', '${statusMode}')">
-                            <span class="status-badge status-available">Available</span>
-                            ${statusMode === 'auto' ? '<span class="text-xs text-gray-500 ml-2">(Auto)</span>' : ''}
-                        </div>
-                        <div class="status-option ${person.status === 'leave' ? 'bg-yellow-50' : ''}" onclick="updateStatus('${person.id}', 'leave', 'manual')">
-                            <span class="status-badge status-leave">On Leave</span>
-                            <span class="text-xs text-gray-500 ml-2">(Manual)</span>
-                        </div>
-                        <div class="status-option ${person.status === 'absent' ? 'bg-red-50' : ''}" onclick="updateStatus('${person.id}', 'absent', 'manual')">
-                            <span class="status-badge status-absent">Absent</span>
-                            <span class="text-xs text-gray-500 ml-2">(Manual)</span>
-                        </div>
-                        <div class="status-option border-t border-gray-200 pt-2 mt-2">
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs text-gray-600">Mode:</span>
-                                <button class="text-xs px-2 py-1 rounded ${statusMode === 'auto' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}" 
-                                        onclick="toggleStatusMode('${person.id}', '${statusMode}')">
-                                    ${statusMode === 'auto' ? 'Auto' : 'Manual'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div>
+                    <span class="status-badge ${statusClass}">${statusText}</span>
                 </div>
                 <div class="text-center font-bold ${activeWorkOrders > 0 ? 'text-blue-600' : 'text-gray-500'}">
                     ${activeWorkOrders}
                 </div>
-                <div class="action-buttons">
-                    <button class="action-btn view" onclick="viewPersonnelActivity('${person.id}')">
+                <div>
+                    <button class="btn btn-primary btn-sm w-full" onclick="viewPersonnelActivity('${person.id}')">
                         <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn edit" onclick="editPersonnel('${person.id}')">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete" onclick="confirmDeletePersonnel('${person.id}', '${person.name}')">
-                        <i class="fas fa-trash"></i>
                     </button>
                 </div>
             `;
             
             return item;
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'working': return 'Working';
+                case 'leave': return 'On Leave';
+                case 'absent': return 'Absent';
+                case 'available': return 'Available';
+                default: return 'Unknown';
+            }
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'working': return 'status-working';
+                case 'leave': return 'status-leave';
+                case 'absent': return 'status-absent';
+                case 'available': return 'status-available';
+                default: return '';
+            }
         }
 
         function getPersonnelWorkOrders(personnelName) {
@@ -2333,7 +1976,7 @@
             let totalActiveWorkOrders = 0;
             allPersonnel.forEach(person => {
                 const workOrders = getPersonnelWorkOrders(person.name);
-                totalActiveWorkOrders += workOrders.filter(wo => wo.status === 'Running' || wo.status === 'On Progress').length;
+                totalActiveWorkOrders += workOrders.filter(wo => wo.status === 'Running').length;
             });
             
             const avgWorkload = allPersonnel.length > 0 ? (totalActiveWorkOrders / allPersonnel.length).toFixed(1) : 0;
@@ -2407,7 +2050,7 @@
             };
             
             allPersonnel.forEach(person => {
-                const activeWorkOrders = getPersonnelWorkOrders(person.name).filter(wo => wo.status === 'Running' || wo.status === 'On Progress').length;
+                const activeWorkOrders = getPersonnelWorkOrders(person.name).filter(wo => wo.status === 'Running').length;
                 if (activeWorkOrders === 0) {
                     workloadCategories['No Work']++;
                 } else if (activeWorkOrders <= 2) {
@@ -2567,7 +2210,7 @@
                         } catch (e) {}
                     }
                     
-                    if ((wo.status === 'Running' || wo.status === 'On Progress') && wo.startDate) {
+                    if (wo.status === 'Running' && wo.startDate) {
                         try {
                             const startDate = wo.startDate.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
                             if (startDate <= date) {
@@ -2801,7 +2444,6 @@
             document.getElementById('modalCompany').textContent = person.company || '-';
             document.getElementById('modalContact').textContent = person.contact || '-';
             document.getElementById('modalLastUpdated').textContent = person.updatedAt ? formatDateTime(person.updatedAt) : '-';
-            document.getElementById('modalStatusMode').textContent = getStatusModeText(person.statusMode || 'auto');
             
             avatar.textContent = getInitials(person.name);
             avatar.style.background = getAvatarColor(person.name);
@@ -2836,7 +2478,7 @@
         }
 
         function updatePersonnelStatsModal(person, workOrders) {
-            const activeWorkOrders = workOrders.filter(wo => wo.status === 'Running' || wo.status === 'On Progress').length;
+            const activeWorkOrders = workOrders.filter(wo => wo.status === 'Running').length;
             const completedThisMonth = getCompletedThisMonth(workOrders);
             const avgCompletionTime = getAverageCompletionTime(workOrders);
             const workload = getWorkloadStatus(workOrders);
@@ -2884,7 +2526,7 @@
         }
 
         function getWorkloadStatus(workOrders) {
-            const activeCount = workOrders.filter(wo => wo.status === 'Running' || wo.status === 'On Progress').length;
+            const activeCount = workOrders.filter(wo => wo.status === 'Running').length;
             
             if (activeCount === 0) return 'Light';
             if (activeCount <= 3) return 'Normal';
@@ -2929,7 +2571,6 @@
             
             const statusColor = {
                 'Running': 'bg-blue-100 text-blue-800',
-                'On Progress': 'bg-purple-100 text-purple-800',
                 'Done': 'bg-green-100 text-green-800',
                 'Close': 'bg-gray-100 text-gray-800'
             }[workOrder.status] || 'bg-gray-100 text-gray-800';
@@ -2972,7 +2613,7 @@
 
         function loadCurrentAssignments(person, workOrders) {
             const container = document.getElementById('currentAssignments');
-            const activeWorkOrders = workOrders.filter(wo => wo.status === 'Running' || wo.status === 'On Progress');
+            const activeWorkOrders = workOrders.filter(wo => wo.status === 'Running');
             
             if (activeWorkOrders.length === 0) {
                 container.innerHTML = `
@@ -2999,15 +2640,6 @@
             
             const startDate = workOrder.startDate ? formatDate(workOrder.startDate) : '-';
             const estimatedTime = workOrder.estimatedTime ? `${workOrder.estimatedTime} days` : '-';
-            const statusClass = {
-                'Running': 'assignment-running',
-                'On Progress': 'assignment-on-progress',
-                'Done': 'assignment-done',
-                'Close': 'assignment-close'
-            }[workOrder.status] || 'assignment-running';
-            
-            const statusText = workOrder.status === 'On Progress' ? 'On Progress' : 
-                              workOrder.status === 'Running' ? 'Active' : workOrder.status;
             
             card.innerHTML = `
                 <div class="flex justify-between items-start mb-3">
@@ -3015,7 +2647,7 @@
                         <h4 class="font-bold text-gray-900">${workOrder.workOrderNumber || 'N/A'}</h4>
                         <p class="text-sm text-gray-600">${workOrder.customer || 'No customer'}</p>
                     </div>
-                    <span class="assignment-status ${statusClass}">${statusText}</span>
+                    <span class="status-badge status-working">Active</span>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3 text-sm mb-3">
@@ -3097,7 +2729,6 @@
                 division: document.getElementById('personnelDivision').value || null,
                 company: document.getElementById('personnelCompany').value || null,
                 status: document.getElementById('personnelStatus').value,
-                statusMode: 'auto', // Default to auto for new personnel
                 contact: document.getElementById('contact').value.trim() || null,
                 notes: document.getElementById('personnelNotes').value.trim() || null,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -3109,11 +2740,6 @@
                 showLoading();
                 
                 if (isEdit) {
-                    // Preserve status mode when editing
-                    const existingPerson = allPersonnel.find(p => p.id === personnelId);
-                    if (existingPerson) {
-                        personnelData.statusMode = existingPerson.statusMode || 'auto';
-                    }
                     await personnelCollection.doc(personnelId).update(personnelData);
                     showToast('Personnel updated successfully', 'success');
                 } else {
@@ -3129,30 +2755,6 @@
             } catch (error) {
                 console.error('Error saving personnel:', error);
                 showToast('Failed to save personnel', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function deletePersonnel(personnelId) {
-            try {
-                showLoading();
-                
-                // Soft delete by setting isActive to false
-                await personnelCollection.doc(personnelId).update({
-                    isActive: false,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedBy: currentUser?.email || 'system'
-                });
-                
-                showToast('Personnel deleted successfully', 'success');
-                closeConfirmDeleteModal();
-                
-                await loadPersonnel();
-                
-            } catch (error) {
-                console.error('Error deleting personnel:', error);
-                showToast('Failed to delete personnel', 'error');
             } finally {
                 hideLoading();
             }
@@ -3197,7 +2799,6 @@
                             division: 'Maintenance',
                             company: 'Genetek Intratama',
                             status: 'available',
-                            statusMode: 'auto',
                             contact: 'N/A',
                             notes: 'Automatically added from work orders sync',
                             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -3242,7 +2843,7 @@
                 
                 let csvContent = "data:text/csv;charset=utf-8,";
                 
-                const headers = ["Name", "Employee ID", "Position", "Division", "Company", "Status", "Status Mode", "Contact", "Last Updated"];
+                const headers = ["Name", "Employee ID", "Position", "Division", "Company", "Status", "Contact", "Last Updated"];
                 csvContent += headers.join(",") + "\r\n";
                 
                 filteredPersonnel.forEach(person => {
@@ -3253,7 +2854,6 @@
                         `"${person.division || ''}"`,
                         `"${person.company || ''}"`,
                         `"${getStatusText(person.status)}"`,
-                        `"${getStatusModeText(person.statusMode || 'auto')}"`,
                         `"${person.contact || ''}"`,
                         `"${person.updatedAt ? formatDateTime(person.updatedAt) : ''}"`
                     ];
@@ -3313,19 +2913,6 @@
             }
         }
 
-        // ==================== MODAL FUNCTIONS ====================
-        function confirmDeletePersonnel(personnelId, personnelName) {
-            document.getElementById('deletePersonnelName').textContent = `Are you sure you want to delete ${personnelName}?`;
-            document.getElementById('confirmDelete').dataset.id = personnelId;
-            document.getElementById('confirmDeleteModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeConfirmDeleteModal() {
-            document.getElementById('confirmDeleteModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
-
         // ==================== EVENT LISTENERS ====================
         function initEventListeners() {
             // Navigation buttons
@@ -3343,7 +2930,6 @@
             
             document.getElementById('syncDataBtn').addEventListener('click', syncWithWorkOrders);
             document.getElementById('exportBtn').addEventListener('click', exportPersonnelData);
-            document.getElementById('updateAllStatusBtn').addEventListener('click', updateAllPersonnelStatus);
             document.getElementById('authButton').addEventListener('click', logout);
             
             // Tabs
@@ -3409,18 +2995,6 @@
             
             // Activity modal
             document.getElementById('closeActivityModal').addEventListener('click', closePersonnelActivityModal);
-            document.getElementById('editPersonnelBtn').addEventListener('click', function() {
-                if (selectedPersonnel) {
-                    closePersonnelActivityModal();
-                    openPersonnelForm(selectedPersonnel.id);
-                }
-            });
-            document.getElementById('deletePersonnelBtn').addEventListener('click', function() {
-                if (selectedPersonnel) {
-                    closePersonnelActivityModal();
-                    confirmDeletePersonnel(selectedPersonnel.id, selectedPersonnel.name);
-                }
-            });
             
             // Activity filter
             document.getElementById('activityFilter').addEventListener('change', function() {
@@ -3468,56 +3042,11 @@
                 e.preventDefault();
                 savePersonnel();
             });
-            
-            // Delete modal
-            document.getElementById('closeConfirmDeleteModal').addEventListener('click', closeConfirmDeleteModal);
-            document.getElementById('cancelDelete').addEventListener('click', closeConfirmDeleteModal);
-            document.getElementById('confirmDelete').addEventListener('click', function() {
-                const personnelId = this.dataset.id;
-                deletePersonnel(personnelId);
-            });
         }
 
         // ==================== GLOBAL FUNCTIONS ====================
         window.viewPersonnelActivity = viewPersonnelActivity;
         window.deleteDailyLog = deleteDailyLog;
-        window.editPersonnel = function(personnelId) {
-            openPersonnelForm(personnelId);
-        };
-        window.confirmDeletePersonnel = confirmDeletePersonnel;
-        
-        window.toggleStatusDropdown = function(personnelId) {
-            const dropdown = document.getElementById(`status-dropdown-${personnelId}`);
-            const allDropdowns = document.querySelectorAll('.status-dropdown-content');
-            
-            allDropdowns.forEach(d => {
-                if (d.id !== `status-dropdown-${personnelId}`) {
-                    d.classList.remove('show');
-                }
-            });
-            
-            dropdown.classList.toggle('show');
-        };
-        
-        window.updateStatus = async function(personnelId, status, statusMode) {
-            await updatePersonnelStatus(personnelId, status, statusMode);
-            document.getElementById(`status-dropdown-${personnelId}`).classList.remove('show');
-        };
-        
-        window.toggleStatusMode = async function(personnelId, currentMode) {
-            const newMode = currentMode === 'auto' ? 'manual' : 'auto';
-            await updatePersonnelStatus(personnelId, 'available', newMode);
-            document.getElementById(`status-dropdown-${personnelId}`).classList.remove('show');
-        };
-        
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.status-dropdown')) {
-                document.querySelectorAll('.status-dropdown-content').forEach(d => {
-                    d.classList.remove('show');
-                });
-            }
-        });
 
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
