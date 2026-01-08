@@ -193,10 +193,31 @@
             box-shadow: var(--shadow-md);
         }
 
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-500) 0%, var(--warning-600) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info-500) 0%, var(--info-600) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
         .btn-outline {
             background: transparent;
             border: 2px solid var(--primary-500);
             color: var(--primary-600);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-50);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
         }
 
         .card {
@@ -298,6 +319,10 @@
             background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
         }
 
+        .status-onprogress {
+            background: linear-gradient(135deg, var(--info-500), var(--info-600));
+        }
+
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -383,6 +408,14 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            font-size: 0.9rem;
+        }
+
         .loading-overlay {
             position: fixed;
             inset: 0;
@@ -451,6 +484,10 @@
             border-left-color: var(--danger-500);
         }
 
+        .toast.warning {
+            border-left-color: var(--warning-500);
+        }
+
         /* Personnel List View */
         .personnel-list-container {
             background: white;
@@ -462,7 +499,7 @@
 
         .personnel-list-header {
             display: grid;
-            grid-template-columns: 1fr 100px 120px 150px 120px 100px 80px;
+            grid-template-columns: 1fr 100px 120px 150px 120px 100px 100px;
             gap: 1rem;
             padding: 1rem 1.5rem;
             background: var(--neutral-50);
@@ -476,7 +513,7 @@
 
         .personnel-list-item {
             display: grid;
-            grid-template-columns: 1fr 100px 120px 150px 120px 100px 80px;
+            grid-template-columns: 1fr 100px 120px 150px 120px 100px 100px;
             gap: 1rem;
             padding: 1rem 1.5rem;
             border-bottom: 1px solid var(--neutral-100);
@@ -745,11 +782,58 @@
             color: var(--primary-700);
         }
 
+        /* Status Dropdown */
+        .status-dropdown {
+            width: 120px;
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid var(--neutral-300);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .status-dropdown:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Assignment Status */
+        .assignment-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .assignment-onprogress {
+            background: var(--info-100);
+            color: var(--info-700);
+            border: 1px solid var(--info-300);
+        }
+
+        .assignment-done {
+            background: var(--accent-100);
+            color: var(--accent-700);
+            border: 1px solid var(--accent-300);
+        }
+
+        .assignment-running {
+            background: var(--primary-100);
+            color: var(--primary-700);
+            border: 1px solid var(--primary-300);
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .personnel-list-header,
             .personnel-list-item {
-                grid-template-columns: 1fr 80px 100px 120px 100px 80px 60px;
+                grid-template-columns: 1fr 80px 100px 120px 100px 100px 80px;
                 font-size: 0.75rem;
                 gap: 0.75rem;
                 padding: 0.75rem 1rem;
@@ -796,6 +880,66 @@
                 font-size: 2rem;
             }
         }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+            border: 1px solid transparent;
+        }
+
+        .action-btn-edit {
+            background: var(--accent-100);
+            color: var(--accent-600);
+            border-color: var(--accent-200);
+        }
+
+        .action-btn-edit:hover {
+            background: var(--accent-200);
+        }
+
+        .action-btn-delete {
+            background: var(--danger-100);
+            color: var(--danger-600);
+            border-color: var(--danger-200);
+        }
+
+        .action-btn-delete:hover {
+            background: var(--danger-200);
+        }
+
+        .action-btn-view {
+            background: var(--info-100);
+            color: var(--info-600);
+            border-color: var(--info-200);
+        }
+
+        .action-btn-view:hover {
+            background: var(--info-200);
+        }
+
+        /* Auto Status Indicator */
+        .auto-status {
+            font-size: 0.7rem;
+            color: var(--neutral-500);
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+
+        .auto-status.active {
+            color: var(--accent-600);
+        }
     </style>
 </head>
 <body>
@@ -830,6 +974,10 @@
                     <button id="exportBtn" class="btn btn-success">
                         <i class="fas fa-file-export"></i>
                         <span>Export</span>
+                    </button>
+                    <button id="updateAutoStatusBtn" class="btn btn-info">
+                        <i class="fas fa-robot"></i>
+                        <span>Update Auto Status</span>
                     </button>
                     <button id="authButton" class="btn btn-danger">
                         <i class="fas fa-sign-out-alt"></i>
@@ -942,7 +1090,7 @@
                     <div>Company</div>
                     <div>Status</div>
                     <div>Active WO</div>
-                    <div>Action</div>
+                    <div>Actions</div>
                 </div>
                 
                 <div id="personnelList">
@@ -1049,9 +1197,17 @@
                         </p>
                     </div>
                 </div>
-                <button id="closeActivityModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div class="flex items-center gap-2">
+                    <button id="editPersonnelBtn" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit mr-1"></i> Edit
+                    </button>
+                    <button id="deletePersonnelBtn" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash mr-1"></i> Delete
+                    </button>
+                    <button id="closeActivityModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
             
             <div class="modal-body">
@@ -1075,6 +1231,10 @@
                                 <div>
                                     <label class="text-sm font-medium text-gray-500">Contact</label>
                                     <p id="modalContact" class="text-gray-900 font-medium"></p>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">Status Mode</label>
+                                    <p id="modalStatusMode" class="text-gray-900 font-medium"></p>
                                 </div>
                                 <div>
                                     <label class="text-sm font-medium text-gray-500">Last Updated</label>
@@ -1115,6 +1275,9 @@
                                 </button>
                                 <button id="dailyLogTab" class="px-6 py-3 font-medium text-gray-500 hover:text-gray-700">
                                     <i class="fas fa-clipboard-list mr-2"></i>Daily Activity Log
+                                </button>
+                                <button id="assignmentsTab" class="px-6 py-3 font-medium text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-tasks mr-2"></i>Current Assignments
                                 </button>
                             </div>
                             
@@ -1175,17 +1338,53 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- Current Assignments Content -->
+                            <div id="assignmentsContent" class="card mt-0 hidden">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-lg font-bold text-gray-900">Current Assignments</h3>
+                                    <button id="refreshAssignmentsBtn" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-sync-alt mr-2"></i>Refresh
+                                    </button>
+                                </div>
+                                
+                                <div id="currentAssignments">
+                                    <!-- Current assignments will be loaded here -->
+                                    <div class="text-center py-8 text-gray-500">
+                                        <i class="fas fa-tasks text-4xl mb-4"></i>
+                                        <p>No current assignments</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
-                        <!-- Current Assignments -->
+                        <!-- Status Control Card -->
                         <div class="card">
-                            <h3 class="text-lg font-bold text-gray-900 mb-6">Current Assignments</h3>
-                            <div id="currentAssignments">
-                                <!-- Current assignments will be loaded here -->
-                                <div class="text-center py-8 text-gray-500">
-                                    <i class="fas fa-tasks text-4xl mb-4"></i>
-                                    <p>No current assignments</p>
+                            <h3 class="text-lg font-bold text-gray-900 mb-4">Status Control</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="form-label">Current Status</label>
+                                    <div id="currentStatusDisplay" class="flex items-center gap-2">
+                                        <span id="currentStatusBadge" class="status-badge"></span>
+                                        <span id="autoStatusIndicator" class="auto-status"></span>
+                                    </div>
                                 </div>
+                                <div>
+                                    <label class="form-label">Manual Status Override</label>
+                                    <select id="manualStatusOverride" class="form-input">
+                                        <option value="auto">Auto (System Managed)</option>
+                                        <option value="working">Working (Manual)</option>
+                                        <option value="available">Available (Manual)</option>
+                                        <option value="leave">On Leave (Manual)</option>
+                                        <option value="absent">Absent (Manual)</option>
+                                    </select>
+                                    <p class="text-xs text-gray-500 mt-1">Select "Auto" to let system manage status based on work orders</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <button id="updateStatusBtn" class="btn btn-primary w-full">
+                                    <i class="fas fa-save mr-2"></i>Update Status
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1280,11 +1479,22 @@
                         </div>
                         
                         <div>
-                            <label class="form-label" for="status">
-                                <i class="fas fa-user-check mr-2"></i>
-                                Status
+                            <label class="form-label" for="statusMode">
+                                <i class="fas fa-cog mr-2"></i>
+                                Status Mode
                             </label>
-                            <select id="personnelStatus" class="form-input" required>
+                            <select id="statusMode" class="form-input">
+                                <option value="auto">Auto (System Managed)</option>
+                                <option value="manual">Manual</option>
+                            </select>
+                        </div>
+                        
+                        <div id="manualStatusField" class="hidden">
+                            <label class="form-label" for="manualStatus">
+                                <i class="fas fa-user-check mr-2"></i>
+                                Manual Status
+                            </label>
+                            <select id="manualStatus" class="form-input">
                                 <option value="available">Available</option>
                                 <option value="working">Working</option>
                                 <option value="leave">On Leave</option>
@@ -1330,6 +1540,37 @@
         </div>
     </div>
 
+    <!-- Confirm Delete Modal -->
+    <div id="confirmDeleteModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-md">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirm Delete</h2>
+                <button id="closeConfirmDeleteModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="text-center py-6">
+                    <div class="w-16 h-16 bg-gradient-to-br from-red-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-exclamation-triangle text-2xl text-red-500"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Delete Personnel</h3>
+                    <p class="text-gray-600 mb-6">Are you sure you want to delete <span id="deletePersonnelName" class="font-semibold"></span>? This action cannot be undone.</p>
+                    
+                    <div class="flex justify-center gap-3">
+                        <button id="cancelDeleteBtn" class="btn btn-secondary">
+                            Cancel
+                        </button>
+                        <button id="confirmDeleteBtn" class="btn btn-danger">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div id="toast-container" class="toast-container"></div>
 
@@ -1352,6 +1593,7 @@
         let currentSort = 'name-asc';
         let selectedPersonnel = null;
         let dailyLogs = [];
+        let personnelToDelete = null;
         
         // Chart instances
         let statusChart = null;
@@ -1369,6 +1611,7 @@
                 division: "Maintenance",
                 company: "Genetek Intratama",
                 status: "working",
+                statusMode: "auto",
                 contact: "+62 812-3456-7890",
                 notes: "Senior technician with 10+ years experience"
             },
@@ -1379,6 +1622,7 @@
                 division: "Testcom",
                 company: "Genetek Intratama",
                 status: "available",
+                statusMode: "auto",
                 contact: "+62 813-4567-8901",
                 notes: "Specialized in network testing"
             },
@@ -1389,6 +1633,7 @@
                 division: "Project",
                 company: "Effrensindo Kencana",
                 status: "working",
+                statusMode: "auto",
                 contact: "+62 814-5678-9012",
                 notes: "Project lead for infrastructure"
             },
@@ -1399,6 +1644,7 @@
                 division: "Maintenance",
                 company: "Genetek Intratama",
                 status: "leave",
+                statusMode: "manual",
                 contact: "+62 815-6789-0123",
                 notes: "On medical leave until next month"
             },
@@ -1409,6 +1655,7 @@
                 division: "Project",
                 company: "Effrensindo Kencana",
                 status: "working",
+                statusMode: "auto",
                 contact: "+62 816-7890-1234",
                 notes: "Project management"
             },
@@ -1419,6 +1666,7 @@
                 division: "Testcom",
                 company: "Genetek Intratama",
                 status: "working",
+                statusMode: "auto",
                 contact: "+62 817-8901-2345",
                 notes: "New technician, training in progress"
             },
@@ -1429,6 +1677,7 @@
                 division: "Maintenance",
                 company: "Genetek Intratama",
                 status: "available",
+                statusMode: "auto",
                 contact: "+62 818-9012-3456",
                 notes: "Available for assignments"
             },
@@ -1439,6 +1688,7 @@
                 division: "Testcom",
                 company: "Genetek Intratama",
                 status: "working",
+                statusMode: "auto",
                 contact: "+62 819-0123-4567",
                 notes: "Testcom team lead"
             },
@@ -1449,6 +1699,7 @@
                 division: "Maintenance",
                 company: "Genetek Intratama",
                 status: "absent",
+                statusMode: "manual",
                 contact: "+62 820-1234-5678",
                 notes: "Unexpected absence, contact HR"
             },
@@ -1459,6 +1710,7 @@
                 division: "Project",
                 company: "Effrensindo Kencana",
                 status: "available",
+                statusMode: "auto",
                 contact: "+62 821-2345-6789",
                 notes: "Recently completed safety training"
             }
@@ -1603,8 +1855,8 @@
             
             toast.innerHTML = `
                 <div class="toast-icon ${type}" 
-                     style="background: linear-gradient(135deg, ${type === 'success' ? 'var(--accent-500)' : type === 'error' ? 'var(--danger-500)' : 'var(--primary-500)'}, 
-                     ${type === 'success' ? 'var(--accent-600)' : type === 'error' ? 'var(--danger-600)' : 'var(--primary-600)'})">
+                     style="background: linear-gradient(135deg, ${type === 'success' ? 'var(--accent-500)' : type === 'error' ? 'var(--danger-500)' : type === 'warning' ? 'var(--warning-500)' : 'var(--primary-500)'}, 
+                     ${type === 'success' ? 'var(--accent-600)' : type === 'error' ? 'var(--danger-600)' : type === 'warning' ? 'var(--warning-600)' : 'var(--primary-600)'})">
                     <i class="fas ${icons[type] || 'fa-info-circle'}"></i>
                 </div>
                 <div>
@@ -1630,6 +1882,183 @@
         function hideLoading() {
             const loadingOverlay = document.getElementById('loadingOverlay');
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
+        }
+
+        // ==================== STATUS MANAGEMENT FUNCTIONS ====================
+        function calculateAutoStatus(person, workOrders) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            // If manual mode, return current status
+            if (person.statusMode === 'manual') {
+                return {
+                    status: person.status,
+                    reason: 'Manual Mode'
+                };
+            }
+            
+            // Get personnel's work orders
+            const personnelWorkOrders = getPersonnelWorkOrders(person.name, workOrders);
+            
+            // Check if person has work orders for today
+            const todaysWorkOrders = personnelWorkOrders.filter(wo => {
+                if (!wo.startDate) return false;
+                
+                try {
+                    const startDate = wo.startDate.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
+                    const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+                    
+                    // Check if work order is active today based on start date and estimated time
+                    if (startDateOnly <= today) {
+                        if (wo.estimatedTime) {
+                            const endDate = new Date(startDate);
+                            endDate.setDate(startDate.getDate() + wo.estimatedTime);
+                            const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+                            return today <= endDateOnly;
+                        }
+                        return true;
+                    }
+                    return false;
+                } catch (e) {
+                    return false;
+                }
+            }).filter(wo => wo.status === 'Running');
+            
+            // If person has work orders for today, status is "working"
+            if (todaysWorkOrders.length > 0) {
+                return {
+                    status: 'working',
+                    reason: `Assigned to ${todaysWorkOrders.length} work order(s) today`
+                };
+            }
+            
+            // Check for upcoming work orders (next 3 days)
+            const upcomingWorkOrders = personnelWorkOrders.filter(wo => {
+                if (!wo.startDate || wo.status !== 'Running') return false;
+                
+                try {
+                    const startDate = wo.startDate.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
+                    const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+                    const daysUntil = Math.ceil((startDateOnly - today) / (1000 * 60 * 60 * 24));
+                    
+                    return daysUntil > 0 && daysUntil <= 3;
+                } catch (e) {
+                    return false;
+                }
+            });
+            
+            if (upcomingWorkOrders.length > 0) {
+                return {
+                    status: 'available',
+                    reason: `Has ${upcomingWorkOrders.length} upcoming work order(s)`
+                };
+            }
+            
+            // Default to available
+            return {
+                status: 'available',
+                reason: 'No assigned work orders'
+            };
+        }
+
+        async function updateAllAutoStatus() {
+            try {
+                showLoading();
+                showToast('Updating personnel statuses...', 'info');
+                
+                await loadWorkOrders();
+                
+                const updates = [];
+                const now = new Date();
+                
+                for (const person of allPersonnel) {
+                    // Skip if manual mode
+                    if (person.statusMode === 'manual') {
+                        continue;
+                    }
+                    
+                    const calculatedStatus = calculateAutoStatus(person, allWorkOrders);
+                    const newStatus = calculatedStatus.status;
+                    
+                    // Only update if status changed
+                    if (person.status !== newStatus) {
+                        updates.push({
+                            id: person.id,
+                            oldStatus: person.status,
+                            newStatus: newStatus,
+                            reason: calculatedStatus.reason
+                        });
+                        
+                        // Update in database
+                        await personnelCollection.doc(person.id).update({
+                            status: newStatus,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            lastStatusUpdate: now.toISOString(),
+                            statusReason: calculatedStatus.reason
+                        });
+                        
+                        // Update local data
+                        person.status = newStatus;
+                        person.lastStatusUpdate = now;
+                        person.statusReason = calculatedStatus.reason;
+                    }
+                }
+                
+                // Refresh display
+                updatePersonnelStats();
+                applyFilters();
+                
+                if (updates.length > 0) {
+                    showToast(`Updated ${updates.length} personnel statuses`, 'success');
+                    console.log('Status updates:', updates);
+                } else {
+                    showToast('All personnel statuses are up to date', 'info');
+                }
+                
+            } catch (error) {
+                console.error('Error updating auto status:', error);
+                showToast('Failed to update statuses', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'working': return 'Working';
+                case 'leave': return 'On Leave';
+                case 'absent': return 'Absent';
+                case 'available': return 'Available';
+                default: return 'Unknown';
+            }
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'working': return 'status-working';
+                case 'leave': return 'status-leave';
+                case 'absent': return 'status-absent';
+                case 'available': return 'status-available';
+                default: return '';
+            }
+        }
+
+        function getAssignmentStatusClass(status) {
+            switch(status) {
+                case 'Running': return 'assignment-running';
+                case 'Done': return 'assignment-done';
+                case 'On Progress': return 'assignment-onprogress';
+                default: return '';
+            }
+        }
+
+        function getAssignmentStatusText(status) {
+            switch(status) {
+                case 'Running': return 'Running';
+                case 'Done': return 'Done';
+                case 'On Progress': return 'On Progress';
+                default: return status || 'Unknown';
+            }
         }
 
         // ==================== SORTING FUNCTIONS ====================
@@ -1749,6 +2178,15 @@
                 
                 await loadWorkOrders();
                 
+                // Update auto statuses
+                for (const person of allPersonnel) {
+                    if (person.statusMode === 'auto') {
+                        const calculatedStatus = calculateAutoStatus(person, allWorkOrders);
+                        person.autoCalculatedStatus = calculatedStatus.status;
+                        person.statusReason = calculatedStatus.reason;
+                    }
+                }
+                
                 updatePersonnelStats();
                 applyFilters();
                 
@@ -1797,6 +2235,26 @@
             document.getElementById('leaveCount').textContent = leave;
             document.getElementById('absentCount').textContent = absent;
             document.getElementById('availableCount').textContent = available;
+        }
+
+        function getPersonnelWorkOrders(personnelName, workOrders = allWorkOrders) {
+            if (!personnelName || !workOrders) return [];
+            
+            return workOrders.filter(wo => {
+                if (!wo.personnel) return false;
+                
+                if (Array.isArray(wo.personnel)) {
+                    return wo.personnel.includes(personnelName);
+                } else if (typeof wo.personnel === 'string') {
+                    try {
+                        const personnelArray = JSON.parse(wo.personnel);
+                        return Array.isArray(personnelArray) && personnelArray.includes(personnelName);
+                    } catch (e) {
+                        return wo.personnel === personnelName;
+                    }
+                }
+                return false;
+            });
         }
 
         function applyFilters() {
@@ -1856,6 +2314,7 @@
             const activeWorkOrders = workOrders.filter(wo => wo.status === 'Running').length;
             const statusClass = getStatusClass(person.status);
             const statusText = getStatusText(person.status);
+            const isAutoMode = person.statusMode === 'auto';
             
             item.innerHTML = `
                 <div class="personnel-info">
@@ -1871,59 +2330,40 @@
                 <div>${person.division || '-'}</div>
                 <div>${person.company || '-'}</div>
                 <div>
-                    <span class="status-badge ${statusClass}">${statusText}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                        ${isAutoMode ? 
+                            `<span class="auto-status active" title="System Managed">
+                                <i class="fas fa-robot text-xs"></i>
+                            </span>` : 
+                            `<span class="auto-status" title="Manual Mode">
+                                <i class="fas fa-user-edit text-xs"></i>
+                            </span>`
+                        }
+                    </div>
+                    ${isAutoMode && person.statusReason ? 
+                        `<div class="auto-status text-xs mt-1" title="${person.statusReason}">
+                            <i class="fas fa-info-circle mr-1"></i>Auto
+                        </div>` : ''
+                    }
                 </div>
                 <div class="text-center font-bold ${activeWorkOrders > 0 ? 'text-blue-600' : 'text-gray-500'}">
                     ${activeWorkOrders}
                 </div>
-                <div>
-                    <button class="btn btn-primary btn-sm w-full" onclick="viewPersonnelActivity('${person.id}')">
+                <div class="action-buttons">
+                    <button class="action-btn action-btn-view" onclick="viewPersonnelActivity('${person.id}')" title="View Details">
                         <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn action-btn-edit" onclick="editPersonnel('${person.id}')" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn action-btn-delete" onclick="confirmDeletePersonnel('${person.id}', '${person.name}')" title="Delete">
+                        <i class="fas fa-trash"></i>
                     </button>
                 </div>
             `;
             
             return item;
-        }
-
-        function getStatusText(status) {
-            switch(status) {
-                case 'working': return 'Working';
-                case 'leave': return 'On Leave';
-                case 'absent': return 'Absent';
-                case 'available': return 'Available';
-                default: return 'Unknown';
-            }
-        }
-
-        function getStatusClass(status) {
-            switch(status) {
-                case 'working': return 'status-working';
-                case 'leave': return 'status-leave';
-                case 'absent': return 'status-absent';
-                case 'available': return 'status-available';
-                default: return '';
-            }
-        }
-
-        function getPersonnelWorkOrders(personnelName) {
-            if (!personnelName || !allWorkOrders) return [];
-            
-            return allWorkOrders.filter(wo => {
-                if (!wo.personnel) return false;
-                
-                if (Array.isArray(wo.personnel)) {
-                    return wo.personnel.includes(personnelName);
-                } else if (typeof wo.personnel === 'string') {
-                    try {
-                        const personnelArray = JSON.parse(wo.personnel);
-                        return Array.isArray(personnelArray) && personnelArray.includes(personnelName);
-                    } catch (e) {
-                        return wo.personnel === personnelName;
-                    }
-                }
-                return false;
-            });
         }
 
         // ==================== ANALYTICS FUNCTIONS ====================
@@ -2443,6 +2883,7 @@
             document.getElementById('modalDivision').textContent = person.division || '-';
             document.getElementById('modalCompany').textContent = person.company || '-';
             document.getElementById('modalContact').textContent = person.contact || '-';
+            document.getElementById('modalStatusMode').textContent = person.statusMode === 'auto' ? 'Auto (System Managed)' : 'Manual';
             document.getElementById('modalLastUpdated').textContent = person.updatedAt ? formatDateTime(person.updatedAt) : '-';
             
             avatar.textContent = getInitials(person.name);
@@ -2451,6 +2892,16 @@
             const statusBadge = document.getElementById('modalPersonnelStatus');
             statusBadge.className = `status-badge ${getStatusClass(person.status)}`;
             statusBadge.textContent = getStatusText(person.status);
+            
+            const autoStatusIndicator = document.getElementById('autoStatusIndicator');
+            if (person.statusMode === 'auto') {
+                autoStatusIndicator.innerHTML = `<span class="auto-status active"><i class="fas fa-robot mr-1"></i>Auto</span>`;
+            } else {
+                autoStatusIndicator.innerHTML = `<span class="auto-status"><i class="fas fa-user-edit mr-1"></i>Manual</span>`;
+            }
+            
+            // Set manual status override dropdown
+            document.getElementById('manualStatusOverride').value = person.statusMode === 'auto' ? 'auto' : person.status;
             
             const personnelWorkOrders = getPersonnelWorkOrders(person.name);
             
@@ -2461,10 +2912,13 @@
             loadCurrentAssignments(person, personnelWorkOrders);
             renderDailyLogs();
             
+            // Set initial tab
             document.getElementById('workActivityContent').classList.remove('hidden');
             document.getElementById('dailyLogContent').classList.add('hidden');
+            document.getElementById('assignmentsContent').classList.add('hidden');
             document.getElementById('workActivityTab').classList.add('border-blue-500', 'bg-blue-50');
             document.getElementById('dailyLogTab').classList.remove('border-blue-500', 'bg-blue-50');
+            document.getElementById('assignmentsTab').classList.remove('border-blue-500', 'bg-blue-50');
             
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -2487,6 +2941,10 @@
             document.getElementById('statsCompletedMonth').textContent = completedThisMonth;
             document.getElementById('statsAvgCompletion').textContent = avgCompletionTime;
             document.getElementById('statsWorkload').textContent = workload;
+            
+            // Update current status display
+            document.getElementById('currentStatusBadge').className = `status-badge ${getStatusClass(person.status)}`;
+            document.getElementById('currentStatusBadge').textContent = getStatusText(person.status);
         }
 
         function getCompletedThisMonth(workOrders) {
@@ -2640,6 +3098,7 @@
             
             const startDate = workOrder.startDate ? formatDate(workOrder.startDate) : '-';
             const estimatedTime = workOrder.estimatedTime ? `${workOrder.estimatedTime} days` : '-';
+            const status = workOrder.status || 'Running';
             
             card.innerHTML = `
                 <div class="flex justify-between items-start mb-3">
@@ -2647,7 +3106,9 @@
                         <h4 class="font-bold text-gray-900">${workOrder.workOrderNumber || 'N/A'}</h4>
                         <p class="text-sm text-gray-600">${workOrder.customer || 'No customer'}</p>
                     </div>
-                    <span class="status-badge status-working">Active</span>
+                    <span class="assignment-status ${getAssignmentStatusClass(status)}">
+                        ${getAssignmentStatusText(status)}
+                    </span>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3 text-sm mb-3">
@@ -2668,6 +3129,11 @@
                         <p class="font-medium">${estimatedTime}</p>
                     </div>
                 </div>
+                
+                <div class="text-xs text-gray-500">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    ${workOrder.notes || 'No additional notes'}
+                </div>
             `;
             
             return card;
@@ -2680,6 +3146,9 @@
             
             document.getElementById('personnelForm').reset();
             document.getElementById('personnelId').value = '';
+            
+            // Reset status mode field visibility
+            document.getElementById('manualStatusField').classList.add('hidden');
             
             if (personnelId) {
                 title.textContent = 'Edit Personnel';
@@ -2695,6 +3164,11 @@
             document.body.style.overflow = 'hidden';
         }
 
+        function editPersonnel(personnelId) {
+            closePersonnelActivityModal();
+            setTimeout(() => openPersonnelForm(personnelId), 300);
+        }
+
         function closePersonnelForm() {
             document.getElementById('personnelFormModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
@@ -2707,9 +3181,15 @@
             document.getElementById('position').value = person.position || '';
             document.getElementById('personnelDivision').value = person.division || '';
             document.getElementById('personnelCompany').value = person.company || '';
-            document.getElementById('personnelStatus').value = person.status || 'available';
+            document.getElementById('statusMode').value = person.statusMode || 'auto';
+            document.getElementById('manualStatus').value = person.status || 'available';
             document.getElementById('contact').value = person.contact || '';
             document.getElementById('personnelNotes').value = person.notes || '';
+            
+            // Show/hide manual status field based on mode
+            if (person.statusMode === 'manual') {
+                document.getElementById('manualStatusField').classList.remove('hidden');
+            }
         }
 
         async function savePersonnel() {
@@ -2722,19 +3202,30 @@
             const personnelId = document.getElementById('personnelId').value;
             const isEdit = !!personnelId;
             
+            const statusMode = document.getElementById('statusMode').value;
+            const manualStatus = document.getElementById('manualStatus').value;
+            
             const personnelData = {
                 name: document.getElementById('personnelName').value.trim(),
                 employeeId: document.getElementById('employeeId').value.trim() || null,
                 position: document.getElementById('position').value || null,
                 division: document.getElementById('personnelDivision').value || null,
                 company: document.getElementById('personnelCompany').value || null,
-                status: document.getElementById('personnelStatus').value,
+                statusMode: statusMode,
+                status: statusMode === 'manual' ? manualStatus : 'available', // Default for auto
                 contact: document.getElementById('contact').value.trim() || null,
                 notes: document.getElementById('personnelNotes').value.trim() || null,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedBy: currentUser?.email || 'system',
                 isActive: true
             };
+            
+            // If auto mode, calculate initial status
+            if (statusMode === 'auto') {
+                const calculatedStatus = calculateAutoStatus(personnelData, allWorkOrders);
+                personnelData.status = calculatedStatus.status;
+                personnelData.statusReason = calculatedStatus.reason;
+            }
             
             try {
                 showLoading();
@@ -2755,6 +3246,115 @@
             } catch (error) {
                 console.error('Error saving personnel:', error);
                 showToast('Failed to save personnel', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ==================== DELETE PERSONNEL FUNCTIONS ====================
+        function confirmDeletePersonnel(personnelId, personnelName) {
+            personnelToDelete = personnelId;
+            document.getElementById('deletePersonnelName').textContent = personnelName;
+            document.getElementById('confirmDeleteModal').classList.remove('hidden');
+        }
+
+        function closeConfirmDeleteModal() {
+            document.getElementById('confirmDeleteModal').classList.add('hidden');
+            personnelToDelete = null;
+        }
+
+        async function deletePersonnel() {
+            if (!personnelToDelete) return;
+            
+            try {
+                showLoading();
+                
+                await personnelCollection.doc(personnelToDelete).update({
+                    isActive: false,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser?.email || 'system'
+                });
+                
+                showToast('Personnel deleted successfully', 'success');
+                
+                closeConfirmDeleteModal();
+                await loadPersonnel();
+                
+                // If we're viewing this personnel, close the modal
+                if (selectedPersonnel && selectedPersonnel.id === personnelToDelete) {
+                    closePersonnelActivityModal();
+                }
+                
+            } catch (error) {
+                console.error('Error deleting personnel:', error);
+                showToast('Failed to delete personnel', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ==================== STATUS UPDATE FUNCTIONS ====================
+        async function updatePersonnelStatus() {
+            if (!selectedPersonnel) return;
+            
+            const statusMode = document.getElementById('manualStatusOverride').value;
+            
+            try {
+                showLoading();
+                
+                const updateData = {
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser?.email || 'system'
+                };
+                
+                if (statusMode === 'auto') {
+                    // Switch to auto mode
+                    const calculatedStatus = calculateAutoStatus(selectedPersonnel, allWorkOrders);
+                    updateData.statusMode = 'auto';
+                    updateData.status = calculatedStatus.status;
+                    updateData.statusReason = calculatedStatus.reason;
+                } else {
+                    // Switch to manual mode with selected status
+                    updateData.statusMode = 'manual';
+                    updateData.status = statusMode;
+                    updateData.statusReason = 'Manually set';
+                }
+                
+                await personnelCollection.doc(selectedPersonnel.id).update(updateData);
+                
+                // Update local data
+                selectedPersonnel.statusMode = updateData.statusMode;
+                selectedPersonnel.status = updateData.status;
+                selectedPersonnel.statusReason = updateData.statusReason;
+                selectedPersonnel.updatedAt = new Date();
+                
+                // Update UI
+                updatePersonnelStatsModal(selectedPersonnel, getPersonnelWorkOrders(selectedPersonnel.name));
+                
+                // Update status badge
+                const statusBadge = document.getElementById('modalPersonnelStatus');
+                statusBadge.className = `status-badge ${getStatusClass(updateData.status)}`;
+                statusBadge.textContent = getStatusText(updateData.status);
+                
+                // Update auto status indicator
+                const autoStatusIndicator = document.getElementById('autoStatusIndicator');
+                if (updateData.statusMode === 'auto') {
+                    autoStatusIndicator.innerHTML = `<span class="auto-status active"><i class="fas fa-robot mr-1"></i>Auto</span>`;
+                } else {
+                    autoStatusIndicator.innerHTML = `<span class="auto-status"><i class="fas fa-user-edit mr-1"></i>Manual</span>`;
+                }
+                
+                // Update status mode display
+                document.getElementById('modalStatusMode').textContent = updateData.statusMode === 'auto' ? 'Auto (System Managed)' : 'Manual';
+                
+                // Refresh main list
+                await loadPersonnel();
+                
+                showToast('Status updated successfully', 'success');
+                
+            } catch (error) {
+                console.error('Error updating personnel status:', error);
+                showToast('Failed to update status', 'error');
             } finally {
                 hideLoading();
             }
@@ -2799,6 +3399,7 @@
                             division: 'Maintenance',
                             company: 'Genetek Intratama',
                             status: 'available',
+                            statusMode: 'auto',
                             contact: 'N/A',
                             notes: 'Automatically added from work orders sync',
                             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -2843,7 +3444,7 @@
                 
                 let csvContent = "data:text/csv;charset=utf-8,";
                 
-                const headers = ["Name", "Employee ID", "Position", "Division", "Company", "Status", "Contact", "Last Updated"];
+                const headers = ["Name", "Employee ID", "Position", "Division", "Company", "Status", "Status Mode", "Contact", "Last Updated"];
                 csvContent += headers.join(",") + "\r\n";
                 
                 filteredPersonnel.forEach(person => {
@@ -2854,6 +3455,7 @@
                         `"${person.division || ''}"`,
                         `"${person.company || ''}"`,
                         `"${getStatusText(person.status)}"`,
+                        `"${person.statusMode === 'auto' ? 'Auto' : 'Manual'}"`,
                         `"${person.contact || ''}"`,
                         `"${person.updatedAt ? formatDateTime(person.updatedAt) : ''}"`
                     ];
@@ -2930,6 +3532,7 @@
             
             document.getElementById('syncDataBtn').addEventListener('click', syncWithWorkOrders);
             document.getElementById('exportBtn').addEventListener('click', exportPersonnelData);
+            document.getElementById('updateAutoStatusBtn').addEventListener('click', updateAllAutoStatus);
             document.getElementById('authButton').addEventListener('click', logout);
             
             // Tabs
@@ -2996,6 +3599,19 @@
             // Activity modal
             document.getElementById('closeActivityModal').addEventListener('click', closePersonnelActivityModal);
             
+            // Edit and delete buttons in activity modal
+            document.getElementById('editPersonnelBtn').addEventListener('click', function() {
+                if (selectedPersonnel) {
+                    editPersonnel(selectedPersonnel.id);
+                }
+            });
+            
+            document.getElementById('deletePersonnelBtn').addEventListener('click', function() {
+                if (selectedPersonnel) {
+                    confirmDeletePersonnel(selectedPersonnel.id, selectedPersonnel.name);
+                }
+            });
+            
             // Activity filter
             document.getElementById('activityFilter').addEventListener('change', function() {
                 if (selectedPersonnel) {
@@ -3008,15 +3624,37 @@
             document.getElementById('workActivityTab').addEventListener('click', function() {
                 document.getElementById('workActivityContent').classList.remove('hidden');
                 document.getElementById('dailyLogContent').classList.add('hidden');
+                document.getElementById('assignmentsContent').classList.add('hidden');
                 this.classList.add('border-blue-500', 'bg-blue-50');
                 document.getElementById('dailyLogTab').classList.remove('border-blue-500', 'bg-blue-50');
+                document.getElementById('assignmentsTab').classList.remove('border-blue-500', 'bg-blue-50');
             });
             
             document.getElementById('dailyLogTab').addEventListener('click', function() {
                 document.getElementById('workActivityContent').classList.add('hidden');
                 document.getElementById('dailyLogContent').classList.remove('hidden');
+                document.getElementById('assignmentsContent').classList.add('hidden');
                 this.classList.add('border-blue-500', 'bg-blue-50');
                 document.getElementById('workActivityTab').classList.remove('border-blue-500', 'bg-blue-50');
+                document.getElementById('assignmentsTab').classList.remove('border-blue-500', 'bg-blue-50');
+            });
+            
+            document.getElementById('assignmentsTab').addEventListener('click', function() {
+                document.getElementById('workActivityContent').classList.add('hidden');
+                document.getElementById('dailyLogContent').classList.add('hidden');
+                document.getElementById('assignmentsContent').classList.remove('hidden');
+                this.classList.add('border-blue-500', 'bg-blue-50');
+                document.getElementById('workActivityTab').classList.remove('border-blue-500', 'bg-blue-50');
+                document.getElementById('dailyLogTab').classList.remove('border-blue-500', 'bg-blue-50');
+            });
+            
+            // Refresh assignments button
+            document.getElementById('refreshAssignmentsBtn').addEventListener('click', function() {
+                if (selectedPersonnel) {
+                    const workOrders = getPersonnelWorkOrders(selectedPersonnel.name);
+                    loadCurrentAssignments(selectedPersonnel, workOrders);
+                    showToast('Assignments refreshed', 'success');
+                }
             });
             
             // Daily log buttons
@@ -3035,6 +3673,15 @@
                 saveDailyLog(content);
             });
             
+            // Status mode change in form
+            document.getElementById('statusMode').addEventListener('change', function() {
+                if (this.value === 'manual') {
+                    document.getElementById('manualStatusField').classList.remove('hidden');
+                } else {
+                    document.getElementById('manualStatusField').classList.add('hidden');
+                }
+            });
+            
             // Personnel form modal
             document.getElementById('closePersonnelFormModal').addEventListener('click', closePersonnelForm);
             document.getElementById('cancelPersonnelForm').addEventListener('click', closePersonnelForm);
@@ -3042,10 +3689,20 @@
                 e.preventDefault();
                 savePersonnel();
             });
+            
+            // Confirm delete modal
+            document.getElementById('closeConfirmDeleteModal').addEventListener('click', closeConfirmDeleteModal);
+            document.getElementById('cancelDeleteBtn').addEventListener('click', closeConfirmDeleteModal);
+            document.getElementById('confirmDeleteBtn').addEventListener('click', deletePersonnel);
+            
+            // Status update button
+            document.getElementById('updateStatusBtn').addEventListener('click', updatePersonnelStatus);
         }
 
         // ==================== GLOBAL FUNCTIONS ====================
         window.viewPersonnelActivity = viewPersonnelActivity;
+        window.editPersonnel = editPersonnel;
+        window.confirmDeletePersonnel = confirmDeletePersonnel;
         window.deleteDailyLog = deleteDailyLog;
 
         // ==================== INITIALIZATION ====================
