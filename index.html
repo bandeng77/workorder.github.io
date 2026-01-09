@@ -1711,99 +1711,6 @@
         .view-toggle-btn:hover:not(.active) {
             background: var(--primary-50);
         }
-
-        /* ==================== STATUS CONTROL POPUP ==================== */
-        .status-control-popup {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            margin-top: 0.5rem;
-            background: white;
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
-            width: 300px;
-            z-index: 1000;
-            display: none;
-        }
-
-        .status-control-popup.show {
-            display: block;
-        }
-
-        .status-control-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--neutral-200);
-            background: var(--neutral-50);
-        }
-
-        .status-control-body {
-            padding: 1.5rem;
-        }
-
-        .status-option {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.75rem;
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            transition: var(--transition-base);
-            margin-bottom: 0.5rem;
-        }
-
-        .status-option:hover {
-            background: var(--neutral-50);
-        }
-
-        .status-option.active {
-            background: var(--primary-50);
-            border: 2px solid var(--primary-500);
-        }
-
-        .status-option-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.25rem;
-        }
-
-        .status-option-icon.working {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-        }
-
-        .status-option-icon.available {
-            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
-        }
-
-        .status-option-icon.leave {
-            background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
-        }
-
-        .status-option-icon.absent {
-            background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
-        }
-
-        .status-option-icon.auto {
-            background: linear-gradient(135deg, var(--neutral-500), var(--neutral-600));
-        }
-
-        .status-option-info {
-            flex: 1;
-        }
-
-        .status-option-title {
-            font-weight: 600;
-            color: var(--neutral-900);
-        }
-
-        .status-option-desc {
-            font-size: 0.875rem;
-            color: var(--neutral-600);
-        }
     </style>
 </head>
 <body>
@@ -2845,74 +2752,6 @@
         </div>
     </div>
 
-    <!-- Status Control Popup -->
-    <div id="statusControlPopup" class="status-control-popup hidden">
-        <div class="status-control-header">
-            <h3 class="font-bold text-gray-900">Status Control</h3>
-            <p class="text-sm text-gray-600 mt-1">Update personnel status</p>
-        </div>
-        <div class="status-control-body">
-            <div class="space-y-3">
-                <div class="status-option" data-status="working">
-                    <div class="status-option-icon working">
-                        <i class="fas fa-briefcase"></i>
-                    </div>
-                    <div class="status-option-info">
-                        <div class="status-option-title">Working</div>
-                        <div class="status-option-desc">Currently assigned to work orders</div>
-                    </div>
-                    <i class="fas fa-check text-green-500 hidden"></i>
-                </div>
-                <div class="status-option" data-status="available">
-                    <div class="status-option-icon available">
-                        <i class="fas fa-user-check"></i>
-                    </div>
-                    <div class="status-option-info">
-                        <div class="status-option-title">Available</div>
-                        <div class="status-option-desc">Ready for new assignments</div>
-                    </div>
-                    <i class="fas fa-check text-green-500 hidden"></i>
-                </div>
-                <div class="status-option" data-status="leave">
-                    <div class="status-option-icon leave">
-                        <i class="fas fa-umbrella-beach"></i>
-                    </div>
-                    <div class="status-option-info">
-                        <div class="status-option-title">On Leave</div>
-                        <div class="status-option-desc">On vacation or leave</div>
-                    </div>
-                    <i class="fas fa-check text-green-500 hidden"></i>
-                </div>
-                <div class="status-option" data-status="absent">
-                    <div class="status-option-icon absent">
-                        <i class="fas fa-user-times"></i>
-                    </div>
-                    <div class="status-option-info">
-                        <div class="status-option-title">Absent</div>
-                        <div class="status-option-desc">Unexpected absence</div>
-                    </div>
-                    <i class="fas fa-check text-green-500 hidden"></i>
-                </div>
-                <div class="status-option" data-status="auto">
-                    <div class="status-option-icon auto">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <div class="status-option-info">
-                        <div class="status-option-title">Auto Mode</div>
-                        <div class="status-option-desc">Let system manage status</div>
-                    </div>
-                    <i class="fas fa-check text-green-500 hidden"></i>
-                </div>
-            </div>
-            <div class="mt-6 pt-6 border-t border-gray-200">
-                <button id="saveStatusBtn" class="btn btn-primary w-full">
-                    <i class="fas fa-save mr-2"></i>
-                    Save Status
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Toast Container -->
     <div id="toast-container" class="toast-container"></div>
 
@@ -3051,9 +2890,6 @@
                         renderWorkOrders();
                         updateWorkOrderCount();
                         
-                        // Update personnel statuses based on work orders
-                        updatePersonnelStatusesFromWorkOrders();
-                        
                         console.log('Work orders updated:', workorders.length);
                     },
                     error: (error) => {
@@ -3090,166 +2926,8 @@
                 });
         }
 
-        // ==================== PERSONNEL STATUS MANAGEMENT ====================
-        async function updatePersonnelStatusesFromWorkOrders() {
-            try {
-                const updates = [];
-                const now = new Date();
-                
-                for (const person of allPersonnel) {
-                    // Skip if manual mode
-                    if (person.statusMode === 'manual') {
-                        continue;
-                    }
-                    
-                    const calculatedStatus = calculateAutoStatus(person, workorders);
-                    const newStatus = calculatedStatus.status;
-                    
-                    // Only update if status changed
-                    if (person.status !== newStatus) {
-                        updates.push({
-                            id: person.id,
-                            oldStatus: person.status,
-                            newStatus: newStatus,
-                            reason: calculatedStatus.reason
-                        });
-                        
-                        // Update in database
-                        await personnelCollection.doc(person.id).update({
-                            status: newStatus,
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            lastStatusUpdate: now.toISOString(),
-                            statusReason: calculatedStatus.reason
-                        });
-                        
-                        // Update local data
-                        person.status = newStatus;
-                        person.lastStatusUpdate = now;
-                        person.statusReason = calculatedStatus.reason;
-                    }
-                }
-                
-                if (updates.length > 0) {
-                    console.log('Auto-updated personnel statuses:', updates.length);
-                }
-                
-            } catch (error) {
-                console.error('Error updating personnel statuses:', error);
-            }
-        }
-
-        function calculateAutoStatus(person, workOrders) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            // If manual mode, return current status
-            if (person.statusMode === 'manual') {
-                return {
-                    status: person.status,
-                    reason: 'Manual Mode'
-                };
-            }
-            
-            // Get personnel's work orders
-            const personnelWorkOrders = getPersonnelWorkOrders(person.name, workOrders);
-            
-            // Check if person has work orders for today
-            const todaysWorkOrders = personnelWorkOrders.filter(wo => {
-                if (!wo.startDate) return false;
-                
-                try {
-                    const startDate = wo.startDate.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
-                    const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-                    
-                    // Check if work order is active today based on start date and estimated time
-                    if (startDateOnly <= today) {
-                        if (wo.estimatedTime) {
-                            const endDate = new Date(startDate);
-                            endDate.setDate(startDate.getDate() + wo.estimatedTime);
-                            const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-                            return today <= endDateOnly;
-                        }
-                        return true;
-                    }
-                    return false;
-                } catch (e) {
-                    return false;
-                }
-            }).filter(wo => wo.status === 'Running');
-            
-            // If person has work orders for today, status is "working"
-            if (todaysWorkOrders.length > 0) {
-                return {
-                    status: 'working',
-                    reason: `Assigned to ${todaysWorkOrders.length} work order(s) today`
-                };
-            }
-            
-            // Check for upcoming work orders (next 3 days)
-            const upcomingWorkOrders = personnelWorkOrders.filter(wo => {
-                if (!wo.startDate || wo.status !== 'Running') return false;
-                
-                try {
-                    const startDate = wo.startDate.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
-                    const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-                    const daysUntil = Math.ceil((startDateOnly - today) / (1000 * 60 * 60 * 24));
-                    
-                    return daysUntil > 0 && daysUntil <= 3;
-                } catch (e) {
-                    return false;
-                }
-            });
-            
-            if (upcomingWorkOrders.length > 0) {
-                return {
-                    status: 'available',
-                    reason: `Has ${upcomingWorkOrders.length} upcoming work order(s)`
-                };
-            }
-            
-            // Default to available
-            return {
-                status: 'available',
-                reason: 'No assigned work orders'
-            };
-        }
-
-        function getPersonnelWorkOrders(personnelName, workOrders = workorders) {
-            if (!personnelName || !workOrders) return [];
-            
-            return workOrders.filter(wo => {
-                if (!wo.personnel) return false;
-                
-                if (Array.isArray(wo.personnel)) {
-                    return wo.personnel.includes(personnelName);
-                } else if (typeof wo.personnel === 'string') {
-                    try {
-                        const personnelArray = JSON.parse(wo.personnel);
-                        return Array.isArray(personnelArray) && personnelArray.includes(personnelName);
-                    } catch (e) {
-                        return wo.personnel === personnelName;
-                    }
-                }
-                return false;
-            });
-        }
-
-        function updateAvailablePersonnelList() {
-            // Update the available personnel array with current data
-            const updatedPersonnel = [...new Set([
-                ...availablePersonnel,
-                ...allPersonnel.map(p => p.name)
-            ])];
-            
-            // Sort alphabetically
-            updatedPersonnel.sort((a, b) => a.localeCompare(b));
-            
-            // Clear and update the array
-            availablePersonnel.length = 0;
-            availablePersonnel.push(...updatedPersonnel);
-            
-            console.log('Updated available personnel list:', availablePersonnel.length);
-        }
+        // ==================== PERSONNEL STATUS MANAGEMENT (Dihapus) ====================
+        // Fungsi-fungsi terkait Status Control telah dihapus
 
         // ==================== UTILITY FUNCTIONS ====================
         function formatDate(date) {
@@ -6317,144 +5995,6 @@
             document.getElementById('statusHistoryModal').classList.add('hidden');
         }
 
-        // ==================== PERSONNEL STATUS CONTROL FUNCTIONS ====================
-        let selectedPersonnelForStatus = null;
-
-        function setupStatusControl() {
-            const statusControlBtn = document.createElement('button');
-            statusControlBtn.id = 'statusControlBtn';
-            statusControlBtn.className = 'btn btn-info hidden';
-            statusControlBtn.innerHTML = '<i class="fas fa-user-cog mr-2"></i><span>Status Control</span>';
-            
-            // Tambahkan button ke action buttons
-            const actionButtons = document.getElementById('actionButtons');
-            actionButtons.appendChild(statusControlBtn);
-            
-            // Setup event listener
-            statusControlBtn.addEventListener('click', function() {
-                openStatusControlPopup();
-            });
-            
-            // Setup event listener untuk save button di popup
-            document.getElementById('saveStatusBtn').addEventListener('click', savePersonnelStatus);
-        }
-
-        function showStatusControlButton(show) {
-            const btn = document.getElementById('statusControlBtn');
-            if (btn) {
-                if (show) {
-                    btn.classList.remove('hidden');
-                } else {
-                    btn.classList.add('hidden');
-                }
-            }
-        }
-
-        function openStatusControlPopup() {
-            console.log('Opening status control popup');
-            
-            const popup = document.getElementById('statusControlPopup');
-            const person = findPersonnelByUserEmail(currentUser.email);
-            
-            if (!person) {
-                showToast('Personnel data not found', 'warning');
-                return;
-            }
-            
-            selectedPersonnelForStatus = person;
-            
-            // Reset semua checkmarks
-            document.querySelectorAll('.status-option .fa-check').forEach(check => {
-                check.classList.add('hidden');
-            });
-            
-            // Hilangkan semua active class
-            document.querySelectorAll('.status-option').forEach(option => {
-                option.classList.remove('active');
-            });
-            
-            // Set active berdasarkan status saat ini
-            const currentStatus = person.status || 'available';
-            const currentOption = document.querySelector(`.status-option[data-status="${currentStatus}"]`);
-            if (currentOption) {
-                currentOption.classList.add('active');
-                const check = currentOption.querySelector('.fa-check');
-                if (check) check.classList.remove('hidden');
-            }
-            
-            // Tampilkan popup
-            popup.classList.add('show');
-            
-            // Setup click handlers untuk status options
-            document.querySelectorAll('.status-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    // Hilangkan semua active class dan checkmarks
-                    document.querySelectorAll('.status-option').forEach(opt => {
-                        opt.classList.remove('active');
-                        const check = opt.querySelector('.fa-check');
-                        if (check) check.classList.add('hidden');
-                    });
-                    
-                    // Set active untuk yang diklik
-                    this.classList.add('active');
-                    const check = this.querySelector('.fa-check');
-                    if (check) check.classList.remove('hidden');
-                });
-            });
-        }
-
-        function closeStatusControlPopup() {
-            document.getElementById('statusControlPopup').classList.remove('show');
-            selectedPersonnelForStatus = null;
-        }
-
-        async function savePersonnelStatus() {
-            if (!selectedPersonnelForStatus) return;
-            
-            const selectedOption = document.querySelector('.status-option.active');
-            if (!selectedOption) {
-                showToast('Please select a status', 'warning');
-                return;
-            }
-            
-            const newStatus = selectedOption.dataset.status;
-            
-            try {
-                showLoading();
-                
-                await personnelCollection.doc(selectedPersonnelForStatus.id).update({
-                    status: newStatus,
-                    statusMode: newStatus === 'auto' ? 'auto' : 'manual',
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastStatusUpdate: new Date().toISOString(),
-                    statusReason: `Manually set to ${newStatus} by ${currentUser.email}`
-                });
-                
-                showToast(`Status updated to ${newStatus}`, 'success');
-                logActivity('status_update', `Updated personnel status to ${newStatus}`, null);
-                
-                closeStatusControlPopup();
-                
-            } catch (error) {
-                console.error('Error saving personnel status:', error);
-                showToast('Failed to update status', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function findPersonnelByUserEmail(email) {
-            if (!email || !allPersonnel.length) return null;
-            
-            // Cari berdasarkan email atau nama yang cocok
-            const person = allPersonnel.find(p => 
-                p.email === email || 
-                p.name.toLowerCase().includes(email.split('@')[0].toLowerCase())
-            );
-            
-            return person || null;
-        }
-
         // ==================== PIPELINES FUNCTION ====================
         function openPipelines() {
             console.log('Opening pipelines...');
@@ -6462,6 +6002,9 @@
             // Redirect to pipelines.html
             window.open('pipelines.html', '_blank');
         }
+
+        // ==================== PERSONNEL STATUS CONTROL FUNCTIONS (DIHAPUS) ====================
+        // Semua fungsi terkait Status Control telah dihapus dari kode ini
 
         async function deleteWorkOrder(workorderId) {
             if (!canDeleteWorkOrder()) {
@@ -6558,7 +6101,6 @@
             
             setupRealtimeListeners();
             loadDataHistory();
-            setupStatusControl();
             
             // Setup event listeners for all buttons
             document.getElementById('newWorkOrderBtn').addEventListener('click', createNewWorkOrder);
@@ -6646,23 +6188,6 @@
             
             // Photo Preview Modal
             document.getElementById('closePhotoPreview').addEventListener('click', closePhotoPreview);
-            
-            // Status Control Popup
-            document.addEventListener('click', function(e) {
-                const popup = document.getElementById('statusControlPopup');
-                const statusControlBtn = document.getElementById('statusControlBtn');
-                
-                if (popup.classList.contains('show') && 
-                    !popup.contains(e.target) && 
-                    !statusControlBtn.contains(e.target)) {
-                    closeStatusControlPopup();
-                }
-            });
-            
-            // Update status control button visibility based on role
-            if (currentUserRole === 'admin' || currentUserRole === 'manager' || currentUserRole === 'user') {
-                showStatusControlButton(true);
-            }
             
             console.log('App initialization complete');
         }
