@@ -2846,6 +2846,73 @@
     </div>
 
     <!-- Status Control Popup -->
+    <div id="statusControlPopup" class="status-control-popup hidden">
+        <div class="status-control-header">
+            <h3 class="font-bold text-gray-900">Status Control</h3>
+            <p class="text-sm text-gray-600 mt-1">Update personnel status</p>
+        </div>
+        <div class="status-control-body">
+            <div class="space-y-3">
+                <div class="status-option" data-status="working">
+                    <div class="status-option-icon working">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="status-option-info">
+                        <div class="status-option-title">Working</div>
+                        <div class="status-option-desc">Currently assigned to work orders</div>
+                    </div>
+                    <i class="fas fa-check text-green-500 hidden"></i>
+                </div>
+                <div class="status-option" data-status="available">
+                    <div class="status-option-icon available">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="status-option-info">
+                        <div class="status-option-title">Available</div>
+                        <div class="status-option-desc">Ready for new assignments</div>
+                    </div>
+                    <i class="fas fa-check text-green-500 hidden"></i>
+                </div>
+                <div class="status-option" data-status="leave">
+                    <div class="status-option-icon leave">
+                        <i class="fas fa-umbrella-beach"></i>
+                    </div>
+                    <div class="status-option-info">
+                        <div class="status-option-title">On Leave</div>
+                        <div class="status-option-desc">On vacation or leave</div>
+                    </div>
+                    <i class="fas fa-check text-green-500 hidden"></i>
+                </div>
+                <div class="status-option" data-status="absent">
+                    <div class="status-option-icon absent">
+                        <i class="fas fa-user-times"></i>
+                    </div>
+                    <div class="status-option-info">
+                        <div class="status-option-title">Absent</div>
+                        <div class="status-option-desc">Unexpected absence</div>
+                    </div>
+                    <i class="fas fa-check text-green-500 hidden"></i>
+                </div>
+                <div class="status-option" data-status="auto">
+                    <div class="status-option-icon auto">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="status-option-info">
+                        <div class="status-option-title">Auto Mode</div>
+                        <div class="status-option-desc">Let system manage status</div>
+                    </div>
+                    <i class="fas fa-check text-green-500 hidden"></i>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <button id="saveStatusBtn" class="btn btn-primary w-full">
+                    <i class="fas fa-save mr-2"></i>
+                    Save Status
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div id="toast-container" class="toast-container"></div>
 
@@ -6581,7 +6648,15 @@
             document.getElementById('closePhotoPreview').addEventListener('click', closePhotoPreview);
             
             // Status Control Popup
-    
+            document.addEventListener('click', function(e) {
+                const popup = document.getElementById('statusControlPopup');
+                const statusControlBtn = document.getElementById('statusControlBtn');
+                
+                if (popup.classList.contains('show') && 
+                    !popup.contains(e.target) && 
+                    !statusControlBtn.contains(e.target)) {
+                    closeStatusControlPopup();
+                }
             });
             
             // Update status control button visibility based on role
