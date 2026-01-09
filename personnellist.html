@@ -511,6 +511,34 @@
             letter-spacing: 0.05em;
         }
 
+        .personnel-list-header-cell {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            user-select: none;
+        }
+
+        .personnel-list-header-cell:hover {
+            color: var(--primary-600);
+        }
+
+        .personnel-list-header-cell.sort-asc .sort-icon,
+        .personnel-list-header-cell.sort-desc .sort-icon {
+            color: var(--primary-600);
+        }
+
+        .sort-icon {
+            color: var(--neutral-400);
+            font-size: 0.75rem;
+            transition: var(--transition-fast);
+        }
+
+        .personnel-list-header-cell:hover .sort-icon {
+            color: var(--primary-500);
+        }
+
         .personnel-list-item {
             display: grid;
             grid-template-columns: 1fr 100px 120px 150px 120px 100px;
@@ -787,61 +815,6 @@
             border-bottom-color: var(--primary-600);
         }
 
-        /* Sort Dropdown */
-        .sort-dropdown {
-            position: relative;
-        }
-
-        .sort-button {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: white;
-            border: 2px solid var(--neutral-200);
-            border-radius: var(--radius-lg);
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition-base);
-        }
-
-        .sort-button:hover {
-            border-color: var(--primary-500);
-        }
-
-        .sort-dropdown-content {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            margin-top: 0.5rem;
-            background: white;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-xl);
-            min-width: 200px;
-            z-index: 10;
-            display: none;
-        }
-
-        .sort-dropdown-content.show {
-            display: block;
-        }
-
-        .sort-option {
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            transition: var(--transition-base);
-            border-bottom: 1px solid var(--neutral-100);
-        }
-
-        .sort-option:hover {
-            background: var(--primary-50);
-        }
-
-        .sort-option.active {
-            background: var(--primary-100);
-            color: var(--primary-700);
-        }
-
         /* Status Dropdown */
         .status-dropdown {
             width: 120px;
@@ -1028,32 +1001,6 @@
                                placeholder="Search personnel by name..."
                                class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all">
                     </div>
-                    
-                    <!-- Sort Dropdown -->
-                    <div class="sort-dropdown">
-                        <button id="sortButton" class="sort-button">
-                            <i class="fas fa-sort-amount-down"></i>
-                            <span id="sortButtonText">Sort: Name A-Z</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div id="sortDropdown" class="sort-dropdown-content">
-                            <div class="sort-option active" data-sort="name-asc">
-                                <i class="fas fa-sort-alpha-down mr-2"></i>Name A-Z
-                            </div>
-                            <div class="sort-option" data-sort="name-desc">
-                                <i class="fas fa-sort-alpha-down-alt mr-2"></i>Name Z-A
-                            </div>
-                            <div class="sort-option" data-sort="status">
-                                <i class="fas fa-user-check mr-2"></i>Status
-                            </div>
-                            <div class="sort-option" data-sort="workload">
-                                <i class="fas fa-tasks mr-2"></i>Work Load
-                            </div>
-                            <div class="sort-option" data-sort="division">
-                                <i class="fas fa-sitemap mr-2"></i>Division
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 
                 <div class="flex flex-wrap gap-2">
@@ -1092,12 +1039,42 @@
             <!-- Personnel List -->
             <div class="personnel-list-container mb-4">
                 <div class="personnel-list-header">
-                    <div>Personnel</div>
-                    <div>Position</div>
-                    <div>Division</div>
-                    <div>Company</div>
-                    <div>Status</div>
-                    <div>Active WO</div>
+                    <div class="personnel-list-header-cell" data-sort="name">
+                        Personnel
+                        <span class="sort-icon">
+                            <i class="fas fa-sort"></i>
+                        </span>
+                    </div>
+                    <div class="personnel-list-header-cell" data-sort="position">
+                        Position
+                        <span class="sort-icon">
+                            <i class="fas fa-sort"></i>
+                        </span>
+                    </div>
+                    <div class="personnel-list-header-cell" data-sort="division">
+                        Division
+                        <span class="sort-icon">
+                            <i class="fas fa-sort"></i>
+                        </span>
+                    </div>
+                    <div class="personnel-list-header-cell" data-sort="company">
+                        Company
+                        <span class="sort-icon">
+                            <i class="fas fa-sort"></i>
+                        </span>
+                    </div>
+                    <div class="personnel-list-header-cell" data-sort="status">
+                        Status
+                        <span class="sort-icon">
+                            <i class="fas fa-sort"></i>
+                        </span>
+                    </div>
+                    <div class="personnel-list-header-cell" data-sort="workload">
+                        Active WO
+                        <span class="sort-icon">
+                            <i class="fas fa-sort"></i>
+                        </span>
+                    </div>
                 </div>
                 
                 <div id="personnelList">
@@ -1582,7 +1559,7 @@
         let filteredPersonnel = [];
         let allWorkOrders = [];
         let currentFilter = 'all';
-        let currentSort = 'name-asc';
+        let currentSort = { field: 'name', direction: 'asc' }; // Changed to object
         let selectedPersonnel = null;
         let dailyLogs = [];
         let personnelToDelete = null;
@@ -2271,41 +2248,87 @@
         function sortPersonnel(personnelArray) {
             const sorted = [...personnelArray];
             
-            switch(currentSort) {
-                case 'name-asc':
-                    return sorted.sort((a, b) => a.name.localeCompare(b.name));
-                case 'name-desc':
-                    return sorted.sort((a, b) => b.name.localeCompare(a.name));
-                case 'status':
-                    const statusOrder = ['working', 'available', 'leave', 'absent'];
-                    return sorted.sort((a, b) => {
-                        const aIndex = statusOrder.indexOf(a.status) ?? 999;
-                        const bIndex = statusOrder.indexOf(b.status) ?? 999;
-                        return aIndex - bIndex;
-                    });
-                case 'workload':
-                    return sorted.sort((a, b) => {
-                        const aWorkload = getPersonnelWorkOrders(a.name).filter(wo => wo.status === 'Running').length;
-                        const bWorkload = getPersonnelWorkOrders(b.name).filter(wo => wo.status === 'Running').length;
-                        return bWorkload - aWorkload;
-                    });
-                case 'division':
-                    return sorted.sort((a, b) => (a.division || '').localeCompare(b.division || ''));
-                default:
-                    return sorted;
+            const { field, direction } = currentSort;
+            
+            return sorted.sort((a, b) => {
+                let aValue, bValue;
+                
+                switch(field) {
+                    case 'name':
+                        aValue = a.name || '';
+                        bValue = b.name || '';
+                        return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+                    
+                    case 'position':
+                        aValue = a.position || '';
+                        bValue = b.position || '';
+                        return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+                    
+                    case 'division':
+                        aValue = a.division || '';
+                        bValue = b.division || '';
+                        return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+                    
+                    case 'company':
+                        aValue = a.company || '';
+                        bValue = b.company || '';
+                        return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+                    
+                    case 'status':
+                        const statusOrder = ['working', 'available', 'leave', 'absent'];
+                        aValue = statusOrder.indexOf(a.status) ?? 999;
+                        bValue = statusOrder.indexOf(b.status) ?? 999;
+                        return direction === 'asc' ? aValue - bValue : bValue - aValue;
+                    
+                    case 'workload':
+                        aValue = getPersonnelWorkOrders(a.name).filter(wo => wo.status === 'Running').length;
+                        bValue = getPersonnelWorkOrders(b.name).filter(wo => wo.status === 'Running').length;
+                        return direction === 'asc' ? aValue - bValue : bValue - aValue;
+                    
+                    default:
+                        return 0;
+                }
+            });
+        }
+
+        function updateSortIcons() {
+            // Reset all sort icons
+            document.querySelectorAll('.personnel-list-header-cell').forEach(cell => {
+                cell.classList.remove('sort-asc', 'sort-desc');
+                const icon = cell.querySelector('.sort-icon i');
+                if (icon) {
+                    icon.className = 'fas fa-sort';
+                }
+            });
+            
+            // Update current sort column
+            const currentCell = document.querySelector(`.personnel-list-header-cell[data-sort="${currentSort.field}"]`);
+            if (currentCell) {
+                const icon = currentCell.querySelector('.sort-icon i');
+                if (icon) {
+                    if (currentSort.direction === 'asc') {
+                        currentCell.classList.add('sort-asc');
+                        icon.className = 'fas fa-sort-up';
+                    } else {
+                        currentCell.classList.add('sort-desc');
+                        icon.className = 'fas fa-sort-down';
+                    }
+                }
             }
         }
 
-        function updateSortButtonText() {
-            const sortTexts = {
-                'name-asc': 'Sort: Name A-Z',
-                'name-desc': 'Sort: Name Z-A',
-                'status': 'Sort: Status',
-                'workload': 'Sort: Work Load',
-                'division': 'Sort: Division'
-            };
+        function setSort(field) {
+            if (currentSort.field === field) {
+                // Toggle direction if same field
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                // Set new field with default ascending direction
+                currentSort.field = field;
+                currentSort.direction = 'asc';
+            }
             
-            document.getElementById('sortButtonText').textContent = sortTexts[currentSort] || 'Sort';
+            updateSortIcons();
+            applyFilters();
         }
 
         // ==================== PERSONNEL FUNCTIONS ====================
@@ -3503,35 +3526,12 @@
                 });
             });
             
-            // Sort dropdown
-            document.getElementById('sortButton').addEventListener('click', function(e) {
-                e.stopPropagation();
-                const dropdown = document.getElementById('sortDropdown');
-                dropdown.classList.toggle('show');
-            });
-            
-            // Sort options
-            document.querySelectorAll('.sort-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const sortValue = this.dataset.sort;
-                    
-                    document.querySelectorAll('.sort-option').forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    currentSort = sortValue;
-                    updateSortButtonText();
-                    
-                    document.getElementById('sortDropdown').classList.remove('show');
-                    
-                    applyFilters();
+            // Sortable headers
+            document.querySelectorAll('.personnel-list-header-cell').forEach(cell => {
+                cell.addEventListener('click', function() {
+                    const sortField = this.dataset.sort;
+                    setSort(sortField);
                 });
-            });
-            
-            // Close sort dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.sort-dropdown')) {
-                    document.getElementById('sortDropdown').classList.remove('show');
-                }
             });
             
             // Pagination buttons
@@ -3659,7 +3659,9 @@
             
             setupAuthStateObserver();
             initEventListeners();
-            updateSortButtonText();
+            
+            // Initialize sort icons
+            updateSortIcons();
             
             console.log('Personnel Management initialization complete');
         });
