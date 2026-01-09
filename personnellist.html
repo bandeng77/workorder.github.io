@@ -559,6 +559,64 @@
             margin-top: 0.25rem;
         }
 
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            background: var(--neutral-50);
+            border-top: 1px solid var(--neutral-200);
+        }
+
+        .pagination-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--neutral-300);
+            background: white;
+            color: var(--neutral-700);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+
+        .pagination-btn:hover:not(.disabled) {
+            border-color: var(--primary-500);
+            color: var(--primary-600);
+            background: var(--primary-50);
+        }
+
+        .pagination-btn.active {
+            background: var(--primary-500);
+            color: white;
+            border-color: var(--primary-500);
+        }
+
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-ellipsis {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            color: var(--neutral-500);
+        }
+
+        .pagination-info {
+            font-size: 0.875rem;
+            color: var(--neutral-600);
+            margin: 0 1rem;
+        }
+
         /* Work Activity Timeline */
         .timeline-item {
             position: relative;
@@ -831,97 +889,16 @@
             border: 1px solid var(--primary-300);
         }
 
-        /* Status Control Popup */
-        .status-control-popup {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            margin-top: 0.5rem;
-            background: white;
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
-            width: 300px;
-            z-index: 1000;
-            display: none;
+        /* Auto Status Indicator */
+        .auto-status {
+            font-size: 0.7rem;
+            color: var(--neutral-500);
+            margin-top: 0.25rem;
+            font-style: italic;
         }
 
-        .status-control-popup.show {
-            display: block;
-        }
-
-        .status-control-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--neutral-200);
-            background: var(--neutral-50);
-        }
-
-        .status-control-body {
-            padding: 1.5rem;
-        }
-
-        .status-option {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.75rem;
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            transition: var(--transition-base);
-            margin-bottom: 0.5rem;
-        }
-
-        .status-option:hover {
-            background: var(--neutral-50);
-        }
-
-        .status-option.active {
-            background: var(--primary-50);
-            border: 2px solid var(--primary-500);
-        }
-
-        .status-option-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.25rem;
-        }
-
-        .status-option-icon.working {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-        }
-
-        .status-option-icon.available {
-            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
-        }
-
-        .status-option-icon.leave {
-            background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
-        }
-
-        .status-option-icon.absent {
-            background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
-        }
-
-        .status-option-icon.auto {
-            background: linear-gradient(135deg, var(--neutral-500), var(--neutral-600));
-        }
-
-        .status-option-info {
-            flex: 1;
-        }
-
-        .status-option-title {
-            font-weight: 600;
-            color: var(--neutral-900);
-        }
-
-        .status-option-desc {
-            font-size: 0.875rem;
-            color: var(--neutral-600);
+        .auto-status.active {
+            color: var(--accent-600);
         }
 
         /* Responsive Design */
@@ -960,6 +937,10 @@
             .modal-body {
                 padding: 1.5rem;
             }
+
+            .pagination {
+                flex-wrap: wrap;
+            }
         }
 
         @media (max-width: 640px) {
@@ -974,18 +955,6 @@
             .stats-number {
                 font-size: 2rem;
             }
-        }
-
-        /* Auto Status Indicator */
-        .auto-status {
-            font-size: 0.7rem;
-            color: var(--neutral-500);
-            margin-top: 0.25rem;
-            font-style: italic;
-        }
-
-        .auto-status.active {
-            color: var(--accent-600);
         }
     </style>
 </head>
@@ -1121,7 +1090,7 @@
         <!-- Personnel List Content -->
         <div id="personnelContent">
             <!-- Personnel List -->
-            <div class="personnel-list-container mb-8">
+            <div class="personnel-list-container mb-4">
                 <div class="personnel-list-header">
                     <div>Personnel</div>
                     <div>Position</div>
@@ -1133,6 +1102,31 @@
                 
                 <div id="personnelList">
                     <!-- Personnel items will be loaded here -->
+                </div>
+                
+                <!-- Pagination -->
+                <div id="pagination" class="pagination hidden">
+                    <button id="firstPageBtn" class="pagination-btn">
+                        <i class="fas fa-angle-double-left"></i>
+                    </button>
+                    <button id="prevPageBtn" class="pagination-btn">
+                        <i class="fas fa-angle-left"></i>
+                    </button>
+                    
+                    <div id="pageNumbers" class="flex gap-1">
+                        <!-- Page numbers will be generated here -->
+                    </div>
+                    
+                    <button id="nextPageBtn" class="pagination-btn">
+                        <i class="fas fa-angle-right"></i>
+                    </button>
+                    <button id="lastPageBtn" class="pagination-btn">
+                        <i class="fas fa-angle-double-right"></i>
+                    </button>
+                    
+                    <div class="pagination-info">
+                        Showing <span id="currentRange">0-0</span> of <span id="totalItems">0</span>
+                    </div>
                 </div>
             </div>
             
@@ -1154,32 +1148,24 @@
         
         <!-- Analytics Content -->
         <div id="analyticsContent" class="hidden">
+            <!-- Analytics content remains the same -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Status Distribution Chart -->
                 <div class="chart-container">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Personnel Status Distribution</h3>
                     <canvas id="statusChart" height="250"></canvas>
                 </div>
-                
-                <!-- Workload Distribution Chart -->
                 <div class="chart-container">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Workload Distribution</h3>
                     <canvas id="workloadChart" height="250"></canvas>
                 </div>
-                
-                <!-- Division Statistics -->
                 <div class="chart-container">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Personnel by Division</h3>
                     <canvas id="divisionChart" height="250"></canvas>
                 </div>
-                
-                <!-- Company Statistics -->
                 <div class="chart-container">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Personnel by Company</h3>
                     <canvas id="companyChart" height="250"></canvas>
                 </div>
-                
-                <!-- Performance Metrics -->
                 <div class="chart-container col-span-1 lg:col-span-2">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Performance Metrics</h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -1201,8 +1187,6 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Productivity Trends -->
                 <div class="chart-container col-span-1 lg:col-span-2" style="height: 400px;">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Productivity Trends (Last 30 Days)</h3>
                     <canvas id="productivityChart" height="300"></canvas>
@@ -1236,9 +1220,6 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button id="statusControlBtn" class="btn btn-info btn-sm">
-                        <i class="fas fa-user-cog mr-1"></i> Status Control
-                    </button>
                     <button id="editPersonnelBtn" class="btn btn-warning btn-sm">
                         <i class="fas fa-edit mr-1"></i> Edit
                     </button>
@@ -1400,74 +1381,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Status Control Popup -->
-    <div id="statusControlPopup" class="status-control-popup hidden">
-        <div class="status-control-header">
-            <h3 class="font-bold text-gray-900">Status Control</h3>
-            <p class="text-sm text-gray-600 mt-1">Update personnel status</p>
-        </div>
-        <div class="status-control-body">
-            <div class="space-y-3">
-                <div class="status-option" data-status="working">
-                    <div class="status-option-icon working">
-                        <i class="fas fa-briefcase"></i>
-                    </div>
-                    <div class="status-option-info">
-                        <div class="status-option-title">Working</div>
-                        <div class="status-option-desc">Currently assigned to work orders</div>
-                    </div>
-                    <i class="fas fa-check text-green-500 hidden"></i>
-                </div>
-                <div class="status-option" data-status="available">
-                    <div class="status-option-icon available">
-                        <i class="fas fa-user-check"></i>
-                    </div>
-                    <div class="status-option-info">
-                        <div class="status-option-title">Available</div>
-                        <div class="status-option-desc">Ready for new assignments</div>
-                    </div>
-                    <i class="fas fa-check text-green-500 hidden"></i>
-                </div>
-                <div class="status-option" data-status="leave">
-                    <div class="status-option-icon leave">
-                        <i class="fas fa-umbrella-beach"></i>
-                    </div>
-                    <div class="status-option-info">
-                        <div class="status-option-title">On Leave</div>
-                        <div class="status-option-desc">On vacation or leave</div>
-                    </div>
-                    <i class="fas fa-check text-green-500 hidden"></i>
-                </div>
-                <div class="status-option" data-status="absent">
-                    <div class="status-option-icon absent">
-                        <i class="fas fa-user-times"></i>
-                    </div>
-                    <div class="status-option-info">
-                        <div class="status-option-title">Absent</div>
-                        <div class="status-option-desc">Unexpected absence</div>
-                    </div>
-                    <i class="fas fa-check text-green-500 hidden"></i>
-                </div>
-                <div class="status-option" data-status="auto">
-                    <div class="status-option-icon auto">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <div class="status-option-info">
-                        <div class="status-option-title">Auto Mode</div>
-                        <div class="status-option-desc">Let system manage status</div>
-                    </div>
-                    <i class="fas fa-check text-green-500 hidden"></i>
-                </div>
-            </div>
-            <div class="mt-6 pt-6 border-t border-gray-200">
-                <button id="saveStatusBtn" class="btn btn-primary w-full">
-                    <i class="fas fa-save mr-2"></i>
-                    Save Status
-                </button>
             </div>
         </div>
     </div>
@@ -1673,6 +1586,11 @@
         let selectedPersonnel = null;
         let dailyLogs = [];
         let personnelToDelete = null;
+        
+        // Pagination variables
+        const ITEMS_PER_PAGE = 20;
+        let currentPage = 1;
+        let totalPages = 1;
         
         // Realtime listeners
         let personnelListener = null;
@@ -2032,6 +1950,151 @@
             };
         }
 
+        // ==================== PAGINATION FUNCTIONS ====================
+        function setupPagination() {
+            const pagination = document.getElementById('pagination');
+            if (!pagination) return;
+            
+            if (filteredPersonnel.length <= ITEMS_PER_PAGE) {
+                pagination.classList.add('hidden');
+                return;
+            }
+            
+            pagination.classList.remove('hidden');
+            
+            // Calculate total pages
+            totalPages = Math.ceil(filteredPersonnel.length / ITEMS_PER_PAGE);
+            
+            // Update page numbers
+            renderPageNumbers();
+            
+            // Update range info
+            updatePaginationInfo();
+        }
+
+        function renderPageNumbers() {
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            if (!pageNumbersContainer) return;
+            
+            pageNumbersContainer.innerHTML = '';
+            
+            // Always show first page
+            createPageButton(1);
+            
+            // Calculate range of pages to show
+            let startPage = Math.max(2, currentPage - 2);
+            let endPage = Math.min(totalPages - 1, currentPage + 2);
+            
+            // Adjust if near start
+            if (currentPage <= 3) {
+                endPage = Math.min(5, totalPages - 1);
+            }
+            
+            // Adjust if near end
+            if (currentPage >= totalPages - 2) {
+                startPage = Math.max(2, totalPages - 4);
+            }
+            
+            // Add ellipsis if needed
+            if (startPage > 2) {
+                const ellipsis = document.createElement('div');
+                ellipsis.className = 'pagination-ellipsis';
+                ellipsis.textContent = '...';
+                pageNumbersContainer.appendChild(ellipsis);
+            }
+            
+            // Add middle pages
+            for (let i = startPage; i <= endPage; i++) {
+                createPageButton(i);
+            }
+            
+            // Add ellipsis if needed
+            if (endPage < totalPages - 1) {
+                const ellipsis = document.createElement('div');
+                ellipsis.className = 'pagination-ellipsis';
+                ellipsis.textContent = '...';
+                pageNumbersContainer.appendChild(ellipsis);
+            }
+            
+            // Always show last page if there is more than one page
+            if (totalPages > 1) {
+                createPageButton(totalPages);
+            }
+            
+            // Update button states
+            updatePaginationButtons();
+        }
+
+        function createPageButton(pageNumber) {
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            const button = document.createElement('button');
+            button.className = 'pagination-btn';
+            if (pageNumber === currentPage) {
+                button.classList.add('active');
+            }
+            button.textContent = pageNumber;
+            button.addEventListener('click', () => goToPage(pageNumber));
+            pageNumbersContainer.appendChild(button);
+        }
+
+        function updatePaginationButtons() {
+            const firstPageBtn = document.getElementById('firstPageBtn');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            const lastPageBtn = document.getElementById('lastPageBtn');
+            
+            if (firstPageBtn) {
+                firstPageBtn.disabled = currentPage === 1;
+                firstPageBtn.classList.toggle('disabled', currentPage === 1);
+            }
+            
+            if (prevPageBtn) {
+                prevPageBtn.disabled = currentPage === 1;
+                prevPageBtn.classList.toggle('disabled', currentPage === 1);
+            }
+            
+            if (nextPageBtn) {
+                nextPageBtn.disabled = currentPage === totalPages;
+                nextPageBtn.classList.toggle('disabled', currentPage === totalPages);
+            }
+            
+            if (lastPageBtn) {
+                lastPageBtn.disabled = currentPage === totalPages;
+                lastPageBtn.classList.toggle('disabled', currentPage === totalPages);
+            }
+        }
+
+        function updatePaginationInfo() {
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+            const endIndex = Math.min(currentPage * ITEMS_PER_PAGE, filteredPersonnel.length);
+            
+            document.getElementById('currentRange').textContent = `${startIndex}-${endIndex}`;
+            document.getElementById('totalItems').textContent = filteredPersonnel.length;
+        }
+
+        function goToPage(pageNumber) {
+            if (pageNumber < 1 || pageNumber > totalPages || pageNumber === currentPage) {
+                return;
+            }
+            
+            currentPage = pageNumber;
+            renderPersonnelList();
+            renderPageNumbers();
+            updatePaginationInfo();
+            
+            // Scroll to top of list
+            const personnelListContainer = document.querySelector('.personnel-list-container');
+            if (personnelListContainer) {
+                personnelListContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function getCurrentPageItems() {
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            return filteredPersonnel.slice(startIndex, endIndex);
+        }
+
         // ==================== UTILITY FUNCTIONS ====================
         function formatDate(date) {
             if (!date) return '-';
@@ -2300,7 +2363,12 @@
             filtered = sortPersonnel(filtered);
             
             filteredPersonnel = filtered;
+            
+            // Reset to first page when filters change
+            currentPage = 1;
+            
             renderPersonnelList();
+            setupPagination();
             
             const emptyState = document.getElementById('emptyState');
             const loadingState = document.getElementById('loadingState');
@@ -2320,7 +2388,9 @@
             
             container.innerHTML = '';
             
-            filteredPersonnel.forEach(person => {
+            const currentPageItems = getCurrentPageItems();
+            
+            currentPageItems.forEach(person => {
                 const listItem = createPersonnelListItem(person);
                 container.appendChild(listItem);
             });
@@ -3124,7 +3194,7 @@
                         <p class="font-medium">${startDate}</p>
                     </div>
                     <div>
-                        <p class="text-gray-500">Est. Time</p>
+                        <p class="text-gray500">Est. Time</p>
                         <p class="font-medium">${estimatedTime}</p>
                     </div>
                 </div>
@@ -3136,124 +3206,6 @@
             `;
             
             return card;
-        }
-
-        // ==================== STATUS CONTROL FUNCTIONS ====================
-        function openStatusControlPopup() {
-            if (!selectedPersonnel) return;
-            
-            const popup = document.getElementById('statusControlPopup');
-            const person = selectedPersonnel;
-            
-            // Reset semua checkmarks
-            document.querySelectorAll('.status-option .fa-check').forEach(check => {
-                check.classList.add('hidden');
-            });
-            
-            // Hilangkan semua active class
-            document.querySelectorAll('.status-option').forEach(option => {
-                option.classList.remove('active');
-            });
-            
-            // Set active berdasarkan status saat ini
-            const currentStatus = person.statusMode === 'auto' ? 'auto' : person.status;
-            const currentOption = document.querySelector(`.status-option[data-status="${currentStatus}"]`);
-            if (currentOption) {
-                currentOption.classList.add('active');
-                const check = currentOption.querySelector('.fa-check');
-                if (check) check.classList.remove('hidden');
-            }
-            
-            // Position the popup relative to the button
-            const statusControlBtn = document.getElementById('statusControlBtn');
-            const rect = statusControlBtn.getBoundingClientRect();
-            popup.style.position = 'absolute';
-            popup.style.top = `${rect.bottom + window.scrollY}px`;
-            popup.style.right = `${window.innerWidth - rect.right}px`;
-            
-            // Tampilkan popup
-            popup.classList.add('show');
-            
-            // Setup click handlers untuk status options
-            document.querySelectorAll('.status-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    // Hilangkan semua active class dan checkmarks
-                    document.querySelectorAll('.status-option').forEach(opt => {
-                        opt.classList.remove('active');
-                        const check = opt.querySelector('.fa-check');
-                        if (check) check.classList.add('hidden');
-                    });
-                    
-                    // Set active untuk yang diklik
-                    this.classList.add('active');
-                    const check = this.querySelector('.fa-check');
-                    if (check) check.classList.remove('hidden');
-                });
-            });
-        }
-
-        function closeStatusControlPopup() {
-            document.getElementById('statusControlPopup').classList.remove('show');
-        }
-
-        async function savePersonnelStatus() {
-            if (!selectedPersonnel) return;
-            
-            const selectedOption = document.querySelector('.status-option.active');
-            if (!selectedOption) {
-                showToast('Please select a status', 'warning');
-                return;
-            }
-            
-            const newStatus = selectedOption.dataset.status;
-            
-            try {
-                showLoading();
-                
-                const updateData = {
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedBy: currentUser?.email || 'system'
-                };
-                
-                if (newStatus === 'auto') {
-                    // Switch to auto mode
-                    const calculatedStatus = calculateAutoStatus(selectedPersonnel, allWorkOrders);
-                    updateData.statusMode = 'auto';
-                    updateData.status = calculatedStatus.status;
-                    updateData.statusReason = calculatedStatus.reason;
-                } else {
-                    // Switch to manual mode with selected status
-                    updateData.statusMode = 'manual';
-                    updateData.status = newStatus;
-                    updateData.statusReason = 'Manually set';
-                }
-                
-                await personnelCollection.doc(selectedPersonnel.id).update(updateData);
-                
-                // Update local data
-                selectedPersonnel.statusMode = updateData.statusMode;
-                selectedPersonnel.status = updateData.status;
-                selectedPersonnel.statusReason = updateData.statusReason;
-                selectedPersonnel.updatedAt = new Date();
-                
-                // Update UI
-                const statusBadge = document.getElementById('modalPersonnelStatus');
-                statusBadge.className = `status-badge ${getStatusClass(updateData.status)}`;
-                statusBadge.textContent = getStatusText(updateData.status);
-                
-                // Update status mode display
-                document.getElementById('modalStatusMode').textContent = updateData.statusMode === 'auto' ? 'Auto (System Managed)' : 'Manual';
-                
-                showToast('Status updated successfully', 'success');
-                
-                closeStatusControlPopup();
-                
-            } catch (error) {
-                console.error('Error updating personnel status:', error);
-                showToast('Failed to update status', 'error');
-            } finally {
-                hideLoading();
-            }
         }
 
         // ==================== PERSONNEL FORM FUNCTIONS ====================
@@ -3287,8 +3239,20 @@
         }
 
         function closePersonnelForm() {
+            const personnelId = document.getElementById('personnelId').value;
             document.getElementById('personnelFormModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
+            
+            // If we were editing a personnel, reopen the activity modal
+            if (personnelId) {
+                const person = allPersonnel.find(p => p.id === personnelId);
+                if (person) {
+                    setTimeout(() => {
+                        selectedPersonnel = person;
+                        openPersonnelActivityModal(person);
+                    }, 300);
+                }
+            }
         }
 
         function populatePersonnelForm(person) {
@@ -3570,26 +3534,14 @@
                 }
             });
             
+            // Pagination buttons
+            document.getElementById('firstPageBtn').addEventListener('click', () => goToPage(1));
+            document.getElementById('prevPageBtn').addEventListener('click', () => goToPage(currentPage - 1));
+            document.getElementById('nextPageBtn').addEventListener('click', () => goToPage(currentPage + 1));
+            document.getElementById('lastPageBtn').addEventListener('click', () => goToPage(totalPages));
+            
             // Activity modal
             document.getElementById('closeActivityModal').addEventListener('click', closePersonnelActivityModal);
-            
-            // Status control button
-            document.getElementById('statusControlBtn').addEventListener('click', openStatusControlPopup);
-            
-            // Save status button
-            document.getElementById('saveStatusBtn').addEventListener('click', savePersonnelStatus);
-            
-            // Close status popup when clicking outside
-            document.addEventListener('click', function(e) {
-                const popup = document.getElementById('statusControlPopup');
-                const statusControlBtn = document.getElementById('statusControlBtn');
-                
-                if (popup.classList.contains('show') && 
-                    !popup.contains(e.target) && 
-                    !statusControlBtn.contains(e.target)) {
-                    closeStatusControlPopup();
-                }
-            });
             
             // Edit and delete buttons in activity modal
             document.getElementById('editPersonnelBtn').addEventListener('click', function() {
