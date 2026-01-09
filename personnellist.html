@@ -499,7 +499,7 @@
 
         .personnel-list-header {
             display: grid;
-            grid-template-columns: 1fr 100px 120px 150px 120px 100px 100px;
+            grid-template-columns: 1fr 100px 120px 150px 120px 100px;
             gap: 1rem;
             padding: 1rem 1.5rem;
             background: var(--neutral-50);
@@ -513,7 +513,7 @@
 
         .personnel-list-item {
             display: grid;
-            grid-template-columns: 1fr 100px 120px 150px 120px 100px 100px;
+            grid-template-columns: 1fr 100px 120px 150px 120px 100px;
             gap: 1rem;
             padding: 1rem 1.5rem;
             border-bottom: 1px solid var(--neutral-100);
@@ -699,6 +699,8 @@
             padding: 1.5rem;
             box-shadow: var(--shadow-md);
             border: 1px solid var(--neutral-200);
+            height: 350px;
+            position: relative;
         }
 
         /* Tabs */
@@ -829,11 +831,104 @@
             border: 1px solid var(--primary-300);
         }
 
+        /* Status Control Popup */
+        .status-control-popup {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            width: 300px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .status-control-popup.show {
+            display: block;
+        }
+
+        .status-control-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--neutral-200);
+            background: var(--neutral-50);
+        }
+
+        .status-control-body {
+            padding: 1.5rem;
+        }
+
+        .status-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition-base);
+            margin-bottom: 0.5rem;
+        }
+
+        .status-option:hover {
+            background: var(--neutral-50);
+        }
+
+        .status-option.active {
+            background: var(--primary-50);
+            border: 2px solid var(--primary-500);
+        }
+
+        .status-option-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .status-option-icon.working {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        }
+
+        .status-option-icon.available {
+            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+        }
+
+        .status-option-icon.leave {
+            background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
+        }
+
+        .status-option-icon.absent {
+            background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
+        }
+
+        .status-option-icon.auto {
+            background: linear-gradient(135deg, var(--neutral-500), var(--neutral-600));
+        }
+
+        .status-option-info {
+            flex: 1;
+        }
+
+        .status-option-title {
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .status-option-desc {
+            font-size: 0.875rem;
+            color: var(--neutral-600);
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .personnel-list-header,
             .personnel-list-item {
-                grid-template-columns: 1fr 80px 100px 120px 100px 100px 80px;
+                grid-template-columns: 1fr 80px 100px 120px 100px;
                 font-size: 0.75rem;
                 gap: 0.75rem;
                 padding: 0.75rem 1rem;
@@ -881,54 +976,6 @@
             }
         }
 
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .action-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition-base);
-            border: 1px solid transparent;
-        }
-
-        .action-btn-edit {
-            background: var(--accent-100);
-            color: var(--accent-600);
-            border-color: var(--accent-200);
-        }
-
-        .action-btn-edit:hover {
-            background: var(--accent-200);
-        }
-
-        .action-btn-delete {
-            background: var(--danger-100);
-            color: var(--danger-600);
-            border-color: var(--danger-200);
-        }
-
-        .action-btn-delete:hover {
-            background: var(--danger-200);
-        }
-
-        .action-btn-view {
-            background: var(--info-100);
-            color: var(--info-600);
-            border-color: var(--info-200);
-        }
-
-        .action-btn-view:hover {
-            background: var(--info-200);
-        }
-
         /* Auto Status Indicator */
         .auto-status {
             font-size: 0.7rem;
@@ -967,17 +1014,9 @@
                         <i class="fas fa-user-plus"></i>
                         <span>Add Personnel</span>
                     </button>
-                    <button id="syncDataBtn" class="btn btn-primary">
-                        <i class="fas fa-sync-alt"></i>
-                        <span>Sync Work Orders</span>
-                    </button>
                     <button id="exportBtn" class="btn btn-success">
                         <i class="fas fa-file-export"></i>
                         <span>Export</span>
-                    </button>
-                    <button id="updateAutoStatusBtn" class="btn btn-info">
-                        <i class="fas fa-robot"></i>
-                        <span>Update Auto Status</span>
                     </button>
                     <button id="authButton" class="btn btn-danger">
                         <i class="fas fa-sign-out-alt"></i>
@@ -1090,7 +1129,6 @@
                     <div>Company</div>
                     <div>Status</div>
                     <div>Active WO</div>
-                    <div>Actions</div>
                 </div>
                 
                 <div id="personnelList">
@@ -1120,25 +1158,25 @@
                 <!-- Status Distribution Chart -->
                 <div class="chart-container">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Personnel Status Distribution</h3>
-                    <canvas id="statusChart" height="300"></canvas>
+                    <canvas id="statusChart" height="250"></canvas>
                 </div>
                 
                 <!-- Workload Distribution Chart -->
                 <div class="chart-container">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Workload Distribution</h3>
-                    <canvas id="workloadChart" height="300"></canvas>
+                    <canvas id="workloadChart" height="250"></canvas>
                 </div>
                 
                 <!-- Division Statistics -->
                 <div class="chart-container">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Personnel by Division</h3>
-                    <canvas id="divisionChart" height="300"></canvas>
+                    <canvas id="divisionChart" height="250"></canvas>
                 </div>
                 
                 <!-- Company Statistics -->
                 <div class="chart-container">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Personnel by Company</h3>
-                    <canvas id="companyChart" height="300"></canvas>
+                    <canvas id="companyChart" height="250"></canvas>
                 </div>
                 
                 <!-- Performance Metrics -->
@@ -1146,28 +1184,28 @@
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Performance Metrics</h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div class="text-center p-4 bg-blue-50 rounded-lg">
-                            <div class="text-3xl font-bold text-blue-600" id="avgCompletionTime">0</div>
+                            <div class="text-2xl font-bold text-blue-600" id="avgCompletionTime">0</div>
                             <div class="text-sm text-gray-600">Avg Completion (days)</div>
                         </div>
                         <div class="text-center p-4 bg-green-50 rounded-lg">
-                            <div class="text-3xl font-bold text-green-600" id="totalCompleted">0</div>
+                            <div class="text-2xl font-bold text-green-600" id="totalCompleted">0</div>
                             <div class="text-sm text-gray-600">Completed This Month</div>
                         </div>
                         <div class="text-center p-4 bg-yellow-50 rounded-lg">
-                            <div class="text-3xl font-bold text-yellow-600" id="avgWorkload">0</div>
+                            <div class="text-2xl font-bold text-yellow-600" id="avgWorkload">0</div>
                             <div class="text-sm text-gray-600">Avg Workload per Person</div>
                         </div>
                         <div class="text-center p-4 bg-purple-50 rounded-lg">
-                            <div class="text-3xl font-bold text-purple-600" id="utilizationRate">0%</div>
+                            <div class="text-2xl font-bold text-purple-600" id="utilizationRate">0%</div>
                             <div class="text-sm text-gray-600">Utilization Rate</div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Productivity Trends -->
-                <div class="chart-container col-span-1 lg:col-span-2">
+                <div class="chart-container col-span-1 lg:col-span-2" style="height: 400px;">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Productivity Trends (Last 30 Days)</h3>
-                    <canvas id="productivityChart" height="250"></canvas>
+                    <canvas id="productivityChart" height="300"></canvas>
                 </div>
             </div>
         </div>
@@ -1198,6 +1236,9 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
+                    <button id="statusControlBtn" class="btn btn-info btn-sm">
+                        <i class="fas fa-user-cog mr-1"></i> Status Control
+                    </button>
                     <button id="editPersonnelBtn" class="btn btn-warning btn-sm">
                         <i class="fas fa-edit mr-1"></i> Edit
                     </button>
@@ -1357,38 +1398,76 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Status Control Card -->
-                        <div class="card">
-                            <h3 class="text-lg font-bold text-gray-900 mb-4">Status Control</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="form-label">Current Status</label>
-                                    <div id="currentStatusDisplay" class="flex items-center gap-2">
-                                        <span id="currentStatusBadge" class="status-badge"></span>
-                                        <span id="autoStatusIndicator" class="auto-status"></span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="form-label">Manual Status Override</label>
-                                    <select id="manualStatusOverride" class="form-input">
-                                        <option value="auto">Auto (System Managed)</option>
-                                        <option value="working">Working (Manual)</option>
-                                        <option value="available">Available (Manual)</option>
-                                        <option value="leave">On Leave (Manual)</option>
-                                        <option value="absent">Absent (Manual)</option>
-                                    </select>
-                                    <p class="text-xs text-gray-500 mt-1">Select "Auto" to let system manage status based on work orders</p>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <button id="updateStatusBtn" class="btn btn-primary w-full">
-                                    <i class="fas fa-save mr-2"></i>Update Status
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Control Popup -->
+    <div id="statusControlPopup" class="status-control-popup hidden">
+        <div class="status-control-header">
+            <h3 class="font-bold text-gray-900">Status Control</h3>
+            <p class="text-sm text-gray-600 mt-1">Update personnel status</p>
+        </div>
+        <div class="status-control-body">
+            <div class="space-y-3">
+                <div class="status-option" data-status="working">
+                    <div class="status-option-icon working">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="status-option-info">
+                        <div class="status-option-title">Working</div>
+                        <div class="status-option-desc">Currently assigned to work orders</div>
+                    </div>
+                    <i class="fas fa-check text-green-500 hidden"></i>
+                </div>
+                <div class="status-option" data-status="available">
+                    <div class="status-option-icon available">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="status-option-info">
+                        <div class="status-option-title">Available</div>
+                        <div class="status-option-desc">Ready for new assignments</div>
+                    </div>
+                    <i class="fas fa-check text-green-500 hidden"></i>
+                </div>
+                <div class="status-option" data-status="leave">
+                    <div class="status-option-icon leave">
+                        <i class="fas fa-umbrella-beach"></i>
+                    </div>
+                    <div class="status-option-info">
+                        <div class="status-option-title">On Leave</div>
+                        <div class="status-option-desc">On vacation or leave</div>
+                    </div>
+                    <i class="fas fa-check text-green-500 hidden"></i>
+                </div>
+                <div class="status-option" data-status="absent">
+                    <div class="status-option-icon absent">
+                        <i class="fas fa-user-times"></i>
+                    </div>
+                    <div class="status-option-info">
+                        <div class="status-option-title">Absent</div>
+                        <div class="status-option-desc">Unexpected absence</div>
+                    </div>
+                    <i class="fas fa-check text-green-500 hidden"></i>
+                </div>
+                <div class="status-option" data-status="auto">
+                    <div class="status-option-icon auto">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="status-option-info">
+                        <div class="status-option-title">Auto Mode</div>
+                        <div class="status-option-desc">Let system manage status</div>
+                    </div>
+                    <i class="fas fa-check text-green-500 hidden"></i>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <button id="saveStatusBtn" class="btn btn-primary w-full">
+                    <i class="fas fa-save mr-2"></i>
+                    Save Status
+                </button>
             </div>
         </div>
     </div>
@@ -1595,6 +1674,10 @@
         let dailyLogs = [];
         let personnelToDelete = null;
         
+        // Realtime listeners
+        let personnelListener = null;
+        let workOrdersListener = null;
+        
         // Chart instances
         let statusChart = null;
         let workloadChart = null;
@@ -1751,6 +1834,204 @@
             }
         }
 
+        // ==================== REALTIME LISTENERS ====================
+        function setupRealtimeListeners() {
+            console.log('Setting up realtime listeners...');
+            
+            // Clean up existing listeners
+            if (personnelListener) {
+                personnelListener();
+            }
+            if (workOrdersListener) {
+                workOrdersListener();
+            }
+            
+            // Setup personnel realtime listener
+            personnelListener = personnelCollection
+                .where('isActive', '==', true)
+                .onSnapshot({
+                    next: (querySnapshot) => {
+                        console.log('Personnel updated in realtime');
+                        allPersonnel = [];
+                        
+                        querySnapshot.forEach((doc) => {
+                            const data = doc.data();
+                            allPersonnel.push({
+                                id: doc.id,
+                                ...data
+                            });
+                        });
+                        
+                        // Update auto statuses based on current work orders
+                        updatePersonnelStatusesFromWorkOrders();
+                        
+                        updatePersonnelStats();
+                        applyFilters();
+                        
+                        console.log('Personnel updated:', allPersonnel.length);
+                    },
+                    error: (error) => {
+                        console.error('Error in personnel listener:', error);
+                        showToast('Failed to update personnel data', 'error');
+                    }
+                });
+            
+            // Setup work orders realtime listener
+            workOrdersListener = workordersCollection
+                .onSnapshot({
+                    next: (querySnapshot) => {
+                        console.log('Work orders updated in realtime');
+                        allWorkOrders = [];
+                        
+                        querySnapshot.forEach((doc) => {
+                            const data = doc.data();
+                            allWorkOrders.push({
+                                id: doc.id,
+                                ...data
+                            });
+                        });
+                        
+                        // Update personnel statuses when work orders change
+                        updatePersonnelStatusesFromWorkOrders();
+                        
+                        // Update analytics if on analytics tab
+                        if (!document.getElementById('analyticsContent').classList.contains('hidden')) {
+                            renderAnalytics();
+                        }
+                        
+                        console.log('Work orders updated:', allWorkOrders.length);
+                    },
+                    error: (error) => {
+                        console.error('Error in work orders listener:', error);
+                        showToast('Failed to update work orders', 'error');
+                    }
+                });
+        }
+
+        // ==================== PERSONNEL STATUS MANAGEMENT ====================
+        async function updatePersonnelStatusesFromWorkOrders() {
+            try {
+                const updates = [];
+                const now = new Date();
+                
+                for (const person of allPersonnel) {
+                    // Skip if manual mode
+                    if (person.statusMode === 'manual') {
+                        continue;
+                    }
+                    
+                    const calculatedStatus = calculateAutoStatus(person, allWorkOrders);
+                    const newStatus = calculatedStatus.status;
+                    
+                    // Only update if status changed
+                    if (person.status !== newStatus) {
+                        updates.push({
+                            id: person.id,
+                            oldStatus: person.status,
+                            newStatus: newStatus,
+                            reason: calculatedStatus.reason
+                        });
+                        
+                        // Update in database
+                        await personnelCollection.doc(person.id).update({
+                            status: newStatus,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            lastStatusUpdate: now.toISOString(),
+                            statusReason: calculatedStatus.reason
+                        });
+                        
+                        // Update local data
+                        person.status = newStatus;
+                        person.lastStatusUpdate = now;
+                        person.statusReason = calculatedStatus.reason;
+                    }
+                }
+                
+                if (updates.length > 0) {
+                    console.log('Auto-updated personnel statuses:', updates.length);
+                }
+                
+            } catch (error) {
+                console.error('Error updating personnel statuses:', error);
+            }
+        }
+
+        function calculateAutoStatus(person, workOrders) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            // If manual mode, return current status
+            if (person.statusMode === 'manual') {
+                return {
+                    status: person.status,
+                    reason: 'Manual Mode'
+                };
+            }
+            
+            // Get personnel's work orders
+            const personnelWorkOrders = getPersonnelWorkOrders(person.name, workOrders);
+            
+            // Check if person has work orders for today
+            const todaysWorkOrders = personnelWorkOrders.filter(wo => {
+                if (!wo.startDate) return false;
+                
+                try {
+                    const startDate = wo.startDate.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
+                    const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+                    
+                    // Check if work order is active today based on start date and estimated time
+                    if (startDateOnly <= today) {
+                        if (wo.estimatedTime) {
+                            const endDate = new Date(startDate);
+                            endDate.setDate(startDate.getDate() + wo.estimatedTime);
+                            const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+                            return today <= endDateOnly;
+                        }
+                        return true;
+                    }
+                    return false;
+                } catch (e) {
+                    return false;
+                }
+            }).filter(wo => wo.status === 'Running');
+            
+            // If person has work orders for today, status is "working"
+            if (todaysWorkOrders.length > 0) {
+                return {
+                    status: 'working',
+                    reason: `Assigned to ${todaysWorkOrders.length} work order(s) today`
+                };
+            }
+            
+            // Check for upcoming work orders (next 3 days)
+            const upcomingWorkOrders = personnelWorkOrders.filter(wo => {
+                if (!wo.startDate || wo.status !== 'Running') return false;
+                
+                try {
+                    const startDate = wo.startDate.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
+                    const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+                    const daysUntil = Math.ceil((startDateOnly - today) / (1000 * 60 * 60 * 24));
+                    
+                    return daysUntil > 0 && daysUntil <= 3;
+                } catch (e) {
+                    return false;
+                }
+            });
+            
+            if (upcomingWorkOrders.length > 0) {
+                return {
+                    status: 'available',
+                    reason: `Has ${upcomingWorkOrders.length} upcoming work order(s)`
+                };
+            }
+            
+            // Default to available
+            return {
+                status: 'available',
+                reason: 'No assigned work orders'
+            };
+        }
+
         // ==================== UTILITY FUNCTIONS ====================
         function formatDate(date) {
             if (!date) return '-';
@@ -1885,144 +2166,6 @@
         }
 
         // ==================== STATUS MANAGEMENT FUNCTIONS ====================
-        function calculateAutoStatus(person, workOrders) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            // If manual mode, return current status
-            if (person.statusMode === 'manual') {
-                return {
-                    status: person.status,
-                    reason: 'Manual Mode'
-                };
-            }
-            
-            // Get personnel's work orders
-            const personnelWorkOrders = getPersonnelWorkOrders(person.name, workOrders);
-            
-            // Check if person has work orders for today
-            const todaysWorkOrders = personnelWorkOrders.filter(wo => {
-                if (!wo.startDate) return false;
-                
-                try {
-                    const startDate = wo.startDate.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
-                    const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-                    
-                    // Check if work order is active today based on start date and estimated time
-                    if (startDateOnly <= today) {
-                        if (wo.estimatedTime) {
-                            const endDate = new Date(startDate);
-                            endDate.setDate(startDate.getDate() + wo.estimatedTime);
-                            const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-                            return today <= endDateOnly;
-                        }
-                        return true;
-                    }
-                    return false;
-                } catch (e) {
-                    return false;
-                }
-            }).filter(wo => wo.status === 'Running');
-            
-            // If person has work orders for today, status is "working"
-            if (todaysWorkOrders.length > 0) {
-                return {
-                    status: 'working',
-                    reason: `Assigned to ${todaysWorkOrders.length} work order(s) today`
-                };
-            }
-            
-            // Check for upcoming work orders (next 3 days)
-            const upcomingWorkOrders = personnelWorkOrders.filter(wo => {
-                if (!wo.startDate || wo.status !== 'Running') return false;
-                
-                try {
-                    const startDate = wo.startDate.toDate ? wo.startDate.toDate() : new Date(wo.startDate);
-                    const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-                    const daysUntil = Math.ceil((startDateOnly - today) / (1000 * 60 * 60 * 24));
-                    
-                    return daysUntil > 0 && daysUntil <= 3;
-                } catch (e) {
-                    return false;
-                }
-            });
-            
-            if (upcomingWorkOrders.length > 0) {
-                return {
-                    status: 'available',
-                    reason: `Has ${upcomingWorkOrders.length} upcoming work order(s)`
-                };
-            }
-            
-            // Default to available
-            return {
-                status: 'available',
-                reason: 'No assigned work orders'
-            };
-        }
-
-        async function updateAllAutoStatus() {
-            try {
-                showLoading();
-                showToast('Updating personnel statuses...', 'info');
-                
-                await loadWorkOrders();
-                
-                const updates = [];
-                const now = new Date();
-                
-                for (const person of allPersonnel) {
-                    // Skip if manual mode
-                    if (person.statusMode === 'manual') {
-                        continue;
-                    }
-                    
-                    const calculatedStatus = calculateAutoStatus(person, allWorkOrders);
-                    const newStatus = calculatedStatus.status;
-                    
-                    // Only update if status changed
-                    if (person.status !== newStatus) {
-                        updates.push({
-                            id: person.id,
-                            oldStatus: person.status,
-                            newStatus: newStatus,
-                            reason: calculatedStatus.reason
-                        });
-                        
-                        // Update in database
-                        await personnelCollection.doc(person.id).update({
-                            status: newStatus,
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            lastStatusUpdate: now.toISOString(),
-                            statusReason: calculatedStatus.reason
-                        });
-                        
-                        // Update local data
-                        person.status = newStatus;
-                        person.lastStatusUpdate = now;
-                        person.statusReason = calculatedStatus.reason;
-                    }
-                }
-                
-                // Refresh display
-                updatePersonnelStats();
-                applyFilters();
-                
-                if (updates.length > 0) {
-                    showToast(`Updated ${updates.length} personnel statuses`, 'success');
-                    console.log('Status updates:', updates);
-                } else {
-                    showToast('All personnel statuses are up to date', 'info');
-                }
-                
-            } catch (error) {
-                console.error('Error updating auto status:', error);
-                showToast('Failed to update statuses', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
         function getStatusText(status) {
             switch(status) {
                 case 'working': return 'Working';
@@ -2103,140 +2246,6 @@
         }
 
         // ==================== PERSONNEL FUNCTIONS ====================
-        async function initializeDefaultPersonnel() {
-            try {
-                console.log('Initializing default personnel data...');
-                
-                const querySnapshot = await personnelCollection.limit(1).get();
-                
-                if (querySnapshot.empty) {
-                    console.log('Creating default personnel data...');
-                    showToast('Creating default personnel data...', 'info');
-                    
-                    const batch = db.batch();
-                    
-                    defaultPersonnel.forEach((person, index) => {
-                        const docRef = personnelCollection.doc();
-                        const personnelData = {
-                            ...person,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            createdBy: currentUser?.email || 'system',
-                            isActive: true
-                        };
-                        batch.set(docRef, personnelData);
-                    });
-                    
-                    await batch.commit();
-                    console.log('Default personnel data created successfully');
-                    showToast('Default personnel data created', 'success');
-                }
-                
-            } catch (error) {
-                console.error('Error initializing default personnel:', error);
-                showToast('Error creating default personnel data', 'error');
-            }
-        }
-
-        async function loadPersonnel() {
-            console.log('Loading personnel data...');
-            showLoading();
-            
-            try {
-                const querySnapshot = await personnelCollection
-                    .where('isActive', '==', true)
-                    .orderBy('name')
-                    .get();
-                
-                allPersonnel = [];
-                
-                if (querySnapshot.empty) {
-                    console.log('No personnel data found, initializing default...');
-                    await initializeDefaultPersonnel();
-                    
-                    const newQuery = await personnelCollection
-                        .where('isActive', '==', true)
-                        .orderBy('name')
-                        .get();
-                    
-                    newQuery.forEach((doc) => {
-                        const data = doc.data();
-                        allPersonnel.push({
-                            id: doc.id,
-                            ...data
-                        });
-                    });
-                } else {
-                    querySnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        allPersonnel.push({
-                            id: doc.id,
-                            ...data
-                        });
-                    });
-                }
-                
-                await loadWorkOrders();
-                
-                // Update auto statuses
-                for (const person of allPersonnel) {
-                    if (person.statusMode === 'auto') {
-                        const calculatedStatus = calculateAutoStatus(person, allWorkOrders);
-                        person.autoCalculatedStatus = calculatedStatus.status;
-                        person.statusReason = calculatedStatus.reason;
-                    }
-                }
-                
-                updatePersonnelStats();
-                applyFilters();
-                
-                console.log('Personnel loaded:', allPersonnel.length);
-                showToast('Personnel data loaded successfully', 'success');
-                
-            } catch (error) {
-                console.error('Error loading personnel:', error);
-                showToast('Failed to load personnel data', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function loadWorkOrders() {
-            try {
-                const querySnapshot = await workordersCollection.get();
-                allWorkOrders = [];
-                
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    allWorkOrders.push({
-                        id: doc.id,
-                        ...data
-                    });
-                });
-                
-                console.log('Work orders loaded for sync:', allWorkOrders.length);
-                return allWorkOrders;
-                
-            } catch (error) {
-                console.error('Error loading work orders:', error);
-                return [];
-            }
-        }
-
-        function updatePersonnelStats() {
-            const total = allPersonnel.length;
-            const working = allPersonnel.filter(p => p.status === 'working').length;
-            const leave = allPersonnel.filter(p => p.status === 'leave').length;
-            const absent = allPersonnel.filter(p => p.status === 'absent').length;
-            const available = allPersonnel.filter(p => p.status === 'available').length;
-            
-            document.getElementById('totalPersonnel').textContent = total;
-            document.getElementById('workingCount').textContent = working;
-            document.getElementById('leaveCount').textContent = leave;
-            document.getElementById('absentCount').textContent = absent;
-            document.getElementById('availableCount').textContent = available;
-        }
-
         function getPersonnelWorkOrders(personnelName, workOrders = allWorkOrders) {
             if (!personnelName || !workOrders) return [];
             
@@ -2255,6 +2264,20 @@
                 }
                 return false;
             });
+        }
+
+        function updatePersonnelStats() {
+            const total = allPersonnel.length;
+            const working = allPersonnel.filter(p => p.status === 'working').length;
+            const leave = allPersonnel.filter(p => p.status === 'leave').length;
+            const absent = allPersonnel.filter(p => p.status === 'absent').length;
+            const available = allPersonnel.filter(p => p.status === 'available').length;
+            
+            document.getElementById('totalPersonnel').textContent = total;
+            document.getElementById('workingCount').textContent = working;
+            document.getElementById('leaveCount').textContent = leave;
+            document.getElementById('absentCount').textContent = absent;
+            document.getElementById('availableCount').textContent = available;
         }
 
         function applyFilters() {
@@ -2307,6 +2330,7 @@
             const item = document.createElement('div');
             item.className = 'personnel-list-item';
             item.dataset.id = person.id;
+            item.onclick = () => viewPersonnelActivity(person.id);
             
             const initials = getInitials(person.name);
             const avatarColor = getAvatarColor(person.name);
@@ -2349,17 +2373,6 @@
                 </div>
                 <div class="text-center font-bold ${activeWorkOrders > 0 ? 'text-blue-600' : 'text-gray-500'}">
                     ${activeWorkOrders}
-                </div>
-                <div class="action-buttons">
-                    <button class="action-btn action-btn-view" onclick="viewPersonnelActivity('${person.id}')" title="View Details">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn action-btn-edit" onclick="editPersonnel('${person.id}')" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn action-btn-delete" onclick="confirmDeletePersonnel('${person.id}', '${person.name}')" title="Delete">
-                        <i class="fas fa-trash"></i>
-                    </button>
                 </div>
             `;
             
@@ -2893,16 +2906,6 @@
             statusBadge.className = `status-badge ${getStatusClass(person.status)}`;
             statusBadge.textContent = getStatusText(person.status);
             
-            const autoStatusIndicator = document.getElementById('autoStatusIndicator');
-            if (person.statusMode === 'auto') {
-                autoStatusIndicator.innerHTML = `<span class="auto-status active"><i class="fas fa-robot mr-1"></i>Auto</span>`;
-            } else {
-                autoStatusIndicator.innerHTML = `<span class="auto-status"><i class="fas fa-user-edit mr-1"></i>Manual</span>`;
-            }
-            
-            // Set manual status override dropdown
-            document.getElementById('manualStatusOverride').value = person.statusMode === 'auto' ? 'auto' : person.status;
-            
             const personnelWorkOrders = getPersonnelWorkOrders(person.name);
             
             await loadDailyLogs(person.id);
@@ -2941,10 +2944,6 @@
             document.getElementById('statsCompletedMonth').textContent = completedThisMonth;
             document.getElementById('statsAvgCompletion').textContent = avgCompletionTime;
             document.getElementById('statsWorkload').textContent = workload;
-            
-            // Update current status display
-            document.getElementById('currentStatusBadge').className = `status-badge ${getStatusClass(person.status)}`;
-            document.getElementById('currentStatusBadge').textContent = getStatusText(person.status);
         }
 
         function getCompletedThisMonth(workOrders) {
@@ -3139,6 +3138,124 @@
             return card;
         }
 
+        // ==================== STATUS CONTROL FUNCTIONS ====================
+        function openStatusControlPopup() {
+            if (!selectedPersonnel) return;
+            
+            const popup = document.getElementById('statusControlPopup');
+            const person = selectedPersonnel;
+            
+            // Reset semua checkmarks
+            document.querySelectorAll('.status-option .fa-check').forEach(check => {
+                check.classList.add('hidden');
+            });
+            
+            // Hilangkan semua active class
+            document.querySelectorAll('.status-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            // Set active berdasarkan status saat ini
+            const currentStatus = person.statusMode === 'auto' ? 'auto' : person.status;
+            const currentOption = document.querySelector(`.status-option[data-status="${currentStatus}"]`);
+            if (currentOption) {
+                currentOption.classList.add('active');
+                const check = currentOption.querySelector('.fa-check');
+                if (check) check.classList.remove('hidden');
+            }
+            
+            // Position the popup relative to the button
+            const statusControlBtn = document.getElementById('statusControlBtn');
+            const rect = statusControlBtn.getBoundingClientRect();
+            popup.style.position = 'absolute';
+            popup.style.top = `${rect.bottom + window.scrollY}px`;
+            popup.style.right = `${window.innerWidth - rect.right}px`;
+            
+            // Tampilkan popup
+            popup.classList.add('show');
+            
+            // Setup click handlers untuk status options
+            document.querySelectorAll('.status-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // Hilangkan semua active class dan checkmarks
+                    document.querySelectorAll('.status-option').forEach(opt => {
+                        opt.classList.remove('active');
+                        const check = opt.querySelector('.fa-check');
+                        if (check) check.classList.add('hidden');
+                    });
+                    
+                    // Set active untuk yang diklik
+                    this.classList.add('active');
+                    const check = this.querySelector('.fa-check');
+                    if (check) check.classList.remove('hidden');
+                });
+            });
+        }
+
+        function closeStatusControlPopup() {
+            document.getElementById('statusControlPopup').classList.remove('show');
+        }
+
+        async function savePersonnelStatus() {
+            if (!selectedPersonnel) return;
+            
+            const selectedOption = document.querySelector('.status-option.active');
+            if (!selectedOption) {
+                showToast('Please select a status', 'warning');
+                return;
+            }
+            
+            const newStatus = selectedOption.dataset.status;
+            
+            try {
+                showLoading();
+                
+                const updateData = {
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser?.email || 'system'
+                };
+                
+                if (newStatus === 'auto') {
+                    // Switch to auto mode
+                    const calculatedStatus = calculateAutoStatus(selectedPersonnel, allWorkOrders);
+                    updateData.statusMode = 'auto';
+                    updateData.status = calculatedStatus.status;
+                    updateData.statusReason = calculatedStatus.reason;
+                } else {
+                    // Switch to manual mode with selected status
+                    updateData.statusMode = 'manual';
+                    updateData.status = newStatus;
+                    updateData.statusReason = 'Manually set';
+                }
+                
+                await personnelCollection.doc(selectedPersonnel.id).update(updateData);
+                
+                // Update local data
+                selectedPersonnel.statusMode = updateData.statusMode;
+                selectedPersonnel.status = updateData.status;
+                selectedPersonnel.statusReason = updateData.statusReason;
+                selectedPersonnel.updatedAt = new Date();
+                
+                // Update UI
+                const statusBadge = document.getElementById('modalPersonnelStatus');
+                statusBadge.className = `status-badge ${getStatusClass(updateData.status)}`;
+                statusBadge.textContent = getStatusText(updateData.status);
+                
+                // Update status mode display
+                document.getElementById('modalStatusMode').textContent = updateData.statusMode === 'auto' ? 'Auto (System Managed)' : 'Manual';
+                
+                showToast('Status updated successfully', 'success');
+                
+                closeStatusControlPopup();
+                
+            } catch (error) {
+                console.error('Error updating personnel status:', error);
+                showToast('Failed to update status', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
         // ==================== PERSONNEL FORM FUNCTIONS ====================
         function openPersonnelForm(personnelId = null) {
             const modal = document.getElementById('personnelFormModal');
@@ -3240,7 +3357,6 @@
                     showToast('Personnel added successfully', 'success');
                 }
                 
-                await loadPersonnel();
                 closePersonnelForm();
                 
             } catch (error) {
@@ -3278,7 +3394,6 @@
                 showToast('Personnel deleted successfully', 'success');
                 
                 closeConfirmDeleteModal();
-                await loadPersonnel();
                 
                 // If we're viewing this personnel, close the modal
                 if (selectedPersonnel && selectedPersonnel.id === personnelToDelete) {
@@ -3288,147 +3403,6 @@
             } catch (error) {
                 console.error('Error deleting personnel:', error);
                 showToast('Failed to delete personnel', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // ==================== STATUS UPDATE FUNCTIONS ====================
-        async function updatePersonnelStatus() {
-            if (!selectedPersonnel) return;
-            
-            const statusMode = document.getElementById('manualStatusOverride').value;
-            
-            try {
-                showLoading();
-                
-                const updateData = {
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedBy: currentUser?.email || 'system'
-                };
-                
-                if (statusMode === 'auto') {
-                    // Switch to auto mode
-                    const calculatedStatus = calculateAutoStatus(selectedPersonnel, allWorkOrders);
-                    updateData.statusMode = 'auto';
-                    updateData.status = calculatedStatus.status;
-                    updateData.statusReason = calculatedStatus.reason;
-                } else {
-                    // Switch to manual mode with selected status
-                    updateData.statusMode = 'manual';
-                    updateData.status = statusMode;
-                    updateData.statusReason = 'Manually set';
-                }
-                
-                await personnelCollection.doc(selectedPersonnel.id).update(updateData);
-                
-                // Update local data
-                selectedPersonnel.statusMode = updateData.statusMode;
-                selectedPersonnel.status = updateData.status;
-                selectedPersonnel.statusReason = updateData.statusReason;
-                selectedPersonnel.updatedAt = new Date();
-                
-                // Update UI
-                updatePersonnelStatsModal(selectedPersonnel, getPersonnelWorkOrders(selectedPersonnel.name));
-                
-                // Update status badge
-                const statusBadge = document.getElementById('modalPersonnelStatus');
-                statusBadge.className = `status-badge ${getStatusClass(updateData.status)}`;
-                statusBadge.textContent = getStatusText(updateData.status);
-                
-                // Update auto status indicator
-                const autoStatusIndicator = document.getElementById('autoStatusIndicator');
-                if (updateData.statusMode === 'auto') {
-                    autoStatusIndicator.innerHTML = `<span class="auto-status active"><i class="fas fa-robot mr-1"></i>Auto</span>`;
-                } else {
-                    autoStatusIndicator.innerHTML = `<span class="auto-status"><i class="fas fa-user-edit mr-1"></i>Manual</span>`;
-                }
-                
-                // Update status mode display
-                document.getElementById('modalStatusMode').textContent = updateData.statusMode === 'auto' ? 'Auto (System Managed)' : 'Manual';
-                
-                // Refresh main list
-                await loadPersonnel();
-                
-                showToast('Status updated successfully', 'success');
-                
-            } catch (error) {
-                console.error('Error updating personnel status:', error);
-                showToast('Failed to update status', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // ==================== SYNC FUNCTIONS ====================
-        async function syncWithWorkOrders() {
-            try {
-                showLoading();
-                
-                await loadWorkOrders();
-                
-                const personnelFromWorkOrders = new Set();
-                
-                allWorkOrders.forEach(wo => {
-                    if (wo.personnel) {
-                        if (Array.isArray(wo.personnel)) {
-                            wo.personnel.forEach(person => personnelFromWorkOrders.add(person));
-                        } else if (typeof wo.personnel === 'string') {
-                            try {
-                                const personnelArray = JSON.parse(wo.personnel);
-                                if (Array.isArray(personnelArray)) {
-                                    personnelArray.forEach(person => personnelFromWorkOrders.add(person));
-                                } else {
-                                    personnelFromWorkOrders.add(wo.personnel);
-                                }
-                            } catch (e) {
-                                personnelFromWorkOrders.add(wo.personnel);
-                            }
-                        }
-                    }
-                });
-                
-                const missingPersonnel = [];
-                personnelFromWorkOrders.forEach(personName => {
-                    const exists = allPersonnel.some(p => p.name === personName);
-                    if (!exists) {
-                        missingPersonnel.push({
-                            name: personName,
-                            employeeId: `AUTO-${Date.now().toString().slice(-6)}`,
-                            position: 'Technician',
-                            division: 'Maintenance',
-                            company: 'Genetek Intratama',
-                            status: 'available',
-                            statusMode: 'auto',
-                            contact: 'N/A',
-                            notes: 'Automatically added from work orders sync',
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            createdBy: currentUser?.email || 'system',
-                            isActive: true
-                        });
-                    }
-                });
-                
-                if (missingPersonnel.length > 0) {
-                    const batch = db.batch();
-                    
-                    missingPersonnel.forEach(person => {
-                        const docRef = personnelCollection.doc();
-                        batch.set(docRef, person);
-                    });
-                    
-                    await batch.commit();
-                    showToast(`Added ${missingPersonnel.length} missing personnel from work orders`, 'success');
-                } else {
-                    showToast('All personnel are already synchronized', 'info');
-                }
-                
-                await loadPersonnel();
-                
-            } catch (error) {
-                console.error('Error syncing with work orders:', error);
-                showToast('Failed to sync with work orders', 'error');
             } finally {
                 hideLoading();
             }
@@ -3487,9 +3461,11 @@
                     currentUser = user;
                     console.log('User logged in:', user.email);
                     
-                    await loadPersonnel();
-                    
+                    // Hide loading state
                     document.getElementById('loadingState').classList.add('hidden');
+                    
+                    // Setup realtime listeners
+                    setupRealtimeListeners();
                     
                 } else {
                     console.log('User not logged in, redirecting to main page...');
@@ -3530,9 +3506,7 @@
                 openPersonnelForm();
             });
             
-            document.getElementById('syncDataBtn').addEventListener('click', syncWithWorkOrders);
             document.getElementById('exportBtn').addEventListener('click', exportPersonnelData);
-            document.getElementById('updateAutoStatusBtn').addEventListener('click', updateAllAutoStatus);
             document.getElementById('authButton').addEventListener('click', logout);
             
             // Tabs
@@ -3598,6 +3572,24 @@
             
             // Activity modal
             document.getElementById('closeActivityModal').addEventListener('click', closePersonnelActivityModal);
+            
+            // Status control button
+            document.getElementById('statusControlBtn').addEventListener('click', openStatusControlPopup);
+            
+            // Save status button
+            document.getElementById('saveStatusBtn').addEventListener('click', savePersonnelStatus);
+            
+            // Close status popup when clicking outside
+            document.addEventListener('click', function(e) {
+                const popup = document.getElementById('statusControlPopup');
+                const statusControlBtn = document.getElementById('statusControlBtn');
+                
+                if (popup.classList.contains('show') && 
+                    !popup.contains(e.target) && 
+                    !statusControlBtn.contains(e.target)) {
+                    closeStatusControlPopup();
+                }
+            });
             
             // Edit and delete buttons in activity modal
             document.getElementById('editPersonnelBtn').addEventListener('click', function() {
@@ -3694,9 +3686,6 @@
             document.getElementById('closeConfirmDeleteModal').addEventListener('click', closeConfirmDeleteModal);
             document.getElementById('cancelDeleteBtn').addEventListener('click', closeConfirmDeleteModal);
             document.getElementById('confirmDeleteBtn').addEventListener('click', deletePersonnel);
-            
-            // Status update button
-            document.getElementById('updateStatusBtn').addEventListener('click', updatePersonnelStatus);
         }
 
         // ==================== GLOBAL FUNCTIONS ====================
