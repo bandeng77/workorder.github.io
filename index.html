@@ -2794,18 +2794,28 @@
         let mediaDevices = [];
         let currentCameraIndex = 0;
         
-        // Daftar personil yang tersedia
+        // Daftar personil yang tersedia (UPDATED)
         const availablePersonnel = [
-            "Husni",
-            "Heksi",
-            "Indra Kurniawan",
-            "Putra",
-            "Wahyu Sujoko",
-            "Fiki",
-            "Edwin",
-            "Yudiono",
-            "Harianto",
-            "Haryo"
+            "Junaidi",
+            "Wahyu Maulana",
+            "M. Rijal Mushsthafa",
+            "Muhamad",
+            "Indra Aji Syafalaq",
+            "M. Rio Ferdiansyah",
+            "Bayu Pambudi",
+            "Bagas Parsetyo",
+            "M. Billal Dhelian Putra",
+            "Elvin Herdiansyah",
+            "Alfiansyah Dira Saputra",
+            "Regandi",
+            "Muhammad Farhan Zidan",
+            "Ahmad Zaini",
+            "Agung Santoso",
+            "Faizal Dafi",
+            "Sayyid Hidayattulloh",
+            "Wisnu Adi Baskoro",
+            "Yogi Widodo",
+            "Galih" // Existing user from previous data
         ];
         
         // Selected personnel for current form
@@ -4564,7 +4574,7 @@
                     else if (userEmail === 'm_husni@genetek.co.id') {
                         correctRole = 'manager';
                     }
-                    // Regular user emails
+                    // Regular user emails (UPDATED)
                     else if (
                         userEmail === 'junaidi@genetek.co.id' ||
                         userEmail === 'wahyumaulana@genetek.co.id' ||
@@ -4860,7 +4870,7 @@
                         defaultRole = 'manager';
                         console.log('Setting role to manager for', userEmail);
                     }
-                    // Regular user emails
+                    // Regular user emails (UPDATED)
                     else if (
                         userEmail === 'junaidi@genetek.co.id' ||
                         userEmail === 'wahyumaulana@genetek.co.id' ||
@@ -5307,15 +5317,15 @@
                 <div class="grid grid-cols-3 gap-3 text-sm">
                     <div class="text-center">
                         <div class="font-semibold text-blue-600">${statusCounts['Running']}</div>
-                        <div class="text-gray-500 text-xs">Running</div>
+                        <div class="text-xs text-gray-500">Running</div>
                     </div>
                     <div class="text-center">
                         <div class="font-semibold text-green-600">${statusCounts['Done']}</div>
-                        <div class="text-gray-500 text-xs">Done</div>
+                        <div class="text-xs text-gray-500">Done</div>
                     </div>
                     <div class="text-center">
                         <div class="font-semibold text-gray-600">${statusCounts['Close']}</div>
-                        <div class="text-gray-500 text-xs">Closed</div>
+                        <div class="text-xs text-gray-500">Closed</div>
                     </div>
                 </div>
             `;
