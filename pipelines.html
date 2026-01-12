@@ -12,7 +12,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
@@ -333,298 +332,6 @@
             border: 1px solid #cbd5e1;
         }
 
-        /* ==================== CAMERA STYLES ==================== */
-        .camera-container {
-            position: relative;
-            width: 100%;
-            height: 400px;
-            border-radius: var(--radius-xl);
-            overflow: hidden;
-            background: #000;
-        }
-
-        .camera-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .camera-controls {
-            position: absolute;
-            bottom: 1rem;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            z-index: 10;
-        }
-
-        .camera-btn {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: white;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition-base);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .camera-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .camera-btn-primary {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-            color: white;
-            width: 64px;
-            height: 64px;
-        }
-
-        .camera-btn-danger {
-            background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
-            color: white;
-        }
-
-        .camera-btn-success {
-            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
-            color: white;
-        }
-
-        .camera-preview {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .camera-switch-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            z-index: 10;
-        }
-
-        /* ==================== PHOTO PREVIEW STYLES ==================== */
-        .photo-preview-container {
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, var(--neutral-50), var(--neutral-100));
-            border-radius: var(--radius-xl);
-            border: 2px dashed var(--neutral-300);
-        }
-
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .photo-item {
-            position: relative;
-            background: white;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-            transition: var(--transition-base);
-        }
-
-        .photo-item:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .photo-img {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-            cursor: pointer;
-        }
-
-        .photo-info {
-            padding: 0.75rem;
-            background: white;
-        }
-
-        .photo-actions {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .photo-action-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition-base);
-            border: 1px solid var(--neutral-200);
-        }
-
-        .photo-action-btn:hover {
-            background: white;
-            transform: scale(1.1);
-        }
-
-        .photo-preview-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            padding: 1rem;
-        }
-
-        .photo-preview-content {
-            width: 90%;
-            max-width: 1200px;
-            height: 90vh;
-            background: black;
-            border-radius: var(--radius-xl);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .photo-preview-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background: black;
-        }
-
-        .preview-close-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            width: 3rem;
-            height: 3rem;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: var(--transition-base);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .preview-close-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
-            transform: scale(1.1);
-        }
-
-        /* ==================== FORM SECTION STYLES ==================== */
-        .form-section {
-            background: white;
-            border-radius: var(--radius-xl);
-            padding: 1.75rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--neutral-200);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .form-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--primary-500), var(--secondary-500));
-        }
-
-        .form-section-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--neutral-800);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .form-section-icon {
-            width: 2.25rem;
-            height: 2.25rem;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.125rem;
-        }
-
-        .form-section-icon-primary {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-        }
-
-        .form-section-icon-secondary {
-            background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
-        }
-
-        .form-section-icon-success {
-            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
-        }
-
-        .form-section-icon-warning {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .form-section-icon-info {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--neutral-700);
-            font-size: 0.9rem;
-            transition: var(--transition-fast);
-        }
-
-        .required-field::after {
-            content: " *";
-            color: var(--danger-500);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 2px solid var(--neutral-200);
-            border-radius: var(--radius-lg);
-            font-size: 0.95rem;
-            background: white;
-            transition: var(--transition-base);
-            color: var(--neutral-800);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-500);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
         /* ==================== GRADIENT BACKGROUNDS ==================== */
         .gradient-bg-primary {
             background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
@@ -877,6 +584,64 @@
             font-size: 1.25rem;
         }
 
+        /* ==================== FORM STYLES ==================== */
+        .form-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-500), var(--secondary-500));
+        }
+
+        .form-section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--neutral-800);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            font-size: 0.9rem;
+            transition: var(--transition-fast);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            font-size: 0.95rem;
+            background: white;
+            transition: var(--transition-base);
+            color: var(--neutral-800);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
         /* ==================== CURRENCY INPUT STYLES ==================== */
         .currency-input-group {
             position: relative;
@@ -900,7 +665,7 @@
             padding-bottom: 320px !important;
         }
 
-        /* ==================== MODIFIED MODAL STYLES ==================== */
+        /* ==================== MODIFIED MODAL STYLES WITH STICKY HEADER & FOOTER ==================== */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -1289,17 +1054,9 @@
                             <i class="fas fa-arrow-left"></i>
                             <span>Back to Dashboard</span>
                         </button>
-                        <button id="exportExcelBtn" class="btn btn-success hidden">
-                            <i class="fas fa-file-excel"></i>
-                            <span>Export Excel</span>
-                        </button>
                         <button id="pipelinesAnalyticsBtn" class="btn btn-info hidden">
                             <i class="fas fa-chart-bar"></i>
-                            <span>Analytics</span>
-                        </button>
-                        <button id="documentationBtn" class="btn btn-warning">
-                            <i class="fas fa-camera"></i>
-                            <span>Ambil Gambar</span>
+                            <span>Pipeline Analytics</span>
                         </button>
                         <button id="authButton" class="btn btn-danger">
                             <i class="fas fa-sign-out-alt"></i>
@@ -1309,7 +1066,7 @@
                 </div>
                 
                 <!-- Search and Filter Box -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                     <div class="search-box">
                         <i class="search-icon fas fa-search"></i>
                         <input type="text" 
@@ -1329,16 +1086,6 @@
                             <option value="">All Status</option>
                             <option value="Open">Open</option>
                             <option value="Close">Close</option>
-                        </select>
-                    </div>
-                    <div>
-                        <select id="sortPipelineItems" class="form-input w-full">
-                            <option value="date-desc">Sort by Date (Newest)</option>
-                            <option value="date-asc">Sort by Date (Oldest)</option>
-                            <option value="no-desc">Sort by Number (High)</option>
-                            <option value="no-asc">Sort by Number (Low)</option>
-                            <option value="value-desc">Sort by Value (High)</option>
-                            <option value="value-asc">Sort by Value (Low)</option>
                         </select>
                     </div>
                 </div>
@@ -1694,208 +1441,6 @@
         </div>
     </div>
 
-    <!-- Documentation Modal (Ambil Gambar) -->
-    <div id="documentationModal" class="modal-overlay hidden">
-        <div class="modal-content w-full max-w-7xl">
-            <div class="modal-header sticky-top">
-                <div>
-                    <h2 class="modal-title">Ambil Gambar Dokumen Pipeline</h2>
-                    <p class="text-gray-300 mt-1">Gunakan kamera untuk mengambil gambar dokumentasi pipeline</p>
-                </div>
-                <button id="closeDocumentationModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="modal-body custom-scrollbar">
-                <!-- Step 1: Search and Select Pipeline Item -->
-                <div class="form-section mb-8">
-                    <div class="form-section-title">
-                        <div class="form-section-icon form-section-icon-primary">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <span>Pilih Pipeline Item</span>
-                    </div>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <label class="form-label required-field" for="docPipelineSearch">
-                                Cari Pipeline Item
-                            </label>
-                            <div class="autocomplete-container">
-                                <input type="text" 
-                                       id="docPipelineSearch" 
-                                       class="form-input"
-                                       placeholder="Ketik nomor quotation atau nama project..."
-                                       required>
-                                <div id="pipelineAutocomplete" class="autocomplete-dropdown"></div>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-2">
-                                Mulai mengetik untuk mencari pipeline item yang ada
-                            </p>
-                        </div>
-                        
-                        <!-- Selected Pipeline Item Info -->
-                        <div id="selectedPipelineInfo" class="hidden">
-                            <div class="card card-primary p-4">
-                                <div class="flex justify-between items-start mb-4">
-                                    <div>
-                                        <h4 id="docQuotationNumber" class="font-bold text-gray-900 text-lg"></h4>
-                                        <p id="docCustomer" class="text-gray-600"></p>
-                                    </div>
-                                    <div id="docStatusBadge" class="pipeline-badge"></div>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p class="text-sm text-gray-500">Project</p>
-                                        <p id="docProject" class="font-medium text-gray-900"></p>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm text-gray-500">Company</p>
-                                        <p id="docCompany" class="font-medium text-gray-900"></p>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm text-gray-500">PIC</p>
-                                        <p id="docPIC" class="font-medium text-gray-900"></p>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm text-gray-500">SOW</p>
-                                        <p id="docSOW" class="font-medium text-gray-900"></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Step 2: Camera Section -->
-                <div id="cameraSection" class="hidden">
-                    <div class="form-section mb-8">
-                        <div class="form-section-title">
-                            <div class="form-section-icon form-section-icon-success">
-                                <i class="fas fa-camera"></i>
-                            </div>
-                            <span>Ambil Gambar dengan Kamera</span>
-                        </div>
-                        
-                        <div class="space-y-6">
-                            <div>
-                                <label class="form-label" for="photoCategory">
-                                    Kategori Gambar
-                                </label>
-                                <select id="photoCategory" class="form-input">
-                                    <option value="Site Survey">Site Survey</option>
-                                    <option value="Meeting">Meeting</option>
-                                    <option value="Progress">Progress</option>
-                                    <option value="Delivery">Delivery</option>
-                                    <option value="Installation">Installation</option>
-                                    <option value="Testing">Testing</option>
-                                    <option value="Completion">Completion</option>
-                                    <option value="Other">Lainnya</option>
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="form-label" for="photoDescription">
-                                    Deskripsi Gambar
-                                </label>
-                                <input type="text" 
-                                       id="photoDescription" 
-                                       class="form-input"
-                                       placeholder="Deskripsikan apa yang ditunjukkan oleh gambar ini...">
-                            </div>
-                            
-                            <!-- Camera Container -->
-                            <div class="camera-container" id="cameraContainer">
-                                <video id="cameraVideo" class="camera-video" autoplay playsinline></video>
-                                <canvas id="cameraCanvas" class="hidden"></canvas>
-                                <img id="photoPreview" class="camera-preview hidden">
-                                
-                                <!-- Camera Controls -->
-                                <div class="camera-controls" id="cameraControls">
-                                    <button id="switchCameraBtn" class="camera-btn" title="Switch Camera">
-                                        <i class="fas fa-sync-alt"></i>
-                                    </button>
-                                    <button id="capturePhotoBtn" class="camera-btn camera-btn-primary" title="Ambil Gambar">
-                                        <i class="fas fa-camera"></i>
-                                    </button>
-                                    <button id="retakePhotoBtn" class="camera-btn camera-btn-danger hidden" title="Ambil Ulang">
-                                        <i class="fas fa-redo"></i>
-                                    </button>
-                                    <button id="savePhotoBtn" class="camera-btn camera-btn-success hidden" title="Simpan Gambar">
-                                        <i class="fas fa-save"></i>
-                                    </button>
-                                </div>
-                                
-                                <!-- Camera Switch Button -->
-                                <button id="cameraSwitchFrontBack" class="camera-btn camera-switch-btn" title="Ganti Kamera">
-                                    <i class="fas fa-camera-retro"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                    
-                <!-- Uploaded Photos -->
-                <div id="uploadedPhotosSection" class="hidden">
-                    <div class="form-section">
-                        <div class="form-section-title">
-                            <div class="form-section-icon form-section-icon-info">
-                                <i class="fas fa-images"></i>
-                            </div>
-                            <span>Gambar yang Telah Disimpan</span>
-                        </div>
-                        
-                        <div id="uploadedPhotos" class="photo-preview-container">
-                            <div class="flex justify-between items-center mb-4">
-                                <h4 class="font-semibold text-gray-900">Gambar untuk pipeline item ini</h4>
-                                <span id="photoCount" class="badge badge-primary">0 gambar</span>
-                            </div>
-                            
-                            <div id="photoGrid" class="photo-grid">
-                                <!-- Photos will be loaded here -->
-                            </div>
-                            
-                            <div id="noPhotosMessage" class="text-center py-8">
-                                <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <i class="fas fa-camera text-2xl text-blue-400"></i>
-                                </div>
-                                <p class="text-gray-600 font-medium mb-2">Belum ada gambar yang diambil</p>
-                                <p class="text-gray-500 text-sm">Gunakan kamera di atas untuk mengambil gambar</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Sticky Footer -->
-            <div class="modal-header sticky-bottom">
-                <div></div>
-                <div class="flex gap-3">
-                    <button id="cancelDocumentationBtn" class="btn btn-secondary">
-                        <i class="fas fa-times"></i>
-                        Cancel
-                    </button>
-                    <button id="openCameraBtn" class="btn btn-primary hidden">
-                        <i class="fas fa-camera"></i>
-                        Buka Kamera
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Photo Preview Modal -->
-    <div id="photoPreviewModal" class="photo-preview-modal hidden">
-        <div class="photo-preview-content">
-            <button id="closePhotoPreview" class="preview-close-btn">
-                <i class="fas fa-times"></i>
-            </button>
-            <img id="previewImage" class="photo-preview-img" src="" alt="Photo Preview">
-        </div>
-    </div>
-
     <!-- Add New PIC Modal -->
     <div id="addPICModal" class="modal-overlay hidden">
         <div class="modal-content w-full max-w-md">
@@ -2136,23 +1681,13 @@
 
 <script>
         // ==================== GLOBAL VARIABLES ====================
-        let db, auth, storage, pipelinesCollection, pipelineHistoryCollection, usersCollection, customersCollection, picsCollection;
+        let db, auth, pipelinesCollection, pipelineHistoryCollection, usersCollection, customersCollection, picsCollection;
         let currentUser = null;
         let currentUserRole = 'user';
         let pipelineItems = [];
         let filteredPipelineItems = [];
         let draggedItem = null;
         let charts = {};
-        
-        // Documentation variables
-        let selectedPipelineId = null;
-        let selectedPipelineData = null;
-        let uploadedPhotos = [];
-        
-        // Camera variables
-        let cameraStream = null;
-        let isFrontCamera = false;
-        let capturedPhotoData = null;
         
         // Data for autocomplete (static data)
         const PIC_LIST_STATIC = [
@@ -2435,7 +1970,6 @@
                 const app = firebase.initializeApp(firebaseConfig);
                 db = firebase.firestore(app);
                 auth = firebase.auth(app);
-                storage = firebase.storage(app);
                 
                 pipelinesCollection = db.collection('pipelines');
                 pipelineHistoryCollection = db.collection('pipelineHistory');
@@ -2589,575 +2123,6 @@
         function hideLoading() {
             const loadingOverlay = document.getElementById('loadingOverlay');
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
-        }
-
-        // ==================== CAMERA FUNCTIONS ====================
-        async function openDocumentationModal() {
-            console.log('Opening camera documentation modal for pipelines');
-            
-            const modal = document.getElementById('documentationModal');
-            modal.classList.remove('hidden');
-            
-            resetDocumentationForm();
-            setupDocumentationSearch();
-        }
-
-        function closeDocumentationModal() {
-            stopCamera();
-            document.getElementById('documentationModal').classList.add('hidden');
-            resetDocumentationForm();
-        }
-
-        function resetDocumentationForm() {
-            selectedPipelineId = null;
-            selectedPipelineData = null;
-            capturedPhotoData = null;
-            uploadedPhotos = [];
-            
-            document.getElementById('docPipelineSearch').value = '';
-            document.getElementById('selectedPipelineInfo').classList.add('hidden');
-            document.getElementById('cameraSection').classList.add('hidden');
-            document.getElementById('uploadedPhotosSection').classList.add('hidden');
-            document.getElementById('openCameraBtn').classList.add('hidden');
-            document.getElementById('photoCategory').value = 'Site Survey';
-            document.getElementById('photoDescription').value = '';
-            
-            // Reset camera UI
-            document.getElementById('photoPreview').classList.add('hidden');
-            document.getElementById('cameraVideo').classList.remove('hidden');
-            document.getElementById('capturePhotoBtn').classList.remove('hidden');
-            document.getElementById('retakePhotoBtn').classList.add('hidden');
-            document.getElementById('savePhotoBtn').classList.add('hidden');
-        }
-
-        async function setupCamera() {
-            try {
-                if (!selectedPipelineId) {
-                    showToast('Pilih pipeline item terlebih dahulu', 'warning');
-                    return;
-                }
-                
-                // Show camera section
-                document.getElementById('cameraSection').classList.remove('hidden');
-                
-                // Request camera permission and start camera
-                const constraints = {
-                    video: {
-                        facingMode: 'environment', // Default to back camera
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
-                    },
-                    audio: false
-                };
-                
-                // Try to get camera stream
-                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
-                const videoElement = document.getElementById('cameraVideo');
-                videoElement.srcObject = cameraStream;
-                
-                // Set up camera controls
-                setupCameraControls();
-                
-                showToast('Kamera siap digunakan', 'success');
-                
-            } catch (error) {
-                console.error('Error setting up camera:', error);
-                
-                if (error.name === 'NotAllowedError') {
-                    showToast('Izin kamera ditolak. Silakan izinkan akses kamera.', 'error');
-                } else if (error.name === 'NotFoundError') {
-                    showToast('Tidak ada kamera yang ditemukan', 'error');
-                } else if (error.name === 'NotReadableError') {
-                    showToast('Kamera sedang digunakan oleh aplikasi lain', 'error');
-                } else {
-                    showToast('Gagal mengakses kamera: ' + error.message, 'error');
-                }
-            }
-        }
-
-        function setupCameraControls() {
-            const switchCameraBtn = document.getElementById('cameraSwitchFrontBack');
-            const capturePhotoBtn = document.getElementById('capturePhotoBtn');
-            const retakePhotoBtn = document.getElementById('retakePhotoBtn');
-            const savePhotoBtn = document.getElementById('savePhotoBtn');
-            
-            // Switch camera button
-            switchCameraBtn.addEventListener('click', switchCamera);
-            
-            // Capture photo button
-            capturePhotoBtn.addEventListener('click', capturePhoto);
-            
-            // Retake photo button
-            retakePhotoBtn.addEventListener('click', retakePhoto);
-            
-            // Save photo button
-            savePhotoBtn.addEventListener('click', savePhoto);
-        }
-
-        async function switchCamera() {
-            try {
-                stopCamera();
-                
-                // Get available video devices
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const videoDevices = devices.filter(device => device.kind === 'videoinput');
-                
-                if (videoDevices.length < 2) {
-                    showToast('Hanya satu kamera yang tersedia', 'warning');
-                    await startCamera(isFrontCamera ? 'user' : 'environment');
-                    return;
-                }
-                
-                // Toggle between front and back camera
-                isFrontCamera = !isFrontCamera;
-                const facingMode = isFrontCamera ? 'user' : 'environment';
-                
-                await startCamera(facingMode);
-                
-                showToast(`Beralih ke kamera ${isFrontCamera ? 'depan' : 'belakang'}`, 'info');
-                
-            } catch (error) {
-                console.error('Error switching camera:', error);
-                showToast('Gagal mengganti kamera', 'error');
-            }
-        }
-
-        async function startCamera(facingMode = 'environment') {
-            try {
-                const constraints = {
-                    video: {
-                        facingMode: facingMode,
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
-                    },
-                    audio: false
-                };
-                
-                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
-                const videoElement = document.getElementById('cameraVideo');
-                videoElement.srcObject = cameraStream;
-                
-            } catch (error) {
-                console.error('Error starting camera:', error);
-                throw error;
-            }
-        }
-
-        function stopCamera() {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => {
-                    track.stop();
-                });
-                cameraStream = null;
-            }
-            
-            const videoElement = document.getElementById('cameraVideo');
-            if (videoElement) {
-                videoElement.srcObject = null;
-            }
-        }
-
-        function capturePhoto() {
-            const video = document.getElementById('cameraVideo');
-            const canvas = document.getElementById('cameraCanvas');
-            const photoPreview = document.getElementById('photoPreview');
-            
-            if (!video || !canvas) return;
-            
-            // Set canvas dimensions to match video
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            // Draw current video frame to canvas
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Get image data as data URL (base64)
-            capturedPhotoData = canvas.toDataURL('image/jpeg', 0.8); // 0.8 quality untuk ukuran lebih kecil
-            
-            // Show preview
-            photoPreview.src = capturedPhotoData;
-            photoPreview.classList.remove('hidden');
-            video.classList.add('hidden');
-            
-            // Show capture controls
-            document.getElementById('capturePhotoBtn').classList.add('hidden');
-            document.getElementById('retakePhotoBtn').classList.remove('hidden');
-            document.getElementById('savePhotoBtn').classList.remove('hidden');
-            
-            // Stop camera temporarily
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-            }
-            
-            showToast('Gambar berhasil diambil', 'success');
-        }
-
-        function retakePhoto() {
-            // Restart camera
-            startCamera(isFrontCamera ? 'user' : 'environment');
-            
-            // Reset UI
-            document.getElementById('photoPreview').classList.add('hidden');
-            document.getElementById('cameraVideo').classList.remove('hidden');
-            document.getElementById('capturePhotoBtn').classList.remove('hidden');
-            document.getElementById('retakePhotoBtn').classList.add('hidden');
-            document.getElementById('savePhotoBtn').classList.add('hidden');
-            
-            capturedPhotoData = null;
-            showToast('Ambil gambar ulang', 'info');
-        }
-
-        async function savePhoto() {
-            if (!capturedPhotoData || !selectedPipelineId) {
-                showToast('Tidak ada gambar yang akan disimpan', 'warning');
-                return;
-            }
-            
-            const category = document.getElementById('photoCategory').value;
-            const description = document.getElementById('photoDescription').value.trim() || 'Tidak ada deskripsi';
-            
-            try {
-                showLoading();
-                
-                // Create photo object with base64 data
-                const photoData = {
-                    id: Date.now().toString(),
-                    imageData: capturedPhotoData, // Simpan sebagai base64
-                    category: category,
-                    description: description,
-                    capturedBy: currentUser.email,
-                    capturedAt: new Date().toISOString(),
-                    cameraType: isFrontCamera ? 'front' : 'back'
-                };
-                
-                // Get current pipeline item
-                const pipelineDoc = await pipelinesCollection.doc(selectedPipelineId).get();
-                if (!pipelineDoc.exists) {
-                    showToast('Pipeline item tidak ditemukan', 'error');
-                    return;
-                }
-                
-                const pipelineData = pipelineDoc.data();
-                const currentPhotos = pipelineData.photos || [];
-                
-                // Add new photo
-                currentPhotos.push(photoData);
-                
-                // Update pipeline item with new photos array
-                await pipelinesCollection.doc(selectedPipelineId).update({
-                    photos: currentPhotos,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedBy: currentUser.email
-                });
-                
-                // Clear form and reset
-                document.getElementById('photoDescription').value = '';
-                retakePhoto(); // Reset camera view
-                
-                // Reload uploaded photos in modal
-                await loadUploadedPhotos();
-                
-                showToast(`Gambar berhasil disimpan untuk ${pipelineData.quotation}!`, 'success');
-                
-                // Show notification about preview availability
-                showToast('Gambar sudah bisa dilihat di detail pipeline item', 'info');
-                
-            } catch (error) {
-                console.error('Error saving photo:', error);
-                showToast('Gagal menyimpan gambar: ' + error.message, 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // ==================== DOCUMENTATION FUNCTIONS ====================
-        function setupDocumentationSearch() {
-            const searchInput = document.getElementById('docPipelineSearch');
-            const dropdown = document.getElementById('pipelineAutocomplete');
-            
-            if (!searchInput || !dropdown) return;
-            
-            searchInput.addEventListener('input', function() {
-                const value = this.value.trim();
-                if (value.length < 2) {
-                    hideAutocomplete('pipeline');
-                    return;
-                }
-                
-                showPipelineAutocomplete(value);
-            });
-            
-            searchInput.addEventListener('focus', function() {
-                const value = this.value.trim();
-                if (value.length >= 2) {
-                    showPipelineAutocomplete(value);
-                }
-            });
-            
-            searchInput.addEventListener('blur', function() {
-                setTimeout(() => {
-                    hideAutocomplete('pipeline');
-                }, 200);
-            });
-        }
-
-        function showPipelineAutocomplete(searchTerm) {
-            const dropdown = document.getElementById('pipelineAutocomplete');
-            if (!dropdown) return;
-            
-            const filtered = pipelineItems.filter(item => 
-                (item.quotation && item.quotation.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                (item.customer && item.customer.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                (item.project && item.project.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                (item.pic && item.pic.toLowerCase().includes(searchTerm.toLowerCase()))
-            ).slice(0, 10);
-            
-            if (filtered.length === 0) {
-                dropdown.innerHTML = `
-                    <div class="autocomplete-item">
-                        <div class="text-gray-500 text-sm">Tidak ada pipeline item yang ditemukan</div>
-                        <div class="autocomplete-info">Coba kata kunci yang berbeda</div>
-                    </div>
-                `;
-            } else {
-                dropdown.innerHTML = filtered.map(item => {
-                    const regex = new RegExp(`(${searchTerm})`, 'gi');
-                    const highlightedQuotation = item.quotation.replace(regex, '<span class="highlight">$1</span>');
-                    const highlightedCustomer = item.customer.replace(regex, '<span class="highlight">$1</span>');
-                    return `
-                        <div class="autocomplete-item" data-id="${item.id}">
-                            <div class="text-sm font-medium">${highlightedQuotation}</div>
-                            <div class="text-xs text-gray-600">${highlightedCustomer} • ${item.project}</div>
-                            <div class="autocomplete-info">${item.company} • ${item.sow}</div>
-                        </div>
-                    `;
-                }).join('');
-            }
-            
-            dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
-                item.addEventListener('mousedown', function(e) {
-                    e.preventDefault();
-                    const pipelineId = this.dataset.id;
-                    if (pipelineId) {
-                        selectPipelineForDocumentation(pipelineId);
-                    }
-                });
-            });
-            
-            dropdown.classList.add('show');
-        }
-
-        async function selectPipelineForDocumentation(pipelineId) {
-            try {
-                showLoading();
-                
-                selectedPipelineId = pipelineId;
-                selectedPipelineData = pipelineItems.find(item => item.id === pipelineId);
-                
-                if (!selectedPipelineData) {
-                    const doc = await pipelinesCollection.doc(pipelineId).get();
-                    if (doc.exists) {
-                        selectedPipelineData = { id: doc.id, ...doc.data() };
-                    } else {
-                        showToast('Pipeline item tidak ditemukan', 'error');
-                        return;
-                    }
-                }
-                
-                updateSelectedPipelineInfo();
-                loadUploadedPhotos();
-                
-                hideAutocomplete('pipeline');
-                
-                // Show open camera button
-                document.getElementById('openCameraBtn').classList.remove('hidden');
-                
-            } catch (error) {
-                console.error('Error selecting pipeline item:', error);
-                showToast('Gagal memuat pipeline item', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function updateSelectedPipelineInfo() {
-            const item = selectedPipelineData;
-            const infoSection = document.getElementById('selectedPipelineInfo');
-            
-            document.getElementById('docQuotationNumber').textContent = item.quotation;
-            document.getElementById('docCustomer').textContent = item.customer || '-';
-            document.getElementById('docProject').textContent = item.project || '-';
-            document.getElementById('docCompany').textContent = item.company || '-';
-            document.getElementById('docPIC').textContent = item.pic || '-';
-            document.getElementById('docSOW').textContent = item.sow || '-';
-            
-            const statusBadge = document.getElementById('docStatusBadge');
-            statusBadge.className = `pipeline-badge ${item.status === 'Open' ? 'pipeline-open-badge' : 'pipeline-close-badge'}`;
-            statusBadge.textContent = item.status;
-            
-            infoSection.classList.remove('hidden');
-        }
-
-        async function loadUploadedPhotos() {
-            if (!selectedPipelineId) return;
-            
-            try {
-                const pipelineDoc = await pipelinesCollection.doc(selectedPipelineId).get();
-                if (!pipelineDoc.exists) {
-                    showToast('Pipeline item tidak ditemukan', 'error');
-                    return;
-                }
-                
-                const pipelineData = pipelineDoc.data();
-                uploadedPhotos = pipelineData.photos || [];
-                
-                displayUploadedPhotos();
-                
-            } catch (error) {
-                console.error('Error loading photos:', error);
-                showToast('Gagal memuat gambar', 'error');
-            }
-        }
-
-        function displayUploadedPhotos() {
-            const photoGrid = document.getElementById('photoGrid');
-            const noPhotosMessage = document.getElementById('noPhotosMessage');
-            const photoCount = document.getElementById('photoCount');
-            const uploadedPhotosSection = document.getElementById('uploadedPhotosSection');
-            
-            photoCount.textContent = `${uploadedPhotos.length} gambar${uploadedPhotos.length !== 1 ? '' : ''}`;
-            
-            if (uploadedPhotos.length === 0) {
-                photoGrid.innerHTML = '';
-                noPhotosMessage.classList.remove('hidden');
-                uploadedPhotosSection.classList.add('hidden');
-                return;
-            }
-            
-            uploadedPhotosSection.classList.remove('hidden');
-            noPhotosMessage.classList.add('hidden');
-            photoGrid.innerHTML = '';
-            
-            uploadedPhotos.forEach(photo => {
-                const photoItem = createPhotoItem(photo);
-                photoGrid.appendChild(photoItem);
-            });
-        }
-
-        function createPhotoItem(photo) {
-            const item = document.createElement('div');
-            item.className = 'photo-item';
-            item.dataset.id = photo.id;
-            
-            const timeAgo = formatTimeAgo(new Date(photo.capturedAt));
-            const cameraIcon = photo.cameraType === 'front' ? 'fa-camera' : 'fa-camera-retro';
-            const cameraTitle = photo.cameraType === 'front' ? 'Kamera Depan' : 'Kamera Belakang';
-            
-            item.innerHTML = `
-                <img src="${photo.imageData}" 
-                     alt="${photo.description}" 
-                     class="photo-img"
-                     loading="lazy"
-                     onclick="openPhotoPreview('${photo.imageData}', '${photo.description}')">
-                
-                <div class="photo-actions">
-                    <div class="photo-action-btn" onclick="openPhotoPreview('${photo.imageData}', '${photo.description}')" title="Lihat">
-                        <i class="fas fa-eye text-blue-600"></i>
-                    </div>
-                    <div class="photo-action-btn" onclick="deletePhoto('${photo.id}')" title="Hapus">
-                        <i class="fas fa-trash text-red-600"></i>
-                    </div>
-                </div>
-                
-                <div class="photo-info">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                            ${photo.category}
-                        </span>
-                        <span class="text-xs text-gray-500">${timeAgo}</span>
-                    </div>
-                    <p class="text-sm text-gray-700 truncate" title="${photo.description}">
-                        ${photo.description}
-                    </p>
-                    <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                        <i class="fas ${cameraIcon}" title="${cameraTitle}"></i>
-                        <span>${photo.capturedBy || 'Unknown'}</span>
-                    </p>
-                </div>
-            `;
-            
-            return item;
-        }
-
-        function openPhotoPreview(imageData, description) {
-            const modal = document.getElementById('photoPreviewModal');
-            const previewImage = document.getElementById('previewImage');
-            
-            previewImage.src = imageData;
-            previewImage.alt = description;
-            
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closePhotoPreview() {
-            document.getElementById('photoPreviewModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-            
-            // Clear image source
-            document.getElementById('previewImage').src = '';
-        }
-
-        async function deletePhoto(photoId) {
-            if (!selectedPipelineId || !photoId) return;
-            
-            if (!confirm('Apakah Anda yakin ingin menghapus gambar ini?')) return;
-            
-            try {
-                showLoading();
-                
-                // Get current pipeline item
-                const pipelineDoc = await pipelinesCollection.doc(selectedPipelineId).get();
-                if (!pipelineDoc.exists) {
-                    showToast('Pipeline item tidak ditemukan', 'error');
-                    return;
-                }
-                
-                const pipelineData = pipelineDoc.data();
-                const currentPhotos = pipelineData.photos || [];
-                
-                // Filter out the photo to delete
-                const updatedPhotos = currentPhotos.filter(photo => photo.id !== photoId);
-                
-                // Update pipeline item
-                await pipelinesCollection.doc(selectedPipelineId).update({
-                    photos: updatedPhotos,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedBy: currentUser.email
-                });
-                
-                // Update local array
-                uploadedPhotos = updatedPhotos;
-                
-                // Update UI
-                displayUploadedPhotos();
-                
-                showToast('Gambar berhasil dihapus', 'success');
-                
-            } catch (error) {
-                console.error('Error deleting photo:', error);
-                showToast('Gagal menghapus gambar', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function hideAutocomplete(type) {
-            const dropdown = document.getElementById(`${type}Autocomplete`);
-            if (dropdown) {
-                dropdown.classList.remove('show');
-            }
         }
 
         // ==================== AUTO-COMPLETE SEARCH FUNCTIONS ====================
@@ -3609,7 +2574,6 @@
                         description: data.description || '',
                         notes: data.notes || '',
                         progress: data.progress || 0,
-                        photos: data.photos || [],
                         updatedAt: data.updatedAt || new Date(),
                         updatedBy: data.updatedBy || ''
                     });
@@ -3644,7 +2608,6 @@
             const searchTerm = document.getElementById('searchPipelineItems').value.toLowerCase();
             const companyFilter = document.getElementById('filterByCompany').value;
             const statusFilter = document.getElementById('filterByStatus').value;
-            const sortBy = document.getElementById('sortPipelineItems').value;
             
             let filtered = [...pipelineItems];
             
@@ -3668,30 +2631,6 @@
             if (statusFilter) {
                 filtered = filtered.filter(item => item.status === statusFilter);
             }
-            
-            // Apply sorting
-            filtered.sort((a, b) => {
-                switch(sortBy) {
-                    case 'date-desc':
-                        const aDate = a.date?.toDate?.() || new Date(0);
-                        const bDate = b.date?.toDate?.() || new Date(0);
-                        return bDate - aDate;
-                    case 'date-asc':
-                        const aDate2 = a.date?.toDate?.() || new Date(0);
-                        const bDate2 = b.date?.toDate?.() || new Date(0);
-                        return aDate2 - bDate2;
-                    case 'no-desc':
-                        return b.no - a.no;
-                    case 'no-asc':
-                        return a.no - b.no;
-                    case 'value-desc':
-                        return (b.valueQuotation + b.valuePO) - (a.valueQuotation + a.valuePO);
-                    case 'value-asc':
-                        return (a.valueQuotation + a.valuePO) - (b.valueQuotation + b.valuePO);
-                    default:
-                        return b.no - a.no;
-                }
-            });
             
             filteredPipelineItems = filtered;
             renderPipelineBoard();
@@ -3729,7 +2668,6 @@
             const timeAgo = formatTimeAgo(item.updatedAt);
             const progress = item.progress || 0;
             const formattedDate = item.date ? formatDate(item.date) : '-';
-            const hasPhotos = item.photos && item.photos.length > 0;
             
             div.innerHTML = `
                 <div class="flex justify-between items-start mb-2">
@@ -3738,10 +2676,6 @@
                         <div class="flex items-center gap-2 mt-1">
                             <span class="text-xs font-medium text-gray-600">#${item.no}</span>
                             ${item.quotation ? `<span class="text-xs text-gray-500">${item.quotation}</span>` : ''}
-                            ${hasPhotos ? `
-                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
-                                <i class="fas fa-camera mr-1"></i>${item.photos.length}
-                            </span>` : ''}
                         </div>
                     </div>
                     <div class="flex flex-col items-end gap-1">
@@ -3816,34 +2750,23 @@
                 </div>
                 
                 <div class="flex justify-end gap-2 mt-3 pt-3 border-t border-gray-100">
-                    <button class="add-documentation-btn text-yellow-600 hover:text-yellow-800 text-sm" title="Add Documentation">
-                        <i class="fas fa-camera"></i>
-                    </button>
-                    <button class="view-pipeline-item-btn text-blue-600 hover:text-blue-800 text-sm" title="View Details">
+                    <button class="view-pipeline-item-btn text-blue-600 hover:text-blue-800 text-sm">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="edit-pipeline-item-btn text-green-600 hover:text-green-800 text-sm" title="Edit">
+                    <button class="edit-pipeline-item-btn text-green-600 hover:text-green-800 text-sm">
                         <i class="fas fa-edit"></i>
                     </button>
                     ${currentUserRole === 'admin' ? `
-                    <button class="delete-pipeline-item-btn text-red-600 hover:text-red-800 text-sm" title="Delete">
+                    <button class="delete-pipeline-item-btn text-red-600 hover:text-red-800 text-sm">
                         <i class="fas fa-trash"></i>
                     </button>` : ''}
                 </div>
             `;
             
             // Add event listeners
-            const addDocBtn = div.querySelector('.add-documentation-btn');
             const viewBtn = div.querySelector('.view-pipeline-item-btn');
             const editBtn = div.querySelector('.edit-pipeline-item-btn');
             const deleteBtn = div.querySelector('.delete-pipeline-item-btn');
-            
-            if (addDocBtn) {
-                addDocBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    openDocumentationForPipeline(item.id);
-                });
-            }
             
             if (viewBtn) {
                 viewBtn.addEventListener('click', (e) => {
@@ -4200,7 +3123,6 @@
                 } else {
                     pipelineData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                     pipelineData.createdBy = currentUser.email;
-                    pipelineData.photos = []; // Initialize empty photos array
                     const result = await pipelinesCollection.add(pipelineData);
                     
                     await logPipelineStatusChange(result.id, pipelineData.project, 'New', pipelineData.status);
@@ -4245,75 +3167,6 @@
                 showToast('Failed to delete pipeline item', 'error');
             } finally {
                 hideLoading();
-            }
-        }
-
-        function openDocumentationForPipeline(pipelineId) {
-            console.log('Opening documentation for pipeline:', pipelineId);
-            openDocumentationModal();
-            
-            // Auto-select the pipeline item
-            setTimeout(() => {
-                const item = pipelineItems.find(i => i.id === pipelineId);
-                if (item) {
-                    document.getElementById('docPipelineSearch').value = item.quotation;
-                    selectPipelineForDocumentation(pipelineId);
-                }
-            }, 500);
-        }
-
-        // ==================== EXPORT FUNCTIONS ====================
-        function exportToExcel() {
-            console.log('Exporting pipelines to Excel');
-            
-            if (!canExportData()) {
-                showToast('Only admins can export data', 'warning');
-                return;
-            }
-            
-            try {
-                if (filteredPipelineItems.length === 0) {
-                    showToast('No data to export', 'warning');
-                    return;
-                }
-                
-                const worksheetData = filteredPipelineItems.map(item => {
-                    return {
-                        'No': item.no,
-                        'Quotation Number': item.quotation,
-                        'Date': formatDate(item.date),
-                        'Company': item.company,
-                        'SOW': item.sow,
-                        'PIC': item.pic,
-                        'Customer': item.customer,
-                        'Project': item.project,
-                        'Status': item.status,
-                        'Value Quotation': formatCurrencyDisplay(item.valueQuotation),
-                        'Value PO': formatCurrencyDisplay(item.valuePO),
-                        'Description': item.description,
-                        'Notes': item.notes,
-                        'Progress': `${item.progress}%`,
-                        'Photos Count': item.photos?.length || 0,
-                        'Created At': formatDateTime(item.createdAt),
-                        'Last Updated': formatDateTime(item.updatedAt),
-                        'Updated By': item.updatedBy
-                    };
-                });
-                
-                const ws = XLSX.utils.json_to_sheet(worksheetData);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Pipelines');
-                
-                const date = new Date();
-                const filename = `Pipeline_Items_${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')}.xlsx`;
-                
-                XLSX.writeFile(wb, filename);
-                
-                showToast('Data exported successfully', 'success');
-                
-            } catch (error) {
-                console.error('Error exporting to Excel:', error);
-                showToast('Failed to export data', 'error');
             }
         }
 
@@ -4401,7 +3254,7 @@
         function openAddCustomerModal() {
             document.getElementById('addCustomerForm').reset();
             document.getElementById('addCustomerModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeAddCustomerModal() {
@@ -4814,9 +3667,7 @@
             console.log('Setting up pipeline permissions for role:', currentUserRole);
             
             const newPipelineBtn = document.getElementById('newPipelineItemBtn');
-            const exportBtn = document.getElementById('exportExcelBtn');
             const analyticsBtn = document.getElementById('pipelinesAnalyticsBtn');
-            const documentationBtn = document.getElementById('documentationBtn');
             
             const userAvatar = document.getElementById('userAvatar');
             if (userAvatar) {
@@ -4836,25 +3687,16 @@
                 roleBadge.innerHTML = `<i class="fas fa-user-tag"></i><span>${currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}</span>`;
             }
             
-            // Hide all buttons first
-            if (exportBtn) exportBtn.classList.add('hidden');
-            if (analyticsBtn) analyticsBtn.classList.add('hidden');
-            
-            // Show common buttons
             if (newPipelineBtn) newPipelineBtn.classList.remove('hidden');
-            if (documentationBtn) documentationBtn.classList.remove('hidden');
+            if (analyticsBtn) analyticsBtn.classList.add('hidden');
             
             switch(currentUserRole) {
                 case 'admin':
-                    if (exportBtn) exportBtn.classList.remove('hidden');
-                    if (analyticsBtn) analyticsBtn.classList.remove('hidden');
-                    break;
                 case 'manager':
-                    if (exportBtn) exportBtn.classList.remove('hidden');
                     if (analyticsBtn) analyticsBtn.classList.remove('hidden');
                     break;
                 case 'user':
-                    // Users can only view and add documentation
+                    // Users can view and create items
                     break;
                 default:
                     break;
@@ -4876,10 +3718,6 @@
         }
 
         function canViewPipelineAnalytics() {
-            return currentUserRole === 'admin' || currentUserRole === 'manager';
-        }
-
-        function canExportData() {
             return currentUserRole === 'admin' || currentUserRole === 'manager';
         }
 
@@ -4966,15 +3804,12 @@
             // Add event listeners
             document.getElementById('newPipelineItemBtn').addEventListener('click', createNewPipelineItem);
             document.getElementById('backToDashboardBtn').addEventListener('click', backToDashboard);
-            document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
             document.getElementById('pipelinesAnalyticsBtn').addEventListener('click', openPipelinesAnalytics);
-            document.getElementById('documentationBtn').addEventListener('click', openDocumentationModal);
             document.getElementById('authButton').addEventListener('click', logout);
             
             document.getElementById('searchPipelineItems').addEventListener('input', filterPipelineItems);
             document.getElementById('filterByCompany').addEventListener('change', filterPipelineItems);
             document.getElementById('filterByStatus').addEventListener('change', filterPipelineItems);
-            document.getElementById('sortPipelineItems').addEventListener('change', filterPipelineItems);
             
             document.getElementById('closePipelineModal').addEventListener('click', closePipelineItemModal);
             document.getElementById('cancelPipelineBtn').addEventListener('click', closePipelineItemModal);
@@ -4982,12 +3817,6 @@
                 e.preventDefault();
                 savePipelineItem();
             });
-            
-            document.getElementById('closeDocumentationModal').addEventListener('click', closeDocumentationModal);
-            document.getElementById('cancelDocumentationBtn').addEventListener('click', closeDocumentationModal);
-            document.getElementById('openCameraBtn').addEventListener('click', setupCamera);
-            
-            document.getElementById('closePhotoPreview').addEventListener('click', closePhotoPreview);
             
             document.getElementById('closePipelinesAnalyticsModal').addEventListener('click', closePipelinesAnalyticsModal);
             document.getElementById('closePipelinesAnalyticsModalBottom').addEventListener('click', closePipelinesAnalyticsModal);
@@ -5025,10 +3854,6 @@
                 }
             }
         }
-
-        // ==================== GLOBAL FUNCTIONS FOR DOCUMENTATION ====================
-        window.openPhotoPreview = openPhotoPreview;
-        window.deletePhoto = deletePhoto;
 
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
