@@ -4556,11 +4556,37 @@
                     
                     console.log('Checking email for role fix:', userEmail);
                     
+                    // Admin email
                     if (userEmail === 'admin@genetek.co.id') {
                         correctRole = 'admin';
-                    } else if (userEmail === 'm_husni@genetek.co.id') {
+                    } 
+                    // Manager email
+                    else if (userEmail === 'm_husni@genetek.co.id') {
                         correctRole = 'manager';
-                    } else if (userEmail === 'galih@genetek.co.id') {
+                    }
+                    // Regular user emails
+                    else if (
+                        userEmail === 'junaidi@genetek.co.id' ||
+                        userEmail === 'wahyumaulana@genetek.co.id' ||
+                        userEmail === 'rijal@genetek.co.id' ||
+                        userEmail === 'muhamad@genetek.co.id' ||
+                        userEmail === 'indra@genetek.co.id' ||
+                        userEmail === 'rio@genetek.co.id' ||
+                        userEmail === 'bayu@genetek.co.id' ||
+                        userEmail === 'bagas@genetek.co.id' ||
+                        userEmail === 'billal@genetek.co.id' ||
+                        userEmail === 'elvin@genetek.co.id' ||
+                        userEmail === 'alfiansyah@genetek.co.id' ||
+                        userEmail === 'regandi@genetek.co.id' ||
+                        userEmail === 'farhan@genetek.co.id' ||
+                        userEmail === 'ahmad@genetek.co.id' ||
+                        userEmail === 'agung@genetek.co.id' ||
+                        userEmail === 'faizal@genetek.co.id' ||
+                        userEmail === 'sayyid@genetek.co.id' ||
+                        userEmail === 'wisnu@genetek.co.id' ||
+                        userEmail === 'yogi@genetek.co.id' ||
+                        userEmail === 'galih@genetek.co.id' // Existing user
+                    ) {
                         correctRole = 'user';
                     }
                     
@@ -4824,16 +4850,45 @@
                     
                     console.log('Checking email for role assignment:', userEmail);
                     
+                    // Admin email
                     if (userEmail === 'admin@genetek.co.id') {
                         defaultRole = 'admin';
                         console.log('Setting role to admin for', userEmail);
-                    } else if (userEmail === 'm_husni@genetek.co.id') {
+                    } 
+                    // Manager email
+                    else if (userEmail === 'm_husni@genetek.co.id') {
                         defaultRole = 'manager';
                         console.log('Setting role to manager for', userEmail);
-                    } else if (userEmail === 'galih@genetek.co.id') {
+                    }
+                    // Regular user emails
+                    else if (
+                        userEmail === 'junaidi@genetek.co.id' ||
+                        userEmail === 'wahyumaulana@genetek.co.id' ||
+                        userEmail === 'rijal@genetek.co.id' ||
+                        userEmail === 'muhamad@genetek.co.id' ||
+                        userEmail === 'indra@genetek.co.id' ||
+                        userEmail === 'rio@genetek.co.id' ||
+                        userEmail === 'bayu@genetek.co.id' ||
+                        userEmail === 'bagas@genetek.co.id' ||
+                        userEmail === 'billal@genetek.co.id' ||
+                        userEmail === 'elvin@genetek.co.id' ||
+                        userEmail === 'alfiansyah@genetek.co.id' ||
+                        userEmail === 'regandi@genetek.co.id' ||
+                        userEmail === 'farhan@genetek.co.id' ||
+                        userEmail === 'ahmad@genetek.co.id' ||
+                        userEmail === 'agung@genetek.co.id' ||
+                        userEmail === 'faizal@genetek.co.id' ||
+                        userEmail === 'sayyid@genetek.co.id' ||
+                        userEmail === 'wisnu@genetek.co.id' ||
+                        userEmail === 'yogi@genetek.co.id' ||
+                        userEmail === 'galih@genetek.co.id'
+                    ) {
                         defaultRole = 'user';
                         console.log('Setting role to user for', userEmail);
-                    } else {
+                    }
+                    // Unknown emails get user role
+                    else {
+                        defaultRole = 'user';
                         console.log('Default role user for unknown email:', userEmail);
                     }
                     
