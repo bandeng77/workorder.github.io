@@ -14,6 +14,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     
     <style>
+        /* All existing CSS styles remain exactly the same */
         :root {
             --primary-50: #f0f9ff;
             --primary-100: #e0f2fe;
@@ -874,6 +875,20 @@
             color: var(--accent-600);
         }
 
+        /* Assignment Log Indicator */
+        .assignment-log-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.125rem 0.375rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.65rem;
+            font-weight: 500;
+            background: var(--primary-50);
+            color: var(--primary-700);
+            border: 1px solid var(--primary-200);
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .personnel-list-header,
@@ -1125,7 +1140,6 @@
         
         <!-- Analytics Content -->
         <div id="analyticsContent" class="hidden">
-            <!-- Analytics content remains the same -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="chart-container">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Personnel Status Distribution</h3>
@@ -1308,12 +1322,23 @@
                                     <button id="addDailyLogBtn" class="btn btn-primary btn-sm">
                                         <i class="fas fa-plus mr-2"></i>Add Today's Log
                                     </button>
+                                    <button id="autoGenerateLogsBtn" class="btn btn-secondary btn-sm">
+                                        <i class="fas fa-robot mr-2"></i>Auto Generate Logs
+                                    </button>
                                 </div>
                                 
                                 <!-- Add Daily Log Form -->
                                 <div id="addDailyLogForm" class="mb-6 hidden">
                                     <div class="card bg-blue-50 border-blue-200">
                                         <h4 class="font-bold text-gray-900 mb-3">Add Daily Activity Log</h4>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="logAssignment">
+                                                Related Assignment (Optional)
+                                            </label>
+                                            <select id="logAssignment" class="form-input">
+                                                <option value="">Select Assignment</option>
+                                            </select>
+                                        </div>
                                         <textarea id="dailyLogInput" class="activity-log-input" 
                                                   placeholder="What did you work on today? Describe your activities, progress, and any issues encountered..."></textarea>
                                         <div class="flex justify-end gap-2 mt-3">
@@ -1323,6 +1348,55 @@
                                             <button id="saveDailyLog" class="btn btn-primary btn-sm">
                                                 <i class="fas fa-save mr-2"></i>Save Log
                                             </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Auto Generate Logs Form -->
+                                <div id="autoGenerateLogsForm" class="mb-6 hidden">
+                                    <div class="card bg-green-50 border-green-200">
+                                        <h4 class="font-bold text-gray-900 mb-3">Auto Generate Daily Logs</h4>
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label class="form-label" for="selectedAssignment">
+                                                    Select Assignment
+                                                </label>
+                                                <select id="selectedAssignment" class="form-input">
+                                                    <option value="">Select Assignment</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="form-label" for="logDays">
+                                                    Number of Days to Generate
+                                                </label>
+                                                <input type="number" 
+                                                       id="logDays" 
+                                                       class="form-input"
+                                                       min="1" 
+                                                       max="30" 
+                                                       value="3"
+                                                       placeholder="Enter number of days">
+                                            </div>
+                                            <div>
+                                                <label class="form-label" for="logTemplate">
+                                                    Log Template
+                                                </label>
+                                                <textarea id="logTemplate" 
+                                                          class="form-input" 
+                                                          rows="3"
+                                                          placeholder="Example: Working on [Assignment] - Day [DayNumber]: [Activity Details]"></textarea>
+                                                <p class="text-xs text-gray-500 mt-1">
+                                                    Available variables: [Assignment], [DayNumber], [Date], [WorkType], [Building]
+                                                </p>
+                                            </div>
+                                            <div class="flex justify-end gap-2">
+                                                <button id="cancelAutoGenerate" class="btn btn-secondary btn-sm">
+                                                    Cancel
+                                                </button>
+                                                <button id="generateLogsBtn" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-magic mr-2"></i>Generate Logs
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1342,9 +1416,14 @@
                             <div id="assignmentsContent" class="card mt-0 hidden">
                                 <div class="flex justify-between items-center mb-6">
                                     <h3 class="text-lg font-bold text-gray-900">Current Assignments</h3>
-                                    <button id="refreshAssignmentsBtn" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-sync-alt mr-2"></i>Refresh
-                                    </button>
+                                    <div class="flex gap-2">
+                                        <button id="refreshAssignmentsBtn" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-sync-alt mr-2"></i>Refresh
+                                        </button>
+                                        <button id="quickLogBtn" class="btn btn-success btn-sm">
+                                            <i class="fas fa-plus-circle mr-2"></i>Quick Log
+                                        </button>
+                                    </div>
                                 </div>
                                 
                                 <div id="currentAssignments">
@@ -1509,6 +1588,80 @@
         </div>
     </div>
 
+    <!-- Quick Log Modal -->
+    <div id="quickLogModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-2xl">
+            <div class="modal-header">
+                <h2 class="modal-title">Quick Log Entry</h2>
+                <button id="closeQuickLogModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="space-y-4">
+                    <div>
+                        <label class="form-label" for="quickLogAssignment">
+                            <i class="fas fa-tasks mr-2"></i>
+                            Assignment
+                        </label>
+                        <select id="quickLogAssignment" class="form-input" required>
+                            <option value="">Select Assignment</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="form-label" for="quickLogDate">
+                            <i class="fas fa-calendar mr-2"></i>
+                            Date
+                        </label>
+                        <input type="date" 
+                               id="quickLogDate" 
+                               class="form-input"
+                               value="">
+                    </div>
+                    
+                    <div>
+                        <label class="form-label" for="quickLogContent">
+                            <i class="fas fa-clipboard mr-2"></i>
+                            Activity Description
+                        </label>
+                        <textarea id="quickLogContent" 
+                                  class="form-input" 
+                                  rows="4"
+                                  placeholder="Describe the work done on this assignment..."
+                                  required></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="form-label" for="quickLogHours">
+                            <i class="fas fa-clock mr-2"></i>
+                            Hours Spent
+                        </label>
+                        <input type="number" 
+                               id="quickLogHours" 
+                               class="form-input"
+                               min="0.5" 
+                               max="24" 
+                               step="0.5"
+                               value="8"
+                               placeholder="Hours spent on this activity">
+                    </div>
+                    
+                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                        <button type="button" id="cancelQuickLog" class="btn btn-secondary">
+                            Cancel
+                        </button>
+                        <button id="saveQuickLog" class="btn btn-primary">
+                            <i class="fas fa-save mr-2"></i>
+                            Save Log Entry
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Confirm Delete Modal -->
     <div id="confirmDeleteModal" class="modal-overlay hidden">
         <div class="modal-content w-full max-w-md">
@@ -1563,6 +1716,7 @@
         let selectedPersonnel = null;
         let dailyLogs = [];
         let personnelToDelete = null;
+        let currentAssignments = [];
         
         // Pagination variables
         const ITEMS_PER_PAGE = 20;
@@ -1925,6 +2079,305 @@
                 status: 'available',
                 reason: 'No assigned work orders'
             };
+        }
+
+        // ==================== DAILY ACTIVITY LOG ENHANCEMENTS ====================
+
+        // Load assignments for dropdown
+        function loadAssignmentsForDropdown(personnelId, personnelName) {
+            const assignments = getPersonnelWorkOrders(personnelName);
+            const activeAssignments = assignments.filter(wo => wo.status === 'Running');
+            
+            // Update assignment dropdowns
+            const logAssignmentSelect = document.getElementById('logAssignment');
+            const selectedAssignmentSelect = document.getElementById('selectedAssignment');
+            const quickLogAssignmentSelect = document.getElementById('quickLogAssignment');
+            
+            // Clear existing options except the first one
+            [logAssignmentSelect, selectedAssignmentSelect, quickLogAssignmentSelect].forEach(select => {
+                if (select) {
+                    // Keep the first option
+                    while (select.options.length > 1) {
+                        select.remove(1);
+                    }
+                    
+                    // Add active assignments
+                    activeAssignments.forEach(assignment => {
+                        const option = document.createElement('option');
+                        option.value = assignment.id;
+                        option.textContent = `${assignment.workOrderNumber || 'N/A'} - ${assignment.customer || 'No Customer'} (${assignment.workType || 'No Type'})`;
+                        select.appendChild(option);
+                    });
+                }
+            });
+            
+            return activeAssignments;
+        }
+
+        // Auto-generate daily logs based on assignment
+        async function autoGenerateDailyLogs(assignmentId, days, template) {
+            try {
+                if (!selectedPersonnel || !assignmentId) {
+                    showToast('Please select an assignment', 'warning');
+                    return;
+                }
+                
+                const assignment = allWorkOrders.find(wo => wo.id === assignmentId);
+                if (!assignment) {
+                    showToast('Assignment not found', 'error');
+                    return;
+                }
+                
+                showLoading();
+                
+                // Parse start date
+                let startDate;
+                if (assignment.startDate) {
+                    startDate = assignment.startDate.toDate ? assignment.startDate.toDate() : new Date(assignment.startDate);
+                } else {
+                    startDate = new Date();
+                }
+                
+                // Create logs for each day
+                for (let day = 1; day <= days; day++) {
+                    const logDate = new Date(startDate);
+                    logDate.setDate(logDate.getDate() + (day - 1));
+                    
+                    // Generate log content from template
+                    let logContent = template
+                        .replace(/\[Assignment\]/g, assignment.workOrderNumber || 'Assignment')
+                        .replace(/\[DayNumber\]/g, day)
+                        .replace(/\[Date\]/g, formatDate(logDate))
+                        .replace(/\[WorkType\]/g, assignment.workType || 'General Work')
+                        .replace(/\[Building\]/g, assignment.building || 'Site');
+                    
+                    // Add some variety to the logs
+                    if (logContent.includes('[Activity Details]')) {
+                        const activities = [
+                            'Performed routine maintenance and inspection',
+                            'Completed scheduled testing procedures',
+                            'Installed and configured new equipment',
+                            'Troubleshot and resolved technical issues',
+                            'Documented work progress and findings',
+                            'Coordinated with team members on site',
+                            'Reviewed safety protocols and procedures',
+                            'Updated work documentation and reports'
+                        ];
+                        const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+                        logContent = logContent.replace('[Activity Details]', randomActivity);
+                    }
+                    
+                    // Save the log
+                    const logData = {
+                        personnelId: selectedPersonnel.id,
+                        personnelName: selectedPersonnel.name,
+                        assignmentId: assignmentId,
+                        assignmentNumber: assignment.workOrderNumber,
+                        assignmentTitle: assignment.customer || 'No Title',
+                        content: logContent,
+                        date: logDate.toISOString().split('T')[0],
+                        hoursSpent: 8, // Default 8 hours
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        createdBy: currentUser?.email || 'system',
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        isAutoGenerated: true
+                    };
+                    
+                    await dailyLogsCollection.add(logData);
+                }
+                
+                showToast(`Successfully generated ${days} daily logs`, 'success');
+                
+                // Reload daily logs
+                await loadDailyLogs(selectedPersonnel.id);
+                renderDailyLogs();
+                
+                // Hide the auto generate form
+                document.getElementById('autoGenerateLogsForm').classList.add('hidden');
+                
+            } catch (error) {
+                console.error('Error auto-generating daily logs:', error);
+                showToast('Failed to generate daily logs', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Enhanced save daily log function
+        async function saveDailyLog(content, assignmentId = null) {
+            try {
+                if (!selectedPersonnel || !content.trim()) {
+                    showToast('Please enter activity content', 'warning');
+                    return;
+                }
+                
+                showLoading();
+                
+                let assignmentData = null;
+                if (assignmentId) {
+                    const assignment = allWorkOrders.find(wo => wo.id === assignmentId);
+                    if (assignment) {
+                        assignmentData = {
+                            assignmentId: assignment.id,
+                            assignmentNumber: assignment.workOrderNumber,
+                            assignmentTitle: assignment.customer
+                        };
+                    }
+                }
+                
+                const logData = {
+                    personnelId: selectedPersonnel.id,
+                    personnelName: selectedPersonnel.name,
+                    content: content.trim(),
+                    date: new Date().toISOString().split('T')[0],
+                    hoursSpent: 8, // Default value
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: currentUser?.email || 'unknown',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    isAutoGenerated: false
+                };
+                
+                // Add assignment data if provided
+                if (assignmentData) {
+                    Object.assign(logData, assignmentData);
+                }
+                
+                await dailyLogsCollection.add(logData);
+                
+                showToast('Daily activity log saved successfully', 'success');
+                
+                await loadDailyLogs(selectedPersonnel.id);
+                renderDailyLogs();
+                
+                document.getElementById('addDailyLogForm').classList.add('hidden');
+                document.getElementById('dailyLogInput').value = '';
+                document.getElementById('logAssignment').value = '';
+                
+            } catch (error) {
+                console.error('Error saving daily log:', error);
+                showToast('Failed to save daily activity log', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Quick log save function
+        async function saveQuickLog() {
+            try {
+                const assignmentId = document.getElementById('quickLogAssignment').value;
+                const date = document.getElementById('quickLogDate').value;
+                const content = document.getElementById('quickLogContent').value;
+                const hours = parseFloat(document.getElementById('quickLogHours').value);
+                
+                if (!assignmentId || !content.trim() || !date) {
+                    showToast('Please fill in all required fields', 'warning');
+                    return;
+                }
+                
+                const assignment = allWorkOrders.find(wo => wo.id === assignmentId);
+                if (!assignment) {
+                    showToast('Assignment not found', 'error');
+                    return;
+                }
+                
+                showLoading();
+                
+                const logData = {
+                    personnelId: selectedPersonnel.id,
+                    personnelName: selectedPersonnel.name,
+                    assignmentId: assignment.id,
+                    assignmentNumber: assignment.workOrderNumber,
+                    assignmentTitle: assignment.customer,
+                    content: content.trim(),
+                    date: date,
+                    hoursSpent: hours,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: currentUser?.email || 'system',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    isAutoGenerated: false
+                };
+                
+                await dailyLogsCollection.add(logData);
+                
+                showToast('Quick log saved successfully', 'success');
+                
+                // Close modal
+                closeQuickLogModal();
+                
+                // Reload logs if on daily log tab
+                if (!document.getElementById('dailyLogContent').classList.contains('hidden')) {
+                    await loadDailyLogs(selectedPersonnel.id);
+                    renderDailyLogs();
+                }
+                
+            } catch (error) {
+                console.error('Error saving quick log:', error);
+                showToast('Failed to save quick log', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Enhanced daily log card with assignment info
+        function createDailyLogCard(log) {
+            const card = document.createElement('div');
+            card.className = 'activity-log-card';
+            
+            const time = log.createdAt ? formatTimeAgo(log.createdAt) : 'Recently';
+            const canDelete = currentUser?.email === log.createdBy;
+            const isAutoGenerated = log.isAutoGenerated || false;
+            
+            // Get assignment info if available
+            let assignmentInfo = '';
+            if (log.assignmentNumber) {
+                assignmentInfo = `
+                    <div class="assignment-log-indicator mt-2">
+                        <i class="fas fa-tasks"></i>
+                        ${log.assignmentNumber} - ${log.assignmentTitle || 'Assignment'}
+                    </div>
+                `;
+            }
+            
+            // Auto-generated indicator
+            let autoGeneratedIndicator = '';
+            if (isAutoGenerated) {
+                autoGeneratedIndicator = `
+                    <div class="assignment-log-indicator mt-2" style="background: var(--accent-50); color: var(--accent-700); border-color: var(--accent-200);">
+                        <i class="fas fa-robot"></i>
+                        Auto-generated
+                    </div>
+                `;
+            }
+            
+            card.innerHTML = `
+                <div class="activity-log-header">
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-clock mr-1"></i>${time}
+                        ${log.date ? `<span class="ml-2"><i class="fas fa-calendar mr-1"></i>${log.date}</span>` : ''}
+                        ${log.hoursSpent ? `<span class="ml-2"><i class="fas fa-hourglass-half mr-1"></i>${log.hoursSpent} hours</span>` : ''}
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        Logged by: ${log.createdBy || 'Unknown'}
+                    </div>
+                </div>
+                
+                <div class="activity-log-content">
+                    ${log.content.replace(/\n/g, '<br>')}
+                </div>
+                
+                ${assignmentInfo}
+                ${autoGeneratedIndicator}
+                
+                ${canDelete ? `
+                <div class="activity-log-actions mt-3">
+                    <button class="text-xs text-red-600 hover:text-red-800" 
+                            onclick="deleteDailyLog('${log.id}')">
+                        <i class="fas fa-trash mr-1"></i>Delete
+                    </button>
+                </div>` : ''}
+            `;
+            
+            return card;
         }
 
         // ==================== PAGINATION FUNCTIONS ====================
@@ -2815,7 +3268,7 @@
                 
                 const querySnapshot = await dailyLogsCollection
                     .where('personnelId', '==', personnelId)
-                    .orderBy('createdAt', 'desc')
+                    .orderBy('date', 'desc')
                     .get();
                 
                 dailyLogs = [];
@@ -2833,43 +3286,6 @@
                 console.error('Error loading daily logs:', error);
                 showToast('Failed to load daily activity logs', 'error');
                 return [];
-            }
-        }
-
-        async function saveDailyLog(content) {
-            try {
-                if (!selectedPersonnel || !content.trim()) {
-                    showToast('Please enter activity content', 'warning');
-                    return;
-                }
-                
-                showLoading();
-                
-                const logData = {
-                    personnelId: selectedPersonnel.id,
-                    personnelName: selectedPersonnel.name,
-                    content: content.trim(),
-                    date: new Date().toISOString().split('T')[0],
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    createdBy: currentUser?.email || 'unknown',
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                await dailyLogsCollection.add(logData);
-                
-                showToast('Daily activity log saved successfully', 'success');
-                
-                await loadDailyLogs(selectedPersonnel.id);
-                renderDailyLogs();
-                
-                document.getElementById('addDailyLogForm').classList.add('hidden');
-                document.getElementById('dailyLogInput').value = '';
-                
-            } catch (error) {
-                console.error('Error saving daily log:', error);
-                showToast('Failed to save daily activity log', 'error');
-            } finally {
-                hideLoading();
             }
         }
 
@@ -2934,39 +3350,6 @@
             });
         }
 
-        function createDailyLogCard(log) {
-            const card = document.createElement('div');
-            card.className = 'activity-log-card';
-            
-            const time = log.createdAt ? formatTimeAgo(log.createdAt) : 'Recently';
-            const canDelete = currentUser?.email === log.createdBy;
-            
-            card.innerHTML = `
-                <div class="activity-log-header">
-                    <div class="text-sm text-gray-600">
-                        <i class="fas fa-clock mr-1"></i>${time}
-                    </div>
-                    <div class="text-xs text-gray-500">
-                        Logged by: ${log.createdBy || 'Unknown'}
-                    </div>
-                </div>
-                
-                <div class="activity-log-content">
-                    ${log.content.replace(/\n/g, '<br>')}
-                </div>
-                
-                ${canDelete ? `
-                <div class="activity-log-actions">
-                    <button class="text-xs text-red-600 hover:text-red-800" 
-                            onclick="deleteDailyLog('${log.id}')">
-                        <i class="fas fa-trash mr-1"></i>Delete
-                    </button>
-                </div>` : ''}
-            `;
-            
-            return card;
-        }
-
         // ==================== PERSONNEL ACTIVITY FUNCTIONS ====================
         async function viewPersonnelActivity(personnelId) {
             const person = allPersonnel.find(p => p.id === personnelId);
@@ -3000,6 +3383,9 @@
             statusBadge.textContent = getStatusText(person.status);
             
             const personnelWorkOrders = getPersonnelWorkOrders(person.name);
+            
+            // Load assignments for dropdowns
+            loadAssignmentsForDropdown(person.id, person.name);
             
             await loadDailyLogs(person.id);
             
@@ -3229,6 +3615,28 @@
             `;
             
             return card;
+        }
+
+        // ==================== QUICK LOG MODAL FUNCTIONS ====================
+        function openQuickLogModal() {
+            const modal = document.getElementById('quickLogModal');
+            
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('quickLogDate').value = today;
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeQuickLogModal() {
+            document.getElementById('quickLogModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            
+            // Clear form
+            document.getElementById('quickLogDate').value = '';
+            document.getElementById('quickLogContent').value = '';
+            document.getElementById('quickLogHours').value = '8';
         }
 
         // ==================== PERSONNEL FORM FUNCTIONS ====================
@@ -3601,21 +4009,63 @@
                 }
             });
             
+            // Quick log button
+            document.getElementById('quickLogBtn').addEventListener('click', openQuickLogModal);
+            
             // Daily log buttons
             document.getElementById('addDailyLogBtn').addEventListener('click', function() {
                 document.getElementById('addDailyLogForm').classList.remove('hidden');
+                document.getElementById('autoGenerateLogsForm').classList.add('hidden');
                 document.getElementById('dailyLogInput').focus();
+            });
+            
+            document.getElementById('autoGenerateLogsBtn').addEventListener('click', function() {
+                document.getElementById('autoGenerateLogsForm').classList.remove('hidden');
+                document.getElementById('addDailyLogForm').classList.add('hidden');
+                
+                // Set default template
+                document.getElementById('logTemplate').value = 'Working on [Assignment] - Day [DayNumber]: [Activity Details] at [Building]. Progress: Normal.';
             });
             
             document.getElementById('cancelDailyLog').addEventListener('click', function() {
                 document.getElementById('addDailyLogForm').classList.add('hidden');
                 document.getElementById('dailyLogInput').value = '';
+                document.getElementById('logAssignment').value = '';
             });
             
             document.getElementById('saveDailyLog').addEventListener('click', function() {
                 const content = document.getElementById('dailyLogInput').value;
-                saveDailyLog(content);
+                const assignmentId = document.getElementById('logAssignment').value || null;
+                saveDailyLog(content, assignmentId);
             });
+            
+            // Auto generate logs buttons
+            document.getElementById('cancelAutoGenerate').addEventListener('click', function() {
+                document.getElementById('autoGenerateLogsForm').classList.add('hidden');
+            });
+            
+            document.getElementById('generateLogsBtn').addEventListener('click', function() {
+                const assignmentId = document.getElementById('selectedAssignment').value;
+                const days = parseInt(document.getElementById('logDays').value);
+                const template = document.getElementById('logTemplate').value;
+                
+                if (!assignmentId || !template.trim()) {
+                    showToast('Please select an assignment and enter a template', 'warning');
+                    return;
+                }
+                
+                if (days < 1 || days > 30) {
+                    showToast('Please enter a valid number of days (1-30)', 'warning');
+                    return;
+                }
+                
+                autoGenerateDailyLogs(assignmentId, days, template);
+            });
+            
+            // Quick log modal
+            document.getElementById('closeQuickLogModal').addEventListener('click', closeQuickLogModal);
+            document.getElementById('cancelQuickLog').addEventListener('click', closeQuickLogModal);
+            document.getElementById('saveQuickLog').addEventListener('click', saveQuickLog);
             
             // Status mode change in form
             document.getElementById('statusMode').addEventListener('change', function() {
