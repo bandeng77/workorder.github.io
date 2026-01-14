@@ -1711,6 +1711,258 @@
         .view-toggle-btn:hover:not(.active) {
             background: var(--primary-50);
         }
+
+        /* ==================== MULTI-SELECT FILTER STYLES ==================== */
+        .filter-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--neutral-800);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            position: relative;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            font-size: 0.875rem;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            background: white;
+            transition: var(--transition-base);
+            color: var(--neutral-800);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25rem;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .filter-select[multiple] {
+            height: auto;
+            min-height: 120px;
+            background-image: none;
+            padding-right: 1rem;
+        }
+
+        .filter-select option {
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .filter-select option:checked {
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
+            color: var(--primary-700);
+            font-weight: 600;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--neutral-50);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--neutral-200);
+            min-height: 3.5rem;
+        }
+
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
+            color: var(--primary-700);
+            border: 1px solid var(--primary-200);
+            animation: slideInRight 0.3s ease;
+        }
+
+        .filter-chip .remove {
+            background: none;
+            border: none;
+            color: var(--primary-600);
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.875rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .filter-chip .remove:hover {
+            color: var(--primary-800);
+        }
+
+        .no-filters {
+            color: var(--neutral-500);
+            font-size: 0.875rem;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ==================== FILTER ICONS ==================== */
+        .filter-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .filter-icon.customer {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        }
+
+        .filter-icon.division {
+            background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
+        }
+
+        .filter-icon.pic {
+            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+        }
+
+        .filter-icon.personnel {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .filter-icon.priority {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .filter-icon.status {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .filter-badge {
+            position: absolute;
+            top: -0.5rem;
+            right: -0.5rem;
+            background: var(--danger-500);
+            color: white;
+            border-radius: 50%;
+            width: 1.25rem;
+            height: 1.25rem;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        /* ==================== FILTER TAGS IN SEARCH ==================== */
+        .search-with-filters {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-count {
+            background: var(--primary-500);
+            color: white;
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments for filters */
+        @media (max-width: 768px) {
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-actions {
+                flex-direction: column;
+            }
+            
+            .search-with-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-indicator {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1857,14 +2109,21 @@
                     </div>
                 </div>
                 
-                <!-- Search Box -->
+                <!-- Search Box with Filter Indicator -->
                 <div class="mb-8">
-                    <div class="search-box">
-                        <i class="search-icon fas fa-search"></i>
-                        <input type="text" 
-                               id="searchWorkOrders" 
-                               placeholder="Search work orders by number, customer, PIC..."
-                               class="search-input">
+                    <div class="search-with-filters">
+                        <div class="search-box flex-1">
+                            <i class="search-icon fas fa-search"></i>
+                            <input type="text" 
+                                   id="searchWorkOrders" 
+                                   placeholder="Search work orders by number, customer, PIC..."
+                                   class="search-input">
+                        </div>
+                        <div class="filter-indicator hidden" id="filterIndicator">
+                            <i class="fas fa-filter"></i>
+                            <span>Active Filters:</span>
+                            <span class="filter-count" id="activeFilterCount">0</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1872,6 +2131,149 @@
         
         <!-- Main Content -->
         <div class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Multi-Select Filter Section -->
+            <div class="filter-section animate-fade-in">
+                <div class="filter-header">
+                    <div class="filter-title">
+                        <i class="fas fa-filter text-blue-600"></i>
+                        <span>Advanced Filters</span>
+                    </div>
+                    <button id="toggleFilters" class="btn btn-outline btn-sm">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>Toggle Filters</span>
+                    </button>
+                </div>
+                
+                <div id="filterControls" class="filter-grid">
+                    <!-- Customer Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label" for="filterCustomer">
+                            <div class="flex items-center gap-2">
+                                <div class="filter-icon customer">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <span>Customer</span>
+                            </div>
+                        </label>
+                        <select id="filterCustomer" class="filter-select" multiple>
+                            <option value="">All Customers</option>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+                    
+                    <!-- Division Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label" for="filterDivision">
+                            <div class="flex items-center gap-2">
+                                <div class="filter-icon division">
+                                    <i class="fas fa-sitemap"></i>
+                                </div>
+                                <span>Division</span>
+                            </div>
+                        </label>
+                        <select id="filterDivision" class="filter-select" multiple>
+                            <option value="">All Divisions</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Testcom">Testcom</option>
+                            <option value="Project">Project</option>
+                        </select>
+                    </div>
+                    
+                    <!-- PIC Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label" for="filterPIC">
+                            <div class="flex items-center gap-2">
+                                <div class="filter-icon pic">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <span>PIC</span>
+                            </div>
+                        </label>
+                        <select id="filterPIC" class="filter-select" multiple>
+                            <option value="">All PIC</option>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+                    
+                    <!-- Personnel Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label" for="filterPersonnel">
+                            <div class="flex items-center gap-2">
+                                <div class="filter-icon personnel">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span>Personnel</span>
+                            </div>
+                        </label>
+                        <select id="filterPersonnel" class="filter-select" multiple>
+                            <option value="">All Personnel</option>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+                    
+                    <!-- Priority Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label" for="filterPriority">
+                            <div class="flex items-center gap-2">
+                                <div class="filter-icon priority">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </div>
+                                <span>Priority</span>
+                            </div>
+                        </label>
+                        <select id="filterPriority" class="filter-select" multiple>
+                            <option value="">All Priorities</option>
+                            <option value="Normal">Normal</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Status Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label" for="filterStatus">
+                            <div class="flex items-center gap-2">
+                                <div class="filter-icon status">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <span>Status</span>
+                            </div>
+                        </label>
+                        <select id="filterStatus" class="filter-select" multiple>
+                            <option value="">All Status</option>
+                            <option value="Running">Running</option>
+                            <option value="Done">Done</option>
+                            <option value="Close">Close</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Active Filters Display -->
+                <div class="active-filters" id="activeFilters">
+                    <div class="no-filters">
+                        <i class="fas fa-info-circle"></i>
+                        <span>No active filters. Select filters above to narrow results.</span>
+                    </div>
+                </div>
+                
+                <!-- Filter Actions -->
+                <div class="filter-actions">
+                    <button id="applyFiltersBtn" class="btn btn-primary">
+                        <i class="fas fa-check"></i>
+                        <span>Apply Filters</span>
+                    </button>
+                    <button id="clearAllFiltersBtn" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        <span>Clear All</span>
+                    </button>
+                    <button id="resetFiltersBtn" class="btn btn-outline">
+                        <i class="fas fa-redo"></i>
+                        <span>Reset to Default</span>
+                    </button>
+                </div>
+            </div>
+            
             <!-- Tabs Navigation -->
             <div class="tabs mb-8">
                 <button class="tab active" data-tab="all">
@@ -2794,6 +3196,24 @@
         let mediaDevices = [];
         let currentCameraIndex = 0;
         
+        // Filter variables
+        let currentFilters = {
+            customer: [],
+            division: [],
+            pic: [],
+            personnel: [],
+            priority: [],
+            status: []
+        };
+        let filterOptions = {
+            customer: new Set(),
+            division: new Set(['Maintenance', 'Testcom', 'Project']),
+            pic: new Set(),
+            personnel: new Set(),
+            priority: new Set(['Normal', 'High', 'Urgent', 'Low']),
+            status: new Set(['Running', 'Done', 'Close'])
+        };
+        
         // Daftar personil yang tersedia (UPDATED)
         const availablePersonnel = [
             "Junaidi",
@@ -2899,6 +3319,7 @@
                         updateStats();
                         renderWorkOrders();
                         updateWorkOrderCount();
+                        updateFilterOptions();
                         
                         console.log('Work orders updated:', workorders.length);
                     },
@@ -2936,8 +3357,528 @@
                 });
         }
 
-        // ==================== PERSONNEL STATUS MANAGEMENT (Dihapus) ====================
-        // Fungsi-fungsi terkait Status Control telah dihapus
+        // ==================== FILTER FUNCTIONS ====================
+        function updateFilterOptions() {
+            console.log('Updating filter options from work orders...');
+            
+            // Reset filter options
+            filterOptions.customer.clear();
+            filterOptions.pic.clear();
+            filterOptions.personnel.clear();
+            
+            workorders.forEach(wo => {
+                // Collect unique customers
+                if (wo.customer) {
+                    filterOptions.customer.add(wo.customer);
+                }
+                
+                // Collect unique PIC
+                if (wo.pic) {
+                    filterOptions.pic.add(wo.pic);
+                }
+                
+                // Collect unique personnel
+                if (wo.personnel) {
+                    let personnelArray = [];
+                    if (Array.isArray(wo.personnel)) {
+                        personnelArray = wo.personnel;
+                    } else if (typeof wo.personnel === 'string') {
+                        try {
+                            personnelArray = JSON.parse(wo.personnel);
+                        } catch (e) {
+                            personnelArray = [wo.personnel];
+                        }
+                    }
+                    
+                    personnelArray.forEach(person => {
+                        if (person) {
+                            filterOptions.personnel.add(person);
+                        }
+                    });
+                }
+            });
+            
+            // Add available personnel to filter options
+            availablePersonnel.forEach(person => {
+                filterOptions.personnel.add(person);
+            });
+            
+            // Update filter dropdowns
+            updateFilterDropdowns();
+            console.log('Filter options updated');
+        }
+
+        function updateFilterDropdowns() {
+            console.log('Updating filter dropdowns...');
+            
+            // Update Customer dropdown
+            const customerSelect = document.getElementById('filterCustomer');
+            if (customerSelect) {
+                // Get existing options except the first one (All Customers)
+                const existingOptions = Array.from(customerSelect.options).slice(1);
+                const existingValues = existingOptions.map(opt => opt.value);
+                
+                // Add new customer options
+                filterOptions.customer.forEach(customer => {
+                    if (customer && !existingValues.includes(customer)) {
+                        const option = document.createElement('option');
+                        option.value = customer;
+                        option.textContent = customer;
+                        customerSelect.appendChild(option);
+                    }
+                });
+            }
+            
+            // Update PIC dropdown
+            const picSelect = document.getElementById('filterPIC');
+            if (picSelect) {
+                // Get existing options except the first one (All PIC)
+                const existingOptions = Array.from(picSelect.options).slice(1);
+                const existingValues = existingOptions.map(opt => opt.value);
+                
+                // Add new PIC options
+                filterOptions.pic.forEach(pic => {
+                    if (pic && !existingValues.includes(pic)) {
+                        const option = document.createElement('option');
+                        option.value = pic;
+                        option.textContent = pic;
+                        picSelect.appendChild(option);
+                    }
+                });
+            }
+            
+            // Update Personnel dropdown
+            const personnelSelect = document.getElementById('filterPersonnel');
+            if (personnelSelect) {
+                // Get existing options except the first one (All Personnel)
+                const existingOptions = Array.from(personnelSelect.options).slice(1);
+                const existingValues = existingOptions.map(opt => opt.value);
+                
+                // Add new personnel options
+                filterOptions.personnel.forEach(personnel => {
+                    if (personnel && !existingValues.includes(personnel)) {
+                        const option = document.createElement('option');
+                        option.value = personnel;
+                        option.textContent = personnel;
+                        personnelSelect.appendChild(option);
+                    }
+                });
+            }
+            
+            console.log('Filter dropdowns updated');
+        }
+
+        function applyMultiFilters() {
+            console.log('Applying multi-filters:', currentFilters);
+            
+            let filtered = [...workorders];
+            
+            // Apply tab filter
+            if (currentTab !== 'all') {
+                const tabStatus = currentTab.charAt(0).toUpperCase() + currentTab.slice(1);
+                filtered = filtered.filter(wo => wo.status === tabStatus);
+            }
+            
+            // Apply search filter
+            const searchTerm = document.getElementById('searchWorkOrders').value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(wo => 
+                    (wo.workOrderNumber && wo.workOrderNumber.toLowerCase().includes(searchTerm)) ||
+                    (wo.customer && wo.customer.toLowerCase().includes(searchTerm)) ||
+                    (wo.building && wo.building.toLowerCase().includes(searchTerm)) ||
+                    (wo.pic && wo.pic.toLowerCase().includes(searchTerm)) ||
+                    (wo.personnel && JSON.stringify(wo.personnel).toLowerCase().includes(searchTerm)) ||
+                    (wo.workType && wo.workType.toLowerCase().includes(searchTerm)) ||
+                    (wo.division && wo.division.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            // Apply multi-select filters
+            // Customer filter
+            if (currentFilters.customer.length > 0) {
+                filtered = filtered.filter(wo => 
+                    wo.customer && currentFilters.customer.includes(wo.customer)
+                );
+            }
+            
+            // Division filter
+            if (currentFilters.division.length > 0) {
+                filtered = filtered.filter(wo => 
+                    wo.division && currentFilters.division.includes(wo.division)
+                );
+            }
+            
+            // PIC filter
+            if (currentFilters.pic.length > 0) {
+                filtered = filtered.filter(wo => 
+                    wo.pic && currentFilters.pic.includes(wo.pic)
+                );
+            }
+            
+            // Personnel filter
+            if (currentFilters.personnel.length > 0) {
+                filtered = filtered.filter(wo => {
+                    if (!wo.personnel) return false;
+                    
+                    let personnelArray = [];
+                    if (Array.isArray(wo.personnel)) {
+                        personnelArray = wo.personnel;
+                    } else if (typeof wo.personnel === 'string') {
+                        try {
+                            personnelArray = JSON.parse(wo.personnel);
+                        } catch (e) {
+                            personnelArray = [wo.personnel];
+                        }
+                    }
+                    
+                    // Check if any personnel matches the filter
+                    return personnelArray.some(person => 
+                        currentFilters.personnel.includes(person)
+                    );
+                });
+            }
+            
+            // Priority filter
+            if (currentFilters.priority.length > 0) {
+                filtered = filtered.filter(wo => 
+                    wo.priority && currentFilters.priority.includes(wo.priority)
+                );
+            }
+            
+            // Status filter
+            if (currentFilters.status.length > 0) {
+                filtered = filtered.filter(wo => 
+                    wo.status && currentFilters.status.includes(wo.status)
+                );
+            }
+            
+            // Apply sorting
+            const sortBy = document.getElementById('sortBy').value;
+            const sortOrder = document.getElementById('sortOrder').value;
+            filtered.sort((a, b) => {
+                let aVal = a[sortBy];
+                let bVal = b[sortBy];
+                
+                if (sortBy === 'createdAt' || sortBy === 'startDate' || sortBy === 'endDate') {
+                    aVal = aVal?.toDate?.() || new Date(0);
+                    bVal = bVal?.toDate?.() || new Date(0);
+                }
+                
+                if (sortOrder === 'asc') {
+                    return aVal > bVal ? 1 : -1;
+                } else {
+                    return aVal < bVal ? 1 : -1;
+                }
+            });
+            
+            filteredWorkorders = filtered;
+            renderWorkOrders();
+            updateWorkOrderCount();
+            updateActiveFiltersDisplay();
+            updateFilterIndicator();
+            
+            console.log('Multi-filters applied. Result count:', filtered.length);
+        }
+
+        function updateActiveFiltersDisplay() {
+            const activeFiltersContainer = document.getElementById('activeFilters');
+            if (!activeFiltersContainer) return;
+            
+            // Count total active filters
+            let totalActiveFilters = 0;
+            Object.values(currentFilters).forEach(filterArray => {
+                if (filterArray.length > 0) {
+                    totalActiveFilters += filterArray.length;
+                }
+            });
+            
+            // Clear container
+            activeFiltersContainer.innerHTML = '';
+            
+            if (totalActiveFilters === 0) {
+                activeFiltersContainer.innerHTML = `
+                    <div class="no-filters">
+                        <i class="fas fa-info-circle"></i>
+                        <span>No active filters. Select filters above to narrow results.</span>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Add filter chips for each active filter
+            // Customer chips
+            currentFilters.customer.forEach(customer => {
+                if (customer) {
+                    const chip = document.createElement('div');
+                    chip.className = 'filter-chip';
+                    chip.innerHTML = `
+                        <i class="fas fa-building"></i>
+                        <span>Customer: ${customer}</span>
+                        <button class="remove" data-type="customer" data-value="${customer.replace(/"/g, '&quot;')}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    activeFiltersContainer.appendChild(chip);
+                }
+            });
+            
+            // Division chips
+            currentFilters.division.forEach(division => {
+                if (division) {
+                    const chip = document.createElement('div');
+                    chip.className = 'filter-chip';
+                    chip.innerHTML = `
+                        <i class="fas fa-sitemap"></i>
+                        <span>Division: ${division}</span>
+                        <button class="remove" data-type="division" data-value="${division.replace(/"/g, '&quot;')}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    activeFiltersContainer.appendChild(chip);
+                }
+            });
+            
+            // PIC chips
+            currentFilters.pic.forEach(pic => {
+                if (pic) {
+                    const chip = document.createElement('div');
+                    chip.className = 'filter-chip';
+                    chip.innerHTML = `
+                        <i class="fas fa-user-tie"></i>
+                        <span>PIC: ${pic}</span>
+                        <button class="remove" data-type="pic" data-value="${pic.replace(/"/g, '&quot;')}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    activeFiltersContainer.appendChild(chip);
+                }
+            });
+            
+            // Personnel chips
+            currentFilters.personnel.forEach(personnel => {
+                if (personnel) {
+                    const chip = document.createElement('div');
+                    chip.className = 'filter-chip';
+                    chip.innerHTML = `
+                        <i class="fas fa-users"></i>
+                        <span>Personnel: ${personnel}</span>
+                        <button class="remove" data-type="personnel" data-value="${personnel.replace(/"/g, '&quot;')}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    activeFiltersContainer.appendChild(chip);
+                }
+            });
+            
+            // Priority chips
+            currentFilters.priority.forEach(priority => {
+                if (priority) {
+                    const chip = document.createElement('div');
+                    chip.className = 'filter-chip';
+                    chip.innerHTML = `
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Priority: ${priority}</span>
+                        <button class="remove" data-type="priority" data-value="${priority.replace(/"/g, '&quot;')}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    activeFiltersContainer.appendChild(chip);
+                }
+            });
+            
+            // Status chips
+            currentFilters.status.forEach(status => {
+                if (status) {
+                    const chip = document.createElement('div');
+                    chip.className = 'filter-chip';
+                    chip.innerHTML = `
+                        <i class="fas fa-chart-line"></i>
+                        <span>Status: ${status}</span>
+                        <button class="remove" data-type="status" data-value="${status.replace(/"/g, '&quot;')}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    activeFiltersContainer.appendChild(chip);
+                }
+            });
+            
+            // Add event listeners to remove buttons
+            activeFiltersContainer.querySelectorAll('.remove').forEach(button => {
+                button.addEventListener('click', function() {
+                    const type = this.dataset.type;
+                    const value = this.dataset.value;
+                    removeFilter(type, value);
+                });
+            });
+        }
+
+        function updateFilterIndicator() {
+            const filterIndicator = document.getElementById('filterIndicator');
+            const activeFilterCount = document.getElementById('activeFilterCount');
+            
+            if (!filterIndicator || !activeFilterCount) return;
+            
+            // Count total active filters
+            let totalActiveFilters = 0;
+            Object.values(currentFilters).forEach(filterArray => {
+                if (filterArray.length > 0) {
+                    totalActiveFilters += filterArray.length;
+                }
+            });
+            
+            if (totalActiveFilters > 0) {
+                filterIndicator.classList.remove('hidden');
+                activeFilterCount.textContent = totalActiveFilters;
+            } else {
+                filterIndicator.classList.add('hidden');
+            }
+        }
+
+        function getSelectedFilters() {
+            console.log('Getting selected filters from UI...');
+            
+            const filters = {
+                customer: [],
+                division: [],
+                pic: [],
+                personnel: [],
+                priority: [],
+                status: []
+            };
+            
+            // Get selected customers
+            const customerSelect = document.getElementById('filterCustomer');
+            if (customerSelect) {
+                filters.customer = Array.from(customerSelect.selectedOptions)
+                    .map(option => option.value)
+                    .filter(value => value !== ''); // Exclude empty "All" option
+            }
+            
+            // Get selected divisions
+            const divisionSelect = document.getElementById('filterDivision');
+            if (divisionSelect) {
+                filters.division = Array.from(divisionSelect.selectedOptions)
+                    .map(option => option.value)
+                    .filter(value => value !== '');
+            }
+            
+            // Get selected PIC
+            const picSelect = document.getElementById('filterPIC');
+            if (picSelect) {
+                filters.pic = Array.from(picSelect.selectedOptions)
+                    .map(option => option.value)
+                    .filter(value => value !== '');
+            }
+            
+            // Get selected personnel
+            const personnelSelect = document.getElementById('filterPersonnel');
+            if (personnelSelect) {
+                filters.personnel = Array.from(personnelSelect.selectedOptions)
+                    .map(option => option.value)
+                    .filter(value => value !== '');
+            }
+            
+            // Get selected priorities
+            const prioritySelect = document.getElementById('filterPriority');
+            if (prioritySelect) {
+                filters.priority = Array.from(prioritySelect.selectedOptions)
+                    .map(option => option.value)
+                    .filter(value => value !== '');
+            }
+            
+            // Get selected statuses
+            const statusSelect = document.getElementById('filterStatus');
+            if (statusSelect) {
+                filters.status = Array.from(statusSelect.selectedOptions)
+                    .map(option => option.value)
+                    .filter(value => value !== '');
+            }
+            
+            console.log('Selected filters:', filters);
+            return filters;
+        }
+
+        function removeFilter(type, value) {
+            console.log(`Removing filter: ${type} = ${value}`);
+            
+            // Remove from current filters
+            if (currentFilters[type]) {
+                currentFilters[type] = currentFilters[type].filter(item => item !== value);
+            }
+            
+            // Update UI
+            updateSelectElement(type, value, false);
+            applyMultiFilters();
+            showToast(`Removed filter: ${value}`, 'info');
+        }
+
+        function updateSelectElement(type, value, isSelected) {
+            const selectId = `filter${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            const selectElement = document.getElementById(selectId);
+            
+            if (selectElement) {
+                const options = Array.from(selectElement.options);
+                const option = options.find(opt => opt.value === value);
+                
+                if (option) {
+                    option.selected = isSelected;
+                }
+            }
+        }
+
+        function clearAllFilters() {
+            console.log('Clearing all filters...');
+            
+            // Reset current filters
+            currentFilters = {
+                customer: [],
+                division: [],
+                pic: [],
+                personnel: [],
+                priority: [],
+                status: []
+            };
+            
+            // Clear all select elements
+            document.querySelectorAll('.filter-select').forEach(select => {
+                Array.from(select.options).forEach(option => {
+                    option.selected = false;
+                });
+                
+                // Select the "All" option
+                if (select.options.length > 0) {
+                    select.options[0].selected = true;
+                }
+            });
+            
+            // Apply filters
+            applyMultiFilters();
+            showToast('All filters cleared', 'success');
+        }
+
+        function resetFiltersToDefault() {
+            console.log('Resetting filters to default...');
+            
+            clearAllFilters();
+            
+            // Reset tab to "all"
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            const allTab = document.querySelector('.tab[data-tab="all"]');
+            if (allTab) {
+                allTab.classList.add('active');
+                currentTab = 'all';
+            }
+            
+            // Clear search
+            const searchInput = document.getElementById('searchWorkOrders');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            
+            // Apply default filters
+            applyMultiFilters();
+            showToast('Filters reset to default', 'info');
+        }
 
         // ==================== UTILITY FUNCTIONS ====================
         function formatDate(date) {
@@ -3072,6 +4013,7 @@
                 updateStats();
                 renderWorkOrders();
                 updateWorkOrderCount();
+                updateFilterOptions();
                 
                 console.log('Work orders loaded:', workorders.length);
                 
@@ -3106,51 +4048,15 @@
         function updateWorkOrderCount() {
             const countElement = document.getElementById('workOrderCount');
             if (countElement) {
-                countElement.textContent = `Showing ${filteredWorkorders.length} of ${workorders.length} work orders`;
-            }
-        }
-
-        function applyFiltersAndRender() {
-            let filtered = [...workorders];
-            
-            if (currentTab !== 'all') {
-                filtered = filtered.filter(wo => wo.status === currentTab.charAt(0).toUpperCase() + currentTab.slice(1));
-            }
-            
-            const searchTerm = document.getElementById('searchWorkOrders').value.toLowerCase();
-            if (searchTerm) {
-                filtered = filtered.filter(wo => 
-                    (wo.workOrderNumber && wo.workOrderNumber.toLowerCase().includes(searchTerm)) ||
-                    (wo.customer && wo.customer.toLowerCase().includes(searchTerm)) ||
-                    (wo.building && wo.building.toLowerCase().includes(searchTerm)) ||
-                    (wo.pic && wo.pic.toLowerCase().includes(searchTerm)) ||
-                    (wo.personnel && JSON.stringify(wo.personnel).toLowerCase().includes(searchTerm)) ||
-                    (wo.workType && wo.workType.toLowerCase().includes(searchTerm)) ||
-                    (wo.division && wo.division.toLowerCase().includes(searchTerm))
-                );
-            }
-            
-            const sortBy = document.getElementById('sortBy').value;
-            const sortOrder = document.getElementById('sortOrder').value;
-            filtered.sort((a, b) => {
-                let aVal = a[sortBy];
-                let bVal = b[sortBy];
+                const total = workorders.length;
+                const filtered = filteredWorkorders.length;
+                countElement.textContent = `Showing ${filtered} of ${total} work orders`;
                 
-                if (sortBy === 'createdAt' || sortBy === 'startDate' || sortBy === 'endDate') {
-                    aVal = aVal?.toDate?.() || new Date(0);
-                    bVal = bVal?.toDate?.() || new Date(0);
+                // Add filter indicator
+                if (filtered < total) {
+                    countElement.innerHTML += ` <span class="badge badge-info ml-2">Filtered</span>`;
                 }
-                
-                if (sortOrder === 'asc') {
-                    return aVal > bVal ? 1 : -1;
-                } else {
-                    return aVal < bVal ? 1 : -1;
-                }
-            });
-            
-            filteredWorkorders = filtered;
-            renderWorkOrders();
-            updateWorkOrderCount();
+            }
         }
 
         function renderWorkOrders() {
@@ -6068,8 +6974,13 @@
             window.location.href = 'pipelines.html';
         }
 
-        // ==================== PERSONNEL STATUS CONTROL FUNCTIONS (DIHAPUS) ====================
-        // Semua fungsi terkait Status Control telah dihapus dari kode ini
+        // ==================== PERSONNEL LIST FUNCTION ====================
+        function openPersonnelList() {
+            console.log('Opening personnel list...');
+            
+            // Redirect to personnel list page in the same tab
+            window.location.href = 'personnellist.html';
+        }
 
         async function deleteWorkOrder(workorderId) {
             if (!canDeleteWorkOrder()) {
@@ -6183,14 +7094,14 @@
             document.getElementById('startDate').addEventListener('change', updateIntegratedWorkOrderNumber);
             document.getElementById('company').addEventListener('change', updateIntegratedWorkOrderNumber);
             
-            document.getElementById('searchWorkOrders').addEventListener('input', applyFiltersAndRender);
+            document.getElementById('searchWorkOrders').addEventListener('input', applyMultiFilters);
             
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', function() {
                     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
                     currentTab = this.dataset.tab;
-                    applyFiltersAndRender();
+                    applyMultiFilters();
                 });
             });
             
@@ -6207,8 +7118,28 @@
                 switchView('timeline');
             });
             
-            document.getElementById('sortBy').addEventListener('change', applyFiltersAndRender);
-            document.getElementById('sortOrder').addEventListener('change', applyFiltersAndRender);
+            document.getElementById('sortBy').addEventListener('change', applyMultiFilters);
+            document.getElementById('sortOrder').addEventListener('change', applyMultiFilters);
+            
+            // Filter event listeners
+            document.getElementById('applyFiltersBtn').addEventListener('click', function() {
+                currentFilters = getSelectedFilters();
+                applyMultiFilters();
+                showToast('Filters applied successfully', 'success');
+            });
+            
+            document.getElementById('clearAllFiltersBtn').addEventListener('click', clearAllFilters);
+            document.getElementById('resetFiltersBtn').addEventListener('click', resetFiltersToDefault);
+            document.getElementById('toggleFilters').addEventListener('click', function() {
+                const filterControls = document.getElementById('filterControls');
+                if (filterControls.classList.contains('hidden')) {
+                    filterControls.classList.remove('hidden');
+                    this.innerHTML = '<i class="fas fa-sliders-h"></i><span>Hide Filters</span>';
+                } else {
+                    filterControls.classList.add('hidden');
+                    this.innerHTML = '<i class="fas fa-sliders-h"></i><span>Show Filters</span>';
+                }
+            });
             
             // Work Order Modal
             document.getElementById('closeWorkOrderModal').addEventListener('click', closeWorkOrderModal);
@@ -6255,14 +7186,6 @@
             document.getElementById('closePhotoPreview').addEventListener('click', closePhotoPreview);
             
             console.log('App initialization complete');
-        }
-
-        // ==================== PERSONNEL LIST FUNCTION ====================
-        function openPersonnelList() {
-            console.log('Opening personnel list...');
-            
-            // Redirect to personnel list page in the same tab
-            window.location.href = 'personnellist.html';
         }
         
         function switchView(view) {
