@@ -469,6 +469,12 @@
             box-shadow: var(--shadow-md);
         }
 
+        .btn-excel {
+            background: linear-gradient(135deg, #217346 0%, #1e5c3a 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
         .btn-outline {
             background: transparent;
             border: 2px solid var(--primary-500);
@@ -1050,13 +1056,17 @@
                             <i class="fas fa-plus-circle"></i>
                             <span>New Pipeline Item</span>
                         </button>
-                        <button id="backToDashboardBtn" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i>
-                            <span>Back to Dashboard</span>
+                        <button id="exportExcelBtn" class="btn btn-excel">
+                            <i class="fas fa-file-excel"></i>
+                            <span>Export to Excel</span>
                         </button>
                         <button id="pipelinesAnalyticsBtn" class="btn btn-info hidden">
                             <i class="fas fa-chart-bar"></i>
                             <span>Pipeline Analytics</span>
+                        </button>
+                        <button id="backToDashboardBtn" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back to Dashboard</span>
                         </button>
                         <button id="authButton" class="btn btn-danger">
                             <i class="fas fa-sign-out-alt"></i>
@@ -1559,6 +1569,128 @@
                     <button type="submit" form="addCustomerForm" class="btn btn-primary">
                         <i class="fas fa-save"></i>
                         Add Customer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Options Modal -->
+    <div id="exportOptionsModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-md">
+            <div class="modal-header sticky-top">
+                <div>
+                    <h2 class="modal-title">Export to Excel</h2>
+                    <p class="text-gray-300 mt-1">Choose export options</p>
+                </div>
+                <button id="closeExportOptionsModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body custom-scrollbar">
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Export Scope</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="exportScope" value="all" class="w-4 h-4 text-green-600" checked>
+                                <div>
+                                    <div class="font-medium">All Pipeline Items</div>
+                                    <p class="text-sm text-gray-500">Export all pipeline items regardless of filters</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="exportScope" value="filtered" class="w-4 h-4 text-green-600">
+                                <div>
+                                    <div class="font-medium">Filtered Items Only</div>
+                                    <p class="text-sm text-gray-500">Export only items matching current search/filters</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="exportScope" value="status" class="w-4 h-4 text-green-600">
+                                <div>
+                                    <div class="font-medium">By Status</div>
+                                    <div class="mt-2 space-y-2">
+                                        <label class="flex items-center gap-2">
+                                            <input type="checkbox" id="exportOpen" class="w-4 h-4 text-green-600" checked>
+                                            <span class="text-sm">Open Items</span>
+                                        </label>
+                                        <label class="flex items-center gap-2">
+                                            <input type="checkbox" id="exportClose" class="w-4 h-4 text-green-600" checked>
+                                            <span class="text-sm">Close Items</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Export Format</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="exportFormat" value="detailed" class="w-4 h-4 text-blue-600" checked>
+                                <div>
+                                    <div class="font-medium">Detailed Export</div>
+                                    <p class="text-sm text-gray-500">Include all fields with formatting</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="exportFormat" value="summary" class="w-4 h-4 text-blue-600">
+                                <div>
+                                    <div class="font-medium">Summary Export</div>
+                                    <p class="text-sm text-gray-500">Basic fields only for quick review</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Export Options</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="checkbox" id="includeTimestamp" class="w-4 h-4 text-blue-600" checked>
+                                <div>
+                                    <div class="font-medium">Include Timestamp</div>
+                                    <p class="text-sm text-gray-500">Add export date and time to filename</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="checkbox" id="includeFilters" class="w-4 h-4 text-blue-600" checked>
+                                <div>
+                                    <div class="font-medium">Include Filter Info</div>
+                                    <p class="text-sm text-gray-500">Add current filter settings to sheet</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-info-circle text-blue-600 text-lg"></i>
+                            <div>
+                                <div class="font-medium text-blue-800">Export Information</div>
+                                <p class="text-sm text-blue-600 mt-1">
+                                    The export will include all pipeline data in a formatted Excel file. 
+                                    Currency values will be properly formatted and columns will be auto-sized.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-header sticky-bottom">
+                <div>
+                    <div class="text-sm text-gray-300" id="exportItemCount">0 items will be exported</div>
+                </div>
+                <div class="flex gap-3">
+                    <button id="cancelExportBtn" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button id="confirmExportBtn" class="btn btn-excel">
+                        <i class="fas fa-file-excel"></i>
+                        Export to Excel
                     </button>
                 </div>
             </div>
@@ -3330,6 +3462,258 @@
             }
         }
 
+        // ==================== EXPORT TO EXCEL FUNCTIONS ====================
+        function openExportOptionsModal() {
+            console.log('Opening export options modal');
+            
+            if (pipelineItems.length === 0) {
+                showToast('No pipeline items to export', 'warning');
+                return;
+            }
+            
+            // Reset form
+            document.querySelectorAll('input[name="exportScope"]')[0].checked = true;
+            document.querySelectorAll('input[name="exportFormat"]')[0].checked = true;
+            document.getElementById('exportOpen').checked = true;
+            document.getElementById('exportClose').checked = true;
+            document.getElementById('includeTimestamp').checked = true;
+            document.getElementById('includeFilters').checked = true;
+            
+            // Update item count
+            updateExportItemCount();
+            
+            document.getElementById('exportOptionsModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeExportOptionsModal() {
+            document.getElementById('exportOptionsModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function updateExportItemCount() {
+            const exportScope = document.querySelector('input[name="exportScope"]:checked')?.value || 'all';
+            const exportOpen = document.getElementById('exportOpen').checked;
+            const exportClose = document.getElementById('exportClose').checked;
+            
+            let count = 0;
+            
+            if (exportScope === 'all') {
+                count = pipelineItems.length;
+            } else if (exportScope === 'filtered') {
+                count = filteredPipelineItems.length;
+            } else if (exportScope === 'status') {
+                if (exportOpen) {
+                    count += pipelineItems.filter(item => item.status === 'Open').length;
+                }
+                if (exportClose) {
+                    count += pipelineItems.filter(item => item.status === 'Close').length;
+                }
+            }
+            
+            document.getElementById('exportItemCount').textContent = `${count} items will be exported`;
+        }
+
+        async function exportToExcel() {
+            console.log('Exporting to Excel...');
+            
+            try {
+                showLoading();
+                
+                const exportScope = document.querySelector('input[name="exportScope"]:checked')?.value || 'all';
+                const exportFormat = document.querySelector('input[name="exportFormat"]:checked')?.value || 'detailed';
+                const exportOpen = document.getElementById('exportOpen').checked;
+                const exportClose = document.getElementById('exportClose').checked;
+                const includeTimestamp = document.getElementById('includeTimestamp').checked;
+                const includeFilters = document.getElementById('includeFilters').checked;
+                
+                // Get items to export
+                let itemsToExport = [];
+                
+                if (exportScope === 'all') {
+                    itemsToExport = [...pipelineItems];
+                } else if (exportScope === 'filtered') {
+                    itemsToExport = [...filteredPipelineItems];
+                } else if (exportScope === 'status') {
+                    itemsToExport = pipelineItems.filter(item => {
+                        if (exportOpen && item.status === 'Open') return true;
+                        if (exportClose && item.status === 'Close') return true;
+                        return false;
+                    });
+                }
+                
+                if (itemsToExport.length === 0) {
+                    showToast('No items to export', 'warning');
+                    closeExportOptionsModal();
+                    return;
+                }
+                
+                // Sort items by number
+                itemsToExport.sort((a, b) => a.no - b.no);
+                
+                // Prepare data for Excel
+                const worksheetData = prepareExcelData(itemsToExport, exportFormat, includeFilters);
+                
+                // Create workbook
+                const wb = XLSX.utils.book_new();
+                
+                // Create worksheet
+                const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+                
+                // Set column widths
+                const colWidths = exportFormat === 'detailed' 
+                    ? [
+                        { wch: 8 },  // No
+                        { wch: 25 }, // Quotation
+                        { wch: 15 }, // Date
+                        { wch: 15 }, // Company
+                        { wch: 10 }, // SOW
+                        { wch: 20 }, // PIC
+                        { wch: 35 }, // Customer
+                        { wch: 30 }, // Project
+                        { wch: 10 }, // Status
+                        { wch: 20 }, // Value Quotation
+                        { wch: 20 }, // Value PO
+                        { wch: 30 }, // Description
+                        { wch: 30 }, // Notes
+                        { wch: 10 }, // Progress
+                        { wch: 20 }, // Updated At
+                        { wch: 20 }, // Updated By
+                    ]
+                    : [
+                        { wch: 8 },  // No
+                        { wch: 25 }, // Quotation
+                        { wch: 15 }, // Date
+                        { wch: 15 }, // Company
+                        { wch: 20 }, // PIC
+                        { wch: 35 }, // Customer
+                        { wch: 30 }, // Project
+                        { wch: 10 }, // Status
+                        { wch: 20 }, // Value Quotation
+                        { wch: 20 }, // Value PO
+                        { wch: 10 }, // Progress
+                    ];
+                
+                ws['!cols'] = colWidths;
+                
+                // Add worksheet to workbook
+                XLSX.utils.book_append_sheet(wb, ws, 'Pipeline Data');
+                
+                // Generate filename
+                let filename = 'Pipeline_Export';
+                if (includeTimestamp) {
+                    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+                    filename += `_${timestamp}`;
+                }
+                filename += '.xlsx';
+                
+                // Export to Excel
+                XLSX.writeFile(wb, filename);
+                
+                showToast(`Exported ${itemsToExport.length} items to Excel`, 'success');
+                closeExportOptionsModal();
+                
+            } catch (error) {
+                console.error('Error exporting to Excel:', error);
+                showToast('Failed to export to Excel', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function prepareExcelData(items, format, includeFilters) {
+            const data = [];
+            
+            // Add header
+            if (format === 'detailed') {
+                data.push([
+                    'No', 'No. Quotation', 'Tanggal', 'Company', 'SOW', 'PIC', 
+                    'Customer', 'Project', 'Status', 'Value Quotation', 'Value PO',
+                    'Description', 'Notes', 'Progress (%)', 'Updated At', 'Updated By'
+                ]);
+            } else {
+                data.push([
+                    'No', 'No. Quotation', 'Tanggal', 'Company', 'PIC', 
+                    'Customer', 'Project', 'Status', 'Value Quotation', 'Value PO', 'Progress (%)'
+                ]);
+            }
+            
+            // Add filter information if requested
+            if (includeFilters) {
+                const searchTerm = document.getElementById('searchPipelineItems').value;
+                const companyFilter = document.getElementById('filterByCompany').value;
+                const statusFilter = document.getElementById('filterByStatus').value;
+                
+                let filterInfo = 'Filters: ';
+                const filters = [];
+                
+                if (searchTerm) filters.push(`Search: "${searchTerm}"`);
+                if (companyFilter) filters.push(`Company: ${companyFilter}`);
+                if (statusFilter) filters.push(`Status: ${statusFilter}`);
+                
+                if (filters.length > 0) {
+                    filterInfo += filters.join(', ');
+                    data.push([filterInfo]);
+                    data.push([]); // Empty row
+                }
+            }
+            
+            // Add data rows
+            items.forEach(item => {
+                if (format === 'detailed') {
+                    data.push([
+                        item.no || '',
+                        item.quotation || '',
+                        item.date ? formatDate(item.date) : '',
+                        item.company || '',
+                        item.sow || '',
+                        item.pic || '',
+                        item.customer || '',
+                        item.project || '',
+                        item.status || '',
+                        formatCurrencyDisplay(item.valueQuotation || 0),
+                        formatCurrencyDisplay(item.valuePO || 0),
+                        item.description || '',
+                        item.notes || '',
+                        item.progress || 0,
+                        item.updatedAt ? formatDateTime(item.updatedAt) : '',
+                        item.updatedBy || ''
+                    ]);
+                } else {
+                    data.push([
+                        item.no || '',
+                        item.quotation || '',
+                        item.date ? formatDate(item.date) : '',
+                        item.company || '',
+                        item.pic || '',
+                        item.customer || '',
+                        item.project || '',
+                        item.status || '',
+                        formatCurrencyDisplay(item.valueQuotation || 0),
+                        formatCurrencyDisplay(item.valuePO || 0),
+                        item.progress || 0
+                    ]);
+                }
+            });
+            
+            // Add summary
+            data.push([]); // Empty row
+            data.push(['Summary Information']);
+            data.push(['Total Items:', items.length]);
+            data.push(['Open Items:', items.filter(i => i.status === 'Open').length]);
+            data.push(['Close Items:', items.filter(i => i.status === 'Close').length]);
+            
+            const totalQuotation = items.reduce((sum, item) => sum + (item.valueQuotation || 0), 0);
+            const totalPO = items.reduce((sum, item) => sum + (item.valuePO || 0), 0);
+            
+            data.push(['Total Quotation Value:', formatCurrencyDisplay(totalQuotation)]);
+            data.push(['Total PO Value:', formatCurrencyDisplay(totalPO)]);
+            data.push(['Export Date:', new Date().toLocaleString('id-ID')]);
+            data.push(['Exported By:', currentUser?.email || 'Unknown']);
+            
+            return data;
+        }
+
         // ==================== PIPELINE ANALYTICS ====================
         function openPipelinesAnalytics() {
             console.log('Opening pipeline analytics');
@@ -3668,6 +4052,7 @@
             
             const newPipelineBtn = document.getElementById('newPipelineItemBtn');
             const analyticsBtn = document.getElementById('pipelinesAnalyticsBtn');
+            const exportBtn = document.getElementById('exportExcelBtn');
             
             const userAvatar = document.getElementById('userAvatar');
             if (userAvatar) {
@@ -3688,6 +4073,7 @@
             }
             
             if (newPipelineBtn) newPipelineBtn.classList.remove('hidden');
+            if (exportBtn) exportBtn.classList.remove('hidden');
             if (analyticsBtn) analyticsBtn.classList.add('hidden');
             
             switch(currentUserRole) {
@@ -3696,7 +4082,7 @@
                     if (analyticsBtn) analyticsBtn.classList.remove('hidden');
                     break;
                 case 'user':
-                    // Users can view and create items
+                    // Users can view, create items, and export
                     break;
                 default:
                     break;
@@ -3803,6 +4189,7 @@
             
             // Add event listeners
             document.getElementById('newPipelineItemBtn').addEventListener('click', createNewPipelineItem);
+            document.getElementById('exportExcelBtn').addEventListener('click', openExportOptionsModal);
             document.getElementById('backToDashboardBtn').addEventListener('click', backToDashboard);
             document.getElementById('pipelinesAnalyticsBtn').addEventListener('click', openPipelinesAnalytics);
             document.getElementById('authButton').addEventListener('click', logout);
@@ -3817,6 +4204,19 @@
                 e.preventDefault();
                 savePipelineItem();
             });
+            
+            // Export modal event listeners
+            document.getElementById('closeExportOptionsModal').addEventListener('click', closeExportOptionsModal);
+            document.getElementById('cancelExportBtn').addEventListener('click', closeExportOptionsModal);
+            document.getElementById('confirmExportBtn').addEventListener('click', exportToExcel);
+            
+            // Add event listeners for export options changes
+            document.querySelectorAll('input[name="exportScope"]').forEach(input => {
+                input.addEventListener('change', updateExportItemCount);
+            });
+            
+            document.getElementById('exportOpen').addEventListener('change', updateExportItemCount);
+            document.getElementById('exportClose').addEventListener('change', updateExportItemCount);
             
             document.getElementById('closePipelinesAnalyticsModal').addEventListener('click', closePipelinesAnalyticsModal);
             document.getElementById('closePipelinesAnalyticsModalBottom').addEventListener('click', closePipelinesAnalyticsModal);
