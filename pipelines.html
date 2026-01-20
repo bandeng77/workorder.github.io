@@ -226,6 +226,156 @@
             opacity: 0.5;
         }
 
+        /* ==================== CAMERA STYLES ==================== */
+        .camera-preview {
+            width: 100%;
+            height: 300px;
+            background: var(--neutral-900);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .camera-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: var(--neutral-900);
+        }
+
+        .camera-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .camera-btn {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+            border: none;
+            box-shadow: var(--shadow-md);
+        }
+
+        .camera-btn-primary {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            color: white;
+        }
+
+        .camera-btn-secondary {
+            background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
+            color: white;
+        }
+
+        .camera-btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .camera-btn:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1rem;
+            pointer-events: none;
+        }
+
+        .camera-status {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            align-self: center;
+        }
+
+        .image-preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .image-preview-item {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-base);
+        }
+
+        .image-preview-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-preview-actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            opacity: 0;
+            transition: var(--transition-fast);
+        }
+
+        .image-preview-item:hover .image-preview-actions {
+            opacity: 1;
+        }
+
+        .image-action-btn {
+            width: 2rem;
+            height: 2rem;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+
+        .image-action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
         /* ==================== PIPELINE BOARD STYLES ==================== */
         .pipeline-board {
             display: grid;
@@ -471,6 +621,12 @@
 
         .btn-excel {
             background: linear-gradient(135deg, #217346 0%, #1e5c3a 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-camera {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
             color: white;
             box-shadow: var(--shadow-md);
         }
@@ -991,6 +1147,18 @@
             .modal-body {
                 padding: 1.5rem;
             }
+            
+            .camera-preview {
+                height: 250px;
+            }
+            
+            .camera-controls {
+                flex-wrap: wrap;
+            }
+            
+            .image-preview-container {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
         }
 
         @media (max-width: 640px) {
@@ -1008,6 +1176,14 @@
             
             .modal-title {
                 font-size: 1.25rem;
+            }
+            
+            .camera-preview {
+                height: 200px;
+            }
+            
+            .image-preview-container {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -1055,6 +1231,11 @@
                         <button id="newPipelineItemBtn" class="btn btn-primary">
                             <i class="fas fa-plus-circle"></i>
                             <span>New Pipeline Item</span>
+                        </button>
+                        <!-- TAMBAH TOMBOL AMBIL GAMBAR -->
+                        <button id="takePictureBtn" class="btn btn-camera">
+                            <i class="fas fa-camera"></i>
+                            <span>Ambil Gambar</span>
                         </button>
                         <button id="exportExcelBtn" class="btn btn-excel">
                             <i class="fas fa-file-excel"></i>
@@ -1431,6 +1612,24 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Section 7: Attached Images (New Section) -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <div class="form-section-icon form-section-icon-warning">
+                                <i class="fas fa-images"></i>
+                            </div>
+                            <span>Attached Images</span>
+                        </div>
+                        
+                        <div id="pipelineImagesContainer">
+                            <!-- Images will be loaded here -->
+                            <div class="text-center py-8 text-gray-500" id="noImagesMessage">
+                                <i class="fas fa-images text-4xl mb-3"></i>
+                                <p>No images attached to this pipeline item</p>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             
@@ -1445,6 +1644,169 @@
                     <button type="submit" form="pipelineItemForm" class="btn btn-primary">
                         <i class="fas fa-save"></i>
                         Save Pipeline Item
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AMBIL GAMBAR -->
+    <div id="takePictureModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-4xl">
+            <div class="modal-header sticky-top">
+                <div>
+                    <h2 class="modal-title">Ambil Gambar</h2>
+                    <p class="text-gray-300 mt-1">Ambil gambar untuk dilampirkan ke pipeline</p>
+                </div>
+                <button id="closeTakePictureModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body custom-scrollbar">
+                <!-- Section 1: Pilih Pipeline -->
+                <div class="form-section mb-6">
+                    <div class="form-section-title">
+                        <div class="form-section-icon form-section-icon-primary">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <span>Pilih Pipeline</span>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label required-field" for="searchPipelineForCamera">
+                            Cari Pipeline Item
+                        </label>
+                        <div class="autocomplete-container">
+                            <input type="text" 
+                                   id="searchPipelineForCamera" 
+                                   class="autocomplete-input form-input"
+                                   required
+                                   placeholder="Ketik untuk mencari pipeline item..."
+                                   autocomplete="off">
+                            <button type="button" 
+                                    class="autocomplete-add-btn"
+                                    id="refreshPipelineListBtn"
+                                    title="Refresh list">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <div class="autocomplete-suggestions" id="pipelineSuggestions"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Pilih pipeline item untuk melampirkan gambar</p>
+                    </div>
+                    
+                    <!-- Selected Pipeline Info -->
+                    <div id="selectedPipelineInfo" class="hidden p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-bold text-blue-800" id="selectedPipelineTitle">Pipeline Item</h4>
+                            <span class="pipeline-badge pipeline-open-badge" id="selectedPipelineStatus">Open</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div class="text-gray-600">No:</div>
+                            <div class="font-medium" id="selectedPipelineNo">-</div>
+                            
+                            <div class="text-gray-600">Quotation:</div>
+                            <div class="font-medium" id="selectedPipelineQuotation">-</div>
+                            
+                            <div class="text-gray-600">Customer:</div>
+                            <div class="font-medium" id="selectedPipelineCustomer">-</div>
+                            
+                            <div class="text-gray-600">PIC:</div>
+                            <div class="font-medium" id="selectedPipelinePIC">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 2: Kamera & Preview -->
+                <div class="form-section mb-6">
+                    <div class="form-section-title">
+                        <div class="form-section-icon form-section-icon-success">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <span>Kamera & Preview</span>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="camera-preview" id="cameraPreview">
+                            <div class="camera-overlay">
+                                <div class="camera-status" id="cameraStatus">
+                                    <i class="fas fa-camera mr-2"></i>
+                                    <span>Kamera siap</span>
+                                </div>
+                            </div>
+                            <video id="cameraVideo" autoplay playsinline></video>
+                            <canvas id="cameraCanvas" class="hidden"></canvas>
+                            <img id="capturedImage" class="hidden" alt="Captured Image">
+                        </div>
+                        
+                        <div class="camera-controls">
+                            <button id="startCameraBtn" class="camera-btn camera-btn-primary" title="Start Camera">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button id="stopCameraBtn" class="camera-btn camera-btn-secondary hidden" title="Stop Camera">
+                                <i class="fas fa-stop"></i>
+                            </button>
+                            <button id="captureBtn" class="camera-btn camera-btn-success hidden" title="Capture Image">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                            <button id="retakeBtn" class="camera-btn camera-btn-warning hidden" title="Retake">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                            <button id="saveImageBtn" class="camera-btn camera-btn-primary hidden" title="Save Image">
+                                <i class="fas fa-save"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <label class="btn btn-outline cursor-pointer">
+                                <i class="fas fa-upload mr-2"></i>
+                                Upload Gambar
+                                <input type="file" 
+                                       id="uploadImageInput" 
+                                       class="hidden" 
+                                       accept="image/*" 
+                                       capture="environment">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 3: Gambar yang Telah Diambil -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <div class="form-section-icon form-section-icon-info">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <span>Gambar yang Telah Diambil</span>
+                    </div>
+                    
+                    <div id="capturedImagesContainer" class="image-preview-container">
+                        <!-- Captured images will be shown here -->
+                        <div class="text-center col-span-full py-8 text-gray-500">
+                            <i class="fas fa-images text-4xl mb-3"></i>
+                            <p>Belum ada gambar yang diambil</p>
+                            <p class="text-sm">Gunakan kamera atau upload gambar untuk melampirkan</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-sm text-gray-600">
+                        <p><i class="fas fa-info-circle mr-2"></i> Gambar akan disimpan sebagai Base64 dan dilampirkan ke pipeline item</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-header sticky-bottom">
+                <div>
+                    <div class="text-sm text-gray-300" id="imageCountInfo">0 gambar tersedia</div>
+                </div>
+                <div class="flex gap-3">
+                    <button id="cancelTakePictureBtn" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button id="attachToPipelineBtn" class="btn btn-primary" disabled>
+                        <i class="fas fa-paperclip"></i>
+                        Lampirkan ke Pipeline
                     </button>
                 </div>
             </div>
@@ -1811,6 +2173,32 @@
         </div>
     </div>
 
+    <!-- Preview Image Modal -->
+    <div id="previewImageModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-4xl">
+            <div class="modal-header sticky-top">
+                <div>
+                    <h2 class="modal-title">Preview Gambar</h2>
+                    <p class="text-gray-300 mt-1" id="previewImageInfo"></p>
+                </div>
+                <button id="closePreviewImageModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body custom-scrollbar">
+                <div class="flex justify-center items-center min-h-[400px]">
+                    <img id="previewImage" src="" alt="Preview" class="max-w-full max-h-[70vh] object-contain rounded-lg">
+                </div>
+                <div class="mt-4 text-center">
+                    <button id="downloadImageBtn" class="btn btn-primary">
+                        <i class="fas fa-download"></i>
+                        Download Gambar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <script>
         // ==================== GLOBAL VARIABLES ====================
         let db, auth, pipelinesCollection, pipelineHistoryCollection, usersCollection, customersCollection, picsCollection;
@@ -1820,6 +2208,12 @@
         let filteredPipelineItems = [];
         let draggedItem = null;
         let charts = {};
+        
+        // Variables for camera
+        let cameraStream = null;
+        let selectedPipelineItem = null;
+        let capturedImages = []; // Array to store base64 images
+        let currentPipelineImages = []; // Images for current pipeline item in modal
         
         // Data for autocomplete (static data)
         const PIC_LIST_STATIC = [
@@ -2257,6 +2651,676 @@
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
         }
 
+        // ==================== CAMERA FUNCTIONS ====================
+        async function startCamera() {
+            try {
+                const video = document.getElementById('cameraVideo');
+                const status = document.getElementById('cameraStatus');
+                
+                if (!video) {
+                    showToast('Camera video element not found', 'error');
+                    return;
+                }
+                
+                status.innerHTML = '<i class="fas fa-camera mr-2"></i><span>Memulai kamera...</span>';
+                
+                // Get camera stream
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                });
+                
+                video.srcObject = cameraStream;
+                video.classList.remove('hidden');
+                
+                // Show camera controls
+                document.getElementById('startCameraBtn').classList.add('hidden');
+                document.getElementById('stopCameraBtn').classList.remove('hidden');
+                document.getElementById('captureBtn').classList.remove('hidden');
+                
+                status.innerHTML = '<i class="fas fa-check-circle mr-2"></i><span>Kamera aktif</span>';
+                showToast('Kamera berhasil diaktifkan', 'success');
+                
+            } catch (error) {
+                console.error('Error starting camera:', error);
+                showToast('Gagal mengakses kamera: ' + error.message, 'error');
+                document.getElementById('cameraStatus').innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i><span>Gagal mengakses kamera</span>';
+            }
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            
+            const video = document.getElementById('cameraVideo');
+            if (video) {
+                video.srcObject = null;
+                video.classList.add('hidden');
+            }
+            
+            // Reset camera controls
+            document.getElementById('startCameraBtn').classList.remove('hidden');
+            document.getElementById('stopCameraBtn').classList.add('hidden');
+            document.getElementById('captureBtn').classList.add('hidden');
+            document.getElementById('retakeBtn').classList.add('hidden');
+            document.getElementById('saveImageBtn').classList.add('hidden');
+            
+            // Hide captured image
+            const capturedImage = document.getElementById('capturedImage');
+            if (capturedImage) {
+                capturedImage.classList.add('hidden');
+                capturedImage.src = '';
+            }
+            
+            document.getElementById('cameraStatus').innerHTML = '<i class="fas fa-camera mr-2"></i><span>Kamera dimatikan</span>';
+        }
+
+        function captureImage() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('cameraCanvas');
+            const capturedImage = document.getElementById('capturedImage');
+            const status = document.getElementById('cameraStatus');
+            
+            if (!video || !canvas || !capturedImage) {
+                showToast('Camera elements not found', 'error');
+                return;
+            }
+            
+            // Set canvas dimensions to match video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // Draw video frame to canvas
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convert canvas to base64 image
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            capturedImage.src = imageData;
+            capturedImage.classList.remove('hidden');
+            video.classList.add('hidden');
+            
+            // Show retake and save buttons
+            document.getElementById('captureBtn').classList.add('hidden');
+            document.getElementById('retakeBtn').classList.remove('hidden');
+            document.getElementById('saveImageBtn').classList.remove('hidden');
+            
+            status.innerHTML = '<i class="fas fa-check-circle mr-2"></i><span>Gambar berhasil diambil</span>';
+        }
+
+        function retakeImage() {
+            const video = document.getElementById('cameraVideo');
+            const capturedImage = document.getElementById('capturedImage');
+            
+            if (video && capturedImage) {
+                capturedImage.classList.add('hidden');
+                capturedImage.src = '';
+                video.classList.remove('hidden');
+                
+                // Show capture button again
+                document.getElementById('captureBtn').classList.remove('hidden');
+                document.getElementById('retakeBtn').classList.add('hidden');
+                document.getElementById('saveImageBtn').classList.add('hidden');
+                
+                document.getElementById('cameraStatus').innerHTML = '<i class="fas fa-check-circle mr-2"></i><span>Kamera aktif</span>';
+            }
+        }
+
+        function saveCapturedImage() {
+            const capturedImage = document.getElementById('capturedImage');
+            
+            if (!capturedImage || !capturedImage.src) {
+                showToast('Tidak ada gambar yang diambil', 'warning');
+                return;
+            }
+            
+            if (!selectedPipelineItem) {
+                showToast('Pilih pipeline item terlebih dahulu', 'warning');
+                return;
+            }
+            
+            // Create image object with metadata
+            const imageData = {
+                id: 'img_' + Date.now(),
+                base64: capturedImage.src,
+                timestamp: new Date().toISOString(),
+                pipelineId: selectedPipelineItem.id,
+                pipelineNo: selectedPipelineItem.no,
+                pipelineProject: selectedPipelineItem.project,
+                takenBy: currentUser.email,
+                description: `Gambar untuk ${selectedPipelineItem.project}`
+            };
+            
+            // Add to captured images array
+            capturedImages.push(imageData);
+            
+            // Update UI
+            updateCapturedImagesUI();
+            
+            // Show success message
+            showToast('Gambar berhasil disimpan', 'success');
+            
+            // Reset camera for next capture
+            retakeImage();
+        }
+
+        function updateCapturedImagesUI() {
+            const container = document.getElementById('capturedImagesContainer');
+            const imageCount = document.getElementById('imageCountInfo');
+            const attachBtn = document.getElementById('attachToPipelineBtn');
+            
+            if (!container || !imageCount || !attachBtn) return;
+            
+            container.innerHTML = '';
+            
+            if (capturedImages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center col-span-full py-8 text-gray-500">
+                        <i class="fas fa-images text-4xl mb-3"></i>
+                        <p>Belum ada gambar yang diambil</p>
+                        <p class="text-sm">Gunakan kamera atau upload gambar untuk melampirkan</p>
+                    </div>
+                `;
+                imageCount.textContent = '0 gambar tersedia';
+                attachBtn.disabled = true;
+            } else {
+                capturedImages.forEach((image, index) => {
+                    const imageCard = document.createElement('div');
+                    imageCard.className = 'image-preview-item';
+                    
+                    const date = new Date(image.timestamp);
+                    const timeString = date.toLocaleTimeString('id-ID', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                    
+                    imageCard.innerHTML = `
+                        <img src="${image.base64}" alt="Captured image ${index + 1}" 
+                             onclick="previewImage('${image.id}')">
+                        <div class="image-preview-actions">
+                            <button class="image-action-btn" onclick="previewImage('${image.id}')" title="Preview">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="image-action-btn" onclick="removeImage('${image.id}')" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                            ${timeString}
+                        </div>
+                    `;
+                    
+                    container.appendChild(imageCard);
+                });
+                
+                imageCount.textContent = `${capturedImages.length} gambar tersedia`;
+                attachBtn.disabled = false;
+            }
+        }
+
+        function previewImage(imageId) {
+            const image = capturedImages.find(img => img.id === imageId);
+            if (!image) return;
+            
+            const modal = document.getElementById('previewImageModal');
+            const previewImage = document.getElementById('previewImage');
+            const previewInfo = document.getElementById('previewImageInfo');
+            
+            if (modal && previewImage && previewInfo) {
+                previewImage.src = image.base64;
+                previewInfo.textContent = `Pipeline: ${image.pipelineProject} (No. ${image.pipelineNo})`;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function removeImage(imageId) {
+            if (!confirm('Hapus gambar ini?')) return;
+            
+            capturedImages = capturedImages.filter(img => img.id !== imageId);
+            updateCapturedImagesUI();
+            showToast('Gambar berhasil dihapus', 'success');
+        }
+
+        function closePreviewImageModal() {
+            document.getElementById('previewImageModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function downloadImage() {
+            const previewImage = document.getElementById('previewImage');
+            if (!previewImage || !previewImage.src) return;
+            
+            const link = document.createElement('a');
+            link.href = previewImage.src;
+            link.download = `pipeline_image_${Date.now()}.jpg`;
+            link.click();
+            
+            showToast('Gambar berhasil didownload', 'success');
+        }
+
+        function uploadImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!selectedPipelineItem) {
+                showToast('Pilih pipeline item terlebih dahulu', 'warning');
+                return;
+            }
+            
+            // Check if file is an image
+            if (!file.type.match('image.*')) {
+                showToast('File harus berupa gambar', 'error');
+                return;
+            }
+            
+            // Check file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Ukuran file maksimal 5MB', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = {
+                    id: 'upload_' + Date.now(),
+                    base64: e.target.result,
+                    timestamp: new Date().toISOString(),
+                    pipelineId: selectedPipelineItem.id,
+                    pipelineNo: selectedPipelineItem.no,
+                    pipelineProject: selectedPipelineItem.project,
+                    takenBy: currentUser.email,
+                    description: `Uploaded image for ${selectedPipelineItem.project}`,
+                    filename: file.name
+                };
+                
+                capturedImages.push(imageData);
+                updateCapturedImagesUI();
+                showToast('Gambar berhasil diupload', 'success');
+                
+                // Reset file input
+                event.target.value = '';
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        async function attachImagesToPipeline() {
+            if (!selectedPipelineItem || capturedImages.length === 0) {
+                showToast('Tidak ada gambar untuk dilampirkan', 'warning');
+                return;
+            }
+            
+            try {
+                showLoading();
+                
+                // Get current pipeline item
+                const pipelineRef = pipelinesCollection.doc(selectedPipelineItem.id);
+                const pipelineDoc = await pipelineRef.get();
+                
+                if (!pipelineDoc.exists) {
+                    throw new Error('Pipeline item tidak ditemukan');
+                }
+                
+                const pipelineData = pipelineDoc.data();
+                const currentImages = pipelineData.images || [];
+                
+                // Add new images to pipeline
+                const newImages = capturedImages.map(img => ({
+                    base64: img.base64,
+                    timestamp: img.timestamp,
+                    takenBy: img.takenBy,
+                    description: img.description
+                }));
+                
+                const updatedImages = [...currentImages, ...newImages];
+                
+                // Update pipeline item with images
+                await pipelineRef.update({
+                    images: updatedImages,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser.email
+                });
+                
+                showToast(`${capturedImages.length} gambar berhasil dilampirkan ke pipeline`, 'success');
+                
+                // Reset and close modal
+                capturedImages = [];
+                selectedPipelineItem = null;
+                closeTakePictureModal();
+                
+                // Reload pipeline items to reflect changes
+                await loadPipelineItems();
+                
+            } catch (error) {
+                console.error('Error attaching images to pipeline:', error);
+                showToast('Gagal melampirkan gambar: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function updatePipelineImagesUI(pipelineItem) {
+            const container = document.getElementById('pipelineImagesContainer');
+            const noImagesMessage = document.getElementById('noImagesMessage');
+            
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (!pipelineItem.images || pipelineItem.images.length === 0) {
+                if (noImagesMessage) {
+                    container.appendChild(noImagesMessage.cloneNode(true));
+                }
+                return;
+            }
+            
+            // Remove no images message
+            if (noImagesMessage) {
+                noImagesMessage.classList.add('hidden');
+            }
+            
+            // Create images grid
+            const grid = document.createElement('div');
+            grid.className = 'image-preview-container';
+            
+            pipelineItem.images.forEach((image, index) => {
+                const imageCard = document.createElement('div');
+                imageCard.className = 'image-preview-item';
+                
+                const date = new Date(image.timestamp);
+                const timeString = date.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                imageCard.innerHTML = `
+                    <img src="${image.base64}" alt="Pipeline image ${index + 1}" 
+                         onclick="previewPipelineImage('${pipelineItem.id}', ${index})">
+                    <div class="image-preview-actions">
+                        <button class="image-action-btn" onclick="previewPipelineImage('${pipelineItem.id}', ${index})" title="Preview">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="image-action-btn" onclick="removePipelineImage('${pipelineItem.id}', ${index})" title="Hapus">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                        ${timeString}
+                    </div>
+                    <div class="absolute bottom-2 left-2 right-2 text-xs text-white truncate">
+                        ${image.takenBy || ''}
+                    </div>
+                `;
+                
+                grid.appendChild(imageCard);
+            });
+            
+            container.appendChild(grid);
+        }
+
+        function previewPipelineImage(pipelineId, imageIndex) {
+            const pipeline = pipelineItems.find(p => p.id === pipelineId);
+            if (!pipeline || !pipeline.images || !pipeline.images[imageIndex]) return;
+            
+            const image = pipeline.images[imageIndex];
+            const modal = document.getElementById('previewImageModal');
+            const previewImage = document.getElementById('previewImage');
+            const previewInfo = document.getElementById('previewImageInfo');
+            
+            if (modal && previewImage && previewInfo) {
+                previewImage.src = image.base64;
+                previewInfo.textContent = `Pipeline: ${pipeline.project} (No. ${pipeline.no}) - ${new Date(image.timestamp).toLocaleString('id-ID')}`;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                
+                // Update download button
+                const downloadBtn = document.getElementById('downloadImageBtn');
+                if (downloadBtn) {
+                    downloadBtn.onclick = () => {
+                        const link = document.createElement('a');
+                        link.href = image.base64;
+                        link.download = `pipeline_${pipeline.no}_${imageIndex + 1}_${Date.now()}.jpg`;
+                        link.click();
+                    };
+                }
+            }
+        }
+
+        async function removePipelineImage(pipelineId, imageIndex) {
+            if (!confirm('Hapus gambar ini dari pipeline?')) return;
+            
+            try {
+                const pipeline = pipelineItems.find(p => p.id === pipelineId);
+                if (!pipeline || !pipeline.images) return;
+                
+                // Remove image from array
+                const updatedImages = [...pipeline.images];
+                updatedImages.splice(imageIndex, 1);
+                
+                // Update pipeline in Firestore
+                await pipelinesCollection.doc(pipelineId).update({
+                    images: updatedImages,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser.email
+                });
+                
+                showToast('Gambar berhasil dihapus dari pipeline', 'success');
+                
+                // Reload pipeline items
+                await loadPipelineItems();
+                
+                // Update UI if modal is open
+                if (document.getElementById('pipelineItemModal').classList.contains('hidden') === false) {
+                    const currentItemId = document.getElementById('pipelineItemId').value;
+                    if (currentItemId === pipelineId) {
+                        const updatedItem = pipelineItems.find(p => p.id === pipelineId);
+                        if (updatedItem) {
+                            updatePipelineImagesUI(updatedItem);
+                        }
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error removing pipeline image:', error);
+                showToast('Gagal menghapus gambar', 'error');
+            }
+        }
+
+        // ==================== TAKE PICTURE MODAL FUNCTIONS ====================
+        function openTakePictureModal() {
+            console.log('Opening take picture modal');
+            
+            // Reset modal state
+            capturedImages = [];
+            selectedPipelineItem = null;
+            
+            // Reset UI
+            const pipelineInfo = document.getElementById('selectedPipelineInfo');
+            if (pipelineInfo) pipelineInfo.classList.add('hidden');
+            
+            document.getElementById('searchPipelineForCamera').value = '';
+            document.getElementById('attachToPipelineBtn').disabled = true;
+            
+            // Stop camera if running
+            stopCamera();
+            
+            // Hide suggestions
+            hideSuggestions('pipelineSuggestions');
+            
+            // Clear captured images container
+            updateCapturedImagesUI();
+            
+            // Show modal
+            document.getElementById('takePictureModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeTakePictureModal() {
+            // Stop camera
+            stopCamera();
+            
+            // Hide modal
+            document.getElementById('takePictureModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // ==================== PIPELINE SEARCH FOR CAMERA ====================
+        function setupPipelineSearchForCamera() {
+            const searchInput = document.getElementById('searchPipelineForCamera');
+            const refreshBtn = document.getElementById('refreshPipelineListBtn');
+            
+            if (searchInput) {
+                let searchTimeout;
+                
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    const searchTerm = this.value.trim();
+                    
+                    searchTimeout = setTimeout(() => {
+                        if (searchTerm.length >= 2) {
+                            searchPipelineSuggestions(searchTerm);
+                        } else {
+                            hideSuggestions('pipelineSuggestions');
+                        }
+                    }, 300);
+                });
+                
+                searchInput.addEventListener('focus', function() {
+                    const searchTerm = this.value.trim();
+                    if (searchTerm.length >= 2) {
+                        searchPipelineSuggestions(searchTerm);
+                    }
+                });
+                
+                // Enter key to select first suggestion
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const suggestions = document.querySelectorAll('#pipelineSuggestions .autocomplete-suggestion');
+                        if (suggestions.length > 0) {
+                            suggestions[0].click();
+                        }
+                    }
+                });
+            }
+            
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    searchPipelineSuggestions('');
+                    this.querySelector('i').classList.add('fa-spin');
+                    setTimeout(() => {
+                        this.querySelector('i').classList.remove('fa-spin');
+                    }, 500);
+                });
+            }
+            
+            // Close suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.autocomplete-container')) {
+                    hideSuggestions('pipelineSuggestions');
+                }
+            });
+        }
+
+        function searchPipelineSuggestions(searchTerm) {
+            const suggestionsContainer = document.getElementById('pipelineSuggestions');
+            if (!suggestionsContainer) return;
+            
+            const searchTermLower = searchTerm.toLowerCase();
+            let filteredPipelines = [...pipelineItems];
+            
+            if (searchTerm) {
+                filteredPipelines = filteredPipelines.filter(pipeline => 
+                    (pipeline.project && pipeline.project.toLowerCase().includes(searchTermLower)) ||
+                    (pipeline.customer && pipeline.customer.toLowerCase().includes(searchTermLower)) ||
+                    (pipeline.quotation && pipeline.quotation.toLowerCase().includes(searchTermLower)) ||
+                    (pipeline.pic && pipeline.pic.toLowerCase().includes(searchTermLower))
+                );
+            }
+            
+            showPipelineSuggestions(suggestionsContainer, filteredPipelines, searchTerm);
+        }
+
+        function showPipelineSuggestions(container, pipelines, searchTerm) {
+            container.innerHTML = '';
+            
+            if (pipelines.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'autocomplete-no-results';
+                noResults.innerHTML = `
+                    <div class="autocomplete-no-results-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <p>No pipeline found for "${searchTerm}"</p>
+                `;
+                container.appendChild(noResults);
+            } else {
+                pipelines.forEach(pipeline => {
+                    const suggestion = document.createElement('div');
+                    suggestion.className = 'autocomplete-suggestion';
+                    suggestion.dataset.id = pipeline.id;
+                    
+                    const badgeClass = getPipelineBadgeClass(pipeline.status);
+                    
+                    suggestion.innerHTML = `
+                        <div class="autocomplete-suggestion-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-medium truncate">${pipeline.project}</div>
+                            <div class="text-xs text-gray-500 truncate">${pipeline.customer || '-'}</div>
+                            <div class="text-xs text-gray-500">${pipeline.quotation || `No. ${pipeline.no}`}</div>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <span class="pipeline-badge ${badgeClass} text-xs">
+                                ${pipeline.status}
+                            </span>
+                            <span class="text-xs text-gray-500 mt-1">${formatDate(pipeline.date)}</span>
+                        </div>
+                    `;
+                    
+                    suggestion.addEventListener('click', function() {
+                        selectPipelineForCamera(pipeline.id);
+                    });
+                    
+                    container.appendChild(suggestion);
+                });
+            }
+            
+            container.classList.add('show');
+        }
+
+        function selectPipelineForCamera(pipelineId) {
+            const pipeline = pipelineItems.find(p => p.id === pipelineId);
+            if (!pipeline) return;
+            
+            selectedPipelineItem = pipeline;
+            
+            // Update UI
+            document.getElementById('searchPipelineForCamera').value = pipeline.project;
+            document.getElementById('selectedPipelineTitle').textContent = pipeline.project;
+            document.getElementById('selectedPipelineNo').textContent = pipeline.no;
+            document.getElementById('selectedPipelineQuotation').textContent = pipeline.quotation || '-';
+            document.getElementById('selectedPipelineCustomer').textContent = pipeline.customer || '-';
+            document.getElementById('selectedPipelinePIC').textContent = pipeline.pic || '-';
+            
+            const statusBadge = document.getElementById('selectedPipelineStatus');
+            statusBadge.className = `pipeline-badge ${getPipelineBadgeClass(pipeline.status)}`;
+            statusBadge.textContent = pipeline.status;
+            
+            document.getElementById('selectedPipelineInfo').classList.remove('hidden');
+            hideSuggestions('pipelineSuggestions');
+            
+            showToast(`Pipeline "${pipeline.project}" dipilih`, 'success');
+        }
+
         // ==================== AUTO-COMPLETE SEARCH FUNCTIONS ====================
         async function setupAutoCompleteSearch() {
             const picInput = document.getElementById('pipelinePIC');
@@ -2572,6 +3636,7 @@
         function hideAllSuggestions() {
             hideSuggestions('picSuggestions');
             hideSuggestions('customerSuggestions');
+            hideSuggestions('pipelineSuggestions');
         }
 
         // ==================== CURRENCY INPUT HANDLING ====================
@@ -2706,6 +3771,7 @@
                         description: data.description || '',
                         notes: data.notes || '',
                         progress: data.progress || 0,
+                        images: data.images || [],
                         updatedAt: data.updatedAt || new Date(),
                         updatedBy: data.updatedBy || ''
                     });
@@ -2800,6 +3866,7 @@
             const timeAgo = formatTimeAgo(item.updatedAt);
             const progress = item.progress || 0;
             const formattedDate = item.date ? formatDate(item.date) : '-';
+            const hasImages = item.images && item.images.length > 0;
             
             div.innerHTML = `
                 <div class="flex justify-between items-start mb-2">
@@ -2808,6 +3875,7 @@
                         <div class="flex items-center gap-2 mt-1">
                             <span class="text-xs font-medium text-gray-600">#${item.no}</span>
                             ${item.quotation ? `<span class="text-xs text-gray-500">${item.quotation}</span>` : ''}
+                            ${hasImages ? `<span class="text-xs text-purple-600"><i class="fas fa-camera"></i> ${item.images.length}</span>` : ''}
                         </div>
                     </div>
                     <div class="flex flex-col items-end gap-1">
@@ -3086,6 +4154,14 @@
             document.getElementById('pipelineNotes').value = '';
             document.getElementById('pipelineProgress').value = 0;
             
+            // Reset images container
+            const imagesContainer = document.getElementById('pipelineImagesContainer');
+            const noImagesMessage = document.getElementById('noImagesMessage');
+            if (imagesContainer && noImagesMessage) {
+                imagesContainer.innerHTML = '';
+                imagesContainer.appendChild(noImagesMessage.cloneNode(true));
+            }
+            
             if (itemId && !canEditPipelineItem()) {
                 showToast('You do not have permission to edit pipeline items', 'warning');
                 return;
@@ -3097,6 +4173,9 @@
                 if (item) {
                     populatePipelineModalForm(item);
                     document.getElementById('originalPipelineStatus').value = item.status;
+                    
+                    // Update images UI
+                    updatePipelineImagesUI(item);
                 }
             } else {
                 modalTitle.textContent = 'New Pipeline Item';
@@ -3577,6 +4656,7 @@
                         { wch: 30 }, // Description
                         { wch: 30 }, // Notes
                         { wch: 10 }, // Progress
+                        { wch: 15 }, // Images Count
                         { wch: 20 }, // Updated At
                         { wch: 20 }, // Updated By
                     ]
@@ -3629,7 +4709,7 @@
                 data.push([
                     'No', 'No. Quotation', 'Tanggal', 'Company', 'SOW', 'PIC', 
                     'Customer', 'Project', 'Status', 'Value Quotation', 'Value PO',
-                    'Description', 'Notes', 'Progress (%)', 'Updated At', 'Updated By'
+                    'Description', 'Notes', 'Progress (%)', 'Images Count', 'Updated At', 'Updated By'
                 ]);
             } else {
                 data.push([
@@ -3676,6 +4756,7 @@
                         item.description || '',
                         item.notes || '',
                         item.progress || 0,
+                        item.images ? item.images.length : 0,
                         item.updatedAt ? formatDateTime(item.updatedAt) : '',
                         item.updatedBy || ''
                     ]);
@@ -3705,9 +4786,11 @@
             
             const totalQuotation = items.reduce((sum, item) => sum + (item.valueQuotation || 0), 0);
             const totalPO = items.reduce((sum, item) => sum + (item.valuePO || 0), 0);
+            const totalImages = items.reduce((sum, item) => sum + (item.images ? item.images.length : 0), 0);
             
             data.push(['Total Quotation Value:', formatCurrencyDisplay(totalQuotation)]);
             data.push(['Total PO Value:', formatCurrencyDisplay(totalPO)]);
+            data.push(['Total Images:', totalImages]);
             data.push(['Export Date:', new Date().toLocaleString('id-ID')]);
             data.push(['Exported By:', currentUser?.email || 'Unknown']);
             
@@ -4051,6 +5134,7 @@
             console.log('Setting up pipeline permissions for role:', currentUserRole);
             
             const newPipelineBtn = document.getElementById('newPipelineItemBtn');
+            const takePictureBtn = document.getElementById('takePictureBtn');
             const analyticsBtn = document.getElementById('pipelinesAnalyticsBtn');
             const exportBtn = document.getElementById('exportExcelBtn');
             
@@ -4073,6 +5157,7 @@
             }
             
             if (newPipelineBtn) newPipelineBtn.classList.remove('hidden');
+            if (takePictureBtn) takePictureBtn.classList.remove('hidden');
             if (exportBtn) exportBtn.classList.remove('hidden');
             if (analyticsBtn) analyticsBtn.classList.add('hidden');
             
@@ -4082,7 +5167,7 @@
                     if (analyticsBtn) analyticsBtn.classList.remove('hidden');
                     break;
                 case 'user':
-                    // Users can view, create items, and export
+                    // Users can view, create items, take pictures, and export
                     break;
                 default:
                     break;
@@ -4171,6 +5256,7 @@
             
             await loadPipelineItems();
             await setupAutoCompleteSearch();
+            setupPipelineSearchForCamera();
             setupDragAndDrop();
             setupCurrencyInputs();
             
@@ -4187,23 +5273,41 @@
                 await updateQuotationPreview();
             });
             
-            // Add event listeners
+            // Add event listeners for main buttons
             document.getElementById('newPipelineItemBtn').addEventListener('click', createNewPipelineItem);
+            document.getElementById('takePictureBtn').addEventListener('click', openTakePictureModal);
             document.getElementById('exportExcelBtn').addEventListener('click', openExportOptionsModal);
             document.getElementById('backToDashboardBtn').addEventListener('click', backToDashboard);
             document.getElementById('pipelinesAnalyticsBtn').addEventListener('click', openPipelinesAnalytics);
             document.getElementById('authButton').addEventListener('click', logout);
             
+            // Search and filter listeners
             document.getElementById('searchPipelineItems').addEventListener('input', filterPipelineItems);
             document.getElementById('filterByCompany').addEventListener('change', filterPipelineItems);
             document.getElementById('filterByStatus').addEventListener('change', filterPipelineItems);
             
+            // Pipeline modal listeners
             document.getElementById('closePipelineModal').addEventListener('click', closePipelineItemModal);
             document.getElementById('cancelPipelineBtn').addEventListener('click', closePipelineItemModal);
             document.getElementById('pipelineItemForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 savePipelineItem();
             });
+            
+            // Take picture modal listeners
+            document.getElementById('closeTakePictureModal').addEventListener('click', closeTakePictureModal);
+            document.getElementById('cancelTakePictureBtn').addEventListener('click', closeTakePictureModal);
+            document.getElementById('startCameraBtn').addEventListener('click', startCamera);
+            document.getElementById('stopCameraBtn').addEventListener('click', stopCamera);
+            document.getElementById('captureBtn').addEventListener('click', captureImage);
+            document.getElementById('retakeBtn').addEventListener('click', retakeImage);
+            document.getElementById('saveImageBtn').addEventListener('click', saveCapturedImage);
+            document.getElementById('uploadImageInput').addEventListener('change', uploadImage);
+            document.getElementById('attachToPipelineBtn').addEventListener('click', attachImagesToPipeline);
+            
+            // Preview image modal listeners
+            document.getElementById('closePreviewImageModal').addEventListener('click', closePreviewImageModal);
+            document.getElementById('downloadImageBtn').addEventListener('click', downloadImage);
             
             // Export modal event listeners
             document.getElementById('closeExportOptionsModal').addEventListener('click', closeExportOptionsModal);
@@ -4218,6 +5322,7 @@
             document.getElementById('exportOpen').addEventListener('change', updateExportItemCount);
             document.getElementById('exportClose').addEventListener('change', updateExportItemCount);
             
+            // Pipeline analytics listeners
             document.getElementById('closePipelinesAnalyticsModal').addEventListener('click', closePipelinesAnalyticsModal);
             document.getElementById('closePipelinesAnalyticsModalBottom').addEventListener('click', closePipelinesAnalyticsModal);
             
