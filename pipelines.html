@@ -2079,65 +2079,6 @@
                     </div>
                 </div>
                 
-                <!-- PIC Performance Section -->
-                <div class="card mb-8">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
-                            <i class="fas fa-user-tie text-orange-600"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-gray-900">PIC Performance Dashboard</h3>
-                            <p class="text-sm text-gray-600">Project distribution and values by PIC</p>
-                        </div>
-                    </div>
-                    
-                    <!-- PIC Summary Stats -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                        <div class="text-center p-4 bg-blue-50 rounded-xl">
-                            <div class="text-2xl font-bold text-blue-700" id="totalPICs">0</div>
-                            <div class="text-sm text-blue-600 mt-1">Total PICs</div>
-                        </div>
-                        <div class="text-center p-4 bg-green-50 rounded-xl">
-                            <div class="text-2xl font-bold text-green-700" id="avgProjectsPerPIC">0</div>
-                            <div class="text-sm text-green-600 mt-1">Avg Projects/PIC</div>
-                        </div>
-                        <div class="text-center p-4 bg-purple-50 rounded-xl">
-                            <div class="text-2xl font-bold text-purple-700" id="topPerformingPIC">-</div>
-                            <div class="text-sm text-purple-600 mt-1">Top Performing PIC</div>
-                        </div>
-                        <div class="text-center p-4 bg-orange-50 rounded-xl">
-                            <div class="text-2xl font-bold text-orange-700" id="totalProjectsPIC">0</div>
-                            <div class="text-sm text-orange-600 mt-1">Total PIC Projects</div>
-                        </div>
-                    </div>
-                    
-                    <!-- PIC Analytics Chart -->
-                    <div class="mb-6">
-                        <canvas id="pipelinePICChart" height="400"></canvas>
-                    </div>
-                    
-                    <!-- PIC Performance Table -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse" id="picPerformanceTable">
-                            <thead>
-                                <tr class="bg-gray-50">
-                                    <th class="p-3 text-left text-sm font-semibold text-gray-700 border-b">PIC</th>
-                                    <th class="p-3 text-left text-sm font-semibold text-gray-700 border-b">Total Projects</th>
-                                    <th class="p-3 text-left text-sm font-semibold text-gray-700 border-b">Open</th>
-                                    <th class="p-3 text-left text-sm font-semibold text-gray-700 border-b">Close</th>
-                                    <th class="p-3 text-left text-sm font-semibold text-gray-700 border-b">Total Quotation (IDR)</th>
-                                    <th class="p-3 text-left text-sm font-semibold text-gray-700 border-b">Total PO (IDR)</th>
-                                    <th class="p-3 text-left text-sm font-semibold text-gray-700 border-b">Progress Avg (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="picPerformanceBody">
-                                <!-- Data will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Main Analytics Charts -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     <div class="card">
                         <div class="flex items-center gap-3 mb-4">
@@ -2179,7 +2120,6 @@
                     </div>
                 </div>
                 
-                <!-- Performance Metrics -->
                 <div class="card">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center">
@@ -2212,14 +2152,10 @@
             </div>
             <div class="modal-header sticky-bottom">
                 <div></div>
-                <div class="flex gap-3">
+                <div>
                     <button id="closePipelinesAnalyticsModalBottom" class="btn btn-secondary">
                         <i class="fas fa-times"></i>
                         Close
-                    </button>
-                    <button id="exportPICAnalyticsBtn" class="btn btn-excel">
-                        <i class="fas fa-file-excel"></i>
-                        Export PIC Analytics
                     </button>
                 </div>
             </div>
@@ -4529,7 +4465,7 @@
         function openAddCustomerModal() {
             document.getElementById('addCustomerForm').reset();
             document.getElementById('addCustomerModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeAddCustomerModal() {
@@ -4904,9 +4840,7 @@
                 generatePipelineStatusChart(allItems);
                 generatePipelineCompanyChart(allItems);
                 generatePipelineRevenueChart(allItems);
-                generatePICPerformanceChart(allItems);
                 updatePipelineMetrics(allItems);
-                updatePICPerformanceMetrics(allItems);
                 
                 showToast('Pipeline analytics loaded successfully', 'success');
                 
@@ -4918,394 +4852,6 @@
             }
         }
 
-        // ==================== PIC PERFORMANCE ANALYTICS FUNCTIONS ====================
-        function generatePICPerformanceChart(pipelineItems) {
-            const ctx = document.getElementById('pipelinePICChart');
-            if (!ctx) return;
-            
-            if (charts.pipelinePICChart) {
-                charts.pipelinePICChart.destroy();
-            }
-            
-            // Group by PIC
-            const picStats = {};
-            
-            pipelineItems.forEach(item => {
-                if (!item.pic) return;
-                
-                const picName = item.pic;
-                if (!picStats[picName]) {
-                    picStats[picName] = {
-                        open: 0,
-                        close: 0,
-                        totalQuotation: 0,
-                        totalPO: 0,
-                        progressSum: 0,
-                        projectCount: 0
-                    };
-                }
-                
-                if (item.status === 'Open') {
-                    picStats[picName].open++;
-                } else if (item.status === 'Close') {
-                    picStats[picName].close++;
-                }
-                
-                picStats[picName].totalQuotation += (item.valueQuotation || 0);
-                picStats[picName].totalPO += (item.valuePO || 0);
-                picStats[picName].progressSum += (item.progress || 0);
-                picStats[picName].projectCount++;
-            });
-            
-            // Sort PICs by total projects (descending)
-            const sortedPICs = Object.keys(picStats).sort((a, b) => {
-                const totalA = picStats[a].open + picStats[a].close;
-                const totalB = picStats[b].open + picStats[b].close;
-                return totalB - totalA;
-            });
-            
-            // Take top 10 PICs for chart (or all if less than 10)
-            const topPICs = sortedPICs.slice(0, 10);
-            
-            const labels = topPICs;
-            const openData = topPICs.map(pic => picStats[pic].open);
-            const closeData = topPICs.map(pic => picStats[pic].close);
-            const totalData = topPICs.map(pic => picStats[pic].open + picStats[pic].close);
-            
-            charts.pipelinePICChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Open',
-                            data: openData,
-                            backgroundColor: 'rgba(34, 197, 94, 0.7)',
-                            borderColor: 'rgb(34, 197, 94)',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Close',
-                            data: closeData,
-                            backgroundColor: 'rgba(100, 116, 139, 0.7)',
-                            borderColor: 'rgb(100, 116, 139)',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                            labels: {
-                                font: {
-                                    size: 12
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.dataset.label;
-                                    const value = context.raw;
-                                    const picName = context.label;
-                                    const picData = picStats[picName];
-                                    
-                                    if (!picData) return `${label}: ${value}`;
-                                    
-                                    let tooltip = `${label}: ${value}`;
-                                    if (label === 'Open') {
-                                        tooltip += ` (${formatCurrencyDisplay(picData.totalQuotation)})`;
-                                    } else if (label === 'Close') {
-                                        tooltip += ` (${formatCurrencyDisplay(picData.totalPO)})`;
-                                    }
-                                    return tooltip;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Person In Charge (PIC)',
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
-                                }
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Number of Projects',
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Update PIC performance table
-            updatePICPerformanceTable(picStats);
-        }
-
-        function updatePICPerformanceTable(picStats) {
-            const tbody = document.getElementById('picPerformanceBody');
-            if (!tbody) return;
-            
-            tbody.innerHTML = '';
-            
-            // Sort PICs by total projects (descending)
-            const sortedPICs = Object.keys(picStats).sort((a, b) => {
-                const totalA = picStats[a].open + picStats[a].close;
-                const totalB = picStats[b].open + picStats[b].close;
-                return totalB - totalA;
-            });
-            
-            sortedPICs.forEach(picName => {
-                const stats = picStats[picName];
-                const totalProjects = stats.open + stats.close;
-                const progressAvg = totalProjects > 0 ? Math.round(stats.progressSum / totalProjects) : 0;
-                
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-50 border-b';
-                
-                row.innerHTML = `
-                    <td class="p-3 text-sm text-gray-800 font-medium">${picName}</td>
-                    <td class="p-3 text-sm text-gray-700">${totalProjects}</td>
-                    <td class="p-3 text-sm">
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            ${stats.open}
-                        </span>
-                    </td>
-                    <td class="p-3 text-sm">
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            ${stats.close}
-                        </span>
-                    </td>
-                    <td class="p-3 text-sm text-gray-700 font-medium">${formatCurrencyDisplay(stats.totalQuotation)}</td>
-                    <td class="p-3 text-sm text-gray-700 font-medium">${formatCurrencyDisplay(stats.totalPO)}</td>
-                    <td class="p-3 text-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-600 h-2 rounded-full" style="width: ${progressAvg}%"></div>
-                            </div>
-                            <span class="text-xs text-gray-600">${progressAvg}%</span>
-                        </div>
-                    </td>
-                `;
-                
-                tbody.appendChild(row);
-            });
-        }
-
-        function updatePICPerformanceMetrics(pipelineItems) {
-            // Group by PIC
-            const picStats = {};
-            let totalProjectsWithPIC = 0;
-            
-            pipelineItems.forEach(item => {
-                if (item.pic) {
-                    totalProjectsWithPIC++;
-                    const picName = item.pic;
-                    if (!picStats[picName]) {
-                        picStats[picName] = {
-                            open: 0,
-                            close: 0,
-                            totalQuotation: 0,
-                            totalPO: 0
-                        };
-                    }
-                    
-                    if (item.status === 'Open') {
-                        picStats[picName].open++;
-                    } else if (item.status === 'Close') {
-                        picStats[picName].close++;
-                    }
-                    
-                    picStats[picName].totalQuotation += (item.valueQuotation || 0);
-                    picStats[picName].totalPO += (item.valuePO || 0);
-                }
-            });
-            
-            const totalPICs = Object.keys(picStats).length;
-            
-            // Find top performing PIC
-            let topPerformingPIC = '-';
-            let maxProjects = 0;
-            
-            Object.keys(picStats).forEach(picName => {
-                const stats = picStats[picName];
-                const totalProjects = stats.open + stats.close;
-                if (totalProjects > maxProjects) {
-                    maxProjects = totalProjects;
-                    topPerformingPIC = picName;
-                }
-            });
-            
-            const avgProjectsPerPIC = totalPICs > 0 ? Math.round(totalProjectsWithPIC / totalPICs) : 0;
-            
-            // Update UI
-            document.getElementById('totalPICs').textContent = totalPICs;
-            document.getElementById('avgProjectsPerPIC').textContent = avgProjectsPerPIC;
-            document.getElementById('topPerformingPIC').textContent = topPerformingPIC;
-            document.getElementById('totalProjectsPIC').textContent = totalProjectsWithPIC;
-        }
-
-        async function exportPICAnalytics() {
-            console.log('Exporting PIC analytics...');
-            
-            try {
-                showLoading();
-                
-                const querySnapshot = await pipelinesCollection.get();
-                const allItems = [];
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    allItems.push({
-                        id: doc.id,
-                        ...data
-                    });
-                });
-                
-                // Group by PIC
-                const picStats = {};
-                
-                allItems.forEach(item => {
-                    if (!item.pic) return;
-                    
-                    const picName = item.pic;
-                    if (!picStats[picName]) {
-                        picStats[picName] = {
-                            open: 0,
-                            close: 0,
-                            totalQuotation: 0,
-                            totalPO: 0,
-                            progressSum: 0,
-                            projectCount: 0
-                        };
-                    }
-                    
-                    if (item.status === 'Open') {
-                        picStats[picName].open++;
-                    } else if (item.status === 'Close') {
-                        picStats[picName].close++;
-                    }
-                    
-                    picStats[picName].totalQuotation += (item.valueQuotation || 0);
-                    picStats[picName].totalPO += (item.valuePO || 0);
-                    picStats[picName].progressSum += (item.progress || 0);
-                    picStats[picName].projectCount++;
-                });
-                
-                // Prepare data for Excel
-                const data = [];
-                
-                // Header
-                data.push([
-                    'PIC Name',
-                    'Total Projects',
-                    'Open Projects',
-                    'Close Projects',
-                    'Total Quotation Value (IDR)',
-                    'Total PO Value (IDR)',
-                    'Average Progress (%)',
-                    'Success Rate (%)'
-                ]);
-                
-                // Sort PICs by total projects (descending)
-                const sortedPICs = Object.keys(picStats).sort((a, b) => {
-                    const totalA = picStats[a].open + picStats[a].close;
-                    const totalB = picStats[b].open + picStats[b].close;
-                    return totalB - totalA;
-                });
-                
-                // Data rows
-                sortedPICs.forEach(picName => {
-                    const stats = picStats[picName];
-                    const totalProjects = stats.open + stats.close;
-                    const progressAvg = totalProjects > 0 ? Math.round(stats.progressSum / totalProjects) : 0;
-                    const successRate = totalProjects > 0 ? Math.round((stats.close / totalProjects) * 100) : 0;
-                    
-                    data.push([
-                        picName,
-                        totalProjects,
-                        stats.open,
-                        stats.close,
-                        formatCurrencyDisplay(stats.totalQuotation),
-                        formatCurrencyDisplay(stats.totalPO),
-                        `${progressAvg}%`,
-                        `${successRate}%`
-                    ]);
-                });
-                
-                // Summary
-                data.push([]); // Empty row
-                data.push(['Summary Information']);
-                data.push(['Total PICs:', Object.keys(picStats).length]);
-                data.push(['Total Projects with PIC:', allItems.filter(item => item.pic).length]);
-                data.push(['Total Projects without PIC:', allItems.filter(item => !item.pic).length]);
-                
-                const totalOpen = allItems.filter(item => item.status === 'Open').length;
-                const totalClose = allItems.filter(item => item.status === 'Close').length;
-                const totalQuotation = allItems.reduce((sum, item) => sum + (item.valueQuotation || 0), 0);
-                const totalPO = allItems.reduce((sum, item) => sum + (item.valuePO || 0), 0);
-                
-                data.push(['Total Open Projects:', totalOpen]);
-                data.push(['Total Close Projects:', totalClose]);
-                data.push(['Total Quotation Value:', formatCurrencyDisplay(totalQuotation)]);
-                data.push(['Total PO Value:', formatCurrencyDisplay(totalPO)]);
-                data.push(['Export Date:', new Date().toLocaleString('id-ID')]);
-                data.push(['Exported By:', currentUser?.email || 'Unknown']);
-                
-                // Create workbook
-                const wb = XLSX.utils.book_new();
-                
-                // Create worksheet
-                const ws = XLSX.utils.aoa_to_sheet(data);
-                
-                // Set column widths
-                ws['!cols'] = [
-                    { wch: 30 },  // PIC Name
-                    { wch: 15 },  // Total Projects
-                    { wch: 15 },  // Open Projects
-                    { wch: 15 },  // Close Projects
-                    { wch: 25 },  // Total Quotation Value
-                    { wch: 25 },  // Total PO Value
-                    { wch: 20 },  // Average Progress
-                    { wch: 15 }   // Success Rate
-                ];
-                
-                // Add worksheet to workbook
-                XLSX.utils.book_append_sheet(wb, ws, 'PIC Performance');
-                
-                // Generate filename
-                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-                const filename = `PIC_Performance_Analytics_${timestamp}.xlsx`;
-                
-                // Export to Excel
-                XLSX.writeFile(wb, filename);
-                
-                showToast('PIC analytics exported successfully', 'success');
-                
-            } catch (error) {
-                console.error('Error exporting PIC analytics:', error);
-                showToast('Failed to export PIC analytics', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // ==================== ANALYTICS CHARTS ====================
         function generatePipelineStatusChart(pipelineItems) {
             const ctx = document.getElementById('pipelineStatusChart');
             if (!ctx) return;
@@ -5779,7 +5325,6 @@
             // Pipeline analytics listeners
             document.getElementById('closePipelinesAnalyticsModal').addEventListener('click', closePipelinesAnalyticsModal);
             document.getElementById('closePipelinesAnalyticsModalBottom').addEventListener('click', closePipelinesAnalyticsModal);
-            document.getElementById('exportPICAnalyticsBtn').addEventListener('click', exportPICAnalytics);
             
             // Add PIC modal event listeners
             document.getElementById('closeAddPICModal').addEventListener('click', closeAddPICModal);
