@@ -944,6 +944,89 @@
                 font-size: 2rem;
             }
         }
+
+        /* Role-based styling */
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .role-admin {
+            background: linear-gradient(135deg, var(--danger-100), var(--danger-50));
+            color: var(--danger-700);
+            border: 1px solid var(--danger-200);
+        }
+
+        .role-manager {
+            background: linear-gradient(135deg, var(--warning-100), var(--warning-50));
+            color: var(--warning-700);
+            border: 1px solid var(--warning-200);
+        }
+
+        .role-user {
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
+            color: var(--primary-700);
+            border: 1px solid var(--primary-200);
+        }
+
+        .user-indicator {
+            font-size: 0.7rem;
+            color: var(--neutral-500);
+            font-style: italic;
+        }
+
+        /* Permission restricted elements */
+        .restricted {
+            opacity: 0.6;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .restricted::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.5);
+            z-index: 1;
+            border-radius: inherit;
+        }
+
+        .permission-required {
+            position: relative;
+        }
+
+        .permission-tooltip {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--neutral-800);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-fast);
+            margin-top: 0.5rem;
+        }
+
+        .permission-required:hover .permission-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
     </style>
 </head>
 <body>
@@ -956,8 +1039,18 @@
                         <i class="fas fa-users"></i>
                     </a>
                     <div>
-                        <h1 class="app-title">Personnel Management</h1>
+                        <h1 class="app-title" id="dynamicTitle">Personnel Management</h1>
                         <p class="app-subtitle">Track and manage personnel status & activities</p>
+                        <div class="flex items-center gap-2 mt-2">
+                            <span id="userRoleBadge" class="role-badge hidden">
+                                <i class="fas fa-user-tag"></i>
+                                <span id="roleText"></span>
+                            </span>
+                            <span id="userInfo" class="text-sm text-gray-300 hidden">
+                                <i class="fas fa-user-circle mr-1"></i>
+                                <span id="userEmail"></span>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 
@@ -982,8 +1075,8 @@
                 </div>
             </div>
             
-            <!-- Quick Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            <!-- Quick Stats - Hidden for regular users -->
+            <div id="quickStatsContainer" class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                 <div class="stats-card">
                     <div class="stats-number text-blue-600" id="totalPersonnel">0</div>
                     <div class="stats-label">Total Personnel</div>
@@ -1006,8 +1099,8 @@
                 </div>
             </div>
             
-            <!-- Search, Filters and Sort -->
-            <div class="flex flex-col md:flex-row gap-4 mb-6">
+            <!-- Search, Filters and Sort - Restricted for regular users -->
+            <div id="searchFilterContainer" class="flex flex-col md:flex-row gap-4 mb-6">
                 <div class="flex-1 flex gap-4">
                     <div class="flex-1 relative">
                         <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -1018,7 +1111,7 @@
                     </div>
                 </div>
                 
-                <div class="flex flex-wrap gap-2">
+                <div id="filterTagsContainer" class="flex flex-wrap gap-2">
                     <button class="filter-tag active" data-filter="all">All</button>
                     <button class="filter-tag" data-filter="working">
                         <i class="fas fa-briefcase mr-2"></i>Working
@@ -1039,10 +1132,11 @@
     
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 py-8">
-        <!-- Tabs -->
-        <div class="tab-container">
+        <!-- Tabs - Analytics hidden for regular users -->
+        <div id="tabsContainer" class="tab-container">
             <button id="personnelTab" class="tab active">
-                <i class="fas fa-users mr-2"></i>Personnel List
+                <i class="fas fa-users mr-2"></i>
+                <span id="personnelTabText">Personnel List</span>
             </button>
             <button id="analyticsTab" class="tab">
                 <i class="fas fa-chart-bar mr-2"></i>Analytics
@@ -1138,7 +1232,7 @@
             </div>
         </div>
         
-        <!-- Analytics Content -->
+        <!-- Analytics Content - Hidden for regular users -->
         <div id="analyticsContent" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="chart-container">
@@ -1252,6 +1346,10 @@
                                 <div>
                                     <label class="text-sm font-medium text-gray-500">Last Updated</label>
                                     <p id="modalLastUpdated" class="text-gray-900 font-medium"></p>
+                                </div>
+                                <div id="userLinkSection" class="hidden">
+                                    <label class="text-sm font-medium text-gray-500">Linked User Account</label>
+                                    <p id="modalLinkedUser" class="text-gray-900 font-medium"></p>
                                 </div>
                             </div>
                         </div>
@@ -1457,6 +1555,7 @@
             <div class="modal-body">
                 <form id="personnelForm" class="space-y-6">
                     <input type="hidden" id="personnelId">
+                    <input type="hidden" id="currentUserIdField" value="">
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -1548,6 +1647,20 @@
                                 <option value="leave">On Leave</option>
                                 <option value="absent">Absent</option>
                             </select>
+                        </div>
+                        
+                        <!-- Link to User Account Field (Visible only for admin) -->
+                        <div id="linkUserField" class="md:col-span-2 hidden">
+                            <label class="form-label" for="linkUserId">
+                                <i class="fas fa-link mr-2"></i>
+                                Link to User Account (Optional)
+                            </label>
+                            <select id="linkUserId" class="form-input">
+                                <option value="">Select User Account</option>
+                            </select>
+                            <p class="text-xs text-gray-500 mt-1">
+                                Linking a user account allows this personnel to login with restricted access
+                            </p>
                         </div>
                         
                         <div class="md:col-span-2">
@@ -1706,17 +1819,32 @@
 
     <script>
         // ==================== GLOBAL VARIABLES ====================
-        let db, auth, personnelCollection, workordersCollection, dailyLogsCollection;
+        let db, auth, personnelCollection, workordersCollection, dailyLogsCollection, usersCollection;
         let currentUser = null;
         let allPersonnel = [];
         let filteredPersonnel = [];
         let allWorkOrders = [];
         let currentFilter = 'all';
-        let currentSort = { field: 'name', direction: 'asc' }; // Changed to object
+        let currentSort = { field: 'name', direction: 'asc' };
         let selectedPersonnel = null;
         let dailyLogs = [];
         let personnelToDelete = null;
         let currentAssignments = [];
+        
+        // User role and permissions
+        let userRole = null;
+        let userPermissions = {
+            canViewAll: false,
+            canAdd: false,
+            canEditAll: false,
+            canEditSelf: false,
+            canDelete: false,
+            canExport: false,
+            canViewAnalytics: false,
+            canLinkUser: false
+        };
+        let userPersonnelId = null;
+        let userPersonnelData = null;
         
         // Pagination variables
         const ITEMS_PER_PAGE = 20;
@@ -1872,6 +2000,7 @@
                 personnelCollection = db.collection('personnel');
                 workordersCollection = db.collection('workorders');
                 dailyLogsCollection = db.collection('dailyLogs');
+                usersCollection = db.collection('users');
                 
                 console.log('Firebase initialized successfully');
                 return true;
@@ -1883,9 +2012,215 @@
             }
         }
 
+        // ==================== USER ROLE & PERMISSIONS ====================
+        async function loadUserRoleAndPermissions(uid) {
+            try {
+                const userDoc = await usersCollection.doc(uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    userRole = userData.role || 'user';
+                    userPersonnelId = userData.personnelId || null;
+                    
+                    // Set permissions based on role
+                    setPermissionsByRole(userRole);
+                    
+                    console.log(`User role: ${userRole}, Personnel ID: ${userPersonnelId}`);
+                    
+                    // Load user's personnel data if exists
+                    if (userPersonnelId) {
+                        const personnelDoc = await personnelCollection.doc(userPersonnelId).get();
+                        if (personnelDoc.exists) {
+                            userPersonnelData = {
+                                id: personnelDoc.id,
+                                ...personnelDoc.data()
+                            };
+                            console.log('User personnel data loaded:', userPersonnelData.name);
+                        }
+                    }
+                    
+                    return true;
+                } else {
+                    // Default to user role if document doesn't exist
+                    userRole = 'user';
+                    setPermissionsByRole(userRole);
+                    console.log('User document not found, defaulting to user role');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error loading user role:', error);
+                userRole = 'user';
+                setPermissionsByRole(userRole);
+                return false;
+            }
+        }
+
+        function setPermissionsByRole(role) {
+            // Reset all permissions
+            userPermissions = {
+                canViewAll: false,
+                canAdd: false,
+                canEditAll: false,
+                canEditSelf: false,
+                canDelete: false,
+                canExport: false,
+                canViewAnalytics: false,
+                canLinkUser: false
+            };
+
+            switch(role) {
+                case 'admin':
+                    userPermissions.canViewAll = true;
+                    userPermissions.canAdd = true;
+                    userPermissions.canEditAll = true;
+                    userPermissions.canEditSelf = true;
+                    userPermissions.canDelete = true;
+                    userPermissions.canExport = true;
+                    userPermissions.canViewAnalytics = true;
+                    userPermissions.canLinkUser = true;
+                    break;
+                    
+                case 'manager':
+                    userPermissions.canViewAll = true;
+                    userPermissions.canAdd = true;
+                    userPermissions.canEditAll = true;
+                    userPermissions.canEditSelf = true;
+                    userPermissions.canDelete = false; // Managers cannot delete
+                    userPermissions.canExport = true;
+                    userPermissions.canViewAnalytics = true;
+                    userPermissions.canLinkUser = true;
+                    break;
+                    
+                case 'user':
+                    userPermissions.canViewAll = false;
+                    userPermissions.canAdd = false;
+                    userPermissions.canEditAll = false;
+                    userPermissions.canEditSelf = true; // Can edit own data
+                    userPermissions.canDelete = false;
+                    userPermissions.canExport = false;
+                    userPermissions.canViewAnalytics = false;
+                    userPermissions.canLinkUser = false;
+                    break;
+                    
+                default:
+                    // Default to most restrictive
+                    break;
+            }
+        }
+
+        function applyRoleBasedUI() {
+            const isAdmin = userRole === 'admin';
+            const isManager = userRole === 'manager';
+            const isRegularUser = userRole === 'user';
+            
+            // Update title based on role
+            const dynamicTitle = document.getElementById('dynamicTitle');
+            if (dynamicTitle) {
+                if (isRegularUser) {
+                    dynamicTitle.textContent = 'My Personnel Profile';
+                } else {
+                    dynamicTitle.textContent = 'Personnel Management';
+                }
+            }
+            
+            // Update personnel tab text
+            const personnelTabText = document.getElementById('personnelTabText');
+            if (personnelTabText) {
+                if (isRegularUser) {
+                    personnelTabText.textContent = 'My Profile';
+                } else {
+                    personnelTabText.textContent = 'Personnel List';
+                }
+            }
+            
+            // Show user role badge
+            const userRoleBadge = document.getElementById('userRoleBadge');
+            const roleText = document.getElementById('roleText');
+            if (userRoleBadge && roleText) {
+                userRoleBadge.classList.remove('hidden');
+                userRoleBadge.className = `role-badge role-${userRole}`;
+                roleText.textContent = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+            }
+            
+            // Show user info
+            const userInfo = document.getElementById('userInfo');
+            const userEmail = document.getElementById('userEmail');
+            if (userInfo && userEmail && currentUser) {
+                userInfo.classList.remove('hidden');
+                userEmail.textContent = currentUser.email;
+            }
+            
+            // Show/hide analytics tab
+            const analyticsTab = document.getElementById('analyticsTab');
+            if (analyticsTab) {
+                if (!userPermissions.canViewAnalytics) {
+                    analyticsTab.style.display = 'none';
+                } else {
+                    analyticsTab.style.display = 'flex';
+                }
+            }
+            
+            // Show/hide add personnel button
+            const addPersonnelBtn = document.getElementById('addPersonnelBtn');
+            if (addPersonnelBtn) {
+                if (!userPermissions.canAdd) {
+                    addPersonnelBtn.style.display = 'none';
+                } else {
+                    addPersonnelBtn.style.display = 'flex';
+                }
+            }
+            
+            // Show/hide export button
+            const exportBtn = document.getElementById('exportBtn');
+            if (exportBtn) {
+                if (!userPermissions.canExport) {
+                    exportBtn.style.display = 'none';
+                } else {
+                    exportBtn.style.display = 'flex';
+                }
+            }
+            
+            // Show/hide quick stats for regular users
+            const quickStatsContainer = document.getElementById('quickStatsContainer');
+            if (quickStatsContainer) {
+                if (isRegularUser) {
+                    quickStatsContainer.style.display = 'none';
+                } else {
+                    quickStatsContainer.style.display = 'grid';
+                }
+            }
+            
+            // Show/hide search and filters for regular users
+            const searchFilterContainer = document.getElementById('searchFilterContainer');
+            const searchPersonnel = document.getElementById('searchPersonnel');
+            const filterTagsContainer = document.getElementById('filterTagsContainer');
+            
+            if (searchFilterContainer && searchPersonnel && filterTagsContainer) {
+                if (isRegularUser) {
+                    searchFilterContainer.style.display = 'none';
+                    // Still show search but with different placeholder and disabled
+                    searchPersonnel.placeholder = 'Search your profile...';
+                    searchPersonnel.disabled = true;
+                    filterTagsContainer.style.display = 'none';
+                } else {
+                    searchFilterContainer.style.display = 'flex';
+                    searchPersonnel.placeholder = 'Search personnel by name...';
+                    searchPersonnel.disabled = false;
+                    filterTagsContainer.style.display = 'flex';
+                }
+            }
+            
+            // Update "Add First Personnel" button visibility
+            const addFirstPersonnelBtn = document.getElementById('addFirstPersonnelBtn');
+            if (addFirstPersonnelBtn) {
+                if (!userPermissions.canAdd) {
+                    addFirstPersonnelBtn.style.display = 'none';
+                }
+            }
+        }
+
         // ==================== REALTIME LISTENERS ====================
         function setupRealtimeListeners() {
-            console.log('Setting up realtime listeners...');
+            console.log('Setting up realtime listeners with role:', userRole);
             
             // Clean up existing listeners
             if (personnelListener) {
@@ -1895,35 +2230,65 @@
                 workOrdersListener();
             }
             
-            // Setup personnel realtime listener
-            personnelListener = personnelCollection
-                .where('isActive', '==', true)
-                .onSnapshot({
-                    next: (querySnapshot) => {
-                        console.log('Personnel updated in realtime');
-                        allPersonnel = [];
-                        
-                        querySnapshot.forEach((doc) => {
-                            const data = doc.data();
-                            allPersonnel.push({
-                                id: doc.id,
-                                ...data
+            // Setup personnel realtime listener with role-based filtering
+            if (userRole === 'user' && userPersonnelId) {
+                // Regular user: only listen to their own data
+                personnelListener = personnelCollection
+                    .doc(userPersonnelId)
+                    .onSnapshot({
+                        next: (doc) => {
+                            console.log('Personal data updated in realtime');
+                            allPersonnel = [];
+                            
+                            if (doc.exists) {
+                                const data = doc.data();
+                                allPersonnel.push({
+                                    id: doc.id,
+                                    ...data
+                                });
+                            }
+                            
+                            updatePersonnelStats();
+                            applyFilters();
+                            
+                            console.log('Personal data updated');
+                        },
+                        error: (error) => {
+                            console.error('Error in personnel listener:', error);
+                            showToast('Failed to update personnel data', 'error');
+                        }
+                    });
+            } else if (userPermissions.canViewAll) {
+                // Admin/Manager: listen to all active personnel
+                personnelListener = personnelCollection
+                    .where('isActive', '==', true)
+                    .onSnapshot({
+                        next: (querySnapshot) => {
+                            console.log('All personnel updated in realtime');
+                            allPersonnel = [];
+                            
+                            querySnapshot.forEach((doc) => {
+                                const data = doc.data();
+                                allPersonnel.push({
+                                    id: doc.id,
+                                    ...data
+                                });
                             });
-                        });
-                        
-                        // Update auto statuses based on current work orders
-                        updatePersonnelStatusesFromWorkOrders();
-                        
-                        updatePersonnelStats();
-                        applyFilters();
-                        
-                        console.log('Personnel updated:', allPersonnel.length);
-                    },
-                    error: (error) => {
-                        console.error('Error in personnel listener:', error);
-                        showToast('Failed to update personnel data', 'error');
-                    }
-                });
+                            
+                            // Update auto statuses based on current work orders
+                            updatePersonnelStatusesFromWorkOrders();
+                            
+                            updatePersonnelStats();
+                            applyFilters();
+                            
+                            console.log('All personnel updated:', allPersonnel.length);
+                        },
+                        error: (error) => {
+                            console.error('Error in personnel listener:', error);
+                            showToast('Failed to update personnel data', 'error');
+                        }
+                    });
+            }
             
             // Setup work orders realtime listener
             workOrdersListener = workordersCollection
@@ -1943,8 +2308,9 @@
                         // Update personnel statuses when work orders change
                         updatePersonnelStatusesFromWorkOrders();
                         
-                        // Update analytics if on analytics tab
-                        if (!document.getElementById('analyticsContent').classList.contains('hidden')) {
+                        // Update analytics if on analytics tab and has permission
+                        if (!document.getElementById('analyticsContent').classList.contains('hidden') && 
+                            userPermissions.canViewAnalytics) {
                             renderAnalytics();
                         }
                         
@@ -2122,6 +2488,12 @@
                     return;
                 }
                 
+                // Permission check: only allow if editing own data or has edit all permission
+                if (userRole === 'user' && selectedPersonnel.id !== userPersonnelId) {
+                    showToast('You can only create logs for your own profile', 'error');
+                    return;
+                }
+                
                 const assignment = allWorkOrders.find(wo => wo.id === assignmentId);
                 if (!assignment) {
                     showToast('Assignment not found', 'error');
@@ -2211,6 +2583,12 @@
                     return;
                 }
                 
+                // Permission check: only allow if editing own data or has edit all permission
+                if (userRole === 'user' && selectedPersonnel.id !== userPersonnelId) {
+                    showToast('You can only create logs for your own profile', 'error');
+                    return;
+                }
+                
                 showLoading();
                 
                 let assignmentData = null;
@@ -2274,6 +2652,12 @@
                     return;
                 }
                 
+                // Permission check: only allow if editing own data or has edit all permission
+                if (userRole === 'user' && selectedPersonnel.id !== userPersonnelId) {
+                    showToast('You can only create logs for your own profile', 'error');
+                    return;
+                }
+                
                 const assignment = allWorkOrders.find(wo => wo.id === assignmentId);
                 if (!assignment) {
                     showToast('Assignment not found', 'error');
@@ -2324,7 +2708,7 @@
             card.className = 'activity-log-card';
             
             const time = log.createdAt ? formatTimeAgo(log.createdAt) : 'Recently';
-            const canDelete = currentUser?.email === log.createdBy;
+            const canDelete = currentUser?.email === log.createdBy || userPermissions.canEditAll;
             const isAutoGenerated = log.isAutoGenerated || false;
             
             // Get assignment info if available
@@ -2806,6 +3190,12 @@
         }
 
         function updatePersonnelStats() {
+            // For regular users, show only their stats or hide stats
+            if (userRole === 'user') {
+                document.getElementById('quickStatsContainer').style.display = 'none';
+                return;
+            }
+            
             const total = allPersonnel.length;
             const working = allPersonnel.filter(p => p.status === 'working').length;
             const leave = allPersonnel.filter(p => p.status === 'leave').length;
@@ -2822,18 +3212,25 @@
         function applyFilters() {
             let filtered = [...allPersonnel];
             
-            if (currentFilter !== 'all') {
-                filtered = filtered.filter(p => p.status === currentFilter);
-            }
-            
-            const searchTerm = document.getElementById('searchPersonnel').value.toLowerCase();
-            if (searchTerm) {
-                filtered = filtered.filter(p => 
-                    p.name.toLowerCase().includes(searchTerm) ||
-                    (p.position && p.position.toLowerCase().includes(searchTerm)) ||
-                    (p.employeeId && p.employeeId.toLowerCase().includes(searchTerm)) ||
-                    (p.division && p.division.toLowerCase().includes(searchTerm))
-                );
+            // For regular users, only show their own data
+            if (userRole === 'user') {
+                filtered = filtered.filter(p => p.id === userPersonnelId);
+            } else {
+                // Apply status filter for admin/manager
+                if (currentFilter !== 'all') {
+                    filtered = filtered.filter(p => p.status === currentFilter);
+                }
+                
+                // Apply search filter
+                const searchTerm = document.getElementById('searchPersonnel').value.toLowerCase();
+                if (searchTerm) {
+                    filtered = filtered.filter(p => 
+                        p.name.toLowerCase().includes(searchTerm) ||
+                        (p.position && p.position.toLowerCase().includes(searchTerm)) ||
+                        (p.employeeId && p.employeeId.toLowerCase().includes(searchTerm)) ||
+                        (p.division && p.division.toLowerCase().includes(searchTerm))
+                    );
+                }
             }
             
             filtered = sortPersonnel(filtered);
@@ -2876,7 +3273,17 @@
             const item = document.createElement('div');
             item.className = 'personnel-list-item';
             item.dataset.id = person.id;
-            item.onclick = () => viewPersonnelActivity(person.id);
+            
+            // Only make clickable if user has permission to view
+            if (userRole === 'user' && person.id !== userPersonnelId) {
+                item.style.cursor = 'not-allowed';
+                item.style.opacity = '0.6';
+                item.onclick = () => {
+                    showToast('You can only view your own profile', 'error');
+                };
+            } else {
+                item.onclick = () => viewPersonnelActivity(person.id);
+            }
             
             const initials = getInitials(person.name);
             const avatarColor = getAvatarColor(person.name);
@@ -2885,6 +3292,7 @@
             const statusClass = getStatusClass(person.status);
             const statusText = getStatusText(person.status);
             const isAutoMode = person.statusMode === 'auto';
+            const isCurrentUser = person.id === userPersonnelId;
             
             item.innerHTML = `
                 <div class="personnel-info">
@@ -2892,7 +3300,7 @@
                         ${initials}
                     </div>
                     <div>
-                        <div class="personnel-name">${person.name}</div>
+                        <div class="personnel-name">${person.name} ${isCurrentUser ? '<span class="user-indicator">(You)</span>' : ''}</div>
                         <div class="personnel-id">${person.employeeId || 'N/A'}</div>
                     </div>
                 </div>
@@ -2927,6 +3335,14 @@
 
         // ==================== ANALYTICS FUNCTIONS ====================
         function renderAnalytics() {
+            // Permission check
+            if (!userPermissions.canViewAnalytics) {
+                showToast('You are not authorized to view analytics', 'error');
+                // Redirect to personnel tab
+                document.getElementById('personnelTab').click();
+                return;
+            }
+            
             if (!allPersonnel.length) return;
             
             updateAnalyticsMetrics();
@@ -3266,6 +3682,13 @@
                     return;
                 }
                 
+                // Permission check: regular users can only load their own logs
+                if (userRole === 'user' && personnelId !== userPersonnelId) {
+                    showToast('You can only view your own activity logs', 'error');
+                    dailyLogs = [];
+                    return [];
+                }
+                
                 const querySnapshot = await dailyLogsCollection
                     .where('personnelId', '==', personnelId)
                     .orderBy('date', 'desc')
@@ -3293,6 +3716,21 @@
             try {
                 if (!confirm('Are you sure you want to delete this activity log?')) {
                     return;
+                }
+                
+                // Permission check
+                const logToDelete = dailyLogs.find(log => log.id === logId);
+                if (!logToDelete) {
+                    showToast('Log not found', 'error');
+                    return;
+                }
+                
+                // Regular users can only delete their own logs
+                if (userRole === 'user') {
+                    if (logToDelete.createdBy !== currentUser.email) {
+                        showToast('You can only delete your own logs', 'error');
+                        return;
+                    }
                 }
                 
                 showLoading();
@@ -3358,6 +3796,12 @@
                 return;
             }
             
+            // Permission check for regular users
+            if (userRole === 'user' && person.id !== userPersonnelId) {
+                showToast('You can only view your own profile', 'error');
+                return;
+            }
+            
             selectedPersonnel = person;
             await openPersonnelActivityModal(person);
         }
@@ -3374,6 +3818,16 @@
             document.getElementById('modalContact').textContent = person.contact || '-';
             document.getElementById('modalStatusMode').textContent = person.statusMode === 'auto' ? 'Auto (System Managed)' : 'Manual';
             document.getElementById('modalLastUpdated').textContent = person.updatedAt ? formatDateTime(person.updatedAt) : '-';
+            
+            // Show/hide user link section
+            const userLinkSection = document.getElementById('userLinkSection');
+            const modalLinkedUser = document.getElementById('modalLinkedUser');
+            if (person.userId) {
+                userLinkSection.classList.remove('hidden');
+                modalLinkedUser.textContent = person.userId;
+            } else {
+                userLinkSection.classList.add('hidden');
+            }
             
             avatar.textContent = getInitials(person.name);
             avatar.style.background = getAvatarColor(person.name);
@@ -3393,6 +3847,27 @@
             loadPersonnelActivities(person, personnelWorkOrders);
             loadCurrentAssignments(person, personnelWorkOrders);
             renderDailyLogs();
+            
+            // Show/hide edit and delete buttons based on permissions
+            const editBtn = document.getElementById('editPersonnelBtn');
+            const deleteBtn = document.getElementById('deletePersonnelBtn');
+            
+            // Check if user can edit this personnel
+            const canEdit = userPermissions.canEditAll || 
+                           (userPermissions.canEditSelf && person.id === userPersonnelId);
+            
+            // Check if user can delete this personnel
+            const canDelete = userPermissions.canDelete && 
+                             userRole !== 'manager' && // Managers cannot delete
+                             person.id !== userPersonnelId; // Cannot delete own account
+            
+            if (editBtn) {
+                editBtn.style.display = canEdit ? 'flex' : 'none';
+            }
+            
+            if (deleteBtn) {
+                deleteBtn.style.display = canDelete ? 'flex' : 'none';
+            }
             
             // Set initial tab
             document.getElementById('workActivityContent').classList.remove('hidden');
@@ -3621,6 +4096,12 @@
         function openQuickLogModal() {
             const modal = document.getElementById('quickLogModal');
             
+            // Permission check
+            if (userRole === 'user' && selectedPersonnel.id !== userPersonnelId) {
+                showToast('You can only create logs for your own profile', 'error');
+                return;
+            }
+            
             // Set today's date as default
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('quickLogDate').value = today;
@@ -3641,14 +4122,49 @@
 
         // ==================== PERSONNEL FORM FUNCTIONS ====================
         function openPersonnelForm(personnelId = null) {
+            // Permission checks
+            if (personnelId) {
+                // Editing existing personnel
+                const person = allPersonnel.find(p => p.id === personnelId);
+                if (!person) {
+                    showToast('Personnel not found', 'error');
+                    return;
+                }
+                
+                // Check if user can edit this personnel
+                const canEdit = userPermissions.canEditAll || 
+                               (userPermissions.canEditSelf && person.id === userPersonnelId);
+                
+                if (!canEdit) {
+                    showToast('You are not authorized to edit this personnel', 'error');
+                    return;
+                }
+            } else {
+                // Adding new personnel
+                if (!userPermissions.canAdd) {
+                    showToast('You are not authorized to add new personnel', 'error');
+                    return;
+                }
+            }
+            
             const modal = document.getElementById('personnelFormModal');
             const title = document.getElementById('personnelFormTitle');
             
             document.getElementById('personnelForm').reset();
             document.getElementById('personnelId').value = '';
+            document.getElementById('currentUserIdField').value = currentUser?.uid || '';
             
             // Reset status mode field visibility
             document.getElementById('manualStatusField').classList.add('hidden');
+            
+            // Show/hide link user field based on permissions
+            const linkUserField = document.getElementById('linkUserField');
+            if (userPermissions.canLinkUser) {
+                linkUserField.classList.remove('hidden');
+                loadUsersForLinking();
+            } else {
+                linkUserField.classList.add('hidden');
+            }
             
             if (personnelId) {
                 title.textContent = 'Edit Personnel';
@@ -3662,6 +4178,34 @@
             
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+        }
+
+        async function loadUsersForLinking() {
+            try {
+                const linkUserIdSelect = document.getElementById('linkUserId');
+                if (!linkUserIdSelect) return;
+                
+                // Clear existing options except first
+                while (linkUserIdSelect.options.length > 1) {
+                    linkUserIdSelect.remove(1);
+                }
+                
+                // Load users without personnel links
+                const usersSnapshot = await usersCollection.get();
+                usersSnapshot.forEach((doc) => {
+                    const userData = doc.data();
+                    // Only show users that don't have personnelId or have this personnelId
+                    if (!userData.personnelId || userData.personnelId === document.getElementById('personnelId').value) {
+                        const option = document.createElement('option');
+                        option.value = doc.id;
+                        option.textContent = `${userData.email} (${userData.name || 'No name'})`;
+                        linkUserIdSelect.appendChild(option);
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error loading users for linking:', error);
+            }
         }
 
         function editPersonnel(personnelId) {
@@ -3698,6 +4242,12 @@
             document.getElementById('contact').value = person.contact || '';
             document.getElementById('personnelNotes').value = person.notes || '';
             
+            // Set linked user if exists
+            const linkUserId = document.getElementById('linkUserId');
+            if (linkUserId && person.userId) {
+                linkUserId.value = person.userId;
+            }
+            
             // Show/hide manual status field based on mode
             if (person.statusMode === 'manual') {
                 document.getElementById('manualStatusField').classList.remove('hidden');
@@ -3714,8 +4264,36 @@
             const personnelId = document.getElementById('personnelId').value;
             const isEdit = !!personnelId;
             
+            // Additional permission checks
+            if (isEdit) {
+                const person = allPersonnel.find(p => p.id === personnelId);
+                if (!person) {
+                    showToast('Personnel not found', 'error');
+                    return;
+                }
+                
+                // Regular users can only edit their own data
+                if (userRole === 'user' && person.id !== userPersonnelId) {
+                    showToast('You can only edit your own profile', 'error');
+                    return;
+                }
+                
+                // Managers cannot deactivate personnel
+                if (userRole === 'manager' && document.getElementById('statusMode').value === 'inactive') {
+                    showToast('Managers cannot deactivate personnel', 'error');
+                    return;
+                }
+            } else {
+                // Adding new personnel - check permission
+                if (!userPermissions.canAdd) {
+                    showToast('You are not authorized to add new personnel', 'error');
+                    return;
+                }
+            }
+            
             const statusMode = document.getElementById('statusMode').value;
             const manualStatus = document.getElementById('manualStatus').value;
+            const linkUserId = document.getElementById('linkUserId')?.value || null;
             
             const personnelData = {
                 name: document.getElementById('personnelName').value.trim(),
@@ -3731,6 +4309,39 @@
                 updatedBy: currentUser?.email || 'system',
                 isActive: true
             };
+            
+            // Add user link if provided and user has permission
+            if (linkUserId && userPermissions.canLinkUser) {
+                personnelData.userId = linkUserId;
+                
+                // Update user document to link to this personnel
+                if (isEdit) {
+                    // Remove link from previous user if changed
+                    const oldPerson = allPersonnel.find(p => p.id === personnelId);
+                    if (oldPerson && oldPerson.userId && oldPerson.userId !== linkUserId) {
+                        await usersCollection.doc(oldPerson.userId).update({
+                            personnelId: null,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                }
+                
+                // Update new user document
+                await usersCollection.doc(linkUserId).update({
+                    personnelId: personnelId,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } else if (isEdit) {
+                // Remove user link if cleared
+                const oldPerson = allPersonnel.find(p => p.id === personnelId);
+                if (oldPerson && oldPerson.userId) {
+                    personnelData.userId = null;
+                    await usersCollection.doc(oldPerson.userId).update({
+                        personnelId: null,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            }
             
             // If auto mode, calculate initial status
             if (statusMode === 'auto') {
@@ -3764,6 +4375,23 @@
 
         // ==================== DELETE PERSONNEL FUNCTIONS ====================
         function confirmDeletePersonnel(personnelId, personnelName) {
+            // Permission checks
+            if (!userPermissions.canDelete) {
+                showToast('You are not authorized to delete personnel', 'error');
+                return;
+            }
+            
+            if (userRole === 'manager') {
+                showToast('Managers cannot delete personnel', 'error');
+                return;
+            }
+            
+            // Cannot delete own personnel record
+            if (personnelId === userPersonnelId) {
+                showToast('You cannot delete your own personnel record', 'error');
+                return;
+            }
+            
             personnelToDelete = personnelId;
             document.getElementById('deletePersonnelName').textContent = personnelName;
             document.getElementById('confirmDeleteModal').classList.remove('hidden');
@@ -3780,6 +4408,21 @@
             try {
                 showLoading();
                 
+                // Get personnel data first to check for user link
+                const personnelDoc = await personnelCollection.doc(personnelToDelete).get();
+                if (personnelDoc.exists) {
+                    const personnelData = personnelDoc.data();
+                    
+                    // Remove user link if exists
+                    if (personnelData.userId) {
+                        await usersCollection.doc(personnelData.userId).update({
+                            personnelId: null,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                }
+                
+                // Soft delete - mark as inactive
                 await personnelCollection.doc(personnelToDelete).update({
                     isActive: false,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -3806,6 +4449,11 @@
         // ==================== EXPORT FUNCTIONS ====================
         function exportPersonnelData() {
             try {
+                if (!userPermissions.canExport) {
+                    showToast('You are not authorized to export data', 'error');
+                    return;
+                }
+                
                 if (filteredPersonnel.length === 0) {
                     showToast('No data to export', 'warning');
                     return;
@@ -3856,10 +4504,16 @@
                     currentUser = user;
                     console.log('User logged in:', user.email);
                     
+                    // Load user role and permissions
+                    await loadUserRoleAndPermissions(user.uid);
+                    
+                    // Apply role-based UI
+                    applyRoleBasedUI();
+                    
                     // Hide loading state
                     document.getElementById('loadingState').classList.add('hidden');
                     
-                    // Setup realtime listeners
+                    // Setup realtime listeners with role-based filtering
                     setupRealtimeListeners();
                     
                 } else {
@@ -3913,6 +4567,12 @@
             });
             
             document.getElementById('analyticsTab').addEventListener('click', function() {
+                // Permission check
+                if (!userPermissions.canViewAnalytics) {
+                    showToast('You are not authorized to view analytics', 'error');
+                    return;
+                }
+                
                 document.getElementById('personnelContent').classList.add('hidden');
                 document.getElementById('analyticsContent').classList.remove('hidden');
                 this.classList.add('active');
