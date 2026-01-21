@@ -149,6 +149,10 @@
             transform: translateY(-50%) scale(1.05);
         }
 
+        .autocomplete-add-btn.hidden {
+            display: none;
+        }
+
         .autocomplete-suggestions {
             position: absolute;
             top: 100%;
@@ -457,6 +461,16 @@
             background: var(--primary-50);
         }
 
+        .pipeline-item-disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .pipeline-item-disabled:hover {
+            transform: none;
+            box-shadow: var(--shadow-sm);
+        }
+
         /* ==================== PIPELINE ITEM STYLES ==================== */
         .pipeline-badge {
             display: inline-flex;
@@ -480,6 +494,55 @@
             background: linear-gradient(135deg, #f1f5f9, #f8fafc);
             color: var(--pipeline-close);
             border: 1px solid #cbd5e1;
+        }
+
+        /* ==================== BADGE STYLES ==================== */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-primary {
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
+            color: var(--primary-700);
+            border: 1px solid var(--primary-300);
+        }
+
+        .badge-secondary {
+            background: linear-gradient(135deg, var(--secondary-100), var(--secondary-50));
+            color: var(--secondary-700);
+            border: 1px solid var(--secondary-300);
+        }
+
+        .badge-success {
+            background: linear-gradient(135deg, var(--accent-100), var(--accent-50));
+            color: var(--accent-700);
+            border: 1px solid var(--accent-300);
+        }
+
+        .badge-info {
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            color: #1d4ed8;
+            border: 1px solid #93c5fd;
+        }
+
+        .badge-warning {
+            background: linear-gradient(135deg, #fef3c7, #fffbeb);
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+
+        .badge-danger {
+            background: linear-gradient(135deg, #fee2e2, #fef2f2);
+            color: #dc2626;
+            border: 1px solid #fca5a5;
         }
 
         /* ==================== GRADIENT BACKGROUNDS ==================== */
@@ -642,6 +705,12 @@
             color: white;
         }
 
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
         /* ==================== COLORFUL CARDS ==================== */
         .card {
             background: white;
@@ -778,6 +847,37 @@
             gap: 0.75rem;
         }
 
+        .form-section-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .form-section-icon-primary {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        }
+
+        .form-section-icon-secondary {
+            background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
+        }
+
+        .form-section-icon-success {
+            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+        }
+
+        .form-section-icon-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .form-section-icon-info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
         .form-label {
             display: block;
             margin-bottom: 0.5rem;
@@ -785,6 +885,11 @@
             color: var(--neutral-700);
             font-size: 0.9rem;
             transition: var(--transition-fast);
+        }
+
+        .required-field::after {
+            content: ' *';
+            color: #ef4444;
         }
 
         .form-input {
@@ -950,15 +1055,15 @@
         }
 
         .toast.warning {
-            border-left-color: var(--warning-500);
+            border-left-color: #f59e0b;
         }
 
         .toast.error {
-            border-left-color: var(--danger-500);
+            border-left-color: #ef4444;
         }
 
         .toast.info {
-            border-left-color: var(--info-500);
+            border-left-color: #3b82f6;
         }
 
         .toast-icon {
@@ -978,15 +1083,15 @@
         }
 
         .toast-icon.warning {
-            background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
+            background: linear-gradient(135deg, #f59e0b, #d97706);
         }
 
         .toast-icon.error {
-            background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
+            background: linear-gradient(135deg, #ef4444, #dc2626);
         }
 
         .toast-icon.info {
-            background: linear-gradient(135deg, var(--info-500), var(--info-600));
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
         }
 
         /* ==================== LOADING OVERLAY ==================== */
@@ -1217,9 +1322,9 @@
                                     <p id="userWelcome" class="font-semibold text-gray-900 truncate"></p>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <span id="userRoleBadge" class="badge-primary">
+                                    <span id="userRoleBadge" class="badge badge-info">
                                         <i class="fas fa-user-tag"></i>
-                                        <span>User</span>
+                                        <span>Loading...</span>
                                     </span>
                                 </div>
                             </div>
@@ -1445,14 +1550,14 @@
                                            placeholder="Type to search or add PIC"
                                            autocomplete="off">
                                     <button type="button" 
-                                            class="autocomplete-add-btn"
+                                            class="autocomplete-add-btn hidden"
                                             id="addPICBtn"
                                             title="Add new PIC">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                     <div class="autocomplete-suggestions" id="picSuggestions"></div>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-1">Start typing to see suggestions, or click + to add new</p>
+                                <p class="text-xs text-gray-500 mt-1">Start typing to see suggestions</p>
                             </div>
                             
                             <div>
@@ -1467,14 +1572,14 @@
                                            placeholder="Type to search or add customer"
                                            autocomplete="off">
                                     <button type="button" 
-                                            class="autocomplete-add-btn"
+                                            class="autocomplete-add-btn hidden"
                                             id="addCustomerBtn"
                                             title="Add new customer">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                     <div class="autocomplete-suggestions" id="customerSuggestions"></div>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-1">Start typing to see suggestions, or click + to add new</p>
+                                <p class="text-xs text-gray-500 mt-1">Start typing to see suggestions</p>
                             </div>
                         </div>
                     </div>
@@ -2118,6 +2223,27 @@
                         </div>
                         <canvas id="pipelineRevenueChart"></canvas>
                     </div>
+                    
+                    <div class="card lg:col-span-2">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
+                                <i class="fas fa-users text-red-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900">PIC Performance</h3>
+                                <p class="text-sm text-gray-600">Progress by Person In Charge</p>
+                            </div>
+                            <div class="ml-auto">
+                                <select id="picChartSort" class="form-input text-sm">
+                                    <option value="name">Sort by Name</option>
+                                    <option value="items">Sort by Item Count</option>
+                                    <option value="progress">Sort by Average Progress</option>
+                                </select>
+                            </div>
+                        </div>
+                        <canvas id="pipelinePICChart"></canvas>
+                        <div class="mt-4 text-sm text-gray-600" id="picChartInfo"></div>
+                    </div>
                 </div>
                 
                 <div class="card">
@@ -2130,7 +2256,7 @@
                             <p class="text-sm text-gray-600">Key pipeline performance indicators</p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
                         <div class="text-center p-4 bg-green-50 rounded-xl">
                             <div class="text-2xl font-bold text-green-700" id="totalOpenItems">0</div>
                             <div class="text-sm text-green-600 mt-1">Open Items</div>
@@ -2146,6 +2272,10 @@
                         <div class="text-center p-4 bg-purple-50 rounded-xl">
                             <div class="text-2xl font-bold text-purple-700" id="totalPOValue">0</div>
                             <div class="text-sm text-purple-600 mt-1">Total PO Value</div>
+                        </div>
+                        <div class="text-center p-4 bg-gradient-to-r from-pink-50 to-rose-50 rounded-xl">
+                            <div class="text-2xl font-bold text-rose-700" id="bestPICName">-</div>
+                            <div class="text-sm text-rose-600 mt-1" id="bestPICProgress">Best PIC</div>
                         </div>
                     </div>
                 </div>
@@ -2649,6 +2779,58 @@
         function hideLoading() {
             const loadingOverlay = document.getElementById('loadingOverlay');
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
+        }
+
+        // ==================== PERMISSION FUNCTIONS ====================
+        function canCreatePipelineItem() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager' || currentUserRole === 'user';
+        }
+
+        function canEditPipelineItem(item) {
+            if (currentUserRole === 'admin' || currentUserRole === 'manager') {
+                return true;
+            }
+            if (currentUserRole === 'user') {
+                // User hanya bisa edit item yang mereka buat sendiri
+                return item.createdBy === currentUser.email;
+            }
+            return false;
+        }
+
+        function canDeletePipelineItem(item) {
+            if (currentUserRole === 'admin') {
+                return true;
+            }
+            if (currentUserRole === 'manager') {
+                // Manager tidak bisa hapus sama sekali
+                return false;
+            }
+            if (currentUserRole === 'user') {
+                // User tidak bisa hapus sama sekali
+                return false;
+            }
+            return false;
+        }
+
+        function canDragAndDrop() {
+            // Hanya admin dan manager yang bisa drag & drop
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canViewPipelineAnalytics() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canAddPIC() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canAddCustomer() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canExportAll() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
         }
 
         // ==================== CAMERA FUNCTIONS ====================
@@ -3418,13 +3600,23 @@
                 });
             }
             
-            // Setup add buttons
+            // Setup add buttons based on permissions
             if (addPICBtn) {
-                addPICBtn.addEventListener('click', openAddPICModal);
+                if (canAddPIC()) {
+                    addPICBtn.classList.remove('hidden');
+                    addPICBtn.addEventListener('click', function() {
+                        openAddPICModal();
+                    });
+                }
             }
             
             if (addCustomerBtn) {
-                addCustomerBtn.addEventListener('click', openAddCustomerModal);
+                if (canAddCustomer()) {
+                    addCustomerBtn.classList.remove('hidden');
+                    addCustomerBtn.addEventListener('click', function() {
+                        openAddCustomerModal();
+                    });
+                }
             }
             
             // Close suggestions when clicking outside
@@ -3583,7 +3775,8 @@
                         <i class="fas fa-search"></i>
                     </div>
                     <p>No ${type} found for "${searchTerm}"</p>
-                    <p class="text-xs">Click + button to add new</p>
+                    ${canAddPIC() && type === 'pic' ? '<p class="text-xs">Click + button to add new</p>' : ''}
+                    ${canAddCustomer() && type === 'customer' ? '<p class="text-xs">Click + button to add new</p>' : ''}
                 `;
                 container.appendChild(noResults);
             } else {
@@ -3773,7 +3966,9 @@
                         progress: data.progress || 0,
                         images: data.images || [],
                         updatedAt: data.updatedAt || new Date(),
-                        updatedBy: data.updatedBy || ''
+                        updatedBy: data.updatedBy || '',
+                        createdBy: data.createdBy || '',
+                        createdAt: data.createdAt || new Date()
                     });
                 });
 
@@ -3808,6 +4003,11 @@
             const statusFilter = document.getElementById('filterByStatus').value;
             
             let filtered = [...pipelineItems];
+            
+            // Untuk regular user, hanya tampilkan item yang mereka buat
+            if (currentUserRole === 'user') {
+                filtered = filtered.filter(item => item.createdBy === currentUser.email);
+            }
             
             // Apply search filter
             if (searchTerm) {
@@ -3860,13 +4060,21 @@
             const div = document.createElement('div');
             div.className = 'pipeline-item animate-fade-in';
             div.dataset.id = item.id;
-            div.draggable = true;
+            
+            // Set draggable hanya untuk admin dan manager
+            div.draggable = canDragAndDrop();
             
             const badgeClass = getPipelineBadgeClass(item.status);
             const timeAgo = formatTimeAgo(item.updatedAt);
             const progress = item.progress || 0;
             const formattedDate = item.date ? formatDate(item.date) : '-';
             const hasImages = item.images && item.images.length > 0;
+            
+            // Cek apakah user bisa edit item ini
+            const canEdit = canEditPipelineItem(item);
+            const canDelete = canDeletePipelineItem(item);
+            const showEditBtn = canEdit;
+            const showDeleteBtn = canDelete;
             
             div.innerHTML = `
                 <div class="flex justify-between items-start mb-2">
@@ -3876,6 +4084,7 @@
                             <span class="text-xs font-medium text-gray-600">#${item.no}</span>
                             ${item.quotation ? `<span class="text-xs text-gray-500">${item.quotation}</span>` : ''}
                             ${hasImages ? `<span class="text-xs text-purple-600"><i class="fas fa-camera"></i> ${item.images.length}</span>` : ''}
+                            ${item.createdBy && currentUserRole === 'user' ? `<span class="text-xs text-blue-600"><i class="fas fa-user"></i> ${item.createdBy === currentUser.email ? 'Anda' : 'Lain'}</span>` : ''}
                         </div>
                     </div>
                     <div class="flex flex-col items-end gap-1">
@@ -3953,10 +4162,11 @@
                     <button class="view-pipeline-item-btn text-blue-600 hover:text-blue-800 text-sm">
                         <i class="fas fa-eye"></i>
                     </button>
+                    ${showEditBtn ? `
                     <button class="edit-pipeline-item-btn text-green-600 hover:text-green-800 text-sm">
                         <i class="fas fa-edit"></i>
-                    </button>
-                    ${currentUserRole === 'admin' ? `
+                    </button>` : ''}
+                    ${showDeleteBtn ? `
                     <button class="delete-pipeline-item-btn text-red-600 hover:text-red-800 text-sm">
                         <i class="fas fa-trash"></i>
                     </button>` : ''}
@@ -3978,20 +4188,31 @@
             if (editBtn) {
                 editBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    openPipelineItemModal(item.id);
+                    if (canEdit) {
+                        openPipelineItemModal(item.id);
+                    } else {
+                        showToast('Anda tidak memiliki izin untuk mengedit item ini', 'warning');
+                    }
                 });
             }
             
-            if (deleteBtn && currentUserRole === 'admin') {
+            if (deleteBtn) {
                 deleteBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    deletePipelineItem(item.id);
+                    if (canDelete) {
+                        deletePipelineItem(item.id);
+                    } else {
+                        showToast('Anda tidak memiliki izin untuk menghapus item ini', 'warning');
+                    }
                 });
             }
             
-            // Drag and drop events
-            div.addEventListener('dragstart', handleDragStart);
-            div.addEventListener('dragend', handleDragEnd);
+            // Drag and drop events hanya untuk yang memiliki izin
+            if (canDragAndDrop()) {
+                div.addEventListener('dragstart', handleDragStart);
+                div.addEventListener('dragend', handleDragEnd);
+            }
+            
             div.addEventListener('click', () => {
                 openPipelineItemDetail(item.id);
             });
@@ -4009,6 +4230,11 @@
 
         // ==================== DRAG AND DROP FUNCTIONS ====================
         function handleDragStart(e) {
+            if (!canDragAndDrop()) {
+                e.preventDefault();
+                return;
+            }
+            
             draggedItem = this;
             this.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
@@ -4016,6 +4242,8 @@
         }
 
         function handleDragEnd(e) {
+            if (!canDragAndDrop()) return;
+            
             this.classList.remove('dragging');
             draggedItem = null;
             
@@ -4030,15 +4258,26 @@
             
             columns.forEach(column => {
                 column.addEventListener('dragover', (e) => {
+                    if (!canDragAndDrop()) {
+                        e.preventDefault();
+                        return;
+                    }
+                    
                     e.preventDefault();
                     column.classList.add('pipeline-item-over');
                 });
                 
                 column.addEventListener('dragleave', () => {
+                    if (!canDragAndDrop()) return;
                     column.classList.remove('pipeline-item-over');
                 });
                 
                 column.addEventListener('drop', async (e) => {
+                    if (!canDragAndDrop()) {
+                        e.preventDefault();
+                        return;
+                    }
+                    
                     e.preventDefault();
                     column.classList.remove('pipeline-item-over');
                     
@@ -4162,7 +4401,7 @@
                 imagesContainer.appendChild(noImagesMessage.cloneNode(true));
             }
             
-            if (itemId && !canEditPipelineItem()) {
+            if (itemId && !canEditPipelineItem(pipelineItems.find(i => i.id === itemId))) {
                 showToast('You do not have permission to edit pipeline items', 'warning');
                 return;
             }
@@ -4357,12 +4596,17 @@
             
             // For now, we'll just open the edit modal
             // In a complete implementation, you might want a separate detail modal
-            openPipelineItemModal(itemId);
+            const item = pipelineItems.find(i => i.id === itemId);
+            if (item && canEditPipelineItem(item)) {
+                openPipelineItemModal(itemId);
+            } else {
+                showToast('Anda tidak memiliki izin untuk mengedit item ini', 'warning');
+            }
         }
 
         async function deletePipelineItem(itemId) {
-            if (!canDeletePipelineItem()) {
-                showToast('Only admins can delete pipeline items', 'warning');
+            if (!canDeletePipelineItem(pipelineItems.find(i => i.id === itemId))) {
+                showToast('Anda tidak memiliki izin untuk menghapus item ini', 'warning');
                 return;
             }
             
@@ -4383,6 +4627,11 @@
 
         // ==================== ADD PIC MODAL FUNCTIONS ====================
         function openAddPICModal() {
+            if (!canAddPIC()) {
+                showToast('Anda tidak memiliki izin untuk menambah PIC', 'warning');
+                return;
+            }
+            
             document.getElementById('addPICForm').reset();
             document.getElementById('addPICModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -4394,6 +4643,11 @@
         }
 
         async function saveNewPIC() {
+            if (!canAddPIC()) {
+                showToast('Anda tidak memiliki izin untuk menambah PIC', 'warning');
+                return;
+            }
+            
             const form = document.getElementById('addPICForm');
             if (!form.checkValidity()) {
                 showToast('Please fill in PIC name', 'warning');
@@ -4463,6 +4717,11 @@
 
         // ==================== ADD CUSTOMER MODAL FUNCTIONS ====================
         function openAddCustomerModal() {
+            if (!canAddCustomer()) {
+                showToast('Anda tidak memiliki izin untuk menambah customer', 'warning');
+                return;
+            }
+            
             document.getElementById('addCustomerForm').reset();
             document.getElementById('addCustomerModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -4474,6 +4733,11 @@
         }
 
         async function saveNewCustomer() {
+            if (!canAddCustomer()) {
+                showToast('Anda tidak memiliki izin untuk menambah customer', 'warning');
+                return;
+            }
+            
             const form = document.getElementById('addCustomerForm');
             if (!form.checkValidity()) {
                 showToast('Please fill in customer name', 'warning');
@@ -4558,6 +4822,27 @@
             document.getElementById('includeTimestamp').checked = true;
             document.getElementById('includeFilters').checked = true;
             
+            // Untuk regular user, batasi opsi export
+            if (currentUserRole === 'user') {
+                const allScopeOption = document.querySelector('input[value="all"]');
+                const statusScopeOption = document.querySelector('input[value="status"]');
+                const includeFiltersCheckbox = document.getElementById('includeFilters');
+                
+                if (allScopeOption) allScopeOption.disabled = true;
+                if (statusScopeOption) statusScopeOption.disabled = true;
+                if (includeFiltersCheckbox) includeFiltersCheckbox.disabled = true;
+                
+                // Otomatis pilih filtered items only
+                const filteredOption = document.querySelector('input[value="filtered"]');
+                if (filteredOption) filteredOption.checked = true;
+            } else {
+                // Enable all options for admin/manager
+                document.querySelectorAll('input[name="exportScope"]').forEach(input => {
+                    input.disabled = false;
+                });
+                document.getElementById('includeFilters').disabled = false;
+            }
+            
             // Update item count
             updateExportItemCount();
             
@@ -4576,17 +4861,30 @@
             const exportClose = document.getElementById('exportClose').checked;
             
             let count = 0;
+            let items = [];
+            
+            // Untuk regular user, hanya hitung item milik sendiri
+            if (currentUserRole === 'user') {
+                items = pipelineItems.filter(item => item.createdBy === currentUser.email);
+            } else {
+                items = pipelineItems;
+            }
             
             if (exportScope === 'all') {
-                count = pipelineItems.length;
+                count = items.length;
             } else if (exportScope === 'filtered') {
-                count = filteredPipelineItems.length;
+                // Untuk regular user, filtered sudah otomatis hanya item milik sendiri
+                if (currentUserRole === 'user') {
+                    count = items.length;
+                } else {
+                    count = filteredPipelineItems.length;
+                }
             } else if (exportScope === 'status') {
                 if (exportOpen) {
-                    count += pipelineItems.filter(item => item.status === 'Open').length;
+                    count += items.filter(item => item.status === 'Open').length;
                 }
                 if (exportClose) {
-                    count += pipelineItems.filter(item => item.status === 'Close').length;
+                    count += items.filter(item => item.status === 'Close').length;
                 }
             }
             
@@ -4610,11 +4908,21 @@
                 let itemsToExport = [];
                 
                 if (exportScope === 'all') {
-                    itemsToExport = [...pipelineItems];
+                    itemsToExport = currentUserRole === 'user' 
+                        ? pipelineItems.filter(item => item.createdBy === currentUser.email)
+                        : [...pipelineItems];
                 } else if (exportScope === 'filtered') {
-                    itemsToExport = [...filteredPipelineItems];
+                    if (currentUserRole === 'user') {
+                        itemsToExport = pipelineItems.filter(item => item.createdBy === currentUser.email);
+                    } else {
+                        itemsToExport = [...filteredPipelineItems];
+                    }
                 } else if (exportScope === 'status') {
-                    itemsToExport = pipelineItems.filter(item => {
+                    let filteredItems = currentUserRole === 'user'
+                        ? pipelineItems.filter(item => item.createdBy === currentUser.email)
+                        : [...pipelineItems];
+                    
+                    itemsToExport = filteredItems.filter(item => {
                         if (exportOpen && item.status === 'Open') return true;
                         if (exportClose && item.status === 'Close') return true;
                         return false;
@@ -4659,6 +4967,7 @@
                         { wch: 15 }, // Images Count
                         { wch: 20 }, // Updated At
                         { wch: 20 }, // Updated By
+                        { wch: 25 }, // Created By
                     ]
                     : [
                         { wch: 8 },  // No
@@ -4709,7 +5018,7 @@
                 data.push([
                     'No', 'No. Quotation', 'Tanggal', 'Company', 'SOW', 'PIC', 
                     'Customer', 'Project', 'Status', 'Value Quotation', 'Value PO',
-                    'Description', 'Notes', 'Progress (%)', 'Images Count', 'Updated At', 'Updated By'
+                    'Description', 'Notes', 'Progress (%)', 'Images Count', 'Updated At', 'Updated By', 'Created By'
                 ]);
             } else {
                 data.push([
@@ -4719,7 +5028,7 @@
             }
             
             // Add filter information if requested
-            if (includeFilters) {
+            if (includeFilters && currentUserRole !== 'user') {
                 const searchTerm = document.getElementById('searchPipelineItems').value;
                 const companyFilter = document.getElementById('filterByCompany').value;
                 const statusFilter = document.getElementById('filterByStatus').value;
@@ -4736,6 +5045,12 @@
                     data.push([filterInfo]);
                     data.push([]); // Empty row
                 }
+            }
+            
+            // Add user filter info for regular users
+            if (currentUserRole === 'user') {
+                data.push([`Filter: Only items created by ${currentUser.email}`]);
+                data.push([]); // Empty row
             }
             
             // Add data rows
@@ -4758,7 +5073,8 @@
                         item.progress || 0,
                         item.images ? item.images.length : 0,
                         item.updatedAt ? formatDateTime(item.updatedAt) : '',
-                        item.updatedBy || ''
+                        item.updatedBy || '',
+                        item.createdBy || ''
                     ]);
                 } else {
                     data.push([
@@ -4793,6 +5109,7 @@
             data.push(['Total Images:', totalImages]);
             data.push(['Export Date:', new Date().toLocaleString('id-ID')]);
             data.push(['Exported By:', currentUser?.email || 'Unknown']);
+            data.push(['User Role:', currentUserRole]);
             
             return data;
         }
@@ -4840,6 +5157,7 @@
                 generatePipelineStatusChart(allItems);
                 generatePipelineCompanyChart(allItems);
                 generatePipelineRevenueChart(allItems);
+                generatePipelinePICChart(allItems);
                 updatePipelineMetrics(allItems);
                 
                 showToast('Pipeline analytics loaded successfully', 'success');
@@ -5065,6 +5383,251 @@
             });
         }
 
+        function generatePipelinePICChart(pipelineItems) {
+            const ctx = document.getElementById('pipelinePICChart');
+            if (!ctx) return;
+            
+            if (charts.pipelinePICChart) {
+                charts.pipelinePICChart.destroy();
+            }
+            
+            // Group items by PIC
+            const picData = {};
+            
+            pipelineItems.forEach(item => {
+                const pic = item.pic || 'Unassigned';
+                
+                if (!picData[pic]) {
+                    picData[pic] = {
+                        items: [],
+                        totalProgress: 0,
+                        openItems: 0,
+                        closeItems: 0,
+                        totalQuotation: 0,
+                        totalPO: 0
+                    };
+                }
+                
+                picData[pic].items.push(item);
+                picData[pic].totalProgress += (item.progress || 0);
+                picData[pic].totalQuotation += (item.valueQuotation || 0);
+                picData[pic].totalPO += (item.valuePO || 0);
+                
+                if (item.status === 'Open') {
+                    picData[pic].openItems++;
+                } else if (item.status === 'Close') {
+                    picData[pic].closeItems++;
+                }
+            });
+            
+            // Prepare data for chart
+            const sortBy = document.getElementById('picChartSort') ? document.getElementById('picChartSort').value : 'name';
+            
+            let sortedPICs = Object.keys(picData);
+            
+            if (sortBy === 'name') {
+                sortedPICs.sort();
+            } else if (sortBy === 'items') {
+                sortedPICs.sort((a, b) => picData[b].items.length - picData[a].items.length);
+            } else if (sortBy === 'progress') {
+                sortedPICs.sort((a, b) => {
+                    const avgProgressA = picData[a].items.length > 0 ? picData[a].totalProgress / picData[a].items.length : 0;
+                    const avgProgressB = picData[b].items.length > 0 ? picData[b].totalProgress / picData[b].items.length : 0;
+                    return avgProgressB - avgProgressA;
+                });
+            }
+            
+            // Take top 10 PICs for chart
+            const topPICs = sortedPICs.slice(0, 10);
+            
+            const chartData = {
+                labels: topPICs.map(pic => pic.length > 20 ? pic.substring(0, 20) + '...' : pic),
+                datasets: [
+                    {
+                        label: 'Average Progress (%)',
+                        data: topPICs.map(pic => {
+                            const avgProgress = picData[pic].items.length > 0 
+                                ? picData[pic].totalProgress / picData[pic].items.length 
+                                : 0;
+                            return Math.round(avgProgress);
+                        }),
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 2,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Item Count',
+                        data: topPICs.map(pic => picData[pic].items.length),
+                        backgroundColor: 'rgba(139, 92, 246, 0.7)',
+                        borderColor: 'rgb(139, 92, 246)',
+                        borderWidth: 2,
+                        yAxisID: 'y1'
+                    }
+                ]
+            };
+            
+            charts.pipelinePICChart = new Chart(ctx, {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.raw;
+                                    return `${label}: ${value}`;
+                                },
+                                afterLabel: function(context) {
+                                    const pic = topPICs[context.dataIndex];
+                                    const data = picData[pic];
+                                    const avgProgress = data.items.length > 0 
+                                        ? Math.round(data.totalProgress / data.items.length)
+                                        : 0;
+                                    return [
+                                        `PIC: ${pic}`,
+                                        `Items: ${data.items.length}`,
+                                        `Open: ${data.openItems}, Close: ${data.closeItems}`,
+                                        `Avg Progress: ${avgProgress}%`,
+                                        `Total Quotation: ${formatCurrencyDisplay(data.totalQuotation)}`,
+                                        `Total PO: ${formatCurrencyDisplay(data.totalPO)}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Average Progress (%)',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Item Count',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Update chart info
+            const chartInfo = document.getElementById('picChartInfo');
+            if (chartInfo) {
+                const totalPICs = Object.keys(picData).length;
+                const totalItems = pipelineItems.length;
+                const avgProgressOverall = pipelineItems.length > 0 
+                    ? pipelineItems.reduce((sum, item) => sum + (item.progress || 0), 0) / pipelineItems.length 
+                    : 0;
+                
+                // Find best PIC
+                let bestPIC = { name: 'None', progress: 0 };
+                Object.keys(picData).forEach(pic => {
+                    const avgProgress = picData[pic].items.length > 0 
+                        ? picData[pic].totalProgress / picData[pic].items.length 
+                        : 0;
+                    if (avgProgress > bestPIC.progress) {
+                        bestPIC = { name: pic, progress: avgProgress };
+                    }
+                });
+                
+                chartInfo.innerHTML = `
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <div class="font-medium">Total PICs</div>
+                            <div class="text-lg font-bold">${totalPICs}</div>
+                        </div>
+                        <div>
+                            <div class="font-medium">Total Items</div>
+                            <div class="text-lg font-bold">${totalItems}</div>
+                        </div>
+                        <div>
+                            <div class="font-medium">Avg Progress</div>
+                            <div class="text-lg font-bold">${Math.round(avgProgressOverall)}%</div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="font-medium mb-2">Top Performing PICs:</div>
+                        <div class="space-y-2">
+                            ${sortedPICs.slice(0, 5).map(pic => {
+                                const data = picData[pic];
+                                const avgProgress = data.items.length > 0 
+                                    ? Math.round(data.totalProgress / data.items.length) 
+                                    : 0;
+                                return `<div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                    <span class="truncate font-medium" title="${pic}">${pic}</span>
+                                    <span class="flex items-center gap-2">
+                                        <span class="text-xs px-2 py-1 rounded ${avgProgress >= 80 ? 'bg-green-100 text-green-800' : avgProgress >= 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
+                                            ${avgProgress}%
+                                        </span>
+                                        <span class="text-xs text-gray-600">(${data.items.length} items)</span>
+                                    </span>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                // Update best PIC in metrics
+                document.getElementById('bestPICName').textContent = bestPIC.name.length > 15 
+                    ? bestPIC.name.substring(0, 15) + '...' 
+                    : bestPIC.name;
+                document.getElementById('bestPICProgress').textContent = `Best PIC (${Math.round(bestPIC.progress)}%)`;
+            }
+            
+            // Add event listener for sort change
+            const sortSelect = document.getElementById('picChartSort');
+            if (sortSelect) {
+                sortSelect.addEventListener('change', () => {
+                    generatePipelinePICChart(pipelineItems);
+                });
+            }
+        }
+
         function updatePipelineMetrics(pipelineItems) {
             const openItems = pipelineItems.filter(item => item.status === 'Open').length;
             const closeItems = pipelineItems.filter(item => item.status === 'Close').length;
@@ -5077,10 +5640,38 @@
                 totalPOValue += (item.valuePO || 0);
             });
             
+            // Find best PIC
+            const picData = {};
+            pipelineItems.forEach(item => {
+                const pic = item.pic || 'Unassigned';
+                if (!picData[pic]) {
+                    picData[pic] = {
+                        count: 0,
+                        totalProgress: 0
+                    };
+                }
+                picData[pic].count++;
+                picData[pic].totalProgress += (item.progress || 0);
+            });
+            
+            let bestPIC = { name: 'None', progress: 0 };
+            Object.keys(picData).forEach(pic => {
+                const avgProgress = picData[pic].count > 0 
+                    ? picData[pic].totalProgress / picData[pic].count 
+                    : 0;
+                if (avgProgress > bestPIC.progress) {
+                    bestPIC = { name: pic, progress: avgProgress };
+                }
+            });
+            
             document.getElementById('totalOpenItems').textContent = openItems;
             document.getElementById('totalCloseItems').textContent = closeItems;
             document.getElementById('totalQuotationValue').textContent = formatCurrencyDisplay(totalQuotationValue);
             document.getElementById('totalPOValue').textContent = formatCurrencyDisplay(totalPOValue);
+            document.getElementById('bestPICName').textContent = bestPIC.name.length > 15 
+                ? bestPIC.name.substring(0, 15) + '...' 
+                : bestPIC.name;
+            document.getElementById('bestPICProgress').textContent = `Best PIC (${Math.round(bestPIC.progress)}%)`;
         }
 
         // ==================== USER MANAGEMENT ====================
@@ -5137,6 +5728,8 @@
             const takePictureBtn = document.getElementById('takePictureBtn');
             const analyticsBtn = document.getElementById('pipelinesAnalyticsBtn');
             const exportBtn = document.getElementById('exportExcelBtn');
+            const addPICBtn = document.getElementById('addPICBtn');
+            const addCustomerBtn = document.getElementById('addCustomerBtn');
             
             const userAvatar = document.getElementById('userAvatar');
             if (userAvatar) {
@@ -5156,40 +5749,36 @@
                 roleBadge.innerHTML = `<i class="fas fa-user-tag"></i><span>${currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}</span>`;
             }
             
+            // Tampilkan/sembunyikan tombol berdasarkan role
             if (newPipelineBtn) newPipelineBtn.classList.remove('hidden');
             if (takePictureBtn) takePictureBtn.classList.remove('hidden');
             if (exportBtn) exportBtn.classList.remove('hidden');
-            if (analyticsBtn) analyticsBtn.classList.add('hidden');
             
-            switch(currentUserRole) {
-                case 'admin':
-                case 'manager':
-                    if (analyticsBtn) analyticsBtn.classList.remove('hidden');
-                    break;
-                case 'user':
-                    // Users can view, create items, take pictures, and export
-                    break;
-                default:
-                    break;
+            // Tombol yang hanya untuk admin/manager
+            if (analyticsBtn) {
+                if (canViewPipelineAnalytics()) {
+                    analyticsBtn.classList.remove('hidden');
+                } else {
+                    analyticsBtn.classList.add('hidden');
+                }
+            }
+            
+            // Tombol tambah PIC dan Customer
+            if (addPICBtn && addCustomerBtn) {
+                if (canAddPIC()) {
+                    addPICBtn.classList.remove('hidden');
+                } else {
+                    addPICBtn.classList.add('hidden');
+                }
+                
+                if (canAddCustomer()) {
+                    addCustomerBtn.classList.remove('hidden');
+                } else {
+                    addCustomerBtn.classList.add('hidden');
+                }
             }
             
             console.log('Pipeline permissions set for role:', currentUserRole);
-        }
-
-        function canCreatePipelineItem() {
-            return currentUserRole === 'admin' || currentUserRole === 'manager' || currentUserRole === 'user';
-        }
-
-        function canEditPipelineItem() {
-            return currentUserRole === 'admin' || currentUserRole === 'manager' || currentUserRole === 'user';
-        }
-
-        function canDeletePipelineItem() {
-            return currentUserRole === 'admin';
-        }
-
-        function canViewPipelineAnalytics() {
-            return currentUserRole === 'admin' || currentUserRole === 'manager';
         }
 
         // ==================== AUTH FUNCTIONS ====================
