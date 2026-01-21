@@ -950,15 +950,6 @@
             color: white;
         }
 
-        .camera-preview {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
         .camera-switch-btn {
             position: absolute;
             top: 1rem;
@@ -2067,7 +2058,7 @@
                     
                     <!-- Action Buttons -->
                     <div class="flex flex-wrap gap-2" id="actionButtons">
-                        <button id="newWorkOrderBtn" class="btn btn-primary">
+                        <button id="newWorkOrderBtn" class="btn btn-primary hidden">
                             <i class="fas fa-plus-circle"></i>
                             <span>New Work Order</span>
                         </button>
@@ -3235,7 +3226,7 @@
             "Sayyid Hidayattulloh",
             "Wisnu Adi Baskoro",
             "Yogi Widodo",
-            "Galih" // Existing user from previous data
+            "Galih"
         ];
         
         // Selected personnel for current form
@@ -3357,6 +3348,211 @@
                 });
         }
 
+        // ==================== ROLE-BASED ACCESS CONTROL FUNCTIONS ====================
+        function setupUserRolePermissions() {
+            console.log('Setting up permissions for role:', currentUserRole);
+            
+            // Setup tombol berdasarkan role
+            const exportBtn = document.getElementById('exportExcelBtn');
+            const newWorkOrderBtn = document.getElementById('newWorkOrderBtn');
+            const analyticsBtn = document.getElementById('analyticsBtn');
+            const activityBtn = document.getElementById('activityBtn');
+            const statusHistoryBtn = document.getElementById('statusHistoryBtn');
+            const pipelinesBtn = document.getElementById('pipelinesBtn');
+            const documentationBtn = document.getElementById('documentationBtn');
+            const personnelListBtn = document.getElementById('personnelListBtn');
+            
+            // Update user avatar berdasarkan role
+            const userAvatar = document.getElementById('userAvatar');
+            if (userAvatar) {
+                userAvatar.className = 'user-avatar';
+                if (currentUserRole === 'admin') {
+                    userAvatar.classList.add('admin');
+                } else if (currentUserRole === 'manager') {
+                    userAvatar.classList.add('manager');
+                } else {
+                    userAvatar.classList.add('user');
+                }
+            }
+            
+            // Update role badge
+            const roleBadge = document.getElementById('userRoleBadge');
+            if (roleBadge) {
+                roleBadge.className = `badge badge-${currentUserRole === 'admin' ? 'secondary' : currentUserRole === 'manager' ? 'primary' : 'info'}`;
+                roleBadge.innerHTML = `<i class="fas fa-user-tag"></i><span>${currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}</span>`;
+            }
+            
+            // Reset semua tombol ke hidden terlebih dahulu
+            const buttons = [exportBtn, newWorkOrderBtn, analyticsBtn, activityBtn, 
+                            statusHistoryBtn, pipelinesBtn, documentationBtn, personnelListBtn];
+            buttons.forEach(btn => {
+                if (btn) btn.classList.add('hidden');
+            });
+            
+            // Atur tampilan berdasarkan role
+            switch(currentUserRole) {
+                case 'admin':
+                    // Admin bisa akses semua
+                    buttons.forEach(btn => {
+                        if (btn) btn.classList.remove('hidden');
+                    });
+                    break;
+                    
+                case 'manager':
+                    // Manager bisa semua kecuali: delete, activity, status history
+                    if (newWorkOrderBtn) newWorkOrderBtn.classList.remove('hidden');
+                    if (analyticsBtn) analyticsBtn.classList.remove('hidden');
+                    if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
+                    if (documentationBtn) documentationBtn.classList.remove('hidden');
+                    if (personnelListBtn) personnelListBtn.classList.remove('hidden');
+                    break;
+                    
+                case 'user':
+                    // User hanya bisa: pipelines, documentation, personnel list
+                    if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
+                    if (documentationBtn) documentationBtn.classList.remove('hidden');
+                    if (personnelListBtn) personnelListBtn.classList.remove('hidden');
+                    break;
+            }
+            
+            console.log('Permissions set for role:', currentUserRole);
+        }
+
+        function filterWorkOrdersForUser(workorders, userEmail) {
+            if (currentUserRole === 'admin' || currentUserRole === 'manager') {
+                return workorders; // Admin & Manager bisa lihat semua
+            }
+            
+            // User hanya bisa lihat WO yang assign ke dirinya
+            const username = userEmail.split('@')[0].toLowerCase();
+            
+            return workorders.filter(wo => {
+                // Cek apakah user adalah PIC dari WO
+                if (wo.pic && wo.pic.toLowerCase().includes(username)) {
+                    return true;
+                }
+                
+                // Cek apakah user ada di list personnel
+                if (wo.personnel) {
+                    let personnelArray = [];
+                    if (Array.isArray(wo.personnel)) {
+                        personnelArray = wo.personnel;
+                    } else if (typeof wo.personnel === 'string') {
+                        try {
+                            personnelArray = JSON.parse(wo.personnel);
+                        } catch (e) {
+                            personnelArray = [wo.personnel];
+                        }
+                    }
+                    
+                    // Cek apakah username ada di personnel
+                    return personnelArray.some(person => 
+                        person.toLowerCase().includes(username)
+                    );
+                }
+                
+                return false;
+            });
+        }
+
+        function canCreateWorkOrder() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canEditWorkOrder(workorder) {
+            if (currentUserRole === 'admin' || currentUserRole === 'manager') {
+                return true;
+            }
+            
+            if (currentUserRole === 'user') {
+                // User hanya bisa edit WO yang assign ke dirinya
+                const userEmail = currentUser.email;
+                const username = userEmail.split('@')[0].toLowerCase();
+                
+                // Cek sebagai PIC
+                if (workorder.pic && workorder.pic.toLowerCase().includes(username)) {
+                    return true;
+                }
+                
+                // Cek sebagai personnel
+                if (workorder.personnel) {
+                    let personnelArray = [];
+                    if (Array.isArray(workorder.personnel)) {
+                        personnelArray = workorder.personnel;
+                    } else if (typeof workorder.personnel === 'string') {
+                        try {
+                            personnelArray = JSON.parse(workorder.personnel);
+                        } catch (e) {
+                            personnelArray = [workorder.personnel];
+                        }
+                    }
+                    
+                    return personnelArray.some(person => 
+                        person.toLowerCase().includes(username)
+                    );
+                }
+            }
+            
+            return false;
+        }
+
+        function canDeleteWorkOrder() {
+            return currentUserRole === 'admin'; // Hanya admin yang bisa hapus
+        }
+
+        function canExportData() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canViewAnalytics() {
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canViewActivity() {
+            return currentUserRole === 'admin';
+        }
+
+        function canViewStatusHistory() {
+            return currentUserRole === 'admin';
+        }
+
+        function canViewDocumentation(workorder) {
+            if (currentUserRole === 'admin' || currentUserRole === 'manager') {
+                return true;
+            }
+            
+            if (currentUserRole === 'user') {
+                // User hanya bisa ambil gambar untuk WO yang assign ke dirinya
+                const userEmail = currentUser.email;
+                const username = userEmail.split('@')[0].toLowerCase();
+                
+                // Cek sebagai PIC
+                if (workorder.pic && workorder.pic.toLowerCase().includes(username)) {
+                    return true;
+                }
+                
+                // Cek sebagai personnel
+                if (workorder.personnel) {
+                    let personnelArray = [];
+                    if (Array.isArray(workorder.personnel)) {
+                        personnelArray = workorder.personnel;
+                    } else if (typeof workorder.personnel === 'string') {
+                        try {
+                            personnelArray = JSON.parse(workorder.personnel);
+                        } catch (e) {
+                            personnelArray = [wo.personnel];
+                        }
+                    }
+                    
+                    return personnelArray.some(person => 
+                        person.toLowerCase().includes(username)
+                    );
+                }
+            }
+            
+            return false;
+        }
+
         // ==================== FILTER FUNCTIONS ====================
         function updateFilterOptions() {
             console.log('Updating filter options from work orders...');
@@ -3472,6 +3668,11 @@
             console.log('Applying multi-filters:', currentFilters);
             
             let filtered = [...workorders];
+            
+            // Apply role-based filtering untuk user
+            if (currentUserRole === 'user') {
+                filtered = filterWorkOrdersForUser(filtered, currentUser.email);
+            }
             
             // Apply tab filter
             if (currentTab !== 'all') {
@@ -3990,6 +4191,15 @@
             if (loadingOverlay) loadingOverlay.classList.add('hidden');
         }
 
+        function getPriorityClass(priority) {
+            switch(priority) {
+                case 'High': return 'priority-high';
+                case 'Urgent': return 'priority-urgent';
+                case 'Low': return 'priority-low';
+                default: return 'priority-normal';
+            }
+        }
+
         // ==================== WORK ORDER FUNCTIONS ====================
         async function loadWorkOrders() {
             console.log('Loading work orders...');
@@ -4060,22 +4270,29 @@
         }
 
         function renderWorkOrders() {
+            let displayWorkorders = filteredWorkorders;
+            
+            // Filter untuk user
+            if (currentUserRole === 'user') {
+                displayWorkorders = filterWorkOrdersForUser(filteredWorkorders, currentUser.email);
+            }
+            
             if (currentView === 'card') {
-                renderCardView();
+                renderCardView(displayWorkorders);
             } else if (currentView === 'list') {
-                renderListView();
+                renderListView(displayWorkorders);
             } else if (currentView === 'timeline') {
-                renderTimelineView();
+                renderTimelineView(displayWorkorders);
             }
         }
 
-        function renderCardView() {
+        function renderCardView(displayWorkorders) {
             const container = document.getElementById('workorders-stage');
             if (!container) return;
             
             container.innerHTML = '';
             
-            if (filteredWorkorders.length === 0) {
+            if (displayWorkorders.length === 0) {
                 container.innerHTML = `
                     <div class="col-span-full flex flex-col items-center justify-center py-16 text-gray-400">
                         <div class="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mb-6">
@@ -4099,7 +4316,7 @@
                 return;
             }
             
-            filteredWorkorders.forEach(workorder => {
+            displayWorkorders.forEach(workorder => {
                 const card = createWorkOrderCard(workorder);
                 container.appendChild(card);
             });
@@ -4125,7 +4342,12 @@
                             workorderId = this.closest('.workorder-card').dataset.id;
                         }
                         if (workorderId) {
-                            openWorkOrderModal(workorderId);
+                            const workorder = workorders.find(wo => wo.id === workorderId);
+                            if (canEditWorkOrder(workorder)) {
+                                openWorkOrderModal(workorderId);
+                            } else {
+                                showToast('You do not have permission to edit this work order', 'warning');
+                            }
                         }
                     });
                 });
@@ -4137,20 +4359,24 @@
                             workorderId = this.closest('.workorder-card').dataset.id;
                         }
                         if (workorderId) {
-                            deleteWorkOrder(workorderId);
+                            if (canDeleteWorkOrder()) {
+                                deleteWorkOrder(workorderId);
+                            } else {
+                                showToast('You do not have permission to delete work orders', 'warning');
+                            }
                         }
                     });
                 });
             }, 100);
         }
 
-        function renderListView() {
+        function renderListView(displayWorkorders) {
             const container = document.getElementById('listViewContent');
             if (!container) return;
             
             container.innerHTML = '';
             
-            if (filteredWorkorders.length === 0) {
+            if (displayWorkorders.length === 0) {
                 container.innerHTML = `
                     <tr>
                         <td colspan="7" class="px-4 py-8 text-center text-gray-500">
@@ -4167,19 +4393,19 @@
                 return;
             }
             
-            filteredWorkorders.forEach(workorder => {
+            displayWorkorders.forEach(workorder => {
                 const row = createListRow(workorder);
                 container.appendChild(row);
             });
         }
 
-        function renderTimelineView() {
+        function renderTimelineView(displayWorkorders) {
             const container = document.getElementById('timelineContent');
             if (!container) return;
             
             container.innerHTML = '';
             
-            if (filteredWorkorders.length === 0) {
+            if (displayWorkorders.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-12 text-gray-400">
                         <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -4194,7 +4420,7 @@
             
             // Group by date
             const groupedByDate = {};
-            filteredWorkorders.forEach(wo => {
+            displayWorkorders.forEach(wo => {
                 const date = formatDate(wo.createdAt);
                 if (!groupedByDate[date]) {
                     groupedByDate[date] = [];
@@ -4352,7 +4578,7 @@
                             <button class="view-detail-btn w-10 h-10 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center transition-colors">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            ${canEditWorkOrder() ? `
+                            ${canEditWorkOrder(workorder) ? `
                             <button class="edit-workorder-btn w-10 h-10 rounded-full bg-green-100 text-green-600 hover:bg-green-200 flex items-center justify-center transition-colors">
                                 <i class="fas fa-edit"></i>
                             </button>` : ''}
@@ -4412,7 +4638,7 @@
                         <button class="view-detail-btn w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center transition-colors">
                             <i class="fas fa-eye text-sm"></i>
                         </button>
-                        ${canEditWorkOrder() ? `
+                        ${canEditWorkOrder(workorder) ? `
                         <button class="edit-workorder-btn w-8 h-8 rounded-full bg-green-100 text-green-600 hover:bg-green-200 flex items-center justify-center transition-colors">
                             <i class="fas fa-edit text-sm"></i>
                         </button>` : ''}
@@ -4464,7 +4690,7 @@
                         </p>
                     </div>
                     <div class="flex gap-2">
-                        ${canEditWorkOrder() ? `
+                        ${canEditWorkOrder(workorder) ? `
                         <button class="edit-workorder-btn w-8 h-8 rounded-full bg-green-100 text-green-600 hover:bg-green-200 flex items-center justify-center transition-colors">
                             <i class="fas fa-edit text-sm"></i>
                         </button>` : ''}
@@ -4479,24 +4705,27 @@
             return item;
         }
 
-        function getPriorityClass(priority) {
-            switch(priority) {
-                case 'High': return 'priority-high';
-                case 'Urgent': return 'priority-urgent';
-                case 'Low': return 'priority-low';
-                default: return 'priority-normal';
-            }
-        }
-
         // ==================== CAMERA FUNCTIONS ====================
         async function openDocumentationModal() {
             console.log('Opening camera documentation modal');
+            
+            if (!currentUser) {
+                showToast('Please login first', 'warning');
+                return;
+            }
             
             const modal = document.getElementById('documentationModal');
             modal.classList.remove('hidden');
             
             resetDocumentationForm();
-            setupDocumentationSearch();
+            
+            // Setup search dengan filtering berdasarkan role
+            if (currentUserRole === 'user') {
+                const userWorkorders = filterWorkOrdersForUser(workorders, currentUser.email);
+                setupDocumentationSearch(userWorkorders);
+            } else {
+                setupDocumentationSearch(workorders);
+            }
         }
 
         function closeDocumentationModal() {
@@ -4531,6 +4760,15 @@
                 if (!selectedWorkOrderId) {
                     showToast('Pilih work order terlebih dahulu', 'warning');
                     return;
+                }
+                
+                // Check permission untuk user
+                if (currentUserRole === 'user') {
+                    const workorder = workorders.find(wo => wo.id === selectedWorkOrderId);
+                    if (!canViewDocumentation(workorder)) {
+                        showToast('You do not have permission to take photos for this work order', 'warning');
+                        return;
+                    }
                 }
                 
                 // Show camera section
@@ -4769,7 +5007,7 @@
         }
 
         // ==================== DOCUMENTATION FUNCTIONS ====================
-        function setupDocumentationSearch() {
+        function setupDocumentationSearch(workordersList) {
             const searchInput = document.getElementById('docWorkOrderSearch');
             const dropdown = document.getElementById('workOrderAutocomplete');
             
@@ -4782,13 +5020,13 @@
                     return;
                 }
                 
-                showWorkOrderAutocomplete(value);
+                showWorkOrderAutocomplete(value, workordersList);
             });
             
             searchInput.addEventListener('focus', function() {
                 const value = this.value.trim();
                 if (value.length >= 2) {
-                    showWorkOrderAutocomplete(value);
+                    showWorkOrderAutocomplete(value, workordersList);
                 }
             });
             
@@ -4799,11 +5037,11 @@
             });
         }
 
-        function showWorkOrderAutocomplete(searchTerm) {
+        function showWorkOrderAutocomplete(searchTerm, workordersList) {
             const dropdown = document.getElementById('workOrderAutocomplete');
             if (!dropdown) return;
             
-            const filtered = workorders.filter(wo => 
+            const filtered = workordersList.filter(wo => 
                 (wo.workOrderNumber && wo.workOrderNumber.toLowerCase().includes(searchTerm.toLowerCase())) ||
                 (wo.customer && wo.customer.toLowerCase().includes(searchTerm.toLowerCase())) ||
                 (wo.building && wo.building.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -4859,6 +5097,14 @@
                         showToast('Work order tidak ditemukan', 'error');
                         return;
                     }
+                }
+                
+                // Check permission untuk user
+                if (currentUserRole === 'user' && !canViewDocumentation(selectedWorkOrderData)) {
+                    showToast('You do not have permission to take photos for this work order', 'warning');
+                    resetDocumentationForm();
+                    hideLoading();
+                    return;
                 }
                 
                 updateSelectedWorkOrderInfo();
@@ -5480,7 +5726,7 @@
                     else if (userEmail === 'm_husni@genetek.co.id') {
                         correctRole = 'manager';
                     }
-                    // Regular user emails (UPDATED)
+                    // Regular user emails
                     else if (
                         userEmail === 'junaidi@genetek.co.id' ||
                         userEmail === 'wahyumaulana@genetek.co.id' ||
@@ -5501,7 +5747,7 @@
                         userEmail === 'sayyid@genetek.co.id' ||
                         userEmail === 'wisnu@genetek.co.id' ||
                         userEmail === 'yogi@genetek.co.id' ||
-                        userEmail === 'galih@genetek.co.id' // Existing user
+                        userEmail === 'galih@genetek.co.id'
                     ) {
                         correctRole = 'user';
                     }
@@ -5529,114 +5775,6 @@
                 console.error('Error fixing user role:', error);
                 return null;
             }
-        }
-
-        // ==================== ROLE-BASED ACCESS CONTROL ====================
-        function setupUserRolePermissions() {
-            console.log('Setting up permissions for role:', currentUserRole);
-            
-            const exportBtn = document.getElementById('exportExcelBtn');
-            const newWorkOrderBtn = document.getElementById('newWorkOrderBtn');
-            const analyticsBtn = document.getElementById('analyticsBtn');
-            const activityBtn = document.getElementById('activityBtn');
-            const statusHistoryBtn = document.getElementById('statusHistoryBtn');
-            const pipelinesBtn = document.getElementById('pipelinesBtn');
-            const documentationBtn = document.getElementById('documentationBtn');
-            const personnelListBtn = document.getElementById('personnelListBtn');
-            
-            const userAvatar = document.getElementById('userAvatar');
-            if (userAvatar) {
-                userAvatar.className = 'user-avatar';
-                if (currentUserRole === 'admin') {
-                    userAvatar.classList.add('admin');
-                } else if (currentUserRole === 'manager') {
-                    userAvatar.classList.add('manager');
-                } else {
-                    userAvatar.classList.add('user');
-                }
-            }
-            
-            const roleBadge = document.getElementById('userRoleBadge');
-            if (roleBadge) {
-                roleBadge.className = `badge badge-${currentUserRole === 'admin' ? 'secondary' : currentUserRole === 'manager' ? 'primary' : 'info'}`;
-                roleBadge.innerHTML = `<i class="fas fa-user-tag"></i><span>${currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}</span>`;
-            }
-            
-            // Hide all buttons first
-            if (exportBtn) exportBtn.classList.add('hidden');
-            if (newWorkOrderBtn) newWorkOrderBtn.classList.add('hidden');
-            if (analyticsBtn) analyticsBtn.classList.add('hidden');
-            if (activityBtn) activityBtn.classList.add('hidden');
-            if (statusHistoryBtn) statusHistoryBtn.classList.add('hidden');
-            if (pipelinesBtn) pipelinesBtn.classList.add('hidden');
-            if (documentationBtn) documentationBtn.classList.add('hidden');
-            if (personnelListBtn) personnelListBtn.classList.add('hidden');
-            
-            switch(currentUserRole) {
-                case 'admin':
-                    if (exportBtn) exportBtn.classList.remove('hidden');
-                    if (newWorkOrderBtn) newWorkOrderBtn.classList.remove('hidden');
-                    if (analyticsBtn) analyticsBtn.classList.remove('hidden');
-                    if (activityBtn) activityBtn.classList.remove('hidden');
-                    if (statusHistoryBtn) statusHistoryBtn.classList.remove('hidden');
-                    if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
-                    if (documentationBtn) documentationBtn.classList.remove('hidden');
-                    if (personnelListBtn) personnelListBtn.classList.remove('hidden');
-                    break;
-                    
-                case 'manager':
-                    if (newWorkOrderBtn) newWorkOrderBtn.classList.remove('hidden');
-                    if (analyticsBtn) analyticsBtn.classList.remove('hidden');
-                    if (activityBtn) activityBtn.classList.remove('hidden');
-                    if (statusHistoryBtn) statusHistoryBtn.classList.remove('hidden');
-                    if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
-                    if (documentationBtn) documentationBtn.classList.remove('hidden');
-                    if (personnelListBtn) personnelListBtn.classList.remove('hidden');
-                    break;
-                    
-                case 'user':
-                    if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
-                    if (documentationBtn) documentationBtn.classList.remove('hidden');
-                    if (personnelListBtn) personnelListBtn.classList.remove('hidden');
-                    break;
-                    
-                default:
-                    break;
-            }
-            
-            console.log('Permissions set for role:', currentUserRole);
-        }
-
-        function canCreateWorkOrder() {
-            return currentUserRole === 'admin' || currentUserRole === 'manager';
-        }
-
-        function canEditWorkOrder() {
-            return currentUserRole === 'admin' || currentUserRole === 'manager';
-        }
-
-        function canDeleteWorkOrder() {
-            return currentUserRole === 'admin';
-        }
-
-        function canExportData() {
-            return currentUserRole === 'admin';
-        }
-
-        function canViewAnalytics() {
-            return currentUserRole === 'admin' || currentUserRole === 'manager';
-        }
-
-        function canViewActivity() {
-            return currentUserRole === 'admin' || currentUserRole === 'manager';
-        }
-
-        function canViewStatusHistory() {
-            return currentUserRole === 'admin' || currentUserRole === 'manager';
-        }
-
-        function canViewDocumentation() {
-            return currentUserRole === 'admin' || currentUserRole === 'manager' || currentUserRole === 'user';
         }
 
         // ==================== AUTH FUNCTIONS ====================
@@ -5776,7 +5914,7 @@
                         defaultRole = 'manager';
                         console.log('Setting role to manager for', userEmail);
                     }
-                    // Regular user emails (UPDATED)
+                    // Regular user emails
                     else if (
                         userEmail === 'junaidi@genetek.co.id' ||
                         userEmail === 'wahyumaulana@genetek.co.id' ||
@@ -6166,6 +6304,12 @@
         // ==================== ANALYTICS FUNCTIONS ====================
         async function loadAnalytics() {
             console.log('Loading analytics data...');
+            
+            if (!canViewAnalytics()) {
+                showToast('You do not have permission to view analytics', 'warning');
+                return;
+            }
+            
             showLoading();
             
             try {
@@ -6639,8 +6783,14 @@
             document.getElementById('workorderId').value = '';
             document.getElementById('originalStatus').value = '';
             
-            if (workorderId && !canEditWorkOrder()) {
-                showToast('You do not have permission to edit work orders', 'warning');
+            if (workorderId) {
+                const workorder = workorders.find(wo => wo.id === workorderId);
+                if (!canEditWorkOrder(workorder)) {
+                    showToast('You do not have permission to edit this work order', 'warning');
+                    return;
+                }
+            } else if (!canCreateWorkOrder()) {
+                showToast('You do not have permission to create work orders', 'warning');
                 return;
             }
             
@@ -6742,6 +6892,18 @@
             const originalStatus = document.getElementById('originalStatus').value;
             const isEdit = !!workorderId;
             
+            // Check permissions
+            if (isEdit) {
+                const workorder = workorders.find(wo => wo.id === workorderId);
+                if (!canEditWorkOrder(workorder)) {
+                    showToast('You do not have permission to edit this work order', 'warning');
+                    return;
+                }
+            } else if (!canCreateWorkOrder()) {
+                showToast('You do not have permission to create work orders', 'warning');
+                return;
+            }
+            
             const customer = document.getElementById('customer').value.trim();
             const building = document.getElementById('building').value.trim();
             const workType = document.getElementById('workType').value.trim();
@@ -6840,6 +7002,15 @@
                 return;
             }
             
+            // Check permission untuk user
+            if (currentUserRole === 'user') {
+                const userWorkorders = filterWorkOrdersForUser([workorder], currentUser.email);
+                if (userWorkorders.length === 0) {
+                    showToast('You do not have permission to view this work order', 'warning');
+                    return;
+                }
+            }
+            
             let personnelArray = [];
             if (workorder.personnel) {
                 if (Array.isArray(workorder.personnel)) {
@@ -6889,7 +7060,7 @@
             const editBtn = document.getElementById('editDetailBtn');
             editBtn.dataset.id = workorderId;
             
-            if (!canEditWorkOrder()) {
+            if (!canEditWorkOrder(workorder)) {
                 editBtn.style.display = 'none';
             } else {
                 editBtn.style.display = 'inline-flex';
@@ -6970,6 +7141,14 @@
         function openPipelines() {
             console.log('Opening pipelines...');
             
+            // Untuk user, filter hanya WO miliknya
+            if (currentUserRole === 'user') {
+                const userWorkorders = filterWorkOrdersForUser(workorders, currentUser.email);
+                // Store filtered workorders untuk digunakan di pipelines.html
+                localStorage.setItem('userWorkorders', JSON.stringify(userWorkorders));
+                localStorage.setItem('currentUserEmail', currentUser.email);
+            }
+            
             // Redirect to pipelines.html in the same tab
             window.location.href = 'pipelines.html';
         }
@@ -7006,17 +7185,24 @@
             console.log('Exporting to Excel');
             
             if (!canExportData()) {
-                showToast('Only admins can export data', 'warning');
+                showToast('Only admins and managers can export data', 'warning');
                 return;
             }
             
             try {
-                if (filteredWorkorders.length === 0) {
+                let exportWorkorders = filteredWorkorders;
+                
+                // Untuk user, export hanya WO miliknya
+                if (currentUserRole === 'user') {
+                    exportWorkorders = filterWorkOrdersForUser(filteredWorkorders, currentUser.email);
+                }
+                
+                if (exportWorkorders.length === 0) {
                     showToast('No data to export', 'warning');
                     return;
                 }
                 
-                const worksheetData = filteredWorkorders.map(wo => {
+                const worksheetData = exportWorkorders.map(wo => {
                     let personnelArray = [];
                     if (wo.personnel) {
                         if (Array.isArray(wo.personnel)) {
@@ -7224,7 +7410,12 @@
                         btn.addEventListener('click', function() {
                             const workorderId = this.closest('tr').dataset.id;
                             if (workorderId) {
-                                openWorkOrderModal(workorderId);
+                                const workorder = workorders.find(wo => wo.id === workorderId);
+                                if (canEditWorkOrder(workorder)) {
+                                    openWorkOrderModal(workorderId);
+                                } else {
+                                    showToast('You do not have permission to edit this work order', 'warning');
+                                }
                             }
                         });
                     });
@@ -7233,7 +7424,11 @@
                         btn.addEventListener('click', function() {
                             const workorderId = this.closest('tr').dataset.id;
                             if (workorderId) {
-                                deleteWorkOrder(workorderId);
+                                if (canDeleteWorkOrder()) {
+                                    deleteWorkOrder(workorderId);
+                                } else {
+                                    showToast('You do not have permission to delete work orders', 'warning');
+                                }
                             }
                         });
                     });
@@ -7245,13 +7440,18 @@
                 document.getElementById('timelineViewContainer').classList.remove('hidden');
                 renderTimelineView();
                 
-                // Add event listeners for timeline view buttons (no view details button)
+                // Add event listeners for timeline view buttons
                 setTimeout(() => {
                     document.querySelectorAll('.edit-workorder-btn').forEach(btn => {
                         btn.addEventListener('click', function() {
                             const workorderId = this.closest('.card').dataset.id;
                             if (workorderId) {
-                                openWorkOrderModal(workorderId);
+                                const workorder = workorders.find(wo => wo.id === workorderId);
+                                if (canEditWorkOrder(workorder)) {
+                                    openWorkOrderModal(workorderId);
+                                } else {
+                                    showToast('You do not have permission to edit this work order', 'warning');
+                                }
                             }
                         });
                     });
@@ -7260,7 +7460,11 @@
                         btn.addEventListener('click', function() {
                             const workorderId = this.closest('.card').dataset.id;
                             if (workorderId) {
-                                deleteWorkOrder(workorderId);
+                                if (canDeleteWorkOrder()) {
+                                    deleteWorkOrder(workorderId);
+                                } else {
+                                    showToast('You do not have permission to delete work orders', 'warning');
+                                }
                             }
                         });
                     });
