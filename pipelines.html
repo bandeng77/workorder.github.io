@@ -1337,7 +1337,7 @@
                             <i class="fas fa-plus-circle"></i>
                             <span>New Pipeline Item</span>
                         </button>
-                        <!-- TAMBAH TOMBOL AMBIL GAMBAR -->
+                        <!-- TOMBOL AMBIL GAMBAR - TAMPILKAN UNTUK SEMUA USER -->
                         <button id="takePictureBtn" class="btn btn-camera">
                             <i class="fas fa-camera"></i>
                             <span>Ambil Gambar</span>
@@ -2833,6 +2833,25 @@
             return currentUserRole === 'admin' || currentUserRole === 'manager';
         }
 
+        // ==================== FITUR AMBIL GAMBAR - AKSES PENUH UNTUK REGULER USER ====================
+        function canTakePicturesForPipeline(pipelineItem) {
+            // Semua user (admin, manager, user) bisa mengambil gambar
+            if (!pipelineItem) return false;
+            
+            // Jika user reguler, hanya bisa untuk pipeline mereka sendiri
+            if (currentUserRole === 'user') {
+                return pipelineItem.createdBy === currentUser.email;
+            }
+            
+            // Admin dan manager bisa untuk semua pipeline
+            return currentUserRole === 'admin' || currentUserRole === 'manager';
+        }
+
+        function canAttachImagesToPipeline(pipelineItem) {
+            // Sama seperti canTakePicturesForPipeline
+            return canTakePicturesForPipeline(pipelineItem);
+        }
+
         // ==================== CAMERA FUNCTIONS ====================
         async function startCamera() {
             try {
@@ -2967,6 +2986,12 @@
                 return;
             }
             
+            // Cek apakah user boleh melampirkan gambar ke pipeline ini
+            if (!canAttachImagesToPipeline(selectedPipelineItem)) {
+                showToast('Anda tidak memiliki izin untuk melampirkan gambar ke pipeline ini', 'warning');
+                return;
+            }
+            
             // Create image object with metadata
             const imageData = {
                 id: 'img_' + Date.now(),
@@ -3096,6 +3121,12 @@
                 return;
             }
             
+            // Cek apakah user boleh melampirkan gambar ke pipeline ini
+            if (!canAttachImagesToPipeline(selectedPipelineItem)) {
+                showToast('Anda tidak memiliki izin untuk melampirkan gambar ke pipeline ini', 'warning');
+                return;
+            }
+            
             // Check if file is an image
             if (!file.type.match('image.*')) {
                 showToast('File harus berupa gambar', 'error');
@@ -3136,6 +3167,12 @@
         async function attachImagesToPipeline() {
             if (!selectedPipelineItem || capturedImages.length === 0) {
                 showToast('Tidak ada gambar untuk dilampirkan', 'warning');
+                return;
+            }
+            
+            // Cek apakah user boleh melampirkan gambar ke pipeline ini
+            if (!canAttachImagesToPipeline(selectedPipelineItem)) {
+                showToast('Anda tidak memiliki izin untuk melampirkan gambar ke pipeline ini', 'warning');
                 return;
             }
             
@@ -3282,6 +3319,12 @@
                 const pipeline = pipelineItems.find(p => p.id === pipelineId);
                 if (!pipeline || !pipeline.images) return;
                 
+                // Cek apakah user boleh menghapus gambar
+                if (currentUserRole === 'user' && pipeline.createdBy !== currentUser.email) {
+                    showToast('Anda tidak memiliki izin untuk menghapus gambar dari pipeline ini', 'warning');
+                    return;
+                }
+                
                 // Remove image from array
                 const updatedImages = [...pipeline.images];
                 updatedImages.splice(imageIndex, 1);
@@ -3367,7 +3410,7 @@
                     
                     searchTimeout = setTimeout(() => {
                         if (searchTerm.length >= 2) {
-                            searchPipelineSuggestions(searchTerm);
+                            searchPipelineSuggestionsForCamera(searchTerm);
                         } else {
                             hideSuggestions('pipelineSuggestions');
                         }
@@ -3377,7 +3420,7 @@
                 searchInput.addEventListener('focus', function() {
                     const searchTerm = this.value.trim();
                     if (searchTerm.length >= 2) {
-                        searchPipelineSuggestions(searchTerm);
+                        searchPipelineSuggestionsForCamera(searchTerm);
                     }
                 });
                 
@@ -3395,7 +3438,7 @@
             
             if (refreshBtn) {
                 refreshBtn.addEventListener('click', function() {
-                    searchPipelineSuggestions('');
+                    searchPipelineSuggestionsForCamera('');
                     this.querySelector('i').classList.add('fa-spin');
                     setTimeout(() => {
                         this.querySelector('i').classList.remove('fa-spin');
@@ -3411,12 +3454,19 @@
             });
         }
 
-        function searchPipelineSuggestions(searchTerm) {
+        function searchPipelineSuggestionsForCamera(searchTerm) {
             const suggestionsContainer = document.getElementById('pipelineSuggestions');
             if (!suggestionsContainer) return;
             
             const searchTermLower = searchTerm.toLowerCase();
             let filteredPipelines = [...pipelineItems];
+            
+            // Untuk regular user, hanya tampilkan pipeline yang mereka buat sendiri
+            if (currentUserRole === 'user') {
+                filteredPipelines = filteredPipelines.filter(pipeline => 
+                    pipeline.createdBy === currentUser.email
+                );
+            }
             
             if (searchTerm) {
                 filteredPipelines = filteredPipelines.filter(pipeline => 
@@ -3427,10 +3477,10 @@
                 );
             }
             
-            showPipelineSuggestions(suggestionsContainer, filteredPipelines, searchTerm);
+            showPipelineSuggestionsForCamera(suggestionsContainer, filteredPipelines, searchTerm);
         }
 
-        function showPipelineSuggestions(container, pipelines, searchTerm) {
+        function showPipelineSuggestionsForCamera(container, pipelines, searchTerm) {
             container.innerHTML = '';
             
             if (pipelines.length === 0) {
@@ -3441,6 +3491,7 @@
                         <i class="fas fa-search"></i>
                     </div>
                     <p>No pipeline found for "${searchTerm}"</p>
+                    ${currentUserRole === 'user' ? '<p class="text-sm">Anda hanya dapat melampirkan gambar ke pipeline yang Anda buat sendiri</p>' : ''}
                 `;
                 container.appendChild(noResults);
             } else {
@@ -3459,6 +3510,8 @@
                             <div class="font-medium truncate">${pipeline.project}</div>
                             <div class="text-xs text-gray-500 truncate">${pipeline.customer || '-'}</div>
                             <div class="text-xs text-gray-500">${pipeline.quotation || `No. ${pipeline.no}`}</div>
+                            ${currentUserRole === 'user' && pipeline.createdBy === currentUser.email ? 
+                                '<div class="text-xs text-blue-600 mt-1"><i class="fas fa-user"></i> Milik Anda</div>' : ''}
                         </div>
                         <div class="flex flex-col items-end">
                             <span class="pipeline-badge ${badgeClass} text-xs">
@@ -3482,6 +3535,12 @@
         function selectPipelineForCamera(pipelineId) {
             const pipeline = pipelineItems.find(p => p.id === pipelineId);
             if (!pipeline) return;
+            
+            // Cek apakah user boleh melampirkan gambar ke pipeline ini
+            if (!canAttachImagesToPipeline(pipeline)) {
+                showToast('Anda tidak memiliki izin untuk melampirkan gambar ke pipeline ini', 'warning');
+                return;
+            }
             
             selectedPipelineItem = pipeline;
             
@@ -4634,7 +4693,7 @@
             
             document.getElementById('addPICForm').reset();
             document.getElementById('addPICModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden');
         }
 
         function closeAddPICModal() {
