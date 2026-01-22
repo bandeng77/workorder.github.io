@@ -2833,24 +2833,6 @@
             return currentUserRole === 'admin' || currentUserRole === 'manager';
         }
 
-        // ==================== PERMISSION FUNCTION FOR CAMERA ====================
-        function canTakePicture() {
-            // Semua user (admin, manager, dan user reguler) bisa akses kamera
-            return currentUserRole === 'admin' || currentUserRole === 'manager' || currentUserRole === 'user';
-        }
-
-        function canAttachImagesToPipeline(pipelineItem) {
-            // Admin dan manager bisa melampirkan gambar ke semua pipeline
-            if (currentUserRole === 'admin' || currentUserRole === 'manager') {
-                return true;
-            }
-            // User reguler hanya bisa melampirkan gambar ke pipeline yang mereka buat sendiri
-            if (currentUserRole === 'user') {
-                return pipelineItem.createdBy === currentUser.email;
-            }
-            return false;
-        }
-
         // ==================== CAMERA FUNCTIONS ====================
         async function startCamera() {
             try {
@@ -2985,12 +2967,6 @@
                 return;
             }
             
-            // Check permission untuk melampirkan gambar
-            if (!canAttachImagesToPipeline(selectedPipelineItem)) {
-                showToast('Anda tidak memiliki izin untuk melampirkan gambar ke pipeline ini', 'warning');
-                return;
-            }
-            
             // Create image object with metadata
             const imageData = {
                 id: 'img_' + Date.now(),
@@ -3066,13 +3042,7 @@
                 });
                 
                 imageCount.textContent = `${capturedImages.length} gambar tersedia`;
-                
-                // Enable attach button hanya jika ada pipeline yang dipilih dan user memiliki izin
-                if (selectedPipelineItem && canAttachImagesToPipeline(selectedPipelineItem)) {
-                    attachBtn.disabled = false;
-                } else {
-                    attachBtn.disabled = true;
-                }
+                attachBtn.disabled = false;
             }
         }
 
@@ -3126,12 +3096,6 @@
                 return;
             }
             
-            // Check permission untuk melampirkan gambar
-            if (!canAttachImagesToPipeline(selectedPipelineItem)) {
-                showToast('Anda tidak memiliki izin untuk melampirkan gambar ke pipeline ini', 'warning');
-                return;
-            }
-            
             // Check if file is an image
             if (!file.type.match('image.*')) {
                 showToast('File harus berupa gambar', 'error');
@@ -3175,12 +3139,6 @@
                 return;
             }
             
-            // Check permission untuk melampirkan gambar
-            if (!canAttachImagesToPipeline(selectedPipelineItem)) {
-                showToast('Anda tidak memiliki izin untuk melampirkan gambar ke pipeline ini', 'warning');
-                return;
-            }
-            
             try {
                 showLoading();
                 
@@ -3200,8 +3158,7 @@
                     base64: img.base64,
                     timestamp: img.timestamp,
                     takenBy: img.takenBy,
-                    description: img.description,
-                    filename: img.filename || ''
+                    description: img.description
                 }));
                 
                 const updatedImages = [...currentImages, ...newImages];
@@ -3325,17 +3282,6 @@
                 const pipeline = pipelineItems.find(p => p.id === pipelineId);
                 if (!pipeline || !pipeline.images) return;
                 
-                // Check permission untuk menghapus gambar
-                // Admin dan manager bisa hapus semua gambar
-                // User reguler hanya bisa hapus gambar yang mereka lampirkan sendiri
-                if (currentUserRole === 'user') {
-                    const imageToDelete = pipeline.images[imageIndex];
-                    if (imageToDelete.takenBy !== currentUser.email) {
-                        showToast('Anda hanya bisa menghapus gambar yang Anda lampirkan sendiri', 'warning');
-                        return;
-                    }
-                }
-                
                 // Remove image from array
                 const updatedImages = [...pipeline.images];
                 updatedImages.splice(imageIndex, 1);
@@ -3372,12 +3318,6 @@
         // ==================== TAKE PICTURE MODAL FUNCTIONS ====================
         function openTakePictureModal() {
             console.log('Opening take picture modal');
-            
-            // Check permission untuk akses kamera
-            if (!canTakePicture()) {
-                showToast('Anda tidak memiliki izin untuk mengakses fitur kamera', 'warning');
-                return;
-            }
             
             // Reset modal state
             capturedImages = [];
@@ -3478,13 +3418,6 @@
             const searchTermLower = searchTerm.toLowerCase();
             let filteredPipelines = [...pipelineItems];
             
-            // Filter untuk user reguler: hanya tampilkan pipeline yang mereka buat
-            if (currentUserRole === 'user') {
-                filteredPipelines = filteredPipelines.filter(pipeline => 
-                    pipeline.createdBy === currentUser.email
-                );
-            }
-            
             if (searchTerm) {
                 filteredPipelines = filteredPipelines.filter(pipeline => 
                     (pipeline.project && pipeline.project.toLowerCase().includes(searchTermLower)) ||
@@ -3508,7 +3441,6 @@
                         <i class="fas fa-search"></i>
                     </div>
                     <p>No pipeline found for "${searchTerm}"</p>
-                    ${currentUserRole === 'user' ? '<p class="text-xs">Anda hanya dapat melihat pipeline yang Anda buat sendiri</p>' : ''}
                 `;
                 container.appendChild(noResults);
             } else {
@@ -3519,11 +3451,6 @@
                     
                     const badgeClass = getPipelineBadgeClass(pipeline.status);
                     
-                    // Tampilkan indikator untuk user reguler jika pipeline bukan milik mereka
-                    const notOwnedIndicator = currentUserRole === 'user' && pipeline.createdBy !== currentUser.email 
-                        ? '<span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded ml-auto">Tidak dapat dilampirkan</span>'
-                        : '';
-                    
                     suggestion.innerHTML = `
                         <div class="autocomplete-suggestion-icon">
                             <i class="fas fa-project-diagram"></i>
@@ -3532,16 +3459,11 @@
                             <div class="font-medium truncate">${pipeline.project}</div>
                             <div class="text-xs text-gray-500 truncate">${pipeline.customer || '-'}</div>
                             <div class="text-xs text-gray-500">${pipeline.quotation || `No. ${pipeline.no}`}</div>
-                            ${pipeline.createdBy && currentUserRole === 'user' ? 
-                                `<div class="text-xs ${pipeline.createdBy === currentUser.email ? 'text-green-600' : 'text-yellow-600'}">
-                                    <i class="fas fa-user"></i> ${pipeline.createdBy === currentUser.email ? 'Milik Anda' : 'Milik ' + pipeline.createdBy}
-                                </div>` : ''}
                         </div>
                         <div class="flex flex-col items-end">
                             <span class="pipeline-badge ${badgeClass} text-xs">
                                 ${pipeline.status}
                             </span>
-                            ${notOwnedIndicator}
                             <span class="text-xs text-gray-500 mt-1">${formatDate(pipeline.date)}</span>
                         </div>
                     `;
@@ -3578,17 +3500,7 @@
             document.getElementById('selectedPipelineInfo').classList.remove('hidden');
             hideSuggestions('pipelineSuggestions');
             
-            // Update attach button state berdasarkan permission
-            const attachBtn = document.getElementById('attachToPipelineBtn');
-            if (attachBtn) {
-                if (canAttachImagesToPipeline(pipeline)) {
-                    attachBtn.disabled = capturedImages.length === 0;
-                    showToast(`Pipeline "${pipeline.project}" dipilih. Anda dapat melampirkan gambar.`, 'success');
-                } else {
-                    attachBtn.disabled = true;
-                    showToast(`Pipeline "${pipeline.project}" dipilih. Anda tidak memiliki izin untuk melampirkan gambar ke pipeline ini.`, 'warning');
-                }
-            }
+            showToast(`Pipeline "${pipeline.project}" dipilih`, 'success');
         }
 
         // ==================== AUTO-COMPLETE SEARCH FUNCTIONS ====================
@@ -4076,15 +3988,8 @@
 
         function updatePipelineStats() {
             // Update count badges
-            let openCount, closeCount;
-            
-            if (currentUserRole === 'user') {
-                openCount = pipelineItems.filter(item => item.status === 'Open' && item.createdBy === currentUser.email).length;
-                closeCount = pipelineItems.filter(item => item.status === 'Close' && item.createdBy === currentUser.email).length;
-            } else {
-                openCount = pipelineItems.filter(item => item.status === 'Open').length;
-                closeCount = pipelineItems.filter(item => item.status === 'Close').length;
-            }
+            const openCount = pipelineItems.filter(item => item.status === 'Open').length;
+            const closeCount = pipelineItems.filter(item => item.status === 'Close').length;
             
             document.getElementById('openCount').textContent = openCount;
             document.getElementById('closeCount').textContent = closeCount;
@@ -4570,7 +4475,7 @@
                     const dateObj = item.date.toDate();
                     dateValue = dateObj.toISOString().split('T')[0];
                 } else if (item.date instanceof Date) {
-                    dateValue = dateObj.toISOString().split('T')[0];
+                    dateValue = item.date.toISOString().split('T')[0];
                 } else if (typeof item.date === 'string') {
                     dateValue = item.date.split('T')[0];
                 }
@@ -4729,7 +4634,7 @@
             
             document.getElementById('addPICForm').reset();
             document.getElementById('addPICModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeAddPICModal() {
