@@ -3380,7 +3380,13 @@
             const roleBadge = document.getElementById('userRoleBadge');
             if (roleBadge) {
                 roleBadge.className = `badge badge-${currentUserRole === 'admin' ? 'secondary' : currentUserRole === 'manager' ? 'primary' : 'info'}`;
-                roleBadge.innerHTML = `<i class="fas fa-user-tag"></i><span>${currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}</span>`;
+                let roleDisplay = '';
+                switch(currentUserRole) {
+                    case 'admin': roleDisplay = 'Administrator'; break;
+                    case 'manager': roleDisplay = 'Manager'; break;
+                    default: roleDisplay = 'User';
+                }
+                roleBadge.innerHTML = `<i class="fas fa-user-tag"></i><span>${roleDisplay}</span>`;
             }
             
             // Reset semua tombol ke hidden terlebih dahulu
@@ -3400,16 +3406,18 @@
                     break;
                     
                 case 'manager':
-                    // Manager bisa semua kecuali: delete, activity, status history
+                    // Manager bisa: New WO, Export, Analytics, Pipelines, Documentation, Personnel List
                     if (newWorkOrderBtn) newWorkOrderBtn.classList.remove('hidden');
+                    if (exportBtn) exportBtn.classList.remove('hidden');
                     if (analyticsBtn) analyticsBtn.classList.remove('hidden');
                     if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
                     if (documentationBtn) documentationBtn.classList.remove('hidden');
                     if (personnelListBtn) personnelListBtn.classList.remove('hidden');
+                    // Activity dan Status History hanya untuk Admin
                     break;
                     
                 case 'user':
-                    // User hanya bisa: pipelines, documentation, personnel list
+                    // User hanya bisa: Pipelines, Documentation, Personnel List
                     if (pipelinesBtn) pipelinesBtn.classList.remove('hidden');
                     if (documentationBtn) documentationBtn.classList.remove('hidden');
                     if (personnelListBtn) personnelListBtn.classList.remove('hidden');
@@ -3457,16 +3465,17 @@
         }
 
         function canCreateWorkOrder() {
+            // Manager dan Admin bisa membuat work order
             return currentUserRole === 'admin' || currentUserRole === 'manager';
         }
-
         function canEditWorkOrder(workorder) {
+            // Admin dan Manager bisa edit semua work order
             if (currentUserRole === 'admin' || currentUserRole === 'manager') {
                 return true;
             }
             
-            if (currentUserRole === 'user') {
-                // User hanya bisa edit WO yang assign ke dirinya
+            // User hanya bisa edit WO yang assign ke dirinya
+            if (currentUserRole === 'user' && currentUser) {
                 const userEmail = currentUser.email;
                 const username = userEmail.split('@')[0].toLowerCase();
                 
@@ -3489,7 +3498,7 @@
                     }
                     
                     return personnelArray.some(person => 
-                        person.toLowerCase().includes(username)
+                        person && person.toLowerCase().includes(username)
                     );
                 }
             }
@@ -5723,18 +5732,18 @@
                     if (userEmail === 'admin@genetek.co.id') {
                         correctRole = 'admin';
                     } 
-                    // Manager email
+                    // Manager email - PERBAIKI TYPO: useremail -> userEmail
                     else if (
-                        useremail == 'm_husni@genetek.co.id' ||
-                        useremail == 'heksi@genetek.co.id' ||
-                        useremail == 'indrakurniawan@genetek.co.id' ||
-                        useremail == 'yudiono@genetek.co.id' ||
-                        useremail == 'putra@genetek.co.id' ||
-                        useremail == 'fiki@genetek.co.id' ||
-                        useremail == 'harianto@genetek.co.id' ||
-                        useremail == 'edwin@genetek.co.id' ||
-                        useremail == 'aries@genetek.co.id' ||
-                        useremail == 'haryo@genetek.co.id'
+                        userEmail === 'm_husni@genetek.co.id' ||
+                        userEmail === 'heksi@genetek.co.id' ||
+                        userEmail === 'indrakurniawan@genetek.co.id' ||
+                        userEmail === 'yudiono@genetek.co.id' ||
+                        userEmail === 'putra@genetek.co.id' ||
+                        userEmail === 'fiki@genetek.co.id' ||
+                        userEmail === 'harianto@genetek.co.id' ||
+                        userEmail === 'edwin@genetek.co.id' ||
+                        userEmail === 'aries@genetek.co.id' ||
+                        userEmail === 'haryo@genetek.co.id'
                     ) {
                         correctRole = 'manager';
                     }
@@ -5921,18 +5930,18 @@
                         defaultRole = 'admin';
                         console.log('Setting role to admin for', userEmail);
                     } 
-                    // Manager email
+                    // Manager email - PERBAIKI TYPO: useremail -> userEmail
                     else if (
-                        useremail == 'm_husni@genetek.co.id' ||
-                        useremail == 'heksi@genetek.co.id' ||
-                        useremail == 'indrakurniawan@genetek.co.id' ||
-                        useremail == 'yudiono@genetek.co.id' ||
-                        useremail == 'putra@genetek.co.id' ||
-                        useremail == 'fiki@genetek.co.id' ||
-                        useremail == 'harianto@genetek.co.id' ||
-                        useremail == 'edwin@genetek.co.id' ||
-                        useremail == 'aries@genetek.co.id' ||
-                        useremail == 'haryo@genetek.co.id'
+                        userEmail === 'm_husni@genetek.co.id' ||
+                        userEmail === 'heksi@genetek.co.id' ||
+                        userEmail === 'indrakurniawan@genetek.co.id' ||
+                        userEmail === 'yudiono@genetek.co.id' ||
+                        userEmail === 'putra@genetek.co.id' ||
+                        userEmail === 'fiki@genetek.co.id' ||
+                        userEmail === 'harianto@genetek.co.id' ||
+                        userEmail === 'edwin@genetek.co.id' ||
+                        userEmail === 'aries@genetek.co.id' ||
+                        userEmail === 'haryo@genetek.co.id'
                     ) {
                         defaultRole = 'manager';
                         console.log('Setting role to manager for', userEmail);
@@ -5987,7 +5996,6 @@
                 return 'user';
             }
         }
-
         function showError(message) {
             const errorDiv = document.getElementById('loginError');
             const errorMessage = document.getElementById('errorMessage');
