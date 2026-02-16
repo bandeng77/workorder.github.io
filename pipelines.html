@@ -72,6 +72,11 @@
             --priority-normal: #3b82f6;
             --priority-low: #94a3b8;
             
+            /* Kriteria Colors */
+            --kriteria-followup: #f59e0b;
+            --kriteria-win: #22c55e;
+            --kriteria-lose: #ef4444;
+            
             /* UI Variables */
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -494,6 +499,25 @@
             background: linear-gradient(135deg, #f1f5f9, #f8fafc);
             color: var(--pipeline-close);
             border: 1px solid #cbd5e1;
+        }
+        
+        /* Kriteria Badges */
+        .kriteria-followup-badge {
+            background: linear-gradient(135deg, #fef3c7, #fffbeb);
+            color: var(--kriteria-followup);
+            border: 1px solid #fcd34d;
+        }
+        
+        .kriteria-win-badge {
+            background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+            color: var(--kriteria-win);
+            border: 1px solid #86efac;
+        }
+        
+        .kriteria-lose-badge {
+            background: linear-gradient(135deg, #fee2e2, #fef2f2);
+            color: var(--kriteria-lose);
+            border: 1px solid #fca5a5;
         }
 
         /* ==================== BADGE STYLES ==================== */
@@ -1595,7 +1619,7 @@
                         </div>
                     </div>
                     
-                    <!-- Section 3: Project and Status -->
+                    <!-- Section 3: Project, Status, and Kriteria -->
                     <div class="form-section">
                         <div class="form-section-title">
                             <div class="form-section-icon form-section-icon-success">
@@ -1604,7 +1628,7 @@
                             <span>Project & Status</span>
                         </div>
                         
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div>
                                 <label class="form-label required-field" for="pipelineProject">
                                     Project
@@ -1624,6 +1648,20 @@
                                     <option value="Open">Open</option>
                                     <option value="Close">Close</option>
                                 </select>
+                            </div>
+                            
+                            <!-- KRITERIA DROPDOWN - BARU -->
+                            <div>
+                                <label class="form-label required-field" for="pipelineKriteria">
+                                    Kriteria
+                                </label>
+                                <select id="pipelineKriteria" class="form-input" required onchange="updateProgressFromKriteria()">
+                                    <option value="">Pilih Kriteria</option>
+                                    <option value="Follow Up">Follow Up</option>
+                                    <option value="Win">Win</option>
+                                    <option value="Lose">Lose</option>
+                                </select>
+                                <p class="text-xs text-gray-500 mt-1">Progress akan otomatis terisi berdasarkan kriteria</p>
                             </div>
                         </div>
                     </div>
@@ -1829,6 +1867,9 @@
                             
                             <div class="text-gray-600">PIC:</div>
                             <div class="font-medium" id="selectedPipelinePIC">-</div>
+                            
+                            <div class="text-gray-600">Kriteria:</div>
+                            <div class="font-medium" id="selectedPipelineKriteria">-</div>
                         </div>
                     </div>
                 </div>
@@ -2620,11 +2661,21 @@
             { id: 'Close', name: 'Close', icon: 'fa-folder', color: 'gray' }
         ];
 
+        // Kriteria options
+        const KRITERIA_OPTIONS = ['Follow Up', 'Win', 'Lose'];
+
         // Category options based on SOW
         const CATEGORY_OPTIONS = {
             'FAS': ['Spare Part', 'Maintenance', 'Project'],
             'Vesda': ['Spare Part', 'Maintenance', 'Project'],
             'FSS': ['Spare Part', 'Maintenance', 'Project']
+        };
+
+        // Progress mapping based on kriteria
+        const KRITERIA_PROGRESS_MAPPING = {
+            'Follow Up': 50,
+            'Win': 100,
+            'Lose': 100
         };
 
         // ==================== INITIALIZE FIREBASE ====================
@@ -2825,6 +2876,41 @@
                 // Disable the select if no SOW is selected
                 categorySelect.disabled = true;
                 categorySelect.value = '';
+            }
+        }
+
+        // ==================== KRITERIA FUNCTIONS ====================
+        function updateProgressFromKriteria() {
+            const kriteriaSelect = document.getElementById('pipelineKriteria');
+            const progressSlider = document.getElementById('pipelineProgress');
+            const progressValue = document.getElementById('progressValue');
+            
+            if (!kriteriaSelect || !progressSlider || !progressValue) return;
+            
+            const selectedKriteria = kriteriaSelect.value;
+            
+            if (selectedKriteria && KRITERIA_PROGRESS_MAPPING[selectedKriteria] !== undefined) {
+                const progress = KRITERIA_PROGRESS_MAPPING[selectedKriteria];
+                progressSlider.value = progress;
+                progressValue.textContent = `${progress}%`;
+                
+                // Disable progress slider if kriteria is Win or Lose (100%)
+                if (selectedKriteria === 'Win' || selectedKriteria === 'Lose') {
+                    progressSlider.disabled = true;
+                } else {
+                    progressSlider.disabled = false;
+                }
+            } else {
+                progressSlider.disabled = false;
+            }
+        }
+
+        function getKriteriaBadgeClass(kriteria) {
+            switch(kriteria) {
+                case 'Follow Up': return 'kriteria-followup-badge';
+                case 'Win': return 'kriteria-win-badge';
+                case 'Lose': return 'kriteria-lose-badge';
+                default: return 'badge-info';
             }
         }
 
@@ -3548,6 +3634,7 @@
                     suggestion.dataset.id = pipeline.id;
                     
                     const badgeClass = getPipelineBadgeClass(pipeline.status);
+                    const kriteriaBadgeClass = pipeline.kriteria ? getKriteriaBadgeClass(pipeline.kriteria) : '';
                     
                     suggestion.innerHTML = `
                         <div class="autocomplete-suggestion-icon">
@@ -3557,14 +3644,15 @@
                             <div class="font-medium truncate">${pipeline.project}</div>
                             <div class="text-xs text-gray-500 truncate">${pipeline.customer || '-'}</div>
                             <div class="text-xs text-gray-500">${pipeline.quotation || `No. ${pipeline.no}`}</div>
+                            ${pipeline.kriteria ? `<div class="text-xs mt-1"><span class="pipeline-badge ${kriteriaBadgeClass} text-xs">${pipeline.kriteria}</span></div>` : ''}
                             ${currentUserRole === 'user' && pipeline.createdBy === currentUser.email ? 
                                 '<div class="text-xs text-blue-600 mt-1"><i class="fas fa-user"></i> Milik Anda</div>' : ''}
                         </div>
                         <div class="flex flex-col items-end">
-                            <span class="pipeline-badge ${badgeClass} text-xs">
+                            <span class="pipeline-badge ${badgeClass} text-xs mb-1">
                                 ${pipeline.status}
                             </span>
-                            <span class="text-xs text-gray-500 mt-1">${formatDate(pipeline.date)}</span>
+                            <span class="text-xs text-gray-500">${formatDate(pipeline.date)}</span>
                         </div>
                     `;
                     
@@ -3598,6 +3686,7 @@
             document.getElementById('selectedPipelineQuotation').textContent = pipeline.quotation || '-';
             document.getElementById('selectedPipelineCustomer').textContent = pipeline.customer || '-';
             document.getElementById('selectedPipelinePIC').textContent = pipeline.pic || '-';
+            document.getElementById('selectedPipelineKriteria').textContent = pipeline.kriteria || '-';
             
             const statusBadge = document.getElementById('selectedPipelineStatus');
             statusBadge.className = `pipeline-badge ${getPipelineBadgeClass(pipeline.status)}`;
@@ -4066,6 +4155,7 @@
                         customer: data.customer || '',
                         project: data.project || '',
                         status: data.status || 'Open',
+                        kriteria: data.kriteria || '', // New field
                         valueQuotation: data.valueQuotation || 0,
                         valuePO: data.valuePO || 0,
                         description: data.description || '',
@@ -4172,6 +4262,7 @@
             div.draggable = canDragAndDrop();
             
             const badgeClass = getPipelineBadgeClass(item.status);
+            const kriteriaBadgeClass = item.kriteria ? getKriteriaBadgeClass(item.kriteria) : '';
             const timeAgo = formatTimeAgo(item.updatedAt);
             const progress = item.progress || 0;
             const formattedDate = item.date ? formatDate(item.date) : '-';
@@ -4198,6 +4289,7 @@
                         <span class="pipeline-badge ${badgeClass}">
                             ${item.status}
                         </span>
+                        ${item.kriteria ? `<span class="pipeline-badge ${kriteriaBadgeClass} text-xs mt-1">${item.kriteria}</span>` : ''}
                         ${item.company ? `<span class="text-xs text-gray-600">${item.company}</span>` : ''}
                         ${item.category ? `<span class="text-xs text-orange-600">${item.category}</span>` : ''}
                     </div>
@@ -4497,11 +4589,13 @@
             document.getElementById('pipelineCustomer').value = '';
             document.getElementById('pipelineProject').value = '';
             document.getElementById('pipelineStatus').value = 'Open';
+            document.getElementById('pipelineKriteria').value = '';
             document.getElementById('pipelineValueQuotation').value = '';
             document.getElementById('pipelineValuePO').value = '';
             document.getElementById('pipelineDescription').value = '';
             document.getElementById('pipelineNotes').value = '';
             document.getElementById('pipelineProgress').value = 0;
+            document.getElementById('pipelineProgress').disabled = false;
             
             // Update category options based on SOW
             updateCategoryOptions();
@@ -4602,12 +4696,20 @@
             document.getElementById('pipelineCustomer').value = item.customer || '';
             document.getElementById('pipelineProject').value = item.project || '';
             document.getElementById('pipelineStatus').value = item.status || 'Open';
+            document.getElementById('pipelineKriteria').value = item.kriteria || '';
             document.getElementById('pipelineValueQuotation').value = item.valueQuotation ? formatCurrency(item.valueQuotation) : '';
             document.getElementById('pipelineValuePO').value = item.valuePO ? formatCurrency(item.valuePO) : '';
             document.getElementById('pipelineDescription').value = item.description || '';
             document.getElementById('pipelineNotes').value = item.notes || '';
             document.getElementById('pipelineProgress').value = item.progress || 0;
             document.getElementById('progressValue').textContent = `${item.progress || 0}%`;
+            
+            // Disable progress if kriteria is Win or Lose
+            if (item.kriteria === 'Win' || item.kriteria === 'Lose') {
+                document.getElementById('pipelineProgress').disabled = true;
+            } else {
+                document.getElementById('pipelineProgress').disabled = false;
+            }
         }
 
         function closePipelineItemModal() {
@@ -4631,6 +4733,13 @@
             const sow = document.getElementById('pipelineSOW').value;
             const category = document.getElementById('pipelineCategory').value;
             const date = document.getElementById('pipelineDate').value;
+            const kriteria = document.getElementById('pipelineKriteria').value;
+            
+            if (!kriteria) {
+                showToast('Please select Kriteria', 'warning');
+                return;
+            }
+            
             let no = parseInt(document.getElementById('pipelineNo').value) || 0;
             
             // Generate quotation number if creating new item
@@ -4654,6 +4763,17 @@
                 }
             }
             
+            // Get progress - either from slider or from kriteria mapping
+            let progress = parseInt(document.getElementById('pipelineProgress').value) || 0;
+            
+            // If kriteria is Win or Lose, ensure progress is 100%
+            if (kriteria === 'Win' || kriteria === 'Lose') {
+                progress = 100;
+            } else if (kriteria === 'Follow Up' && progress < 50) {
+                // For Follow Up, if progress is less than 50, set to 50 (minimum)
+                progress = 50;
+            }
+            
             const pipelineData = {
                 no: no,
                 quotation: quotationNumber,
@@ -4665,11 +4785,12 @@
                 customer: document.getElementById('pipelineCustomer').value.trim(),
                 project: document.getElementById('pipelineProject').value.trim(),
                 status: document.getElementById('pipelineStatus').value,
+                kriteria: kriteria,
                 valueQuotation: parseCurrency(document.getElementById('pipelineValueQuotation').value),
                 valuePO: parseCurrency(document.getElementById('pipelineValuePO').value),
                 description: document.getElementById('pipelineDescription').value.trim() || '',
                 notes: document.getElementById('pipelineNotes').value.trim() || '',
-                progress: parseInt(document.getElementById('pipelineProgress').value) || 0,
+                progress: progress,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedBy: currentUser.email
             };
@@ -5076,6 +5197,7 @@
                         { wch: 35 }, // Customer
                         { wch: 30 }, // Project
                         { wch: 10 }, // Status
+                        { wch: 15 }, // Kriteria
                         { wch: 20 }, // Value Quotation
                         { wch: 20 }, // Value PO
                         { wch: 30 }, // Description
@@ -5097,6 +5219,7 @@
                         { wch: 35 }, // Customer
                         { wch: 30 }, // Project
                         { wch: 10 }, // Status
+                        { wch: 15 }, // Kriteria
                         { wch: 20 }, // Value Quotation
                         { wch: 20 }, // Value PO
                         { wch: 10 }, // Progress
@@ -5136,13 +5259,13 @@
             if (format === 'detailed') {
                 data.push([
                     'No', 'No. Quotation', 'Tanggal', 'Company', 'SOW', 'Category', 'PIC', 
-                    'Customer', 'Project', 'Status', 'Value Quotation', 'Value PO',
+                    'Customer', 'Project', 'Status', 'Kriteria', 'Value Quotation', 'Value PO',
                     'Description', 'Notes', 'Progress (%)', 'Images Count', 'Updated At', 'Updated By', 'Created By'
                 ]);
             } else {
                 data.push([
                     'No', 'No. Quotation', 'Tanggal', 'Company', 'SOW', 'Category', 'PIC', 
-                    'Customer', 'Project', 'Status', 'Value Quotation', 'Value PO', 'Progress (%)'
+                    'Customer', 'Project', 'Status', 'Kriteria', 'Value Quotation', 'Value PO', 'Progress (%)'
                 ]);
             }
             
@@ -5186,6 +5309,7 @@
                         item.customer || '',
                         item.project || '',
                         item.status || '',
+                        item.kriteria || '',
                         formatCurrencyDisplay(item.valueQuotation || 0),
                         formatCurrencyDisplay(item.valuePO || 0),
                         item.description || '',
@@ -5208,6 +5332,7 @@
                         item.customer || '',
                         item.project || '',
                         item.status || '',
+                        item.kriteria || '',
                         formatCurrencyDisplay(item.valueQuotation || 0),
                         formatCurrencyDisplay(item.valuePO || 0),
                         item.progress || 0
@@ -5221,6 +5346,9 @@
             data.push(['Total Items:', items.length]);
             data.push(['Open Items:', items.filter(i => i.status === 'Open').length]);
             data.push(['Close Items:', items.filter(i => i.status === 'Close').length]);
+            data.push(['Follow Up Items:', items.filter(i => i.kriteria === 'Follow Up').length]);
+            data.push(['Win Items:', items.filter(i => i.kriteria === 'Win').length]);
+            data.push(['Lose Items:', items.filter(i => i.kriteria === 'Lose').length]);
             
             const totalQuotation = items.reduce((sum, item) => sum + (item.valueQuotation || 0), 0);
             const totalPO = items.reduce((sum, item) => sum + (item.valuePO || 0), 0);
@@ -5526,7 +5654,10 @@
                         openItems: 0,
                         closeItems: 0,
                         totalQuotation: 0,
-                        totalPO: 0
+                        totalPO: 0,
+                        followUpItems: 0,
+                        winItems: 0,
+                        loseItems: 0
                     };
                 }
                 
@@ -5539,6 +5670,14 @@
                     picData[pic].openItems++;
                 } else if (item.status === 'Close') {
                     picData[pic].closeItems++;
+                }
+                
+                if (item.kriteria === 'Follow Up') {
+                    picData[pic].followUpItems++;
+                } else if (item.kriteria === 'Win') {
+                    picData[pic].winItems++;
+                } else if (item.kriteria === 'Lose') {
+                    picData[pic].loseItems++;
                 }
             });
             
@@ -5621,6 +5760,7 @@
                                         `PIC: ${pic}`,
                                         `Items: ${data.items.length}`,
                                         `Open: ${data.openItems}, Close: ${data.closeItems}`,
+                                        `Follow Up: ${data.followUpItems}, Win: ${data.winItems}, Lose: ${data.loseItems}`,
                                         `Avg Progress: ${avgProgress}%`,
                                         `Total Quotation: ${formatCurrencyDisplay(data.totalQuotation)}`,
                                         `Total PO: ${formatCurrencyDisplay(data.totalPO)}`
@@ -5698,7 +5838,7 @@
                 });
                 
                 chartInfo.innerHTML = `
-                    <div class="grid grid-cols-3 gap-4 mb-4">
+                    <div class="grid grid-cols-4 gap-4 mb-4">
                         <div>
                             <div class="font-medium">Total PICs</div>
                             <div class="text-lg font-bold">${totalPICs}</div>
@@ -5711,6 +5851,10 @@
                             <div class="font-medium">Avg Progress</div>
                             <div class="text-lg font-bold">${Math.round(avgProgressOverall)}%</div>
                         </div>
+                        <div>
+                            <div class="font-medium">Win Rate</div>
+                            <div class="text-lg font-bold">${Math.round(pipelineItems.filter(i => i.kriteria === 'Win').length / (pipelineItems.filter(i => i.kriteria === 'Win' || i.kriteria === 'Lose').length || 1) * 100)}%</div>
+                        </div>
                     </div>
                     <div class="mt-4">
                         <div class="font-medium mb-2">Top Performing PICs:</div>
@@ -5720,6 +5864,9 @@
                                 const avgProgress = data.items.length > 0 
                                     ? Math.round(data.totalProgress / data.items.length) 
                                     : 0;
+                                const winCount = data.winItems || 0;
+                                const loseCount = data.loseItems || 0;
+                                const winRate = (winCount + loseCount) > 0 ? Math.round(winCount / (winCount + loseCount) * 100) : 0;
                                 return `<div class="flex justify-between items-center p-2 bg-gray-50 rounded">
                                     <span class="truncate font-medium" title="${pic}">${pic}</span>
                                     <span class="flex items-center gap-2">
@@ -5727,6 +5874,9 @@
                                             ${avgProgress}%
                                         </span>
                                         <span class="text-xs text-gray-600">(${data.items.length} items)</span>
+                                        <span class="text-xs ${winRate >= 70 ? 'text-green-600' : winRate >= 40 ? 'text-yellow-600' : 'text-red-600'}">
+                                            ${winRate}% win
+                                        </span>
                                     </span>
                                 </div>`;
                             }).join('')}
@@ -5744,7 +5894,11 @@
             // Add event listener for sort change
             const sortSelect = document.getElementById('picChartSort');
             if (sortSelect) {
-                sortSelect.addEventListener('change', () => {
+                // Remove existing listener to avoid duplicates
+                const newSortSelect = sortSelect.cloneNode(true);
+                sortSelect.parentNode.replaceChild(newSortSelect, sortSelect);
+                
+                newSortSelect.addEventListener('change', () => {
                     generatePipelinePICChart(pipelineItems);
                 });
             }
@@ -5973,6 +6127,9 @@
             
             // Add event listener for SOW change to update category options
             document.getElementById('pipelineSOW').addEventListener('change', updateCategoryOptions);
+            
+            // Add event listener for Kriteria change to update progress
+            document.getElementById('pipelineKriteria').addEventListener('change', updateProgressFromKriteria);
             
             // Add event listeners for quotation number generation
             document.getElementById('pipelineDate').addEventListener('change', async function() {
