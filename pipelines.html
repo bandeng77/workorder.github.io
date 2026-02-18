@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Work Order Pipelines</title>
+    <title>Work Order Pipelines - Admin Sales View</title>
     
     <!-- Load Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -76,6 +76,10 @@
             --kriteria-followup: #f59e0b;
             --kriteria-win: #22c55e;
             --kriteria-lose: #ef4444;
+            
+            /* Admin Sales Color */
+            --adminsales-500: #6366f1;
+            --adminsales-600: #4f46e5;
             
             /* UI Variables */
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -476,6 +480,20 @@
             box-shadow: var(--shadow-sm);
         }
 
+        /* Admin Sales specific styles */
+        .pipeline-item-view-only {
+            cursor: pointer;
+        }
+
+        .pipeline-item-view-only:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .pipeline-item-view-only:active {
+            cursor: pointer;
+        }
+
         /* ==================== PIPELINE ITEM STYLES ==================== */
         .pipeline-badge {
             display: inline-flex;
@@ -569,6 +587,12 @@
             border: 1px solid #fca5a5;
         }
 
+        .badge-adminsales {
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            color: var(--adminsales-600);
+            border: 1px solid #a5b4fc;
+        }
+
         /* ==================== GRADIENT BACKGROUNDS ==================== */
         .gradient-bg-primary {
             background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
@@ -580,6 +604,10 @@
 
         .gradient-bg-accent {
             background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-700) 100%);
+        }
+
+        .gradient-bg-adminsales {
+            background: linear-gradient(135deg, var(--adminsales-500) 0%, var(--adminsales-600) 100%);
         }
 
         /* ==================== ELEGANT HEADER ==================== */
@@ -718,6 +746,12 @@
             box-shadow: var(--shadow-md);
         }
 
+        .btn-view {
+            background: linear-gradient(135deg, var(--adminsales-500) 0%, var(--adminsales-600) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
         .btn-outline {
             background: transparent;
             border: 2px solid var(--primary-500);
@@ -802,6 +836,10 @@
 
         .user-avatar.user {
             background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+        }
+
+        .user-avatar.adminsales {
+            background: linear-gradient(135deg, var(--adminsales-500), var(--adminsales-600));
         }
 
         /* ==================== SEARCH BOX ==================== */
@@ -933,6 +971,11 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
+        .form-input:disabled {
+            background: var(--neutral-100);
+            cursor: not-allowed;
+        }
+
         /* ==================== CURRENCY INPUT STYLES ==================== */
         .currency-input-group {
             position: relative;
@@ -1040,6 +1083,100 @@
             overflow-y: auto;
             flex: 1;
             min-height: 0;
+        }
+
+        /* Detail Information Styles */
+        .detail-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--neutral-200);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .detail-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-500), var(--secondary-500));
+        }
+
+        .detail-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--neutral-800);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .detail-section-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .detail-section-icon-primary {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        }
+
+        .detail-section-icon-secondary {
+            background: linear-gradient(135deg, var(--secondary-500), var(--secondary-600));
+        }
+
+        .detail-section-icon-success {
+            background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+        }
+
+        .detail-section-icon-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .detail-section-icon-info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .detail-item {
+            display: flex;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed var(--neutral-200);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            width: 120px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--neutral-600);
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            flex: 1;
+            font-size: 0.95rem;
+            color: var(--neutral-800);
+        }
+
+        .detail-value-highlight {
+            font-weight: 700;
+            color: var(--primary-700);
         }
 
         /* ==================== TOAST NOTIFICATIONS ==================== */
@@ -1235,6 +1372,13 @@
             background-clip: text;
         }
 
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
         /* ==================== RESPONSIVE DESIGN ==================== */
         @media (max-width: 768px) {
             .pipeline-board {
@@ -1287,6 +1431,15 @@
             
             .image-preview-container {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .detail-item {
+                flex-direction: column;
+            }
+            
+            .detail-label {
+                width: 100%;
+                margin-bottom: 0.25rem;
             }
         }
 
@@ -1355,13 +1508,12 @@
                         </div>
                     </div>
                     
-                    <!-- Action Buttons -->
+                    <!-- Action Buttons - Will be dynamically shown/hidden based on role -->
                     <div class="flex flex-wrap gap-2" id="actionButtons">
                         <button id="newPipelineItemBtn" class="btn btn-primary">
                             <i class="fas fa-plus-circle"></i>
                             <span>New Pipeline Item</span>
                         </button>
-                        <!-- TOMBOL AMBIL GAMBAR - TAMPILKAN UNTUK SEMUA USER -->
                         <button id="takePictureBtn" class="btn btn-camera">
                             <i class="fas fa-camera"></i>
                             <span>Ambil Gambar</span>
@@ -1370,7 +1522,7 @@
                             <i class="fas fa-file-excel"></i>
                             <span>Export to Excel</span>
                         </button>
-                        <button id="pipelinesAnalyticsBtn" class="btn btn-info hidden">
+                        <button id="pipelinesAnalyticsBtn" class="btn btn-info">
                             <i class="fas fa-chart-bar"></i>
                             <span>Pipeline Analytics</span>
                         </button>
@@ -1461,7 +1613,7 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- Pipeline Item Modal -->
+    <!-- Pipeline Item Modal (Create/Edit) -->
     <div id="pipelineItemModal" class="modal-overlay hidden">
         <div class="modal-content w-full max-w-4xl">
             <!-- Sticky Header -->
@@ -2344,14 +2496,229 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div id="toast-container"></div>
-
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay hidden">
-        <div class="text-center">
-            <div class="loading-spinner mb-4"></div>
-            <p class="text-white text-lg font-medium">Loading Pipelines...</p>
+    <!-- Pipeline Detail Modal (For View Only) -->
+    <div id="pipelineDetailModal" class="modal-overlay hidden">
+        <div class="modal-content w-full max-w-4xl">
+            <!-- Sticky Header -->
+            <div class="modal-header sticky-top">
+                <div>
+                    <h2 class="modal-title" id="pipelineDetailTitle">Pipeline Item Details</h2>
+                    <p class="text-gray-300 mt-1" id="pipelineDetailSubtitle">View pipeline item information</p>
+                </div>
+                <button id="closePipelineDetailModal" class="text-gray-400 hover:text-white transition-colors text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Scrollable Body -->
+            <div class="modal-body custom-scrollbar">
+                <div class="space-y-6">
+                    <!-- Header with badges -->
+                    <div class="flex flex-wrap justify-between items-start gap-4 mb-6">
+                        <div>
+                            <span class="text-sm text-gray-600">Pipeline Item #</span>
+                            <span class="text-xl font-bold text-gray-900" id="detailNo"></span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span id="detailStatusBadge" class="pipeline-badge"></span>
+                            <span id="detailKriteriaBadge" class="pipeline-badge hidden"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 1: Basic Information -->
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <div class="detail-section-icon detail-section-icon-primary">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <span>Basic Information</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div class="detail-item">
+                                <div class="detail-label">No. Quotation</div>
+                                <div class="detail-value" id="detailQuotation">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Tanggal</div>
+                                <div class="detail-value" id="detailDate">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Company</div>
+                                <div class="detail-value" id="detailCompany">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">SOW</div>
+                                <div class="detail-value" id="detailSOW">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Category</div>
+                                <div class="detail-value" id="detailCategory">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 2: PIC and Customer -->
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <div class="detail-section-icon detail-section-icon-secondary">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <span>Person In Charge & Customer</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div class="detail-item">
+                                <div class="detail-label">PIC</div>
+                                <div class="detail-value" id="detailPIC">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Customer</div>
+                                <div class="detail-value" id="detailCustomer">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 3: Project & Status -->
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <div class="detail-section-icon detail-section-icon-success">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <span>Project & Status</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                            <div class="detail-item lg:col-span-3">
+                                <div class="detail-label">Project</div>
+                                <div class="detail-value font-medium" id="detailProject">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Status</div>
+                                <div class="detail-value" id="detailStatus">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Kriteria</div>
+                                <div class="detail-value" id="detailKriteria">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Progress</div>
+                                <div class="detail-value" id="detailProgress">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 4: Financial Information -->
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <div class="detail-section-icon detail-section-icon-warning">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <span>Financial Information</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div class="detail-item">
+                                <div class="detail-label">Value Quotation</div>
+                                <div class="detail-value detail-value-highlight" id="detailValueQuotation">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Value PO</div>
+                                <div class="detail-value detail-value-highlight" id="detailValuePO">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 5: Description -->
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <div class="detail-section-icon detail-section-icon-info">
+                                <i class="fas fa-align-left"></i>
+                            </div>
+                            <span>Description</span>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">Description</div>
+                            <div class="detail-value" id="detailDescription">-</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 6: Notes -->
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <div class="detail-section-icon detail-section-icon-info">
+                                <i class="fas fa-sticky-note"></i>
+                            </div>
+                            <span>Notes</span>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">Notes</div>
+                            <div class="detail-value" id="detailNotes">-</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 7: Attached Images -->
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <div class="detail-section-icon detail-section-icon-warning">
+                                <i class="fas fa-images"></i>
+                            </div>
+                            <span>Attached Images</span>
+                            <span id="detailImagesCount" class="ml-auto text-sm bg-gray-200 px-2 py-1 rounded">0 images</span>
+                        </div>
+                        
+                        <div id="detailImagesContainer" class="image-preview-container">
+                            <!-- Images will be loaded here -->
+                            <div class="text-center col-span-full py-8 text-gray-500" id="detailNoImagesMessage">
+                                <i class="fas fa-images text-4xl mb-3"></i>
+                                <p>No images attached to this pipeline item</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 8: Metadata -->
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <div class="detail-section-icon detail-section-icon-info">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <span>System Information</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div class="detail-item">
+                                <div class="detail-label">Created By</div>
+                                <div class="detail-value text-sm" id="detailCreatedBy">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Created At</div>
+                                <div class="detail-value text-sm" id="detailCreatedAt">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Updated By</div>
+                                <div class="detail-value text-sm" id="detailUpdatedBy">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Updated At</div>
+                                <div class="detail-value text-sm" id="detailUpdatedAt">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sticky Footer -->
+            <div class="modal-header sticky-bottom">
+                <div></div>
+                <div class="flex gap-3">
+                    <button id="closePipelineDetailBottomBtn" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Close
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2378,6 +2745,17 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="text-center">
+            <div class="loading-spinner mb-4"></div>
+            <p class="text-white text-lg font-medium">Loading Pipelines...</p>
         </div>
     </div>
 
@@ -2963,11 +3341,40 @@
         }
 
         function canExportAll() {
-            return currentUserRole === 'admin' || currentUserRole === 'manager';
+            // Admin sales bisa export semua
+            return currentUserRole === 'admin' || currentUserRole === 'manager' || currentUserRole === 'adminsales';
+        }
+
+        // ==================== ADMIN SALES PERMISSION FUNCTIONS ====================
+        function isAdminSales() {
+            return currentUserRole === 'adminsales';
+        }
+
+        function canViewAllPipelineItems() {
+            // Admin sales bisa melihat semua items
+            return true;
+        }
+
+        function canViewImages() {
+            // Admin sales bisa melihat attachment
+            return true;
+        }
+
+        function canDownloadImages() {
+            // Admin sales bisa mendownload gambar
+            return true;
+        }
+
+        function canExportExcel() {
+            // Admin sales bisa export excel
+            return true;
         }
 
         // ==================== FITUR AMBIL GAMBAR - AKSES PENUH UNTUK REGULER USER ====================
         function canTakePicturesForPipeline(pipelineItem) {
+            // Admin sales TIDAK bisa mengambil gambar
+            if (isAdminSales()) return false;
+            
             // Semua user (admin, manager, user) bisa mengambil gambar
             if (!pipelineItem) return false;
             
@@ -2981,12 +3388,21 @@
         }
 
         function canAttachImagesToPipeline(pipelineItem) {
+            // Admin sales TIDAK bisa melampirkan gambar
+            if (isAdminSales()) return false;
+            
             // Sama seperti canTakePicturesForPipeline
             return canTakePicturesForPipeline(pipelineItem);
         }
 
         // ==================== CAMERA FUNCTIONS ====================
         async function startCamera() {
+            // Admin sales tidak bisa menggunakan kamera
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk menggunakan kamera', 'warning');
+                return;
+            }
+            
             try {
                 const video = document.getElementById('cameraVideo');
                 const status = document.getElementById('cameraStatus');
@@ -3056,6 +3472,12 @@
         }
 
         function captureImage() {
+            // Admin sales tidak bisa mengambil gambar
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk mengambil gambar', 'warning');
+                return;
+            }
+            
             const video = document.getElementById('cameraVideo');
             const canvas = document.getElementById('cameraCanvas');
             const capturedImage = document.getElementById('capturedImage');
@@ -3089,6 +3511,12 @@
         }
 
         function retakeImage() {
+            // Admin sales tidak bisa mengambil gambar
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk mengambil gambar', 'warning');
+                return;
+            }
+            
             const video = document.getElementById('cameraVideo');
             const capturedImage = document.getElementById('capturedImage');
             
@@ -3107,6 +3535,12 @@
         }
 
         function saveCapturedImage() {
+            // Admin sales tidak bisa menyimpan gambar
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk menyimpan gambar', 'warning');
+                return;
+            }
+            
             const capturedImage = document.getElementById('capturedImage');
             
             if (!capturedImage || !capturedImage.src) {
@@ -3221,6 +3655,12 @@
         }
 
         function removeImage(imageId) {
+            // Admin sales tidak bisa menghapus gambar
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk menghapus gambar', 'warning');
+                return;
+            }
+            
             if (!confirm('Hapus gambar ini?')) return;
             
             capturedImages = capturedImages.filter(img => img.id !== imageId);
@@ -3246,6 +3686,12 @@
         }
 
         function uploadImage(event) {
+            // Admin sales tidak bisa upload gambar
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk upload gambar', 'warning');
+                return;
+            }
+            
             const file = event.target.files[0];
             if (!file) return;
             
@@ -3298,6 +3744,12 @@
         }
 
         async function attachImagesToPipeline() {
+            // Admin sales tidak bisa melampirkan gambar
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk melampirkan gambar', 'warning');
+                return;
+            }
+            
             if (!selectedPipelineItem || capturedImages.length === 0) {
                 showToast('Tidak ada gambar untuk dilampirkan', 'warning');
                 return;
@@ -3399,8 +3851,13 @@
                         <button class="image-action-btn" onclick="previewPipelineImage('${pipelineItem.id}', ${index})" title="Preview">
                             <i class="fas fa-eye"></i>
                         </button>
+                        ${!isAdminSales() ? `
                         <button class="image-action-btn" onclick="removePipelineImage('${pipelineItem.id}', ${index})" title="Hapus">
                             <i class="fas fa-trash"></i>
+                        </button>
+                        ` : ''}
+                        <button class="image-action-btn" onclick="downloadPipelineImage('${pipelineItem.id}', ${index})" title="Download">
+                            <i class="fas fa-download"></i>
                         </button>
                     </div>
                     <div class="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
@@ -3422,30 +3879,30 @@
             if (!pipeline || !pipeline.images || !pipeline.images[imageIndex]) return;
             
             const image = pipeline.images[imageIndex];
-            const modal = document.getElementById('previewImageModal');
-            const previewImage = document.getElementById('previewImage');
-            const previewInfo = document.getElementById('previewImageInfo');
+            openPreviewImageModal(image, `Pipeline: ${pipeline.project} (No. ${pipeline.no})`);
+        }
+
+        function downloadPipelineImage(pipelineId, imageIndex) {
+            const pipeline = pipelineItems.find(p => p.id === pipelineId);
+            if (!pipeline || !pipeline.images || !pipeline.images[imageIndex]) return;
             
-            if (modal && previewImage && previewInfo) {
-                previewImage.src = image.base64;
-                previewInfo.textContent = `Pipeline: ${pipeline.project} (No. ${pipeline.no}) - ${new Date(image.timestamp).toLocaleString('id-ID')}`;
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-                
-                // Update download button
-                const downloadBtn = document.getElementById('downloadImageBtn');
-                if (downloadBtn) {
-                    downloadBtn.onclick = () => {
-                        const link = document.createElement('a');
-                        link.href = image.base64;
-                        link.download = `pipeline_${pipeline.no}_${imageIndex + 1}_${Date.now()}.jpg`;
-                        link.click();
-                    };
-                }
-            }
+            const image = pipeline.images[imageIndex];
+            
+            const link = document.createElement('a');
+            link.href = image.base64;
+            link.download = `pipeline_${pipeline.no}_${imageIndex + 1}_${Date.now()}.jpg`;
+            link.click();
+            
+            showToast('Gambar berhasil didownload', 'success');
         }
 
         async function removePipelineImage(pipelineId, imageIndex) {
+            // Admin sales tidak bisa menghapus gambar
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk menghapus gambar dari pipeline ini', 'warning');
+                return;
+            }
+            
             if (!confirm('Hapus gambar ini dari pipeline?')) return;
             
             try {
@@ -3485,6 +3942,17 @@
                     }
                 }
                 
+                // Update UI if detail modal is open
+                if (document.getElementById('pipelineDetailModal').classList.contains('hidden') === false) {
+                    const detailNo = document.getElementById('detailNo').textContent;
+                    if (detailNo == pipeline.no) {
+                        const updatedItem = pipelineItems.find(p => p.id === pipelineId);
+                        if (updatedItem) {
+                            updateDetailImagesUI(updatedItem);
+                        }
+                    }
+                }
+                
             } catch (error) {
                 console.error('Error removing pipeline image:', error);
                 showToast('Gagal menghapus gambar', 'error');
@@ -3493,6 +3961,12 @@
 
         // ==================== TAKE PICTURE MODAL FUNCTIONS ====================
         function openTakePictureModal() {
+            // Admin sales tidak bisa membuka modal kamera
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk mengambil gambar', 'warning');
+                return;
+            }
+            
             console.log('Opening take picture modal');
             
             // Reset modal state
@@ -3594,8 +4068,13 @@
             const searchTermLower = searchTerm.toLowerCase();
             let filteredPipelines = [...pipelineItems];
             
+            // Untuk admin sales, tampilkan semua pipeline
+            if (isAdminSales()) {
+                // Admin sales bisa melihat semua pipeline
+                filteredPipelines = [...pipelineItems];
+            }
             // Untuk regular user, hanya tampilkan pipeline yang mereka buat sendiri
-            if (currentUserRole === 'user') {
+            else if (currentUserRole === 'user') {
                 filteredPipelines = filteredPipelines.filter(pipeline => 
                     pipeline.createdBy === currentUser.email
                 );
@@ -3647,6 +4126,8 @@
                             ${pipeline.kriteria ? `<div class="text-xs mt-1"><span class="pipeline-badge ${kriteriaBadgeClass} text-xs">${pipeline.kriteria}</span></div>` : ''}
                             ${currentUserRole === 'user' && pipeline.createdBy === currentUser.email ? 
                                 '<div class="text-xs text-blue-600 mt-1"><i class="fas fa-user"></i> Milik Anda</div>' : ''}
+                            ${isAdminSales() ? 
+                                '<div class="text-xs text-indigo-600 mt-1"><i class="fas fa-eye"></i> View Only</div>' : ''}
                         </div>
                         <div class="flex flex-col items-end">
                             <span class="pipeline-badge ${badgeClass} text-xs mb-1">
@@ -3802,6 +4283,8 @@
                     addPICBtn.addEventListener('click', function() {
                         openAddPICModal();
                     });
+                } else {
+                    addPICBtn.classList.add('hidden');
                 }
             }
             
@@ -3811,6 +4294,8 @@
                     addCustomerBtn.addEventListener('click', function() {
                         openAddCustomerModal();
                     });
+                } else {
+                    addCustomerBtn.classList.add('hidden');
                 }
             }
             
@@ -4201,8 +4686,13 @@
             
             let filtered = [...pipelineItems];
             
+            // Untuk admin sales, tampilkan semua items
+            if (isAdminSales()) {
+                // Admin sales bisa melihat semua items
+                filtered = [...pipelineItems];
+            }
             // Untuk regular user, hanya tampilkan item yang mereka buat
-            if (currentUserRole === 'user') {
+            else if (currentUserRole === 'user') {
                 filtered = filtered.filter(item => item.createdBy === currentUser.email);
             }
             
@@ -4255,11 +4745,17 @@
 
         function createPipelineItemElement(item) {
             const div = document.createElement('div');
-            div.className = 'pipeline-item animate-fade-in';
-            div.dataset.id = item.id;
             
-            // Set draggable hanya untuk admin dan manager
-            div.draggable = canDragAndDrop();
+            // Set class berdasarkan role
+            if (isAdminSales()) {
+                div.className = 'pipeline-item animate-fade-in pipeline-item-view-only';
+                div.draggable = false;
+            } else {
+                div.className = 'pipeline-item animate-fade-in';
+                div.draggable = canDragAndDrop();
+            }
+            
+            div.dataset.id = item.id;
             
             const badgeClass = getPipelineBadgeClass(item.status);
             const kriteriaBadgeClass = item.kriteria ? getKriteriaBadgeClass(item.kriteria) : '';
@@ -4269,8 +4765,8 @@
             const hasImages = item.images && item.images.length > 0;
             
             // Cek apakah user bisa edit item ini
-            const canEdit = canEditPipelineItem(item);
-            const canDelete = canDeletePipelineItem(item);
+            const canEdit = !isAdminSales() && canEditPipelineItem(item);
+            const canDelete = !isAdminSales() && canDeletePipelineItem(item);
             const showEditBtn = canEdit;
             const showDeleteBtn = canDelete;
             
@@ -4283,6 +4779,7 @@
                             ${item.quotation ? `<span class="text-xs text-gray-500">${item.quotation}</span>` : ''}
                             ${hasImages ? `<span class="text-xs text-purple-600"><i class="fas fa-camera"></i> ${item.images.length}</span>` : ''}
                             ${item.createdBy && currentUserRole === 'user' ? `<span class="text-xs text-blue-600"><i class="fas fa-user"></i> ${item.createdBy === currentUser.email ? 'Anda' : 'Lain'}</span>` : ''}
+                            ${isAdminSales() ? `<span class="text-xs text-indigo-600"><i class="fas fa-eye"></i> View Only</span>` : ''}
                         </div>
                     </div>
                     <div class="flex flex-col items-end gap-1">
@@ -4360,6 +4857,12 @@
                 </div>
                 
                 <div class="flex justify-end gap-2 mt-3 pt-3 border-t border-gray-100">
+                    ${isAdminSales() ? `
+                    <button class="view-pipeline-detail-btn text-indigo-600 hover:text-indigo-800 text-sm">
+                        <i class="fas fa-eye"></i>
+                        <span class="ml-1">View Details</span>
+                    </button>
+                    ` : `
                     <button class="view-pipeline-item-btn text-blue-600 hover:text-blue-800 text-sm">
                         <i class="fas fa-eye"></i>
                     </button>
@@ -4371,41 +4874,56 @@
                     <button class="delete-pipeline-item-btn text-red-600 hover:text-red-800 text-sm">
                         <i class="fas fa-trash"></i>
                     </button>` : ''}
+                    `}
                 </div>
             `;
             
             // Add event listeners
-            const viewBtn = div.querySelector('.view-pipeline-item-btn');
-            const editBtn = div.querySelector('.edit-pipeline-item-btn');
-            const deleteBtn = div.querySelector('.delete-pipeline-item-btn');
-            
-            if (viewBtn) {
-                viewBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    openPipelineItemDetail(item.id);
-                });
-            }
-            
-            if (editBtn) {
-                editBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (canEdit) {
-                        openPipelineItemModal(item.id);
-                    } else {
-                        showToast('Anda tidak memiliki izin untuk mengedit item ini', 'warning');
-                    }
-                });
-            }
-            
-            if (deleteBtn) {
-                deleteBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (canDelete) {
-                        deletePipelineItem(item.id);
-                    } else {
-                        showToast('Anda tidak memiliki izin untuk menghapus item ini', 'warning');
-                    }
-                });
+            if (isAdminSales()) {
+                const viewDetailBtn = div.querySelector('.view-pipeline-detail-btn');
+                if (viewDetailBtn) {
+                    viewDetailBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openPipelineDetailModal(item.id);
+                    });
+                }
+            } else {
+                const viewBtn = div.querySelector('.view-pipeline-item-btn');
+                const editBtn = div.querySelector('.edit-pipeline-item-btn');
+                const deleteBtn = div.querySelector('.delete-pipeline-item-btn');
+                
+                if (viewBtn) {
+                    viewBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (isAdminSales()) {
+                            openPipelineDetailModal(item.id);
+                        } else {
+                            openPipelineItemDetail(item.id);
+                        }
+                    });
+                }
+                
+                if (editBtn) {
+                    editBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (canEdit) {
+                            openPipelineItemModal(item.id);
+                        } else {
+                            showToast('Anda tidak memiliki izin untuk mengedit item ini', 'warning');
+                        }
+                    });
+                }
+                
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (canDelete) {
+                            deletePipelineItem(item.id);
+                        } else {
+                            showToast('Anda tidak memiliki izin untuk menghapus item ini', 'warning');
+                        }
+                    });
+                }
             }
             
             // Drag and drop events hanya untuk yang memiliki izin
@@ -4414,9 +4932,15 @@
                 div.addEventListener('dragend', handleDragEnd);
             }
             
-            div.addEventListener('click', () => {
-                openPipelineItemDetail(item.id);
-            });
+            if (isAdminSales()) {
+                div.addEventListener('click', () => {
+                    openPipelineDetailModal(item.id);
+                });
+            } else {
+                div.addEventListener('click', () => {
+                    openPipelineItemDetail(item.id);
+                });
+            }
             
             return div;
         }
@@ -4555,6 +5079,12 @@
 
         // ==================== MODAL FUNCTIONS ====================
         async function createNewPipelineItem() {
+            // Admin sales tidak bisa membuat item baru
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk membuat pipeline item', 'warning');
+                return;
+            }
+            
             console.log('Creating new pipeline item');
             
             if (!canCreatePipelineItem()) {
@@ -4566,6 +5096,12 @@
         }
 
         async function openPipelineItemModal(itemId = null) {
+            // Admin sales tidak bisa membuka modal edit/create
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk mengedit pipeline item', 'warning');
+                return;
+            }
+            
             console.log('Opening pipeline item modal:', itemId ? 'edit' : 'create');
             
             const modal = document.getElementById('pipelineItemModal');
@@ -4719,6 +5255,12 @@
         }
 
         async function savePipelineItem() {
+            // Admin sales tidak bisa menyimpan item
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk menyimpan pipeline item', 'warning');
+                return;
+            }
+            
             const form = document.getElementById('pipelineItemForm');
             if (!form.checkValidity()) {
                 showToast('Please fill in all required fields', 'warning');
@@ -4829,6 +5371,12 @@
         }
 
         function openPipelineItemDetail(itemId) {
+            // Admin sales buka detail modal, bukan edit
+            if (isAdminSales()) {
+                openPipelineDetailModal(itemId);
+                return;
+            }
+            
             console.log('Opening pipeline item detail:', itemId);
             
             // For now, we'll just open the edit modal
@@ -4842,6 +5390,12 @@
         }
 
         async function deletePipelineItem(itemId) {
+            // Admin sales tidak bisa hapus
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk menghapus item ini', 'warning');
+                return;
+            }
+            
             if (!canDeletePipelineItem(pipelineItems.find(i => i.id === itemId))) {
                 showToast('Anda tidak memiliki izin untuk menghapus item ini', 'warning');
                 return;
@@ -4862,8 +5416,164 @@
             }
         }
 
+        // ==================== DETAIL MODAL FUNCTIONS ====================
+        function openPipelineDetailModal(itemId) {
+            console.log('Opening pipeline detail modal:', itemId);
+            
+            const item = pipelineItems.find(i => i.id === itemId);
+            if (!item) {
+                showToast('Pipeline item not found', 'error');
+                return;
+            }
+            
+            populateDetailModal(item);
+            
+            document.getElementById('pipelineDetailModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function populateDetailModal(item) {
+            // Basic info
+            document.getElementById('detailNo').textContent = item.no || '-';
+            document.getElementById('detailQuotation').textContent = item.quotation || '-';
+            document.getElementById('detailDate').textContent = item.date ? formatDate(item.date) : '-';
+            document.getElementById('detailCompany').textContent = item.company || '-';
+            document.getElementById('detailSOW').textContent = item.sow || '-';
+            document.getElementById('detailCategory').textContent = item.category || '-';
+            
+            // PIC & Customer
+            document.getElementById('detailPIC').textContent = item.pic || '-';
+            document.getElementById('detailCustomer').textContent = item.customer || '-';
+            
+            // Project & Status
+            document.getElementById('detailProject').textContent = item.project || '-';
+            document.getElementById('detailStatus').textContent = item.status || '-';
+            document.getElementById('detailKriteria').textContent = item.kriteria || '-';
+            document.getElementById('detailProgress').textContent = `${item.progress || 0}%`;
+            
+            // Financial
+            document.getElementById('detailValueQuotation').textContent = formatCurrencyDisplay(item.valueQuotation);
+            document.getElementById('detailValuePO').textContent = formatCurrencyDisplay(item.valuePO);
+            
+            // Description & Notes
+            document.getElementById('detailDescription').textContent = item.description || '-';
+            document.getElementById('detailNotes').textContent = item.notes || '-';
+            
+            // Metadata
+            document.getElementById('detailCreatedBy').textContent = item.createdBy || '-';
+            document.getElementById('detailCreatedAt').textContent = item.createdAt ? formatDateTime(item.createdAt) : '-';
+            document.getElementById('detailUpdatedBy').textContent = item.updatedBy || '-';
+            document.getElementById('detailUpdatedAt').textContent = item.updatedAt ? formatDateTime(item.updatedAt) : '-';
+            
+            // Status badges
+            const statusBadge = document.getElementById('detailStatusBadge');
+            statusBadge.className = `pipeline-badge ${getPipelineBadgeClass(item.status)}`;
+            statusBadge.textContent = item.status;
+            
+            const kriteriaBadge = document.getElementById('detailKriteriaBadge');
+            if (item.kriteria) {
+                kriteriaBadge.className = `pipeline-badge ${getKriteriaBadgeClass(item.kriteria)}`;
+                kriteriaBadge.textContent = item.kriteria;
+                kriteriaBadge.classList.remove('hidden');
+            } else {
+                kriteriaBadge.classList.add('hidden');
+            }
+            
+            // Images
+            updateDetailImagesUI(item);
+        }
+
+        function updateDetailImagesUI(item) {
+            const container = document.getElementById('detailImagesContainer');
+            const noImagesMessage = document.getElementById('detailNoImagesMessage');
+            const imagesCount = document.getElementById('detailImagesCount');
+            
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (!item.images || item.images.length === 0) {
+                if (noImagesMessage) {
+                    container.appendChild(noImagesMessage.cloneNode(true));
+                }
+                imagesCount.textContent = '0 images';
+                return;
+            }
+            
+            imagesCount.textContent = `${item.images.length} image${item.images.length > 1 ? 's' : ''}`;
+            
+            // Create images grid
+            const grid = document.createElement('div');
+            grid.className = 'image-preview-container';
+            
+            item.images.forEach((image, index) => {
+                const imageCard = document.createElement('div');
+                imageCard.className = 'image-preview-item';
+                
+                const date = new Date(image.timestamp);
+                const timeString = date.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                const dateString = formatDate(image.timestamp);
+                
+                imageCard.innerHTML = `
+                    <img src="${image.base64}" alt="Pipeline image ${index + 1}" 
+                         onclick="previewImageFromDetail('${item.id}', ${index})">
+                    <div class="image-preview-actions">
+                        <button class="image-action-btn" onclick="previewImageFromDetail('${item.id}', ${index})" title="Preview">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="image-action-btn" onclick="downloadImageFromDetail('${item.id}', ${index})" title="Download">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                    <div class="image-timestamp" title="${dateString} ${timeString}">
+                        <i class="far fa-clock mr-1"></i>${timeString}
+                    </div>
+                `;
+                
+                grid.appendChild(imageCard);
+            });
+            
+            container.appendChild(grid);
+        }
+
+        function closePipelineDetailModal() {
+            document.getElementById('pipelineDetailModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function previewImageFromDetail(pipelineId, imageIndex) {
+            const pipeline = pipelineItems.find(p => p.id === pipelineId);
+            if (!pipeline || !pipeline.images || !pipeline.images[imageIndex]) return;
+            
+            const image = pipeline.images[imageIndex];
+            openPreviewImageModal(image, `Pipeline: ${pipeline.project} (No. ${pipeline.no})`);
+        }
+
+        function downloadImageFromDetail(pipelineId, imageIndex) {
+            const pipeline = pipelineItems.find(p => p.id === pipelineId);
+            if (!pipeline || !pipeline.images || !pipeline.images[imageIndex]) return;
+            
+            const image = pipeline.images[imageIndex];
+            
+            const link = document.createElement('a');
+            link.href = image.base64;
+            link.download = `pipeline_${pipeline.no}_${imageIndex + 1}_${Date.now()}.jpg`;
+            link.click();
+            
+            showToast('Gambar berhasil didownload', 'success');
+        }
+
         // ==================== ADD PIC MODAL FUNCTIONS ====================
         function openAddPICModal() {
+            // Admin sales tidak bisa menambah PIC
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk menambah PIC', 'warning');
+                return;
+            }
+            
             if (!canAddPIC()) {
                 showToast('Anda tidak memiliki izin untuk menambah PIC', 'warning');
                 return;
@@ -4880,6 +5590,12 @@
         }
 
         async function saveNewPIC() {
+            // Admin sales tidak bisa menyimpan PIC
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk menambah PIC', 'warning');
+                return;
+            }
+            
             if (!canAddPIC()) {
                 showToast('Anda tidak memiliki izin untuk menambah PIC', 'warning');
                 return;
@@ -4954,6 +5670,12 @@
 
         // ==================== ADD CUSTOMER MODAL FUNCTIONS ====================
         function openAddCustomerModal() {
+            // Admin sales tidak bisa menambah customer
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk menambah customer', 'warning');
+                return;
+            }
+            
             if (!canAddCustomer()) {
                 showToast('Anda tidak memiliki izin untuk menambah customer', 'warning');
                 return;
@@ -4970,6 +5692,12 @@
         }
 
         async function saveNewCustomer() {
+            // Admin sales tidak bisa menyimpan customer
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk menambah customer', 'warning');
+                return;
+            }
+            
             if (!canAddCustomer()) {
                 showToast('Anda tidak memiliki izin untuk menambah customer', 'warning');
                 return;
@@ -5059,8 +5787,16 @@
             document.getElementById('includeTimestamp').checked = true;
             document.getElementById('includeFilters').checked = true;
             
+            // Untuk admin sales, semua opsi export bisa digunakan
+            if (isAdminSales()) {
+                // Admin sales bisa semua opsi export
+                document.querySelectorAll('input[name="exportScope"]').forEach(input => {
+                    input.disabled = false;
+                });
+                document.getElementById('includeFilters').disabled = false;
+            }
             // Untuk regular user, batasi opsi export
-            if (currentUserRole === 'user') {
+            else if (currentUserRole === 'user') {
                 const allScopeOption = document.querySelector('input[value="all"]');
                 const statusScopeOption = document.querySelector('input[value="status"]');
                 const includeFiltersCheckbox = document.getElementById('includeFilters');
@@ -5100,8 +5836,12 @@
             let count = 0;
             let items = [];
             
+            // Untuk admin sales, hitung semua items
+            if (isAdminSales()) {
+                items = pipelineItems;
+            }
             // Untuk regular user, hanya hitung item milik sendiri
-            if (currentUserRole === 'user') {
+            else if (currentUserRole === 'user') {
                 items = pipelineItems.filter(item => item.createdBy === currentUser.email);
             } else {
                 items = pipelineItems;
@@ -5110,8 +5850,12 @@
             if (exportScope === 'all') {
                 count = items.length;
             } else if (exportScope === 'filtered') {
+                // Untuk admin sales, filtered sudah otomatis semua items
+                if (isAdminSales()) {
+                    count = filteredPipelineItems.length;
+                }
                 // Untuk regular user, filtered sudah otomatis hanya item milik sendiri
-                if (currentUserRole === 'user') {
+                else if (currentUserRole === 'user') {
                     count = items.length;
                 } else {
                     count = filteredPipelineItems.length;
@@ -5144,26 +5888,45 @@
                 // Get items to export
                 let itemsToExport = [];
                 
-                if (exportScope === 'all') {
-                    itemsToExport = currentUserRole === 'user' 
-                        ? pipelineItems.filter(item => item.createdBy === currentUser.email)
-                        : [...pipelineItems];
-                } else if (exportScope === 'filtered') {
-                    if (currentUserRole === 'user') {
-                        itemsToExport = pipelineItems.filter(item => item.createdBy === currentUser.email);
-                    } else {
+                // Untuk admin sales, bisa export semua items
+                if (isAdminSales()) {
+                    if (exportScope === 'all') {
+                        itemsToExport = [...pipelineItems];
+                    } else if (exportScope === 'filtered') {
                         itemsToExport = [...filteredPipelineItems];
+                    } else if (exportScope === 'status') {
+                        itemsToExport = pipelineItems.filter(item => {
+                            if (exportOpen && item.status === 'Open') return true;
+                            if (exportClose && item.status === 'Close') return true;
+                            return false;
+                        });
                     }
-                } else if (exportScope === 'status') {
-                    let filteredItems = currentUserRole === 'user'
-                        ? pipelineItems.filter(item => item.createdBy === currentUser.email)
-                        : [...pipelineItems];
+                }
+                // Untuk user biasa
+                else if (currentUserRole === 'user') {
+                    const userItems = pipelineItems.filter(item => item.createdBy === currentUser.email);
                     
-                    itemsToExport = filteredItems.filter(item => {
-                        if (exportOpen && item.status === 'Open') return true;
-                        if (exportClose && item.status === 'Close') return true;
-                        return false;
-                    });
+                    if (exportScope === 'all' || exportScope === 'filtered') {
+                        itemsToExport = [...userItems];
+                    } else if (exportScope === 'status') {
+                        itemsToExport = userItems.filter(item => {
+                            if (exportOpen && item.status === 'Open') return true;
+                            if (exportClose && item.status === 'Close') return true;
+                            return false;
+                        });
+                    }
+                } else {
+                    if (exportScope === 'all') {
+                        itemsToExport = [...pipelineItems];
+                    } else if (exportScope === 'filtered') {
+                        itemsToExport = [...filteredPipelineItems];
+                    } else if (exportScope === 'status') {
+                        itemsToExport = pipelineItems.filter(item => {
+                            if (exportOpen && item.status === 'Open') return true;
+                            if (exportClose && item.status === 'Close') return true;
+                            return false;
+                        });
+                    }
                 }
                 
                 if (itemsToExport.length === 0) {
@@ -5270,7 +6033,7 @@
             }
             
             // Add filter information if requested
-            if (includeFilters && currentUserRole !== 'user') {
+            if (includeFilters) {
                 const searchTerm = document.getElementById('searchPipelineItems').value;
                 const companyFilter = document.getElementById('filterByCompany').value;
                 const statusFilter = document.getElementById('filterByStatus').value;
@@ -5290,8 +6053,14 @@
             }
             
             // Add user filter info for regular users
-            if (currentUserRole === 'user') {
+            if (currentUserRole === 'user' && !isAdminSales()) {
                 data.push([`Filter: Only items created by ${currentUser.email}`]);
+                data.push([]); // Empty row
+            }
+            
+            // Add admin sales note
+            if (isAdminSales()) {
+                data.push([`Exported by: Admin Sales (${currentUser.email})`]);
                 data.push([]); // Empty row
             }
             
@@ -5359,7 +6128,7 @@
             data.push(['Total Images:', totalImages]);
             data.push(['Export Date:', new Date().toLocaleString('id-ID')]);
             data.push(['Exported By:', currentUser?.email || 'Unknown']);
-            data.push(['User Role:', currentUserRole]);
+            data.push(['User Role:', currentUserRole === 'adminsales' ? 'Admin Sales' : currentUserRole]);
             
             return data;
         }
@@ -5367,6 +6136,12 @@
         // ==================== PIPELINE ANALYTICS ====================
         function openPipelinesAnalytics() {
             console.log('Opening pipeline analytics');
+            
+            // Admin sales tidak bisa melihat analytics
+            if (isAdminSales()) {
+                showToast('Anda tidak memiliki izin untuk melihat pipeline analytics', 'warning');
+                return;
+            }
             
             if (!canViewPipelineAnalytics()) {
                 showToast('You do not have permission to view pipeline analytics', 'warning');
@@ -5970,7 +6745,9 @@
                     let defaultRole = 'user';
                     const userEmail = currentUser.email;
                     
-                    if (userEmail === 'admin@genetek.co.id') {
+                    if (userEmail === 'adminsales@genetek.co.id') {
+                        defaultRole = 'adminsales';
+                    } else if (userEmail === 'admin@genetek.co.id') {
                         defaultRole = 'admin';
                     } else if (userEmail === 'm_husni@genetek.co.id') {
                         defaultRole = 'manager';
@@ -6004,8 +6781,8 @@
             const takePictureBtn = document.getElementById('takePictureBtn');
             const analyticsBtn = document.getElementById('pipelinesAnalyticsBtn');
             const exportBtn = document.getElementById('exportExcelBtn');
-            const addPICBtn = document.getElementById('addPICBtn');
-            const addCustomerBtn = document.getElementById('addCustomerBtn');
+            const backBtn = document.getElementById('backToDashboardBtn');
+            const logoutBtn = document.getElementById('authButton');
             
             const userAvatar = document.getElementById('userAvatar');
             if (userAvatar) {
@@ -6014,6 +6791,8 @@
                     userAvatar.classList.add('admin');
                 } else if (currentUserRole === 'manager') {
                     userAvatar.classList.add('manager');
+                } else if (currentUserRole === 'adminsales') {
+                    userAvatar.classList.add('adminsales');
                 } else {
                     userAvatar.classList.add('user');
                 }
@@ -6021,36 +6800,49 @@
             
             const roleBadge = document.getElementById('userRoleBadge');
             if (roleBadge) {
-                roleBadge.className = `badge badge-${currentUserRole === 'admin' ? 'secondary' : currentUserRole === 'manager' ? 'primary' : 'info'}`;
-                roleBadge.innerHTML = `<i class="fas fa-user-tag"></i><span>${currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1)}</span>`;
+                let badgeClass = 'badge-info';
+                let roleDisplay = currentUserRole;
+                
+                if (currentUserRole === 'admin') {
+                    badgeClass = 'badge-secondary';
+                    roleDisplay = 'Admin';
+                } else if (currentUserRole === 'manager') {
+                    badgeClass = 'badge-primary';
+                    roleDisplay = 'Manager';
+                } else if (currentUserRole === 'adminsales') {
+                    badgeClass = 'badge-adminsales';
+                    roleDisplay = 'Admin Sales';
+                } else {
+                    badgeClass = 'badge-info';
+                    roleDisplay = 'User';
+                }
+                
+                roleBadge.className = `badge ${badgeClass}`;
+                roleBadge.innerHTML = `<i class="fas fa-user-tag"></i><span>${roleDisplay}</span>`;
             }
             
             // Tampilkan/sembunyikan tombol berdasarkan role
-            if (newPipelineBtn) newPipelineBtn.classList.remove('hidden');
-            if (takePictureBtn) takePictureBtn.classList.remove('hidden');
-            if (exportBtn) exportBtn.classList.remove('hidden');
-            
-            // Tombol yang hanya untuk admin/manager
-            if (analyticsBtn) {
-                if (canViewPipelineAnalytics()) {
-                    analyticsBtn.classList.remove('hidden');
-                } else {
-                    analyticsBtn.classList.add('hidden');
-                }
-            }
-            
-            // Tombol tambah PIC dan Customer
-            if (addPICBtn && addCustomerBtn) {
-                if (canAddPIC()) {
-                    addPICBtn.classList.remove('hidden');
-                } else {
-                    addPICBtn.classList.add('hidden');
-                }
+            if (isAdminSales()) {
+                // Admin sales: hanya export, back, dan logout
+                if (newPipelineBtn) newPipelineBtn.classList.add('hidden');
+                if (takePictureBtn) takePictureBtn.classList.add('hidden');
+                if (analyticsBtn) analyticsBtn.classList.add('hidden');
+                if (exportBtn) exportBtn.classList.remove('hidden');
+                if (backBtn) backBtn.classList.remove('hidden');
+                if (logoutBtn) logoutBtn.classList.remove('hidden');
+            } else {
+                // Untuk role lain
+                if (newPipelineBtn) newPipelineBtn.classList.remove('hidden');
+                if (takePictureBtn) takePictureBtn.classList.remove('hidden');
+                if (exportBtn) exportBtn.classList.remove('hidden');
                 
-                if (canAddCustomer()) {
-                    addCustomerBtn.classList.remove('hidden');
-                } else {
-                    addCustomerBtn.classList.add('hidden');
+                // Tombol yang hanya untuk admin/manager
+                if (analyticsBtn) {
+                    if (canViewPipelineAnalytics()) {
+                        analyticsBtn.classList.remove('hidden');
+                    } else {
+                        analyticsBtn.classList.add('hidden');
+                    }
                 }
             }
             
@@ -6175,6 +6967,10 @@
             document.getElementById('saveImageBtn').addEventListener('click', saveCapturedImage);
             document.getElementById('uploadImageInput').addEventListener('change', uploadImage);
             document.getElementById('attachToPipelineBtn').addEventListener('click', attachImagesToPipeline);
+            
+            // Detail modal listeners
+            document.getElementById('closePipelineDetailModal').addEventListener('click', closePipelineDetailModal);
+            document.getElementById('closePipelineDetailBottomBtn').addEventListener('click', closePipelineDetailModal);
             
             // Preview image modal listeners
             document.getElementById('closePreviewImageModal').addEventListener('click', closePreviewImageModal);
