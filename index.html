@@ -2901,6 +2901,35 @@
                             </div>
                             
                             <div>
+                                <label class="form-label" for="salesName">
+                                    Nama Sales
+                                </label>
+                                <select id="salesName" class="form-input">
+                                    <option value="">Select Sales</option>
+                                    <option value="Fiki Hernawan">Fiki Hernawan</option>
+                                    <option value="Wahyu Sujoko">Wahyu Sujoko</option>
+                                    <option value="Probadi Haryo Wicaksono">Probadi Haryo Wicaksono</option>
+                                    <option value="Yudiyono">Yudiyono</option>
+                                    <option value="Aries A Bastian">Aries A Bastian</option>
+                                    <option value="M Gorwantoro Putra">M Gorwantoro Putra</option>
+                                    <option value="Indra Kurinawan">Indra Kurinawan</option>
+                                    <option value="Edwin Qomarudin">Edwin Qomarudin</option>
+                                    <option value="Muhamad Husni">Muhamad Husni</option>
+                                    <option value="Ahmad Asyrory">Ahmad Asyrory</option>
+                                    <option value="Andi Rahman">Andi Rahman</option>
+                                    <option value="Dhea Stephanie Gazali">Dhea Stephanie Gazali</option>
+                                    <option value="Rangga Riseto">Rangga Riseto</option>
+                                    <option value="Pamungkas Tri Sulistiyono">Pamungkas Tri Sulistiyono</option>
+                                    <option value="Bintang Norys Pambudy">Bintang Norys Pambudy</option>
+                                    <option value="David Tides Sagita">David Tides Sagita</option>
+                                    <option value="Iskandar Bagus Wahyu Yuwono">Iskandar Bagus Wahyu Yuwono</option>
+                                    <option value="Brahmantyo Hadiprasetyo">Brahmantyo Hadiprasetyo</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
+                            <div>
                                 <label class="form-label">
                                     Nama Personil
                                     <span class="text-xs text-gray-500 ml-2">(Search and add personnel)</span>
@@ -3075,6 +3104,11 @@
                         <div class="detail-item">
                             <label class="text-sm font-medium text-gray-500">PIC</label>
                             <p id="detailPIC" class="text-gray-900"></p>
+                        </div>
+                        <!-- Sales Name Display -->
+                        <div class="detail-item">
+                            <label class="text-sm font-medium text-gray-500">Nama Sales</label>
+                            <p id="detailSalesName" class="text-gray-900"></p>
                         </div>
                         <div class="detail-item">
                             <label class="text-sm font-medium text-gray-500">Personnel</label>
@@ -4531,6 +4565,17 @@
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium text-gray-900 truncate">${workorder.pic || 'No PIC'}</p>
                             <p class="text-xs text-gray-500">PIC</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Sales Name Display -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-yellow-100 flex items-center justify-center text-yellow-600">
+                            <i class="fas fa-user-tie text-sm"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 truncate">${workorder.salesName || 'No Sales'}</p>
+                            <p class="text-xs text-gray-500">Sales</p>
                         </div>
                     </div>
                     
@@ -6897,6 +6942,7 @@
             document.getElementById('company').value = workorder.company || '';
             document.getElementById('workType').value = workorder.workType || '';
             document.getElementById('pic').value = workorder.pic || '';
+            document.getElementById('salesName').value = workorder.salesName || '';
             document.getElementById('status').value = workorder.status || 'Running';
             document.getElementById('priority').value = workorder.priority || 'Normal';
             document.getElementById('estimatedTime').value = workorder.estimatedTime || '';
@@ -6958,6 +7004,7 @@
                 company: document.getElementById('company').value,
                 workType: workType,
                 pic: document.getElementById('pic').value || '',
+                salesName: document.getElementById('salesName').value || '',
                 personnel: personnelArray,
                 status: document.getElementById('status').value,
                 priority: document.getElementById('priority').value || 'Normal',
@@ -7065,6 +7112,7 @@
             document.getElementById('detailDivision').textContent = workorder.division || '-';
             document.getElementById('detailCompany').textContent = workorder.company || '-';
             document.getElementById('detailPIC').textContent = workorder.pic || '-';
+            document.getElementById('detailSalesName').textContent = workorder.salesName || '-';
             const detailPersonnel = document.getElementById('detailPersonnel');
             detailPersonnel.innerHTML = '';
             if (personnelArray.length > 0) {
@@ -7256,6 +7304,7 @@
                         'Company': wo.company,
                         'Work Type': wo.workType,
                         'PIC': wo.pic || '',
+                        'Sales Name': wo.salesName || '',
                         'Personnel': personnelArray.join(', '),
                         'Start Date': formatDate(wo.startDate),
                         'End Date': formatDate(wo.endDate),
